@@ -8,13 +8,7 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": ["warn"],
     "class-methods-use-this": "off",
     "import/no-unresolved": "off",
-    "import/extensions": [
-      "error",
-      "always",
-      {
-        ignorePackages: true,
-      },
-    ],
     "no-use-before-define": ["error", { functions: false }],
+    "lines-between-class-members": "off",
   },
 };
