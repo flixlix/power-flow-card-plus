@@ -10,6 +10,7 @@ specifiers:
   '@rollup/plugin-commonjs': ^21.1.0
   '@rollup/plugin-node-resolve': ^13.2.1
   '@rollup/plugin-typescript': ^8.3.2
+  '@semantic-release/changelog': ^6.0.1
   '@semantic-release/git': ^10.0.1
   '@typescript-eslint/eslint-plugin': ^5.20.0
   '@typescript-eslint/parser': ^5.20.0
@@ -42,6 +43,7 @@ devDependencies:
   '@rollup/plugin-commonjs': 21.1.0_rollup@2.70.2
   '@rollup/plugin-node-resolve': 13.2.1_rollup@2.70.2
   '@rollup/plugin-typescript': 8.3.2_056aba5e56e0ab5307259a29131f3fbe
+  '@semantic-release/changelog': 6.0.1_semantic-release@19.0.2
   '@semantic-release/git': 10.0.1_semantic-release@19.0.2
   '@typescript-eslint/eslint-plugin': 5.20.0_81f0d1a74f014d44d273bd1612c85fd9
   '@typescript-eslint/parser': 5.20.0_eslint@8.14.0+typescript@4.6.3
@@ -650,6 +652,19 @@ packages:
       rollup: 2.70.2
     dev: true
 
+  /@semantic-release/changelog/6.0.1_semantic-release@19.0.2:
+    resolution: {integrity: sha512-FT+tAGdWHr0RCM3EpWegWnvXJ05LQtBkQUaQRIExONoXjVjLuOILNm4DEKNaV+GAQyJjbLRVs57ti//GypH6PA==}
+    engines: {node: '>=14.17'}
+    peerDependencies:
+      semantic-release: '>=18.0.0'
+    dependencies:
+      '@semantic-release/error': 3.0.0
+      aggregate-error: 3.1.0
+      fs-extra: 9.1.0
+      lodash: 4.17.21
+      semantic-release: 19.0.2
+    dev: true
+
   /@semantic-release/commit-analyzer/9.0.2_semantic-release@19.0.2:
     resolution: {integrity: sha512-E+dr6L+xIHZkX4zNMe6Rnwg4YQrWNXK+rNsvwOPpdFppvZO1olE2fIgWhv89TkQErygevbjsZFSIxp+u6w2e5g==}
     engines: {node: '>=14.17'}
@@ -1112,6 +1127,11 @@ packages:
   /astral-regex/2.0.0:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
+    dev: true
+
+  /at-least-node/1.0.0:
+    resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
+    engines: {node: '>= 4.0.0'}
     dev: true
 
   /axe-core/4.4.1:
@@ -2107,6 +2127,16 @@ packages:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
     dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: true
+
+  /fs-extra/9.1.0:
+    resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
+    engines: {node: '>=10'}
+    dependencies:
+      at-least-node: 1.0.0
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
