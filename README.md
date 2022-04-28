@@ -1,4 +1,5 @@
 # Realtime Energy Distribution Card
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](https://github.com/hacs/integration)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/ulic75/realtime-energy-distribution-card?style=flat-square)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ulic75/realtime-energy-distribution-card/CI?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/ulic75/realtime-energy-distribution-card/total?style=flat-square)
