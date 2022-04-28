@@ -1,4 +1,7 @@
 # Realtime Energy Distribution Card
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/ulic75/realtime-energy-distribution-card?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ulic75/realtime-energy-distribution-card/CI?style=flat-square)
+![GitHub all releases](https://img.shields.io/github/downloads/ulic75/realtime-energy-distribution-card/total?style=flat-square)
 
 This card for [Home Assistant](https://github.com/home-assistant/home-assistant) Dashboard card is designed to mimic the historic distribution card included by Home Assistant.
 
