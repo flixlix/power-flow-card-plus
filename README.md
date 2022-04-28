@@ -1,12 +1,11 @@
 # Realtime Energy Distribution Card
+
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](https://github.com/hacs/integration)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/ulic75/realtime-energy-distribution-card?style=flat-square)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ulic75/realtime-energy-distribution-card/CI?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/ulic75/realtime-energy-distribution-card/total?style=flat-square)
 
-This card for [Home Assistant](https://github.com/home-assistant/home-assistant) Dashboard card is designed to mimic the historic distribution card included by Home Assistant.
-
-The card works with entities from within the **sensor** & **binary_sensor** domain and displays the sensors current state as well as a line graph representation of the history.
+This card for [Home Assistant](https://github.com/home-assistant/home-assistant) Dashboards is designed to provide realtime energy distribution in an identical style to the Official Energy Distribution card included by Home Assistant.
 
 ![realtime-distribution-preview](https://user-images.githubusercontent.com/5641964/165636264-dc2e02ed-e550-4167-9ce4-3dcbd7a84272.png)
 
@@ -38,12 +37,11 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 1. Make sure, advanced mode is enabled in your user profile (click on your user name to get there)
 2. Navigate to Configuration -> Dashboards -> Resources Tab. Hit (+ ADD RESOURCE) icon
 3. Enter URL `/local/realtime-energy-distribution-card.js` and select type "JavaScript Module".
-   (Use `/hacsfiles/realtime-energy-distribution-card/realtime-energy-distribution-card.js` and select "JavaScript Module" for HACS install)
-4. Restart Home Assistant.
+   (Use `/hacsfiles/realtime-energy-distribution-card/realtime-energy-distribution-card.js` and select "JavaScript Module" for HACS install if HACS didn't do it already)
 
 ## Using the card
 
-We recommend looking at the [Example usage section](#example-usage) to understand the basics to configure this card.
+I recommend looking at the [Example usage section](#example-usage) to understand the basics to configure this card.
 (also) pay attention to the **required** options mentioned below.
 
 ### Options
@@ -59,12 +57,12 @@ We recommend looking at the [Example usage section](#example-usage) to understan
 
 #### Entities map
 
-| Name                     | Unit | Description                                                                            |
-| ------------------------ | :--: | -------------------------------------------------------------------------------------- |
-| battery **_(required)_** |  kW  | Entity providing a positive value when charging and a negative value when discharging. |
-| battery_charge           |  %   | Entity providing the current percentage of charge on the battery.                      |
-| grid **_(required)_**    |  kW  | Entity providing a positive value when consuming and a negative value when producting. |
-| solar **_(required)_**   |  kW  | Entity providing a value of generation.                                                |
+| Name                  | Unit | Description                                                                                         |
+| --------------------- | :--: | --------------------------------------------------------------------------------------------------- |
+| grid **_(required)_** |  kW  | Entity providing a state with a positive value when consuming and a negative value when producting. |
+| battery               |  kW  | Entity providing a state with a positive value when charging and a negative value when discharging. |
+| battery_charge        |  %   | Entity providing a state with the current percentage of charge on the battery.                      |
+| solar                 |  kW  | Entity providing a state with the value of generation.                                              |
 
 ### Example usage
 
@@ -76,6 +74,7 @@ entities:
   battery_charge: sensor.powerwall_charge
   grid: sensor.powerwall_site_now
   solar: sensor.powerwall_solar_now
+max_flow_rate: 10
 ```
 
 ### Flow Formula
