@@ -20,8 +20,8 @@ import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribu
 import { roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
-const SLOWEST_CIRCLE_RATE = 6;
-const FASTEST_CIRCLE_RATE = 0.75;
+const MAX_FLOW_RATE = 6;
+const MIN_FLOW_RATE = 0.75;
 
 @customElement("realtime-energy-distribution-card")
 export class RealtimeEnergyDistributionCard extends LitElement {
@@ -35,7 +35,11 @@ export class RealtimeEnergyDistributionCard extends LitElement {
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
   setConfig(config: RealtimeEnergyDistributionCardConfig): void {
-    this._config = config;
+    this._config = {
+      ...config,
+      min_flow_rate: config.min_flow_rate ?? MIN_FLOW_RATE,
+      max_flow_rate: config.max_flow_rate ?? MAX_FLOW_RATE,
+    };
   }
 
   public getCardSize(): Promise<number> | number {
@@ -44,9 +48,11 @@ export class RealtimeEnergyDistributionCard extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
-  private circleRate = (value: number, total: number): number =>
-    SLOWEST_CIRCLE_RATE -
-    (value / total) * (SLOWEST_CIRCLE_RATE - FASTEST_CIRCLE_RATE);
+  private circleRate = (value: number, total: number): number => {
+    const min = this._config?.min_flow_rate!;
+    const max = this._config?.max_flow_rate!;
+    return max - (value / total) * (max - min);
+  };
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {

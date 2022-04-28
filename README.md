@@ -50,11 +50,12 @@ We recommend looking at the [Example usage section](#example-usage) to understan
 
 #### Card options
 
-| Name                      | Type   | Default | Description                                                                                             |
-| ------------------------- | ------ | ------- | ------------------------------------------------------------------------------------------------------- |
-| type **_(required)_**     | string |         | `custom:realtime-energy-distribution-card`.                                                             |
-| entities **_(required)_** | map    |         | One or more sensor entities in a list, see [entities map](#entities-map) for additional entity options. |
-|                           |
+| Name                      | Type   | Default | Description                                                                                                                             |
+| ------------------------- | ------ | :-----: | --------------------------------------------------------------------------------------------------------------------------------------- |
+| type **_(required)_**     | string |         | `custom:realtime-energy-distribution-card`.                                                                                             |
+| entities **_(required)_** | map    |         | One or more sensor entities in a list, see [entities map](#entities-map) for additional entity options.                                 |
+| min_flow_rate             | number |   .75   | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
+| max_flow_rate             | number |    6    | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
 
 #### Entities map
 
@@ -76,3 +77,13 @@ entities:
   grid: sensor.powerwall_site_now
   solar: sensor.powerwall_solar_now
 ```
+
+### Flow Formula
+
+This formula is based on the offical formula used by the Energy Distribution card.
+
+```js
+max - (value / total) * (max - min);
+```
+
+I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.

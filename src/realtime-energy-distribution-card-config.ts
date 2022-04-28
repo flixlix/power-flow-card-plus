@@ -8,4 +8,6 @@ export interface RealtimeEnergyDistributionCardConfig
     grid?: string;
     solar?: string;
   };
+  min_flow_rate: number;
+  max_flow_rate: number;
 }
