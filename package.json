@@ -1,7 +1,7 @@
 {
-  "name": "realtime-energy-distribution-card",
+  "name": "power-distribution-card",
   "version": "1.0.0",
-  "description": "A realtime energy distribution card for Home Assistant",
+  "description": "A power distribution card for Home Assistant",
   "keywords": [
     "home-assistant",
     "homeassistant",
@@ -12,14 +12,14 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ulic75/realtime-energy-distribution-card.git"
+    "url": "git+https://github.com/ulic75/power-distribution-card.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ulic75/realtime-energy-distribution-card/issues"
+    "url": "https://github.com/ulic75/power-distribution-card/issues"
   },
-  "homepage": "https://github.com/ulic75/realtime-energy-distribution-card#readme",
+  "homepage": "https://github.com/ulic75/power-distribution-card#readme",
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint src/*",

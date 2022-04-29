@@ -19,7 +19,7 @@ const serveOptions = {
 
 export default [
   {
-    input: "src/realtime-energy-distribution-card.ts",
+    input: "src/power-distribution-card.ts",
     output: [
       {
         dir: "./dist",

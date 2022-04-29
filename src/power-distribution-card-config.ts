@@ -1,7 +1,6 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 
-export interface RealtimeEnergyDistributionCardConfig
-  extends LovelaceCardConfig {
+export interface PowerDistributionCardConfig extends LovelaceCardConfig {
   entities: {
     battery?: string;
     battery_charge?: string;

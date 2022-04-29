@@ -16,17 +16,17 @@ import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribution-card-config.js";
+import { PowerDistributionCardConfig } from "./power-distribution-card-config.js";
 import { roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 
-@customElement("realtime-energy-distribution-card")
-export class RealtimeEnergyDistributionCard extends LitElement {
+@customElement("power-distribution-card")
+export class PowerDistributionCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
-  @state() private _config?: RealtimeEnergyDistributionCardConfig;
+  @state() private _config?: PowerDistributionCardConfig;
 
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
   @query("#grid-home-flow") gridToHomeFlow?: SVGSVGElement;
@@ -34,7 +34,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  setConfig(config: RealtimeEnergyDistributionCardConfig): void {
+  setConfig(config: PowerDistributionCardConfig): void {
     this._config = {
       ...config,
       min_flow_rate: config.min_flow_rate ?? MIN_FLOW_RATE,
@@ -639,6 +639,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "realtime-energy-distribution-card": RealtimeEnergyDistributionCard;
+    "power-distribution-card": PowerDistributionCard;
   }
 }
