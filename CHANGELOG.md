@@ -1,3 +1,10 @@
+### [1.1.1](https://github.com/ulic75/power-distribution-card/compare/v1.1.0...v1.1.1) (2022-04-29)
+
+
+### Bug Fixes
+
+* rename card to power-distribution-card ([6678525](https://github.com/ulic75/power-distribution-card/commit/667852570cf2e5eb06509ac1717c25a91cff6faa))
+
 # [1.1.0](https://github.com/ulic75/power-distribution-card/compare/v1.0.0...v1.1.0) (2022-04-28)
 
 ### Features
