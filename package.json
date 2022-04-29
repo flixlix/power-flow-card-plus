@@ -23,7 +23,7 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint src/*",
-    "watch": "rollup -wc"
+    "start": "rollup -wc"
   },
   "dependencies": {
     "@mdi/js": "^6.6.96",
