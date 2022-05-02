@@ -151,11 +151,9 @@ export class PowerDistributionCard extends LitElement {
                 >
                 <div class="circle">
                   <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-                  ${solarState > 0
-                    ? html` <span class="solar">
-                        ${roundValue(solarState, 1)} kW</span
-                      >`
-                    : html``}
+                  <span class="solar">
+                    ${roundValue(solarState ?? 0, 1)} kW</span
+                  >
                 </div>
               </div>`
             : html``}
