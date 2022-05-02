@@ -8,6 +8,7 @@ import {
   mdiBatteryLow,
   mdiBatteryMedium,
   mdiBatteryOutline,
+  mdiBatteryUnknown,
   mdiHome,
   mdiSolarPower,
   mdiTransmissionTower,
@@ -17,7 +18,7 @@ import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerDistributionCardConfig } from "./power-distribution-card-config.js";
-import { roundValue } from "./utils.js";
+import { coerceNumber, roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const MAX_FLOW_RATE = 6;
@@ -54,6 +55,11 @@ export class PowerDistributionCard extends LitElement {
     return max - (value / total) * (max - min);
   };
 
+  private getEntityState = (entity: string | undefined): number | null => {
+    if (entity === undefined) return null;
+    return coerceNumber(this.hass.states[entity].state, null);
+  };
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -63,25 +69,22 @@ export class PowerDistributionCard extends LitElement {
     const hasSolarProduction = this._config.entities.solar !== undefined;
     const hasReturnToGrid = true;
 
-    const batteryState = this._config.entities.battery
-      ? +this.hass.states[this._config.entities.battery].state
-      : 0;
-    const batteryChargeState = this._config.entities.battery_charge
-      ? +this.hass.states[this._config.entities.battery_charge].state
-      : 0;
-    const gridState = this._config.entities.grid
-      ? +this.hass.states[this._config.entities.grid].state
-      : 0;
-    const solarState = this._config.entities.solar
-      ? +this.hass.states[this._config.entities.solar].state
-      : 0;
+    const batteryState = this.getEntityState(this._config.entities.battery);
+    const batteryChargeState = this.getEntityState(
+      this._config.entities.battery_charge
+    );
+    const gridState = this.getEntityState(this._config.entities.grid);
+    const solarState = this.getEntityState(this._config.entities.solar);
 
-    const solarToGrid = roundValue(Math.abs(Math.min(gridState, 0)), 1);
-    const batteryToHome = roundValue(Math.max(batteryState, 0), 1);
-    const gridToHome = roundValue(Math.max(gridState, 0), 1);
-    const solarToBattery = roundValue(Math.abs(Math.min(batteryState, 0)), 1);
+    const solarToGrid = roundValue(Math.abs(Math.min(gridState ?? 0, 0)), 1);
+    const batteryToHome = roundValue(Math.max(batteryState ?? 0, 0), 1);
+    const gridToHome = roundValue(Math.max(gridState ?? 0, 0), 1);
+    const solarToBattery = roundValue(
+      Math.abs(Math.min(batteryState ?? 0, 0)),
+      1
+    );
     const solarToHome =
-      roundValue(solarState, 1) - solarToGrid - solarToBattery;
+      roundValue(solarState ?? 0, 1) - solarToGrid - solarToBattery;
 
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
     const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
@@ -101,7 +104,9 @@ export class PowerDistributionCard extends LitElement {
       CIRCLE_CIRCUMFERENCE * (gridToHome / homeConsumption);
 
     let batteryIcon = mdiBatteryHigh;
-    if (batteryChargeState <= 72 && batteryChargeState > 44) {
+    if (batteryChargeState === null) {
+      batteryIcon = mdiBatteryUnknown;
+    } else if (batteryChargeState <= 72 && batteryChargeState > 44) {
       batteryIcon = mdiBatteryMedium;
     } else if (batteryChargeState <= 44 && batteryChargeState > 16) {
       batteryIcon = mdiBatteryLow;
@@ -247,7 +252,7 @@ export class PowerDistributionCard extends LitElement {
               >
             </div>
           </div>
-          ${hasBattery
+          ${hasBattery && batteryChargeState !== null
             ? html`<div class="row">
                 <div class="spacer"></div>
                 <div class="circle-container battery">
