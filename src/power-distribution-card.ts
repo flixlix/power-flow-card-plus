@@ -69,7 +69,8 @@ export class PowerDistributionCard extends LitElement {
 
     const hasBattery = entities.battery !== undefined;
     const hasSolarProduction = entities.solar !== undefined;
-    const hasReturnToGrid = true;
+    const hasReturnToGrid =
+      typeof entities.grid === "string" || entities.grid.production;
 
     const batteryChargeState = entities.battery_charge?.length
       ? this.getEntityState(entities.battery_charge)
