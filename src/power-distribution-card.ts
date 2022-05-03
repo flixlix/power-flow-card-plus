@@ -4,11 +4,11 @@ import {
   mdiArrowLeft,
   mdiArrowRight,
   mdiArrowUp,
+  mdiBattery,
   mdiBatteryHigh,
   mdiBatteryLow,
   mdiBatteryMedium,
   mdiBatteryOutline,
-  mdiBatteryUnknown,
   mdiHome,
   mdiSolarPower,
   mdiTransmissionTower,
@@ -105,7 +105,7 @@ export class PowerDistributionCard extends LitElement {
 
     let batteryIcon = mdiBatteryHigh;
     if (batteryChargeState === null) {
-      batteryIcon = mdiBatteryUnknown;
+      batteryIcon = mdiBattery;
     } else if (batteryChargeState <= 72 && batteryChargeState > 44) {
       batteryIcon = mdiBatteryMedium;
     } else if (batteryChargeState <= 44 && batteryChargeState > 16) {
@@ -252,17 +252,19 @@ export class PowerDistributionCard extends LitElement {
               >
             </div>
           </div>
-          ${hasBattery && batteryChargeState !== null
+          ${hasBattery
             ? html`<div class="row">
                 <div class="spacer"></div>
                 <div class="circle-container battery">
                   <div class="circle">
-                    <span>
-                      ${formatNumber(batteryChargeState, this.hass.locale, {
-                        maximumFractionDigits: 0,
-                        minimumFractionDigits: 0,
-                      })}%
-                    </span>
+                    ${batteryChargeState !== null
+                      ? html`<span>
+                          ${formatNumber(batteryChargeState, this.hass.locale, {
+                            maximumFractionDigits: 0,
+                            minimumFractionDigits: 0,
+                          })}%
+                        </span>`
+                      : null}
                     <ha-svg-icon .path=${batteryIcon}></ha-svg-icon>
                     <span class="battery-in">
                       <ha-svg-icon
