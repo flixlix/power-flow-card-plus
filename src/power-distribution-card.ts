@@ -55,9 +55,9 @@ export class PowerDistributionCard extends LitElement {
     return max - (value / total) * (max - min);
   };
 
-  private getEntityState = (entity: string | undefined): number | null => {
-    if (entity === undefined) return null;
-    return coerceNumber(this.hass.states[entity].state, null);
+  private getEntityState = (entity: string | undefined): number => {
+    if (!entity) return 0;
+    return coerceNumber(this.hass.states[entity].state);
   };
 
   protected render(): TemplateResult {
@@ -65,26 +65,49 @@ export class PowerDistributionCard extends LitElement {
       return html``;
     }
 
-    const hasBattery = this._config.entities.battery !== undefined;
-    const hasSolarProduction = this._config.entities.solar !== undefined;
+    const { entities } = this._config;
+
+    const hasBattery = entities.battery !== undefined;
+    const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid = true;
 
-    const batteryState = this.getEntityState(this._config.entities.battery);
-    const batteryChargeState = this.getEntityState(
-      this._config.entities.battery_charge
-    );
-    const gridState = this.getEntityState(this._config.entities.grid);
-    const solarState = this.getEntityState(this._config.entities.solar);
+    const batteryChargeState = entities.battery_charge?.length
+      ? this.getEntityState(entities.battery_charge)
+      : null;
+    const solarState = this.getEntityState(entities.solar);
 
-    const solarToGrid = roundValue(Math.abs(Math.min(gridState ?? 0, 0)), 1);
-    const batteryToHome = roundValue(Math.max(batteryState ?? 0, 0), 1);
-    const gridToHome = roundValue(Math.max(gridState ?? 0, 0), 1);
-    const solarToBattery = roundValue(
-      Math.abs(Math.min(batteryState ?? 0, 0)),
+    const solarToGrid = hasReturnToGrid
+      ? roundValue(
+          typeof entities.grid === "string"
+            ? Math.abs(Math.min(this.getEntityState(entities.grid), 0))
+            : this.getEntityState(entities.grid.production),
+          1
+        )
+      : 0;
+
+    const batteryToHome = roundValue(
+      typeof entities.battery === "string"
+        ? Math.max(this.getEntityState(entities.battery), 0)
+        : this.getEntityState(entities.battery?.consumption),
       1
     );
+
+    const gridToHome = roundValue(
+      typeof entities.grid === "string"
+        ? Math.max(this.getEntityState(entities.grid), 0)
+        : this.getEntityState(entities.grid.consumption),
+      1
+    );
+
+    const solarToBattery = roundValue(
+      typeof entities.battery === "string"
+        ? Math.abs(Math.min(this.getEntityState(entities.battery), 0))
+        : this.getEntityState(entities.battery?.production),
+      1
+    );
+
     const solarToHome =
-      roundValue(solarState ?? 0, 1) - solarToGrid - solarToBattery;
+      roundValue(solarState, 1) - solarToGrid - solarToBattery;
 
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
     const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
@@ -166,10 +189,15 @@ export class PowerDistributionCard extends LitElement {
             <div class="circle-container grid">
               <div class="circle">
                 <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
-                <span class="return">
-                  <ha-svg-icon class="small" .path=${mdiArrowLeft}></ha-svg-icon
-                  >${roundValue(solarToGrid, 1)} kW
-                </span>
+                ${hasReturnToGrid
+                  ? html`<span class="return">
+                      <ha-svg-icon
+                        class="small"
+                        .path=${mdiArrowLeft}
+                      ></ha-svg-icon
+                      >${roundValue(solarToGrid, 1)} kW
+                    </span>`
+                  : null}
                 <span class="consumption">
                   <ha-svg-icon
                     class="small"
@@ -258,7 +286,7 @@ export class PowerDistributionCard extends LitElement {
                 <div class="circle-container battery">
                   <div class="circle">
                     ${batteryChargeState !== null
-                      ? html`<span>
+                      ? html` <span>
                           ${formatNumber(batteryChargeState, this.hass.locale, {
                             maximumFractionDigits: 0,
                             minimumFractionDigits: 0,

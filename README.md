@@ -48,32 +48,60 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Card options
 
-| Name                      | Type   | Default | Description                                                                                                                             |
-| ------------------------- | ------ | :-----: | --------------------------------------------------------------------------------------------------------------------------------------- |
-| type **_(required)_**     | string |         | `custom:power-distribution-card`.                                                                                                       |
-| entities **_(required)_** | map    |         | One or more sensor entities in a list, see [entities map](#entities-map) for additional entity options.                                 |
-| min_flow_rate             | number |   .75   | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
-| max_flow_rate             | number |    6    | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
+| Name          | Type     |   Default    | Description                                                                                                                             |
+| ------------- | -------- | :----------: | --------------------------------------------------------------------------------------------------------------------------------------- |
+| type          | `string` | **required** | `custom:power-distribution-card`.                                                                                                       |
+| entities      | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                     |
+| min_flow_rate | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
+| max_flow_rate | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
 
-#### Entities map
+#### Entities object
 
-| Name                  | Unit | Description                                                                                         |
-| --------------------- | :--: | --------------------------------------------------------------------------------------------------- |
-| grid **_(required)_** |  kW  | Entity providing a state with a positive value when consuming and a negative value when producting. |
-| battery               |  kW  | Entity providing a state with a positive value when charging and a negative value when discharging. |
-| battery_charge        |  %   | Entity providing a state with the current percentage of charge on the battery.                      |
-| solar                 |  kW  | Entity providing a state with the value of generation.                                              |
+| Name           | Type                | Default      | Description                                                                                                                                                                                                     |
+| -------------- | :------------------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| grid           | `string` / `object` | **required** | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| battery        | `string` / `object` |              | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| battery_charge | `string`            |              | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
+| solar          | `string`            |              | Entity ID providing a state with the value of generation.                                                                                                                                                       |
+
+#### Split entities
+
+Can be use with either Grid or Battery configuration
+
+| Name        | Type     | Default               | Description                                                                                       |
+| ----------- | -------- | --------------------- | ------------------------------------------------------------------------------------------------- |
+| consumption | `string` | **required** for grid | Entity ID providing a state value for consumption, this is required if using a split grid object. |
+| production  | `string` |                       | Entity ID providing a state value for production                                                  |
 
 ### Example usage
+
+#### Using combined entities for grid and battery that support positive state values for consumption and negative state values for production.
 
 ```yaml
 type: custom:power-distribution-card
 title: Realtime Distribution
 entities:
-  battery: sensor.powerwall_battery_now
-  battery_charge: sensor.powerwall_charge
-  grid: sensor.powerwall_site_now
-  solar: sensor.powerwall_solar_now
+  battery: sensor.battery_in_out
+  battery_charge: sensor.battery_percent
+  grid: sensor.grid_in_out
+  solar: sensor.solar_out
+max_flow_rate: 10
+```
+
+#### Using split entities for grid and battery where each consumption and production entity state has a positive value.
+
+```yaml
+type: custom:power-distribution-card
+title: Realtime Distribution
+entities:
+  battery:
+    consumption: sensor.battery_out
+    production: sensor.battery_in
+  battery_charge: sensor.battery_percent
+  grid:
+    consumption: sensor.grid_out
+    production: sensor.grid_in
+  solar: sensor.solar_out
 max_flow_rate: 10
 ```
 
