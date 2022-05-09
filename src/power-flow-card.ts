@@ -17,17 +17,17 @@ import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { PowerDistributionCardConfig } from "./power-distribution-card-config.js";
+import { PowerFlowCardConfig } from "./power-flow-card-config.js";
 import { coerceNumber, roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 
-@customElement("power-distribution-card")
-export class PowerDistributionCard extends LitElement {
+@customElement("power-flow-card")
+export class PowerFlowCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
-  @state() private _config?: PowerDistributionCardConfig;
+  @state() private _config?: PowerFlowCardConfig;
 
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
   @query("#grid-home-flow") gridToHomeFlow?: SVGSVGElement;
@@ -35,7 +35,7 @@ export class PowerDistributionCard extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  setConfig(config: PowerDistributionCardConfig): void {
+  setConfig(config: PowerFlowCardConfig): void {
     this._config = {
       ...config,
       min_flow_rate: config.min_flow_rate ?? MIN_FLOW_RATE,
@@ -673,6 +673,6 @@ export class PowerDistributionCard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "power-distribution-card": PowerDistributionCard;
+    "power-flow-card": PowerFlowCard;
   }
 }
