@@ -1,3 +1,10 @@
+## [2.1.0](https://github.com/ulic75/power-distribution-card/compare/v2.0.0...v2.1.0) (2022-05-09)
+
+
+### Features
+
+* support watts and kilowats ([#18](https://github.com/ulic75/power-distribution-card/issues/18)) ([9596eeb](https://github.com/ulic75/power-distribution-card/commit/9596eebe336cf12798386da1a3bdeebb457cf567))
+
 ## [2.0.0](https://github.com/ulic75/power-distribution-card/compare/v1.2.0...v2.0.0) (2022-05-09)
 
 
