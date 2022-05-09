@@ -48,14 +48,17 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Card options
 
-| Name          | Type     |   Default    | Description                                                                                                                             |
-| ------------- | -------- | :----------: | --------------------------------------------------------------------------------------------------------------------------------------- |
-| type          | `string` | **required** | `custom:power-flow-card`.                                                                                                               |
-| entities      | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                     |
-| min_flow_rate | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
-| max_flow_rate | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
+| Name           | Type     |   Default    | Description                                                                                                                             |
+| -------------- | -------- | :----------: | --------------------------------------------------------------------------------------------------------------------------------------- |
+| type           | `string` | **required** | `custom:power-flow-card`.                                                                                                               |
+| entities       | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                     |
+| min_flow_rate  | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
+| max_flow_rate  | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
+| watt_threshold | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.            |
 
 #### Entities object
+
+All entites (except _battery_charge_) should have a `unit_of_measurement` attribute of W(watts) or kW(kilowatts).
 
 | Name           | Type                | Default      | Description                                                                                                                                                                                                     |
 | -------------- | :------------------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -66,7 +69,7 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Split entities
 
-Can be use with either Grid or Battery configuration
+Can be use with either Grid or Battery configuration. The same `unit_of_measurement` rule as above applies.
 
 | Name        | Type     | Default               | Description                                                                                       |
 | ----------- | -------- | --------------------- | ------------------------------------------------------------------------------------------------- |

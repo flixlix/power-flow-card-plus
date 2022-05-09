@@ -19,4 +19,5 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
   };
   min_flow_rate: number;
   max_flow_rate: number;
+  watt_threshold: number;
 }

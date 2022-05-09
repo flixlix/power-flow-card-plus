@@ -40,6 +40,7 @@ export class PowerFlowCard extends LitElement {
       ...config,
       min_flow_rate: config.min_flow_rate ?? MIN_FLOW_RATE,
       max_flow_rate: config.max_flow_rate ?? MAX_FLOW_RATE,
+      watt_threshold: config.watt_threshold ?? 0,
     };
   }
 
@@ -60,6 +61,19 @@ export class PowerFlowCard extends LitElement {
     return coerceNumber(this.hass.states[entity].state);
   };
 
+  private getEntityStateWatts = (entity: string | undefined): number => {
+    if (!entity) return 0;
+    const stateObj = this.hass.states[entity];
+    const value = coerceNumber(stateObj.state);
+    if (stateObj.attributes.unit_of_measurement === "W") return value;
+    return value * 1000;
+  };
+
+  private displayValue = (value: number) =>
+    value >= coerceNumber(this._config?.watt_threshold, 0)
+      ? `${roundValue(value / 1000, 1)} kW`
+      : `${value} W`;
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -75,40 +89,30 @@ export class PowerFlowCard extends LitElement {
     const batteryChargeState = entities.battery_charge?.length
       ? this.getEntityState(entities.battery_charge)
       : null;
-    const solarState = this.getEntityState(entities.solar);
+    const solarState = this.getEntityStateWatts(entities.solar);
 
     const solarToGrid = hasReturnToGrid
-      ? roundValue(
-          typeof entities.grid === "string"
-            ? Math.abs(Math.min(this.getEntityState(entities.grid), 0))
-            : this.getEntityState(entities.grid.production),
-          1
-        )
+      ? typeof entities.grid === "string"
+        ? Math.abs(Math.min(this.getEntityStateWatts(entities.grid), 0))
+        : this.getEntityStateWatts(entities.grid.production)
       : 0;
 
-    const batteryToHome = roundValue(
+    const batteryToHome =
       typeof entities.battery === "string"
-        ? Math.max(this.getEntityState(entities.battery), 0)
-        : this.getEntityState(entities.battery?.consumption),
-      1
-    );
+        ? Math.max(this.getEntityStateWatts(entities.battery), 0)
+        : this.getEntityStateWatts(entities.battery?.consumption);
 
-    const gridToHome = roundValue(
+    const gridToHome =
       typeof entities.grid === "string"
-        ? Math.max(this.getEntityState(entities.grid), 0)
-        : this.getEntityState(entities.grid.consumption),
-      1
-    );
+        ? Math.max(this.getEntityStateWatts(entities.grid), 0)
+        : this.getEntityStateWatts(entities.grid.consumption);
 
-    const solarToBattery = roundValue(
+    const solarToBattery =
       typeof entities.battery === "string"
-        ? Math.abs(Math.min(this.getEntityState(entities.battery), 0))
-        : this.getEntityState(entities.battery?.production),
-      1
-    );
+        ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery), 0))
+        : this.getEntityStateWatts(entities.battery?.production);
 
-    const solarToHome =
-      roundValue(solarState, 1) - solarToGrid - solarToBattery;
+    const solarToHome = solarState - solarToGrid - solarToBattery;
 
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
     const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
@@ -180,9 +184,7 @@ export class PowerFlowCard extends LitElement {
                 >
                 <div class="circle">
                   <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-                  <span class="solar">
-                    ${roundValue(solarState ?? 0, 1)} kW</span
-                  >
+                  <span class="solar"> ${this.displayValue(solarState)}</span>
                 </div>
               </div>`
             : html``}
@@ -196,7 +198,7 @@ export class PowerFlowCard extends LitElement {
                         class="small"
                         .path=${mdiArrowLeft}
                       ></ha-svg-icon
-                      >${roundValue(solarToGrid, 1)} kW
+                      >${this.displayValue(solarToGrid)}
                     </span>`
                   : null}
                 <span class="consumption">
@@ -204,7 +206,7 @@ export class PowerFlowCard extends LitElement {
                     class="small"
                     .path=${mdiArrowRight}
                   ></ha-svg-icon
-                  >${roundValue(gridToHome, 1)} kW
+                  >${this.displayValue(gridToHome)}
                 </span>
               </div>
               <span class="label"
@@ -220,7 +222,7 @@ export class PowerFlowCard extends LitElement {
                 })}"
               >
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
-                ${roundValue(homeConsumption, 1)} kW
+                ${this.displayValue(homeConsumption)}
                 ${homeSolarCircumference !== undefined
                   ? html`<svg>
                       ${homeSolarCircumference !== undefined
@@ -300,14 +302,14 @@ export class PowerFlowCard extends LitElement {
                         class="small"
                         .path=${mdiArrowDown}
                       ></ha-svg-icon
-                      >${roundValue(solarToBattery, 1)} kW</span
+                      >${this.displayValue(solarToBattery)}</span
                     >
                     <span class="battery-out">
                       <ha-svg-icon
                         class="small"
                         .path=${mdiArrowUp}
                       ></ha-svg-icon
-                      >${roundValue(batteryToHome, 1)} kW</span
+                      >${this.displayValue(batteryToHome)}</span
                     >
                   </div>
                   <span class="label"
