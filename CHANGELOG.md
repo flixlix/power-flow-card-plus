@@ -1,3 +1,16 @@
+## [2.0.0](https://github.com/ulic75/power-distribution-card/compare/v1.2.0...v2.0.0) (2022-05-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* card name
+
+card type will need to be changed from `custom:power-distribution-card` to `custom:power-flow-card`
+
+### Miscellaneous Chores
+
+* rename to power-flow-card ([#17](https://github.com/ulic75/power-distribution-card/issues/17)) ([bb26ad7](https://github.com/ulic75/power-distribution-card/commit/bb26ad7a498ddd77f72d81939769c48f786a09bd)), closes [#15](https://github.com/ulic75/power-distribution-card/issues/15)
+
 ## [1.2.0](https://github.com/ulic75/power-distribution-card/compare/v1.1.1...v1.2.0) (2022-05-03)
 
 
