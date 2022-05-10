@@ -89,7 +89,7 @@ export class PowerFlowCard extends LitElement {
     const batteryChargeState = entities.battery_charge?.length
       ? this.getEntityState(entities.battery_charge)
       : null;
-    const solarState = this.getEntityStateWatts(entities.solar);
+    const solarState = Math.max(this.getEntityStateWatts(entities.solar), 0);
 
     const solarToGrid = hasReturnToGrid
       ? typeof entities.grid === "string"
