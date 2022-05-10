@@ -1,3 +1,10 @@
+### [2.1.1](https://github.com/ulic75/power-distribution-card/compare/v2.1.0...v2.1.1) (2022-05-10)
+
+
+### Bug Fixes
+
+* round watts to 1 decimal place ([#22](https://github.com/ulic75/power-distribution-card/issues/22)) ([2606dbd](https://github.com/ulic75/power-distribution-card/commit/2606dbd3623e49c3e8418ee75f12c78361052258))
+
 ## [2.1.0](https://github.com/ulic75/power-distribution-card/compare/v2.0.0...v2.1.0) (2022-05-09)
 
 
