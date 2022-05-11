@@ -21,6 +21,7 @@ import { PowerFlowCardConfig } from "./power-flow-card-config.js";
 import { coerceNumber, roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
+const KW_DECIMALS = 1;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 
@@ -38,6 +39,7 @@ export class PowerFlowCard extends LitElement {
   setConfig(config: PowerFlowCardConfig): void {
     this._config = {
       ...config,
+      kw_decimals: coerceNumber(config.kw_decimals, KW_DECIMALS),
       min_flow_rate: config.min_flow_rate ?? MIN_FLOW_RATE,
       max_flow_rate: config.max_flow_rate ?? MAX_FLOW_RATE,
       watt_threshold: config.watt_threshold ?? 0,
@@ -71,7 +73,7 @@ export class PowerFlowCard extends LitElement {
 
   private displayValue = (value: number) =>
     value >= coerceNumber(this._config?.watt_threshold, 0)
-      ? `${roundValue(value / 1000, 1)} kW`
+      ? `${roundValue(value / 1000, this._config!.kw_decimals!)} kW`
       : `${roundValue(value, 1)} W`;
 
   protected render(): TemplateResult {

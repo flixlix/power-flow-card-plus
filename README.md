@@ -55,6 +55,7 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 | -------------- | -------- | :----------: | --------------------------------------------------------------------------------------------------------------------------------------- |
 | type           | `string` | **required** | `custom:power-flow-card`.                                                                                                               |
 | entities       | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                     |
+| kw_decimals    | `number` |      1       | Number of decimals rounded to when kilowatts are displayed                                                                              |
 | min_flow_rate  | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
 | max_flow_rate  | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
 | watt_threshold | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.            |
