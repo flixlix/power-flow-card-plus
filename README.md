@@ -35,8 +35,11 @@ resources:
 Else, if you prefer the graphical editor, use the menu to add the resource:
 
 1. Make sure, advanced mode is enabled in your user profile (click on your user name to get there)
-2. Navigate to Configuration -> Dashboards -> Resources Tab. Hit (+ ADD RESOURCE) icon
-3. Enter URL `/local/power-flow-card.js` and select type "JavaScript Module".
+2. Navigate to Settings -> Dashboards
+3. Click three dot icon
+4. Select Resources
+5. Hit (+ ADD RESOURCE) icon
+6. Enter URL `/local/power-flow-card.js` and select type "JavaScript Module".
    (Use `/hacsfiles/power-flow-card/power-flow-card.js` and select "JavaScript Module" for HACS install if HACS didn't do it already)
 
 ## Using the card
