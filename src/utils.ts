@@ -5,10 +5,10 @@ export function coerceNumber(value: any, fallbackValue = 0) {
   return _isNumberValue(value) ? Number(value) : fallbackValue;
 }
 
-export const roundValue = (value: number, decimalPlaces: number): number => {
-  const factorOfTen = 10 ** decimalPlaces;
-  return Math.round(value * factorOfTen) / factorOfTen;
-};
+export const round = (value: number, decimalPlaces: number): number =>
+  Number(
+    `${Math.round(Number(`${value}e${decimalPlaces}`))}e-${decimalPlaces}`
+  );
 
 export function _isNumberValue(value: any): boolean {
   // parseFloat(value) handles most of the cases we're interested in (it treats null, empty string,

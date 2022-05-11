@@ -18,7 +18,7 @@ import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardConfig } from "./power-flow-card-config.js";
-import { coerceNumber, roundValue } from "./utils.js";
+import { coerceNumber, round } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;
@@ -73,8 +73,8 @@ export class PowerFlowCard extends LitElement {
 
   private displayValue = (value: number) =>
     value >= coerceNumber(this._config?.watt_threshold, 0)
-      ? `${roundValue(value / 1000, this._config!.kw_decimals!)} kW`
-      : `${roundValue(value, 1)} W`;
+      ? `${round(value / 1000, this._config!.kw_decimals!)} kW`
+      : `${round(value, 1)} W`;
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
