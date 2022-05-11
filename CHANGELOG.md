@@ -1,3 +1,15 @@
+## [2.2.0](https://github.com/ulic75/power-distribution-card/compare/v2.1.1...v2.2.0) (2022-05-11)
+
+
+### Features
+
+* add new option `kw_decimals` ([#32](https://github.com/ulic75/power-distribution-card/issues/32)) ([a2af9d0](https://github.com/ulic75/power-distribution-card/commit/a2af9d0de134ff803911c88ef5a9c1c8ea38aab5))
+
+
+### Bug Fixes
+
+* prevent negative solar state ([#25](https://github.com/ulic75/power-distribution-card/issues/25)) ([162376b](https://github.com/ulic75/power-distribution-card/commit/162376bd9ade661e0094223f911b38a57772c528)), closes [#23](https://github.com/ulic75/power-distribution-card/issues/23)
+
 ### [2.1.1](https://github.com/ulic75/power-distribution-card/compare/v2.1.0...v2.1.1) (2022-05-10)
 
 
