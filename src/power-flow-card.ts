@@ -675,6 +675,17 @@ export class PowerFlowCard extends LitElement {
   `;
 }
 
+const windowWithCards = window as unknown as Window & {
+  customCards: unknown[];
+};
+windowWithCards.customCards = windowWithCards.customCards || [];
+windowWithCards.customCards.push({
+  type: "power-flow-card",
+  name: "Power Flow Card",
+  description:
+    "A power distribution card inspired by the official Energy Distribution card for Home Assistant",
+});
+
 declare global {
   interface HTMLElementTagNameMap {
     "power-flow-card": PowerFlowCard;
