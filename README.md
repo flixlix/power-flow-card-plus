@@ -89,13 +89,11 @@ Using combined entities for grid, battery and solor that support positive state 
 
 ```yaml
 type: custom:power-flow-card
-title: Power Distribution
 entities:
   battery: sensor.battery_in_out
   battery_charge: sensor.battery_percent
   grid: sensor.grid_in_out
   solar: sensor.solar_out
-max_flow_rate: 10
 ```
 
 #### Inverted Entities Example
@@ -104,14 +102,12 @@ Using combined entites as above but where the battery and grid entities are inve
 
 ```yaml
 type: custom:power-flow-card
-title: Power Distribution
 entities:
   battery: sensor.battery_in_out
   battery_charge: sensor.battery_percent
   grid: sensor.grid_in_out
   solar: sensor.solar_out
 inverted_entities: battery, grid
-max_flow_rate: 10
 ```
 
 #### Split Entites Example
@@ -120,7 +116,6 @@ Using split entities for grid and battery where each consumption and production 
 
 ```yaml
 type: custom:power-flow-card
-title: Power Distribution
 entities:
   battery:
     consumption: sensor.battery_out
@@ -130,7 +125,6 @@ entities:
     consumption: sensor.grid_out
     production: sensor.grid_in
   solar: sensor.solar_out
-max_flow_rate: 10
 ```
 
 ### Flow Formula
@@ -139,6 +133,16 @@ This formula is based on the offical formula used by the Energy Distribution car
 
 ```js
 max - (value / total) * (max - min);
+// max = max_flow_rate
+// min = min_flow_rate
+// value = line value, solar to grid for example
+// total = home consumption + solar to grid + solar to battery
 ```
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
+
+## Credits
+
+- [HA Energy Distribution Card](https://www.home-assistant.io//dashboards/energy/#energy-distribution)
+- [@angular/cdk](https://github.com/angular/components/tree/main/src/cdk)
+- [Jack Moore](https://www.jacklmoore.com/notes/rounding-in-javascript/)
