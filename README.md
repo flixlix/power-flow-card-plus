@@ -51,15 +51,16 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Card options
 
-| Name              | Type     |   Default    | Description                                                                                                                                                       |
-| ----------------- | -------- | :----------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type              | `string` | **required** | `custom:power-flow-card`.                                                                                                                                         |
-| entities          | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                               |
-| inverted_entities | `string` |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example). |
-| kw_decimals       | `number` |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                       |
-| min_flow_rate     | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                           |
-| max_flow_rate     | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                           |
-| watt_threshold    | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                      |
+| Name              | Type     |   Default    | Description                                                                                                                                                                  |
+| ----------------- | -------- | :----------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type              | `string` | **required** | `custom:power-flow-card`.                                                                                                                                                    |
+| entities          | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
+| dashboard_link    | `string` |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
+| inverted_entities | `string` |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example).            |
+| kw_decimals       | `number` |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
+| min_flow_rate     | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
+| max_flow_rate     | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
+| watt_threshold    | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
 
 #### Entities object
 

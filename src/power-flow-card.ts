@@ -521,8 +521,21 @@ export class PowerFlowCard extends LitElement {
                 : ""}
             </svg>
           </div>
-        </div></ha-card
-      >
+        </div>
+        ${this._config.dashboard_link
+          ? html`
+              <div class="card-actions">
+                <a href=${this._config.dashboard_link}
+                  ><mwc-button>
+                    ${this.hass.localize(
+                      "ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard"
+                    )}
+                  </mwc-button></a
+                >
+              </div>
+            `
+          : ""}
+      </ha-card>
     `;
   }
 
@@ -706,6 +719,9 @@ export class PowerFlowCard extends LitElement {
         stroke-dashoffset: 238.76104;
         stroke-dasharray: 238.76104;
       }
+    }
+    .card-actions a {
+      text-decoration: none;
     }
   `;
 }
