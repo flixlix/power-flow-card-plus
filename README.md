@@ -51,14 +51,15 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Card options
 
-| Name           | Type     |   Default    | Description                                                                                                                             |
-| -------------- | -------- | :----------: | --------------------------------------------------------------------------------------------------------------------------------------- |
-| type           | `string` | **required** | `custom:power-flow-card`.                                                                                                               |
-| entities       | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                     |
-| kw_decimals    | `number` |      1       | Number of decimals rounded to when kilowatts are displayed                                                                              |
-| min_flow_rate  | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
-| max_flow_rate  | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula). |
-| watt_threshold | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.            |
+| Name              | Type     |   Default    | Description                                                                                                                                                       |
+| ----------------- | -------- | :----------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type              | `string` | **required** | `custom:power-flow-card`.                                                                                                                                         |
+| entities          | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                               |
+| inverted_entities | `string` |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example). |
+| kw_decimals       | `number` |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                       |
+| min_flow_rate     | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                           |
+| max_flow_rate     | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                           |
+| watt_threshold    | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                      |
 
 #### Entities object
 
@@ -82,7 +83,9 @@ Can be use with either Grid or Battery configuration. The same `unit_of_measurem
 
 ### Example usage
 
-#### Using combined entities for grid and battery that support positive state values for consumption and negative state values for production.
+#### Combined Entites Example
+
+Using combined entities for grid, battery and solor that support positive state values for consumption and negative state values for production.
 
 ```yaml
 type: custom:power-flow-card
@@ -95,7 +98,25 @@ entities:
 max_flow_rate: 10
 ```
 
-#### Using split entities for grid and battery where each consumption and production entity state has a positive value.
+#### Inverted Entities Example
+
+Using combined entites as above but where the battery and grid entities are inverted (negative = consumption and positive = production).
+
+```yaml
+type: custom:power-flow-card
+title: Power Distribution
+entities:
+  battery: sensor.battery_in_out
+  battery_charge: sensor.battery_percent
+  grid: sensor.grid_in_out
+  solar: sensor.solar_out
+inverted_entities: battery, grid
+max_flow_rate: 10
+```
+
+#### Split Entites Example
+
+Using split entities for grid and battery where each consumption and production entity state has a positive value.
 
 ```yaml
 type: custom:power-flow-card

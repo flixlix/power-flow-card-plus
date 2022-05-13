@@ -1,4 +1,4 @@
-/* eslint no-nested-ternary: warn */
+/* eslint-disable no-nested-ternary */
 import {
   mdiArrowDown,
   mdiArrowLeft,
@@ -18,7 +18,7 @@ import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardConfig } from "./power-flow-card-config.js";
-import { coerceNumber, round } from "./utils.js";
+import { coerceNumber, coerceStringArray, round } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;
@@ -39,6 +39,7 @@ export class PowerFlowCard extends LitElement {
   setConfig(config: PowerFlowCardConfig): void {
     this._config = {
       ...config,
+      inverted_entities: coerceStringArray(config.inverted_entities, ","),
       kw_decimals: coerceNumber(config.kw_decimals, KW_DECIMALS),
       min_flow_rate: coerceNumber(config.min_flow_rate, MIN_FLOW_RATE),
       max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
@@ -49,6 +50,9 @@ export class PowerFlowCard extends LitElement {
   public getCardSize(): Promise<number> | number {
     return 3;
   }
+
+  private entityInverted = (entityName: "battery" | "grid" | "solar") =>
+    this._config!.inverted_entities.includes(entityName);
 
   private previousDur: { [name: string]: number } = {};
 
@@ -91,35 +95,66 @@ export class PowerFlowCard extends LitElement {
     const batteryChargeState = entities.battery_charge?.length
       ? this.getEntityState(entities.battery_charge)
       : null;
-    const solarState = Math.max(this.getEntityStateWatts(entities.solar), 0);
 
-    const solarToGrid = hasReturnToGrid
-      ? typeof entities.grid === "string"
-        ? Math.abs(Math.min(this.getEntityStateWatts(entities.grid), 0))
-        : this.getEntityStateWatts(entities.grid.production)
-      : 0;
+    const solarState = this.entityInverted("solar")
+      ? Math.abs(Math.min(this.getEntityStateWatts(entities.solar), 0))
+      : Math.max(this.getEntityStateWatts(entities.solar), 0);
 
-    const batteryToHome =
-      typeof entities.battery === "string"
-        ? Math.max(this.getEntityStateWatts(entities.battery), 0)
-        : this.getEntityStateWatts(entities.battery?.consumption);
+    let solarToGrid = 0;
+    if (hasReturnToGrid) {
+      if (typeof entities.grid === "string") {
+        if (this.entityInverted("grid"))
+          solarToGrid = Math.max(this.getEntityStateWatts(entities.grid), 0);
+        else
+          solarToGrid = Math.abs(
+            Math.min(this.getEntityStateWatts(entities.grid), 0)
+          );
+      } else solarToGrid = this.getEntityStateWatts(entities.grid.production);
+    }
 
-    const gridToHome =
-      typeof entities.grid === "string"
-        ? Math.max(this.getEntityStateWatts(entities.grid), 0)
-        : this.getEntityStateWatts(entities.grid.consumption);
+    let batteryToHome = 0;
+    if (typeof entities.battery === "string") {
+      if (this.entityInverted("battery"))
+        batteryToHome = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.battery), 0)
+        );
+      else
+        batteryToHome = Math.max(this.getEntityStateWatts(entities.battery), 0);
+    } else {
+      batteryToHome = this.getEntityStateWatts(entities.battery?.consumption);
+    }
 
-    const solarToBattery =
-      typeof entities.battery === "string"
-        ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery), 0))
-        : this.getEntityStateWatts(entities.battery?.production);
+    let gridToHome = 0;
+    if (typeof entities.grid === "string") {
+      if (this.entityInverted("grid"))
+        gridToHome = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.grid), 0)
+        );
+      else gridToHome = Math.max(this.getEntityStateWatts(entities.grid), 0);
+    } else {
+      gridToHome = this.getEntityStateWatts(entities.grid.consumption);
+    }
+
+    let solarToBattery = 0;
+    if (typeof entities.battery === "string") {
+      if (this.entityInverted("battery"))
+        solarToBattery = Math.max(
+          this.getEntityStateWatts(entities.battery),
+          0
+        );
+      else
+        solarToBattery = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.battery), 0)
+        );
+    } else {
+      solarToBattery = this.getEntityStateWatts(entities.battery?.production);
+    }
 
     const solarToHome = solarState - solarToGrid - solarToBattery;
 
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
     const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
 
-    // eslint-disable-next-line prefer-const
     let homeBatteryCircumference: number | undefined;
     if (hasBattery)
       homeBatteryCircumference =

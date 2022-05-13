@@ -17,6 +17,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
         };
     solar?: string;
   };
+  inverted_entities: string | string[];
   kw_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;

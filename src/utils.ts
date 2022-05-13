@@ -5,6 +5,27 @@ export function coerceNumber(value: any, fallbackValue = 0) {
   return _isNumberValue(value) ? Number(value) : fallbackValue;
 }
 
+export function coerceStringArray(
+  value: any,
+  separator: string | RegExp = /\s+/
+): string[] {
+  const result: string[] = [];
+
+  if (value != null) {
+    const sourceValues = Array.isArray(value)
+      ? value
+      : `${value}`.split(separator);
+    for (const sourceValue of sourceValues) {
+      const trimmedString = `${sourceValue}`.trim();
+      if (trimmedString) {
+        result.push(trimmedString);
+      }
+    }
+  }
+
+  return result;
+}
+
 export const round = (value: number, decimalPlaces: number): number =>
   Number(
     `${Math.round(Number(`${value}e${decimalPlaces}`))}e-${decimalPlaces}`
