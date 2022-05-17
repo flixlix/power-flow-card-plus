@@ -6,15 +6,30 @@ module.exports = {
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
-      "@semantic-release/git",
+      "@google/semantic-release-replace-plugin",
       {
-        assets: ["CHANGELOG.md", "README.md", "package.json", "pnpm-lock.yaml"],
+        replacements: [
+          {
+            files: ["dist/power-flow-card.js"],
+            from: "Power Flow Card v(.*) is installed",
+            to: "Power Flow Card v${nextRelease.version} is installed",
+            results: [
+              {
+                file: "dist/power-flow-card.js",
+                hasChanged: true,
+                numMatches: 1,
+                numReplacements: 1,
+              },
+            ],
+            countMatches: true,
+          },
+        ],
       },
     ],
     [
-      "@semantic-release/github",
+      "@semantic-release/git",
       {
-        assets: "dist/*.js",
+        assets: ["CHANGELOG.md", "README.md", "package.json", "pnpm-lock.yaml"],
       },
     ],
   ],

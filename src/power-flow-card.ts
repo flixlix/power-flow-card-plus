@@ -19,6 +19,7 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardConfig } from "./power-flow-card-config.js";
 import { coerceNumber, coerceStringArray, round } from "./utils.js";
+import "./print-version.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;

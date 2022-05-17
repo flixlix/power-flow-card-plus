@@ -1,5 +1,6 @@
 import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import serve from "rollup-plugin-serve";
 import { terser } from "rollup-plugin-terser";
@@ -30,6 +31,7 @@ export default [
         declaration: false,
       }),
       nodeResolve(),
+      json(),
       commonjs(),
       babel({
         exclude: "node_modules/**",
