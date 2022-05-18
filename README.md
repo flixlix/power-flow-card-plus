@@ -7,7 +7,7 @@
 
 This card for [Home Assistant](https://github.com/home-assistant/home-assistant) Dashboards is designed to provide power distribution in an identical style to the Official Energy Distribution card included by Home Assistant.
 
-![realtime-distribution-preview](https://user-images.githubusercontent.com/5641964/165636264-dc2e02ed-e550-4167-9ce4-3dcbd7a84272.png)
+![power-flow-2 4 0](https://user-images.githubusercontent.com/5641964/169116530-f5ddefc4-6ee1-46cc-b89e-a8d8fabaa892.png)
 
 ## Install
 
