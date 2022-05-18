@@ -1,3 +1,12 @@
+## [2.4.0](https://github.com/ulic75/power-distribution-card/compare/v2.3.0...v2.4.0) (2022-05-18)
+
+
+### Features
+
+* add new `dashboard_link` option (see readme) ([#46](https://github.com/ulic75/power-distribution-card/issues/46)) ([e979053](https://github.com/ulic75/power-distribution-card/commit/e97905346ec1f66a862f2fa684bf2c4f571a1b7f))
+* support grid<>battery flow ([#53](https://github.com/ulic75/power-distribution-card/issues/53)) ([cf4b7b9](https://github.com/ulic75/power-distribution-card/commit/cf4b7b973c48ca8c74772e32854e6f6cb6ed143a))
+* watt decimals can be configured via w_decimals option ([#52](https://github.com/ulic75/power-distribution-card/issues/52)) ([c15a375](https://github.com/ulic75/power-distribution-card/commit/c15a3754a61aaccfc1f62801915902b2e64756b8)), closes [#45](https://github.com/ulic75/power-distribution-card/issues/45)
+
 ## [2.3.0](https://github.com/ulic75/power-distribution-card/compare/v2.2.0...v2.3.0) (2022-05-13)
 
 
