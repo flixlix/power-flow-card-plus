@@ -32,6 +32,7 @@ export class PowerFlowCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: PowerFlowCardConfig;
 
+  @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
   @query("#grid-home-flow") gridToHomeFlow?: SVGSVGElement;
   @query("#solar-battery-flow") solarToBatteryFlow?: SVGSVGElement;
@@ -78,10 +79,12 @@ export class PowerFlowCard extends LitElement {
     return value * 1000;
   };
 
-  private displayValue = (value: number) =>
-    value >= this._config!.watt_threshold
+  private displayValue = (value: number | null) => {
+    if (value === null) return 0;
+    return value >= this._config!.watt_threshold
       ? `${round(value / 1000, this._config!.kw_decimals)} kW`
       : `${round(value, this._config!.w_decimals)} W`;
+  };
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
@@ -95,81 +98,144 @@ export class PowerFlowCard extends LitElement {
     const hasReturnToGrid =
       typeof entities.grid === "string" || entities.grid.production;
 
+    let totalFromGrid = 0;
+    if (typeof entities.grid === "string") {
+      if (this.entityInverted("grid"))
+        totalFromGrid = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.grid), 0)
+        );
+      else totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid), 0);
+    } else {
+      totalFromGrid = this.getEntityStateWatts(entities.grid.consumption);
+    }
+
+    let totalSolarProduction: number = 0;
+    if (hasSolarProduction) {
+      if (this.entityInverted("solar"))
+        totalSolarProduction = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.solar), 0)
+        );
+      else
+        totalSolarProduction = Math.max(
+          this.getEntityStateWatts(entities.solar),
+          0
+        );
+    }
+
+    let totalBatteryIn: number | null = null;
+    let totalBatteryOut: number | null = null;
+    if (hasBattery) {
+      if (typeof entities.battery === "string") {
+        totalBatteryIn = this.entityInverted("battery")
+          ? Math.max(this.getEntityStateWatts(entities.battery), 0)
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery), 0));
+        totalBatteryOut = this.entityInverted("battery")
+          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery), 0))
+          : Math.max(this.getEntityStateWatts(entities.battery), 0);
+      } else {
+        totalBatteryIn = this.getEntityStateWatts(entities.battery?.production);
+        totalBatteryOut = this.getEntityStateWatts(
+          entities.battery?.consumption
+        );
+      }
+    }
+
+    let returnedToGrid: number | null = null;
+    if (hasReturnToGrid) {
+      if (typeof entities.grid === "string") {
+        returnedToGrid = this.entityInverted("grid")
+          ? Math.max(this.getEntityStateWatts(entities.grid), 0)
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.grid), 0));
+      } else {
+        returnedToGrid = this.getEntityStateWatts(entities.grid.production);
+      }
+    }
+
+    let solarConsumption: number | null = null;
+    if (hasSolarProduction) {
+      solarConsumption =
+        totalSolarProduction - (returnedToGrid ?? 0) - (totalBatteryIn ?? 0);
+    }
+
+    let batteryFromGrid: null | number = null;
+    let batteryToGrid: null | number = null;
+    if (solarConsumption !== null && solarConsumption < 0) {
+      // What we returned to the grid and what went in to the battery is more
+      // than produced, so we have used grid energy to fill the battery or
+      // returned battery energy to the grid
+      if (hasBattery) {
+        batteryFromGrid = Math.abs(solarConsumption);
+        if (batteryFromGrid > totalFromGrid) {
+          batteryToGrid = Math.min(batteryFromGrid - totalFromGrid, 0);
+          batteryFromGrid = totalFromGrid;
+        }
+      }
+      solarConsumption = 0;
+    }
+
+    let solarToBattery: null | number = null;
+    if (hasSolarProduction && hasBattery) {
+      if (!batteryToGrid) {
+        batteryToGrid = Math.max(
+          0,
+          (returnedToGrid || 0) -
+            (totalSolarProduction || 0) -
+            (totalBatteryIn || 0) -
+            (batteryFromGrid || 0)
+        );
+      }
+      solarToBattery = totalBatteryIn! - (batteryFromGrid || 0);
+    } else if (!hasSolarProduction && hasBattery) {
+      batteryToGrid = returnedToGrid;
+    }
+
+    //! Clean up this name
+    let solarToGrid = 0;
+    if (hasSolarProduction && returnedToGrid)
+      solarToGrid = returnedToGrid - (batteryToGrid ?? 0);
+
+    let batteryConsumption: number | null = null;
+    if (hasBattery) {
+      batteryConsumption = (totalBatteryOut ?? 0) - (batteryToGrid ?? 0);
+    }
+
+    const gridConsumption = Math.max(totalFromGrid - (batteryFromGrid ?? 0), 0);
+
+    const totalHomeConsumption = Math.max(
+      gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0),
+      0
+    );
+
+    let homeBatteryCircumference: number | undefined;
+    if (batteryConsumption)
+      homeBatteryCircumference =
+        CIRCLE_CIRCUMFERENCE * (batteryConsumption / totalHomeConsumption);
+
+    let homeSolarCircumference: number | undefined;
+    if (hasSolarProduction) {
+      homeSolarCircumference =
+        CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
+    }
+
+    const homeGridCircumference =
+      CIRCLE_CIRCUMFERENCE *
+      ((totalHomeConsumption -
+        (batteryConsumption ?? 0) -
+        (solarConsumption ?? 0)) /
+        totalHomeConsumption);
+
+    const totalLines =
+      gridConsumption +
+      (solarConsumption ?? 0) +
+      solarToGrid +
+      (solarToBattery ?? 0) +
+      (batteryConsumption ?? 0) +
+      (batteryFromGrid ?? 0) +
+      (batteryToGrid ?? 0);
+
     const batteryChargeState = entities.battery_charge?.length
       ? this.getEntityState(entities.battery_charge)
       : null;
-
-    const solarState = this.entityInverted("solar")
-      ? Math.abs(Math.min(this.getEntityStateWatts(entities.solar), 0))
-      : Math.max(this.getEntityStateWatts(entities.solar), 0);
-
-    let solarToGrid = 0;
-    if (hasReturnToGrid) {
-      if (typeof entities.grid === "string") {
-        if (this.entityInverted("grid"))
-          solarToGrid = Math.max(this.getEntityStateWatts(entities.grid), 0);
-        else
-          solarToGrid = Math.abs(
-            Math.min(this.getEntityStateWatts(entities.grid), 0)
-          );
-      } else solarToGrid = this.getEntityStateWatts(entities.grid.production);
-    }
-
-    let batteryToHome = 0;
-    if (typeof entities.battery === "string") {
-      if (this.entityInverted("battery"))
-        batteryToHome = Math.abs(
-          Math.min(this.getEntityStateWatts(entities.battery), 0)
-        );
-      else
-        batteryToHome = Math.max(this.getEntityStateWatts(entities.battery), 0);
-    } else {
-      batteryToHome = this.getEntityStateWatts(entities.battery?.consumption);
-    }
-
-    let gridToHome = 0;
-    if (typeof entities.grid === "string") {
-      if (this.entityInverted("grid"))
-        gridToHome = Math.abs(
-          Math.min(this.getEntityStateWatts(entities.grid), 0)
-        );
-      else gridToHome = Math.max(this.getEntityStateWatts(entities.grid), 0);
-    } else {
-      gridToHome = this.getEntityStateWatts(entities.grid.consumption);
-    }
-
-    let solarToBattery = 0;
-    if (typeof entities.battery === "string") {
-      if (this.entityInverted("battery"))
-        solarToBattery = Math.max(
-          this.getEntityStateWatts(entities.battery),
-          0
-        );
-      else
-        solarToBattery = Math.abs(
-          Math.min(this.getEntityStateWatts(entities.battery), 0)
-        );
-    } else {
-      solarToBattery = this.getEntityStateWatts(entities.battery?.production);
-    }
-
-    const solarToHome = solarState - solarToGrid - solarToBattery;
-
-    const homeConsumption = batteryToHome + gridToHome + solarToHome;
-    const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
-
-    let homeBatteryCircumference: number | undefined;
-    if (hasBattery)
-      homeBatteryCircumference =
-        CIRCLE_CIRCUMFERENCE * (batteryToHome / homeConsumption);
-
-    let homeSolarCircumference: number | undefined;
-    if (hasSolarProduction)
-      homeSolarCircumference =
-        CIRCLE_CIRCUMFERENCE * (solarToHome / homeConsumption);
-
-    const homeHighCarbonCircumference =
-      CIRCLE_CIRCUMFERENCE * (gridToHome / homeConsumption);
 
     let batteryIcon = mdiBatteryHigh;
     if (batteryChargeState === null) {
@@ -183,22 +249,27 @@ export class PowerFlowCard extends LitElement {
     }
 
     const newDur = {
-      batteryToHome: this.circleRate(batteryToHome, totalConsumption),
-      gridToHome: this.circleRate(gridToHome, totalConsumption),
-      solarToBattery: this.circleRate(solarToBattery, totalConsumption),
-      solarToGrid: this.circleRate(solarToGrid, totalConsumption),
-      solarToHome: this.circleRate(solarToHome, totalConsumption),
+      batteryGrid: this.circleRate(
+        batteryFromGrid ?? batteryToGrid ?? 0,
+        totalLines
+      ),
+      batteryToHome: this.circleRate(batteryConsumption ?? 0, totalLines),
+      gridToHome: this.circleRate(gridConsumption, totalLines),
+      solarToBattery: this.circleRate(solarToBattery ?? 0, totalLines),
+      solarToGrid: this.circleRate(solarToGrid, totalLines),
+      solarToHome: this.circleRate(solarConsumption ?? 0, totalLines),
     };
 
     // Smooth duration changes
     [
+      "batteryGrid",
       "batteryToHome",
       "gridToHome",
       "solarToBattery",
       "solarToGrid",
       "solarToHome",
     ].forEach((flowName) => {
-      const flowSVGElement = this[`${flowName}Flow`];
+      const flowSVGElement = this[`${flowName}Flow`] as SVGSVGElement;
       if (
         flowSVGElement &&
         this.previousDur[flowName] &&
@@ -216,29 +287,35 @@ export class PowerFlowCard extends LitElement {
       <ha-card .header=${this._config.title}>
         <div class="card-content">
           ${hasSolarProduction
-            ? html`<div class="circle-container solar">
-                <span class="label"
-                  >${this.hass.localize(
-                    "ui.panel.lovelace.cards.energy.energy_distribution.solar"
-                  )}</span
-                >
-                <div class="circle">
-                  <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-                  <span class="solar"> ${this.displayValue(solarState)}</span>
+            ? html` <div class="row">
+                <div class="spacer"></div>
+                <div class="circle-container solar">
+                  <span class="label"
+                    >${this.hass.localize(
+                      "ui.panel.lovelace.cards.energy.energy_distribution.solar"
+                    )}</span
+                  >
+                  <div class="circle">
+                    <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
+                    <span class="solar">
+                      ${this.displayValue(totalSolarProduction)}</span
+                    >
+                  </div>
                 </div>
+                <div class="spacer"></div>
               </div>`
             : html``}
           <div class="row">
             <div class="circle-container grid">
               <div class="circle">
                 <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
-                ${hasReturnToGrid
+                ${returnedToGrid !== null
                   ? html`<span class="return">
                       <ha-svg-icon
                         class="small"
                         .path=${mdiArrowLeft}
                       ></ha-svg-icon
-                      >${this.displayValue(solarToGrid)}
+                      >${this.displayValue(returnedToGrid)}
                     </span>`
                   : null}
                 <span class="consumption">
@@ -246,7 +323,7 @@ export class PowerFlowCard extends LitElement {
                     class="small"
                     .path=${mdiArrowRight}
                   ></ha-svg-icon
-                  >${this.displayValue(gridToHome)}
+                  >${this.displayValue(totalFromGrid)}
                 </span>
               </div>
               <span class="label"
@@ -262,7 +339,7 @@ export class PowerFlowCard extends LitElement {
                 })}"
               >
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
-                ${this.displayValue(homeConsumption)}
+                ${this.displayValue(totalHomeConsumption)}
                 ${homeSolarCircumference !== undefined
                   ? html`<svg>
                       ${homeSolarCircumference !== undefined
@@ -302,12 +379,12 @@ export class PowerFlowCard extends LitElement {
                         cx="40"
                         cy="40"
                         r="38"
-                        stroke-dasharray="${homeHighCarbonCircumference ??
+                        stroke-dasharray="${homeGridCircumference ??
                         CIRCLE_CIRCUMFERENCE -
                           homeSolarCircumference! -
                           (homeBatteryCircumference ||
-                            0)} ${homeHighCarbonCircumference !== undefined
-                          ? CIRCLE_CIRCUMFERENCE - homeHighCarbonCircumference
+                            0)} ${homeGridCircumference !== undefined
+                          ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
                           : homeSolarCircumference! +
                             (homeBatteryCircumference || 0)}"
                         stroke-dashoffset="0"
@@ -342,14 +419,14 @@ export class PowerFlowCard extends LitElement {
                         class="small"
                         .path=${mdiArrowDown}
                       ></ha-svg-icon
-                      >${this.displayValue(solarToBattery)}</span
+                      >${this.displayValue(totalBatteryIn)}</span
                     >
                     <span class="battery-out">
                       <ha-svg-icon
                         class="small"
                         .path=${mdiArrowUp}
                       ></ha-svg-icon
-                      >${this.displayValue(batteryToHome)}</span
+                      >${this.displayValue(totalBatteryOut)}</span
                     >
                   </div>
                   <span class="label"
@@ -359,6 +436,106 @@ export class PowerFlowCard extends LitElement {
                   >
                 </div>
                 <div class="spacer"></div>
+              </div>`
+            : ""}
+          ${hasSolarProduction
+            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="solar-home-flow"
+                >
+                  <path
+                    id="solar"
+                    class="solar"
+                    d="M${hasBattery ? 55 : 53},0 v15 c0,${hasBattery
+                      ? "35 10,30 30,30"
+                      : "40 10,35 30,35"} h25"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${solarConsumption
+                    ? svg`<circle
+                            r="1"
+                            class="solar"
+                            vector-effect="non-scaling-stroke"
+                          >
+                            <animateMotion
+                              dur="${newDur.solarToHome}s"
+                              repeatCount="indefinite"
+                              calcMode="linear"
+                            >
+                              <mpath xlink:href="#solar" />
+                            </animateMotion>
+                          </circle>`
+                    : ""}
+                </svg>
+              </div>`
+            : ""}
+          ${hasReturnToGrid && hasSolarProduction
+            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="solar-grid-flow"
+                >
+                  <path
+                    id="return"
+                    class="return"
+                    d="M${hasBattery ? 45 : 47},0 v15 c0,${hasBattery
+                      ? "35 -10,30 -30,30"
+                      : "40 -10,35 -30,35"} h-20"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${solarToGrid && hasSolarProduction
+                    ? svg`<circle
+                        r="1"
+                        class="return"
+                        vector-effect="non-scaling-stroke"
+                      >
+                        <animateMotion
+                          dur="${newDur.solarToGrid}s"
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        >
+                          <mpath xlink:href="#return" />
+                        </animateMotion>
+                      </circle>`
+                    : ""}
+                </svg>
+              </div>`
+            : ""}
+          ${hasBattery && hasSolarProduction
+            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="solar-battery-flow"
+                >
+                  <path
+                    id="battery-solar"
+                    class="battery-solar"
+                    d="M50,0 V100"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${solarToBattery
+                    ? svg`<circle
+                            r="1"
+                            class="battery-solar"
+                            vector-effect="non-scaling-stroke"
+                          >
+                            <animateMotion
+                              dur="${newDur.solarToBattery}s"
+                              repeatCount="indefinite"
+                              calcMode="linear"
+                            >
+                              <mpath xlink:href="#battery-solar" />
+                            </animateMotion>
+                          </circle>`
+                    : ""}
+                </svg>
               </div>`
             : ""}
           <div class="lines ${classMap({ battery: hasBattery })}">
@@ -374,7 +551,7 @@ export class PowerFlowCard extends LitElement {
                 d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
                 vector-effect="non-scaling-stroke"
               ></path>
-              ${gridToHome
+              ${gridConsumption
                 ? svg`<circle
                     r="1"
                     class="grid"
@@ -391,139 +568,89 @@ export class PowerFlowCard extends LitElement {
                 : ""}
             </svg>
           </div>
-          <div class="lines ${classMap({ battery: hasBattery })}">
-            <svg
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"
-              id="solar-home-flow"
-            >
-              ${hasSolarProduction
-                ? svg`<path
-                    id="solar"
-                    class="solar"
-                    d="M${hasBattery ? 55 : 53},0 v15 c0,${
-                    hasBattery ? "35 10,30 30,30" : "40 10,35 30,35"
-                  } h25"
-                    vector-effect="non-scaling-stroke"
-                  ></path>`
-                : ""}
-              ${solarToHome > 0
-                ? svg`<circle
-                    r="1"
-                    class="solar"
-                    vector-effect="non-scaling-stroke"
-                  >
-                    <animateMotion
-                      dur="${newDur.solarToHome}s"
-                      repeatCount="indefinite"
-                      calcMode="linear"
-                    >
-                      <mpath xlink:href="#solar" />
-                    </animateMotion>
-                  </circle>`
-                : ""}
-            </svg>
-          </div>
-          <div class="lines ${classMap({ battery: hasBattery })}">
-            <svg
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"
-              id="solar-grid-flow"
-            >
-              ${hasReturnToGrid && hasSolarProduction
-                ? svg`<path
-                    id="return"
-                    class="return"
-                    d="M${hasBattery ? 45 : 47},0 v15 c0,${
-                    hasBattery ? "35 -10,30 -30,30" : "40 -10,35 -30,35"
-                  } h-20"
-                    vector-effect="non-scaling-stroke"
-                  ></path> `
-                : ""}
-              ${solarToGrid > 0 && hasSolarProduction
-                ? svg`<circle
-                    r="1"
-                    class="return"
-                    vector-effect="non-scaling-stroke"
-                  >
-                    <animateMotion
-                      dur="${newDur.solarToGrid}s"
-                      repeatCount="indefinite"
-                      calcMode="linear"
-                    >
-                      <mpath xlink:href="#return" />
-                    </animateMotion>
-                  </circle>`
-                : ""}
-            </svg>
-          </div>
-          <div class="lines ${classMap({ battery: hasBattery })}">
-            <svg
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"
-              id="solar-battery-flow"
-            >
-              ${hasBattery && hasSolarProduction
-                ? svg`<path
-                    id="battery-solar"
-                    class="battery-solar"
-                    d="M50,0 V100"
-                    vector-effect="non-scaling-stroke"
-                  ></path>`
-                : ""}
-              ${solarToBattery
-                ? svg`<circle
-                    r="1"
-                    class="battery-solar"
-                    vector-effect="non-scaling-stroke"
-                  >
-                    <animateMotion
-                      dur="${newDur.solarToBattery}s"
-                      repeatCount="indefinite"
-                      calcMode="linear"
-                    >
-                      <mpath xlink:href="#battery-solar" />
-                    </animateMotion>
-                  </circle>`
-                : ""}
-            </svg>
-          </div>
-          <div class="lines ${classMap({ battery: hasBattery })}">
-            <svg
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"
-              id="battery-home-flow"
-            >
-              ${hasBattery
-                ? svg`<path
+          ${hasBattery
+            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="battery-home-flow"
+                >
+                  <path
                     id="battery-home"
                     class="battery-home"
                     d="M55,100 v-15 c0,-35 10,-30 30,-30 h20"
                     vector-effect="non-scaling-stroke"
                   ></path>
-                  `
-                : ""}
-              ${batteryToHome > 0
-                ? svg`<circle
+                  ${batteryConsumption
+                    ? svg`<circle
+                        r="1"
+                        class="battery-home"
+                        vector-effect="non-scaling-stroke"
+                      >
+                        <animateMotion
+                          dur="${newDur.batteryToHome}s"
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        >
+                          <mpath xlink:href="#battery-home" />
+                        </animateMotion>
+                      </circle>`
+                    : ""}
+                </svg>
+              </div>`
+            : ""}
+          ${hasBattery
+            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="battery-grid-flow"
+                >
+                  <path
+                    id="battery-grid"
+                    class=${classMap({
+                      "battery-from-grid": Boolean(batteryFromGrid),
+                      "battery-to-grid": Boolean(batteryToGrid),
+                    })}
+                    d="M45,100 v-15 c0,-35 -10,-30 -30,-30 h-20"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${batteryFromGrid
+                    ? svg`<circle
                     r="1"
-                    class="battery-home"
+                    class="battery-from-grid"
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${newDur.batteryToHome}s"
+                      dur="${newDur.batteryGrid}s"
                       repeatCount="indefinite"
+                      keyPoints="1;0" keyTimes="0;1"
                       calcMode="linear"
                     >
-                      <mpath xlink:href="#battery-home" />
+                      <mpath xlink:href="#battery-grid" />
                     </animateMotion>
                   </circle>`
-                : ""}
-            </svg>
-          </div>
+                    : ""}
+                  ${batteryToGrid
+                    ? svg`<circle
+                        r="1"
+                        class="battery-to-grid"
+                        vector-effect="non-scaling-stroke"
+                      >
+                        <animateMotion
+                          dur="${newDur.batteryGrid}s"
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        >
+                          <mpath xlink:href="#battery-grid" />
+                        </animateMotion>
+                      </circle>`
+                    : ""}
+                </svg>
+              </div>`
+            : ""}
         </div>
         ${this._config.dashboard_link
           ? html`
@@ -675,6 +802,12 @@ export class PowerFlowCard extends LitElement {
     }
     .battery-out {
       color: var(--energy-battery-out-color);
+    }
+    path.battery-from-grid {
+      stroke: var(--energy-grid-consumption-color);
+    }
+    path.battery-to-grid {
+      stroke: var(--energy-grid-return-color);
     }
     path.return,
     circle.return,

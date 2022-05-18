@@ -134,11 +134,13 @@ entities:
 This formula is based on the offical formula used by the Energy Distribution card.
 
 ```js
-max - (value / total) * (max - min);
+max - (value / totalLines) * (max - min);
 // max = max_flow_rate
 // min = min_flow_rate
 // value = line value, solar to grid for example
-// total = home consumption + solar to grid + solar to battery
+// totalLines = gridConsumption + solarConsumption + solarToBattery +
+//   batteryConsumption + batteryFromGrid + batteryToGrid +
+//   (returnedToGrid ? returnedToGrid - batteryToGrid : 0)
 ```
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
