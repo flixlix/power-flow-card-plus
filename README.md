@@ -4,6 +4,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/ulic75/power-flow-card?style=flat-square)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ulic75/power-flow-card/CI?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/ulic75/power-flow-card/total?style=flat-square)
+[![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/ulic75)
 
 This card for [Home Assistant](https://github.com/home-assistant/home-assistant) Dashboards is designed to provide power distribution in an identical style to the Official Energy Distribution card included by Home Assistant.
 
