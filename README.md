@@ -140,8 +140,7 @@ max - (value / totalLines) * (max - min);
 // min = min_flow_rate
 // value = line value, solar to grid for example
 // totalLines = gridConsumption + solarConsumption + solarToBattery +
-//   batteryConsumption + batteryFromGrid + batteryToGrid +
-//   (returnedToGrid ? returnedToGrid - batteryToGrid : 0)
+//   solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid
 ```
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
