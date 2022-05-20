@@ -20,6 +20,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardConfig } from "./power-flow-card-config.js";
 import { coerceNumber, coerceStringArray, round } from "./utils.js";
 import "./print-version.js";
+import { EntityType } from "./type.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;
@@ -55,8 +56,8 @@ export class PowerFlowCard extends LitElement {
     return 3;
   }
 
-  private entityInverted = (entityName: "battery" | "grid" | "solar") =>
-    this._config!.inverted_entities.includes(entityName);
+  private entityInverted = (entityType: EntityType) =>
+    this._config!.inverted_entities.includes(entityType);
 
   private previousDur: { [name: string]: number } = {};
 

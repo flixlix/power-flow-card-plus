@@ -1,20 +1,11 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
+import { ComboEntity } from "./type.js";
 
 export interface PowerFlowCardConfig extends LovelaceCardConfig {
   entities: {
-    battery?:
-      | string
-      | {
-          consumption: string;
-          production: string;
-        };
+    battery?: string | ComboEntity;
     battery_charge?: string;
-    grid:
-      | string
-      | {
-          consumption: string;
-          production?: string;
-        };
+    grid: string | ComboEntity;
     solar?: string;
   };
   dashboard_link?: string;
