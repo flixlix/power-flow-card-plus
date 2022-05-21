@@ -18,9 +18,14 @@ import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardConfig } from "./power-flow-card-config.js";
-import { coerceNumber, coerceStringArray, round } from "./utils.js";
+import {
+  coerceNumber,
+  coerceStringArray,
+  round,
+  isNumberValue,
+} from "./utils.js";
 import { EntityType } from "./type.js";
-import "./logging.js";
+import { logError } from "./logging.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;
@@ -55,6 +60,13 @@ export class PowerFlowCard extends LitElement {
   public getCardSize(): Promise<number> | number {
     return 3;
   }
+  private unavailableOrMisconfiguredError = (entityId: string | undefined) =>
+    logError(
+      `entity "${entityId ?? "Unknown"}" is not available or misconfigured`
+    );
+
+  private entityAvailable = (entityId: string): boolean =>
+    isNumberValue(this.hass.states[entityId]?.state);
 
   private entityInverted = (entityType: EntityType) =>
     this._config!.inverted_entities.includes(entityType);
@@ -68,12 +80,18 @@ export class PowerFlowCard extends LitElement {
   };
 
   private getEntityState = (entity: string | undefined): number => {
-    if (!entity) return 0;
+    if (!entity || !this.entityAvailable(entity)) {
+      this.unavailableOrMisconfiguredError(entity);
+      return 0;
+    }
     return coerceNumber(this.hass.states[entity].state);
   };
 
   private getEntityStateWatts = (entity: string | undefined): number => {
-    if (!entity) return 0;
+    if (!entity || !this.entityAvailable(entity)) {
+      this.unavailableOrMisconfiguredError(entity);
+      return 0;
+    }
     const stateObj = this.hass.states[entity];
     const value = coerceNumber(stateObj.state);
     if (stateObj.attributes.unit_of_measurement === "W") return value;
