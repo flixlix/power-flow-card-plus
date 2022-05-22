@@ -1,3 +1,16 @@
+## [2.5.0](https://github.com/ulic75/power-distribution-card/compare/v2.4.0...v2.5.0) (2022-05-22)
+
+
+### Features
+
+* log unavailable/misconfigured entities to browser console ([#61](https://github.com/ulic75/power-distribution-card/issues/61)) ([f32576a](https://github.com/ulic75/power-distribution-card/commit/f32576a58c14666dd75e495e9d4d05a9a9c25cb3))
+* off grid support ([#63](https://github.com/ulic75/power-distribution-card/issues/63)) ([7676356](https://github.com/ulic75/power-distribution-card/commit/7676356d3a6b82269e5cd22ca927c1f2674e6a8e))
+
+
+### Bug Fixes
+
+* debounce error logging ([#62](https://github.com/ulic75/power-distribution-card/issues/62)) ([de73d05](https://github.com/ulic75/power-distribution-card/commit/de73d05e5032465956c4b75ecc41c1644bb2ce64))
+
 ## [2.4.0](https://github.com/ulic75/power-distribution-card/compare/v2.3.0...v2.4.0) (2022-05-18)
 
 
