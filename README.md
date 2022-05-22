@@ -66,23 +66,23 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Entities object
 
-All entites (except _battery_charge_) should have a `unit_of_measurement` attribute of W(watts) or kW(kilowatts).
+At least one of _grid_, _battery_, or _solar_ is required. All entites (except _battery_charge_) should have a `unit_of_measurement` attribute of W(watts) or kW(kilowatts).
 
-| Name           | Type                | Default      | Description                                                                                                                                                                                                     |
-| -------------- | :------------------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| grid           | `string` / `object` | **required** | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
-| battery        | `string` / `object` |              | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
-| battery_charge | `string`            |              | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
-| solar          | `string`            |              | Entity ID providing a state with the value of generation.                                                                                                                                                       |
+| Name           | Type                | Description                                                                                                                                                                                                     |
+| -------------- | :------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| grid           | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| battery        | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| battery_charge | `string`            | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
+| solar          | `string`            | Entity ID providing a state with the value of generation.                                                                                                                                                       |
 
 #### Split entities
 
 Can be use with either Grid or Battery configuration. The same `unit_of_measurement` rule as above applies.
 
-| Name        | Type     | Default               | Description                                                                                       |
-| ----------- | -------- | --------------------- | ------------------------------------------------------------------------------------------------- |
-| consumption | `string` | **required** for grid | Entity ID providing a state value for consumption, this is required if using a split grid object. |
-| production  | `string` |                       | Entity ID providing a state value for production                                                  |
+| Name        | Type     | Description                                                                                       |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
+| consumption | `string` | Entity ID providing a state value for consumption, this is required if using a split grid object. |
+| production  | `string` | Entity ID providing a state value for production                                                  |
 
 ### Example usage
 

@@ -46,6 +46,16 @@ export class PowerFlowCard extends LitElement {
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
   setConfig(config: PowerFlowCardConfig): void {
+    if (
+      !config.entities ||
+      (!config.entities.battery &&
+        !config.entities.grid &&
+        !config.entities.solar)
+    ) {
+      throw new Error(
+        "At least one entity for battery, grid or solar must be defined"
+      );
+    }
     this._config = {
       ...config,
       inverted_entities: coerceStringArray(config.inverted_entities, ","),
@@ -112,20 +122,26 @@ export class PowerFlowCard extends LitElement {
 
     const { entities } = this._config;
 
+    const hasGrid = entities.grid !== undefined;
+
     const hasBattery = entities.battery !== undefined;
     const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid =
-      typeof entities.grid === "string" || entities.grid.production;
+      hasGrid &&
+      (typeof entities.grid === "string" || entities.grid.production);
 
     let totalFromGrid = 0;
-    if (typeof entities.grid === "string") {
-      if (this.entityInverted("grid"))
-        totalFromGrid = Math.abs(
-          Math.min(this.getEntityStateWatts(entities.grid), 0)
-        );
-      else totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid), 0);
-    } else {
-      totalFromGrid = this.getEntityStateWatts(entities.grid.consumption);
+    if (hasGrid) {
+      if (typeof entities.grid === "string") {
+        if (this.entityInverted("grid"))
+          totalFromGrid = Math.abs(
+            Math.min(this.getEntityStateWatts(entities.grid), 0)
+          );
+        else
+          totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid), 0);
+      } else {
+        totalFromGrid = this.getEntityStateWatts(entities.grid.consumption);
+      }
     }
 
     let totalSolarProduction: number = 0;
@@ -208,7 +224,6 @@ export class PowerFlowCard extends LitElement {
       batteryToGrid = returnedToGrid;
     }
 
-    //! Clean up this name
     let solarToGrid = 0;
     if (hasSolarProduction && returnedToGrid)
       solarToGrid = returnedToGrid - (batteryToGrid ?? 0);
@@ -325,66 +340,63 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : html``}
           <div class="row">
-            <div class="circle-container grid">
-              <div class="circle">
-                <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
-                ${returnedToGrid !== null
-                  ? html`<span class="return">
+            ${hasGrid
+              ? html` <div class="circle-container grid">
+                  <div class="circle">
+                    <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
+                    ${returnedToGrid !== null
+                      ? html`<span class="return">
+                          <ha-svg-icon
+                            class="small"
+                            .path=${mdiArrowLeft}
+                          ></ha-svg-icon
+                          >${this.displayValue(returnedToGrid)}
+                        </span>`
+                      : null}
+                    <span class="consumption">
                       <ha-svg-icon
                         class="small"
-                        .path=${mdiArrowLeft}
+                        .path=${mdiArrowRight}
                       ></ha-svg-icon
-                      >${this.displayValue(returnedToGrid)}
-                    </span>`
-                  : null}
-                <span class="consumption">
-                  <ha-svg-icon
-                    class="small"
-                    .path=${mdiArrowRight}
-                  ></ha-svg-icon
-                  >${this.displayValue(totalFromGrid)}
-                </span>
-              </div>
-              <span class="label"
-                >${this.hass.localize(
-                  "ui.panel.lovelace.cards.energy.energy_distribution.grid"
-                )}</span
-              >
-            </div>
+                      >${this.displayValue(totalFromGrid)}
+                    </span>
+                  </div>
+                  <span class="label"
+                    >${this.hass.localize(
+                      "ui.panel.lovelace.cards.energy.energy_distribution.grid"
+                    )}</span
+                  >
+                </div>`
+              : html`<div class="spacer"></div>`}
             <div class="circle-container home">
-              <div
-                class="circle ${classMap({
-                  border: homeSolarCircumference === undefined,
-                })}"
-              >
+              <div class="circle">
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
                 ${this.displayValue(totalHomeConsumption)}
-                ${homeSolarCircumference !== undefined
-                  ? html`<svg>
-                      ${homeSolarCircumference !== undefined
-                        ? svg`<circle
+                <svg>
+                  ${homeSolarCircumference !== undefined
+                    ? svg`<circle
                             class="solar"
                             cx="40"
                             cy="40"
                             r="38"
                             stroke-dasharray="${homeSolarCircumference} ${
-                            CIRCLE_CIRCUMFERENCE - homeSolarCircumference
-                          }"
+                        CIRCLE_CIRCUMFERENCE - homeSolarCircumference
+                      }"
                             shape-rendering="geometricPrecision"
                             stroke-dashoffset="-${
                               CIRCLE_CIRCUMFERENCE - homeSolarCircumference
                             }"
                           />`
-                        : ""}
-                      ${homeBatteryCircumference
-                        ? svg`<circle
+                    : ""}
+                  ${homeBatteryCircumference
+                    ? svg`<circle
                             class="battery"
                             cx="40"
                             cy="40"
                             r="38"
                             stroke-dasharray="${homeBatteryCircumference} ${
-                            CIRCLE_CIRCUMFERENCE - homeBatteryCircumference
-                          }"
+                        CIRCLE_CIRCUMFERENCE - homeBatteryCircumference
+                      }"
                             stroke-dashoffset="-${
                               CIRCLE_CIRCUMFERENCE -
                               homeBatteryCircumference -
@@ -392,25 +404,24 @@ export class PowerFlowCard extends LitElement {
                             }"
                             shape-rendering="geometricPrecision"
                           />`
-                        : ""}
-                      <circle
-                        class="grid"
-                        cx="40"
-                        cy="40"
-                        r="38"
-                        stroke-dasharray="${homeGridCircumference ??
-                        CIRCLE_CIRCUMFERENCE -
-                          homeSolarCircumference! -
-                          (homeBatteryCircumference ||
-                            0)} ${homeGridCircumference !== undefined
-                          ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
-                          : homeSolarCircumference! +
-                            (homeBatteryCircumference || 0)}"
-                        stroke-dashoffset="0"
-                        shape-rendering="geometricPrecision"
-                      />
-                    </svg>`
-                  : ""}
+                    : ""}
+                  <circle
+                    class="grid"
+                    cx="40"
+                    cy="40"
+                    r="38"
+                    stroke-dasharray="${homeGridCircumference ??
+                    CIRCLE_CIRCUMFERENCE -
+                      homeSolarCircumference! -
+                      (homeBatteryCircumference ||
+                        0)} ${homeGridCircumference !== undefined
+                      ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
+                      : homeSolarCircumference! +
+                        (homeBatteryCircumference || 0)}"
+                    stroke-dashoffset="0"
+                    shape-rendering="geometricPrecision"
+                  />
+                </svg>
               </div>
               <span class="label"
                 >${this.hass.localize(
@@ -468,7 +479,9 @@ export class PowerFlowCard extends LitElement {
                   <path
                     id="solar"
                     class="solar"
-                    d="M${hasBattery ? 55 : 53},0 v15 c0,${hasBattery
+                    d="M${hasBattery ? 55 : 53},0 v${hasGrid
+                      ? 15
+                      : 17} c0,${hasBattery
                       ? "35 10,30 30,30"
                       : "40 10,35 30,35"} h25"
                     vector-effect="non-scaling-stroke"
@@ -557,21 +570,26 @@ export class PowerFlowCard extends LitElement {
                 </svg>
               </div>`
             : ""}
-          <div class="lines ${classMap({ battery: hasBattery })}">
-            <svg
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid slice"
-              id="grid-home-flow"
-            >
-              <path
-                class="grid"
-                id="grid"
-                d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
-                vector-effect="non-scaling-stroke"
-              ></path>
-              ${gridConsumption
-                ? svg`<circle
+          ${hasGrid
+            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="grid-home-flow"
+                >
+                  <path
+                    class="grid"
+                    id="grid"
+                    d="M0,${hasBattery
+                      ? 50
+                      : hasSolarProduction
+                      ? 56
+                      : 53} H100"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${gridConsumption
+                    ? svg`<circle
                     r="1"
                     class="grid"
                     vector-effect="non-scaling-stroke"
@@ -584,9 +602,10 @@ export class PowerFlowCard extends LitElement {
                       <mpath xlink:href="#grid" />
                     </animateMotion>
                   </circle>`
-                : ""}
-            </svg>
-          </div>
+                    : ""}
+                </svg>
+              </div>`
+            : null}
           ${hasBattery
             ? html`<div class="lines ${classMap({ battery: hasBattery })}">
                 <svg
@@ -598,7 +617,7 @@ export class PowerFlowCard extends LitElement {
                   <path
                     id="battery-home"
                     class="battery-home"
-                    d="M55,100 v-15 c0,-35 10,-30 30,-30 h20"
+                    d="M55,100 v-${hasGrid ? 15 : 17} c0,-35 10,-30 30,-30 h20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${batteryConsumption
@@ -619,7 +638,7 @@ export class PowerFlowCard extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasBattery
+          ${hasGrid && hasBattery
             ? html`<div class="lines ${classMap({ battery: hasBattery })}">
                 <svg
                   viewBox="0 0 100 100"
