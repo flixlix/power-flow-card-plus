@@ -17,8 +17,8 @@ module.exports = {
               {
                 file: "dist/power-flow-card.js",
                 hasChanged: true,
-                numMatches: 1,
-                numReplacements: 1,
+                numMatches: 2,
+                numReplacements: 2,
               },
             ],
             countMatches: true,
