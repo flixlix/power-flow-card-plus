@@ -1,4 +1,16 @@
 /* eslint-disable no-redeclare */
+export const round = (value: number, decimalPlaces: number): number =>
+  Number(
+    `${Math.round(Number(`${value}e${decimalPlaces}`))}e-${decimalPlaces}`
+  );
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 export function isNumberValue(value: any): boolean {
   // parseFloat(value) handles most of the cases we're interested in (it treats null, empty string,
   // and other non-number values as NaN, where Number just uses 0) but it considers the string
@@ -33,8 +45,3 @@ export function coerceStringArray(
 
   return result;
 }
-
-export const round = (value: number, decimalPlaces: number): number =>
-  Number(
-    `${Math.round(Number(`${value}e${decimalPlaces}`))}e-${decimalPlaces}`
-  );
