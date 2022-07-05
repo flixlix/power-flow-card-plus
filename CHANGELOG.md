@@ -1,3 +1,10 @@
+### [2.5.1](https://github.com/ulic75/power-distribution-card/compare/v2.5.0...v2.5.1) (2022-07-05)
+
+
+### Bug Fixes
+
+* smooth out flow dots on safari based guis ([#85](https://github.com/ulic75/power-distribution-card/issues/85)) ([3ce9ebf](https://github.com/ulic75/power-distribution-card/commit/3ce9ebf47a4c638b98f722788946540ed669cda7)), closes [#82](https://github.com/ulic75/power-distribution-card/issues/82)
+
 ## [2.5.0](https://github.com/ulic75/power-distribution-card/compare/v2.4.0...v2.5.0) (2022-05-22)
 
 
