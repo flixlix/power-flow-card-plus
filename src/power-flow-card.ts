@@ -309,10 +309,12 @@ export class PowerFlowCard extends LitElement {
         this.previousDur[flowName] &&
         this.previousDur[flowName] !== newDur[flowName]
       ) {
+        flowSVGElement.pauseAnimations();
         flowSVGElement.setCurrentTime(
           flowSVGElement.getCurrentTime() *
             (newDur[flowName] / this.previousDur[flowName])
         );
+        flowSVGElement.unpauseAnimations();
       }
       this.previousDur[flowName] = newDur[flowName];
     });
