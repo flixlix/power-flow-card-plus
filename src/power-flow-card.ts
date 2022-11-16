@@ -1009,7 +1009,7 @@ export class PowerFlowCard extends LitElement {
       border-color: var(--energy-water-color);
     }
     .solar {
-      color: var(--energy-solar-color);
+      color: var(--primary-text-color);
     }
     .solar .circle {
       border-color: var(--energy-solar-color);
