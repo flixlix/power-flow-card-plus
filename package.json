@@ -1,6 +1,6 @@
 {
   "name": "power-distribution-card",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "A power distribution card for Home Assistant",
   "keywords": [
     "home-assistant",

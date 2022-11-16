@@ -1,3 +1,15 @@
+## [2.6.0](https://github.com/ulic75/power-distribution-card/compare/v2.5.1...v2.6.0) (2022-11-16)
+
+
+### Features
+
+* add support for display of gas and water ([#110](https://github.com/ulic75/power-distribution-card/issues/110)) ([270b3e6](https://github.com/ulic75/power-distribution-card/commit/270b3e64ece2d95fd632a056c9bd0360f90dace0))
+
+
+### Bug Fixes
+
+* **solar:** text color to match energy-distribution-card ([#111](https://github.com/ulic75/power-distribution-card/issues/111)) ([efab88f](https://github.com/ulic75/power-distribution-card/commit/efab88f47f3b482383a2df4fda7b6023ac5da744))
+
 ### [2.5.1](https://github.com/ulic75/power-distribution-card/compare/v2.5.0...v2.5.1) (2022-07-05)
 
 
