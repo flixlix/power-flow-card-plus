@@ -9,9 +9,11 @@ import {
   mdiBatteryLow,
   mdiBatteryMedium,
   mdiBatteryOutline,
+  mdiFire,
   mdiHome,
   mdiSolarPower,
   mdiTransmissionTower,
+  mdiWater,
 } from "@mdi/js";
 import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
@@ -36,7 +38,7 @@ const W_DECIMALS = 1;
 @customElement("power-flow-card")
 export class PowerFlowCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
-  @state() private _config?: PowerFlowCardConfig;
+  @state() private _config = {} as PowerFlowCardConfig;
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -125,6 +127,8 @@ export class PowerFlowCard extends LitElement {
     const hasGrid = entities.grid !== undefined;
 
     const hasBattery = entities.battery !== undefined;
+    const hasGas = entities.gas !== undefined;
+    const hasWater = entities.water !== undefined;
     const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid =
       hasGrid &&
@@ -142,6 +146,28 @@ export class PowerFlowCard extends LitElement {
       } else {
         totalFromGrid = this.getEntityStateWatts(entities.grid.consumption);
       }
+    }
+
+    let gasUnit: string | null = null;
+    let gasUsage: number | null = null;
+    if (hasGas) {
+      const gasEntity = this.hass.states[this._config.entities.gas!];
+      const gasState = Number(gasEntity.state);
+      gasUnit = gasEntity.attributes.unit_of_measurement ?? "m³";
+      if (this.entityInverted("gas"))
+        gasUsage = Math.abs(Math.min(gasState, 0));
+      else gasUsage = Math.max(gasState, 0);
+    }
+
+    let waterUnit: string | null = null;
+    let waterUsage: number | null = null;
+    if (hasWater) {
+      const waterEntity = this.hass.states[this._config.entities.water!];
+      const waterState = Number(waterEntity.state);
+      waterUnit = waterEntity.attributes.unit_of_measurement ?? "m³";
+      if (this.entityInverted("water"))
+        waterUsage = Math.abs(Math.min(waterState, 0));
+      else waterUsage = Math.max(waterState, 0);
     }
 
     let totalSolarProduction: number = 0;
@@ -322,23 +348,93 @@ export class PowerFlowCard extends LitElement {
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
-          ${hasSolarProduction
-            ? html` <div class="row">
+          ${hasSolarProduction || hasGas || hasWater
+            ? html`<div class="row">
                 <div class="spacer"></div>
-                <div class="circle-container solar">
-                  <span class="label"
-                    >${this.hass.localize(
-                      "ui.panel.lovelace.cards.energy.energy_distribution.solar"
-                    )}</span
-                  >
-                  <div class="circle">
-                    <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-                    <span class="solar">
-                      ${this.displayValue(totalSolarProduction)}</span
-                    >
-                  </div>
-                </div>
-                <div class="spacer"></div>
+                ${hasSolarProduction
+                  ? html`<div class="circle-container solar">
+                      <span class="label"
+                        >${this.hass.localize(
+                          "ui.panel.lovelace.cards.energy.energy_distribution.solar"
+                        )}</span
+                      >
+                      <div class="circle">
+                        <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
+                        <span class="solar">
+                          ${this.displayValue(totalSolarProduction)}</span
+                        >
+                      </div>
+                    </div>`
+                  : hasGas || hasWater
+                  ? html`<div class="spacer"></div>`
+                  : ""}
+                ${hasGas
+                  ? html`<div class="circle-container gas">
+                      <span class="label"
+                        >${this.hass.localize(
+                          "ui.panel.lovelace.cards.energy.energy_distribution.gas"
+                        )}</span
+                      >
+                      <div class="circle">
+                        <ha-svg-icon .path=${mdiFire}></ha-svg-icon>
+                        ${formatNumber(gasUsage || 0, this.hass.locale, {
+                          maximumFractionDigits: 1,
+                        })}
+                        ${gasUnit}
+                      </div>
+                      <svg width="80" height="30">
+                        <path d="M40 -10 v50" id="gas" />
+                        ${gasUsage
+                          ? svg`<circle
+                              r="3.4"
+                              class="gas"
+                              vector-effect="non-scaling-stroke"
+                            >
+                              <animateMotion
+                                dur="1.66s"
+                                repeatCount="indefinite"
+                                calcMode="linear"
+                              >
+                                <mpath xlink:href="#gas" />
+                              </animateMotion>
+                            </circle>`
+                          : ""}
+                      </svg>
+                    </div>`
+                  : hasWater
+                  ? html`<div class="circle-container water">
+                      <span class="label"
+                        >${this.hass.localize(
+                          "ui.panel.lovelace.cards.energy.energy_distribution.water"
+                        )}</span
+                      >
+                      <div class="circle">
+                        <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
+                        ${formatNumber(waterUsage || 0, this.hass.locale, {
+                          maximumFractionDigits: 1,
+                        })}
+                        ${waterUnit}
+                      </div>
+                      <svg width="80" height="30">
+                        <path d="M40 -10 v40" id="water" />
+                        ${waterUsage
+                          ? svg`<circle
+                                r="3.4"
+                                class="water"
+                                vector-effect="non-scaling-stroke"
+                              >
+                                <animateMotion
+                                  dur="1.66s"
+                                  repeatCount="indefinite"
+                                  calcMode="linear"
+                                >
+                                  <mpath xlink:href="#water" />
+                                </animateMotion>
+                              </circle>`
+                          : ""}
+                      </svg>
+                    </div> `
+                  : html`<div class="spacer"></div>`}
               </div>`
             : html``}
           <div class="row">
@@ -425,53 +521,99 @@ export class PowerFlowCard extends LitElement {
                   />
                 </svg>
               </div>
-              <span class="label"
-                >${this.hass.localize(
-                  "ui.panel.lovelace.cards.energy.energy_distribution.home"
-                )}</span
-              >
+              ${hasGas && hasWater
+                ? ""
+                : html` <span class="label"
+                    >${this.hass.localize(
+                      "ui.panel.lovelace.cards.energy.energy_distribution.home"
+                    )}</span
+                  >`}
             </div>
           </div>
-          ${hasBattery
+          ${hasBattery || (hasWater && hasGas)
             ? html`<div class="row">
                 <div class="spacer"></div>
-                <div class="circle-container battery">
-                  <div class="circle">
-                    ${batteryChargeState !== null
-                      ? html` <span>
-                          ${formatNumber(batteryChargeState, this.hass.locale, {
-                            maximumFractionDigits: 0,
-                            minimumFractionDigits: 0,
-                          })}%
-                        </span>`
-                      : null}
-                    <ha-svg-icon .path=${batteryIcon}></ha-svg-icon>
-                    <span class="battery-in">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowDown}
-                      ></ha-svg-icon
-                      >${this.displayValue(totalBatteryIn)}</span
-                    >
-                    <span class="battery-out">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowUp}
-                      ></ha-svg-icon
-                      >${this.displayValue(totalBatteryOut)}</span
-                    >
-                  </div>
-                  <span class="label"
-                    >${this.hass.localize(
-                      "ui.panel.lovelace.cards.energy.energy_distribution.battery"
-                    )}</span
-                  >
-                </div>
-                <div class="spacer"></div>
+                ${hasBattery
+                  ? html` <div class="circle-container battery">
+                      <div class="circle">
+                        ${batteryChargeState !== null
+                          ? html` <span>
+                              ${formatNumber(
+                                batteryChargeState,
+                                this.hass.locale,
+                                {
+                                  maximumFractionDigits: 0,
+                                  minimumFractionDigits: 0,
+                                }
+                              )}%
+                            </span>`
+                          : null}
+                        <ha-svg-icon .path=${batteryIcon}></ha-svg-icon>
+                        <span class="battery-in">
+                          <ha-svg-icon
+                            class="small"
+                            .path=${mdiArrowDown}
+                          ></ha-svg-icon
+                          >${this.displayValue(totalBatteryIn)}</span
+                        >
+                        <span class="battery-out">
+                          <ha-svg-icon
+                            class="small"
+                            .path=${mdiArrowUp}
+                          ></ha-svg-icon
+                          >${this.displayValue(totalBatteryOut)}</span
+                        >
+                      </div>
+                      <span class="label"
+                        >${this.hass.localize(
+                          "ui.panel.lovelace.cards.energy.energy_distribution.battery"
+                        )}</span
+                      >
+                    </div>`
+                  : html`<div class="spacer"></div>`}
+                ${hasGas && hasWater
+                  ? html`<div class="circle-container water bottom">
+                      <svg width="80" height="30">
+                        <path d="M40 40 v-40" id="water" />
+                        ${waterUsage
+                          ? svg`<circle
+                                r="3.4"
+                                class="water"
+                                vector-effect="non-scaling-stroke"
+                              >
+                                <animateMotion
+                                  dur="1.66s"
+                                  repeatCount="indefinite"
+                                  calcMode="linear"
+                                >
+                                  <mpath xlink:href="#water" />
+                                </animateMotion>
+                              </circle>`
+                          : ""}
+                      </svg>
+                      <div class="circle">
+                        <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
+                        ${formatNumber(waterUsage || 0, this.hass.locale, {
+                          maximumFractionDigits: 1,
+                        })}
+                        ${waterUnit}
+                      </div>
+                      <span class="label"
+                        >${this.hass.localize(
+                          "ui.panel.lovelace.cards.energy.energy_distribution.water"
+                        )}</span
+                      >
+                    </div>`
+                  : html`<div class="spacer"></div>`}
               </div>`
-            : ""}
+            : html`<div class="spacer"></div>`}
           ${hasSolarProduction
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -507,7 +649,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasReturnToGrid && hasSolarProduction
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -541,7 +688,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasBattery && hasSolarProduction
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -573,7 +725,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasGrid
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -609,7 +766,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : null}
           ${hasBattery
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -641,7 +803,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasGrid && hasBattery
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -731,6 +898,10 @@ export class PowerFlowCard extends LitElement {
       bottom: 100px;
       height: 156px;
     }
+    .lines.high {
+      bottom: 107px;
+      height: 156px;
+    }
     .lines svg {
       width: calc(100% - 160px);
       height: 100%;
@@ -750,6 +921,19 @@ export class PowerFlowCard extends LitElement {
     .circle-container.solar {
       margin: 0 4px;
       height: 130px;
+    }
+    .circle-container.gas {
+      margin-left: 4px;
+      height: 130px;
+    }
+    .circle-container.water {
+      margin-left: 4px;
+      height: 130px;
+    }
+    .circle-container.water.bottom {
+      position: relative;
+      top: -20px;
+      margin-bottom: -20px;
     }
     .circle-container.battery {
       height: 110px;
@@ -774,6 +958,8 @@ export class PowerFlowCard extends LitElement {
       position: relative;
       text-decoration: none;
       color: var(--primary-text-color);
+      background-color: var(--card-background-color);
+      z-index: 1;
     }
     ha-svg-icon {
       padding-bottom: 2px;
@@ -799,6 +985,28 @@ export class PowerFlowCard extends LitElement {
       height: 100%;
       top: 0;
       left: 0;
+    }
+    .gas path,
+    .gas circle {
+      stroke: var(--energy-gas-color);
+    }
+    circle.gas {
+      stroke-width: 4;
+      fill: var(--energy-gas-color);
+    }
+    .gas .circle {
+      border-color: var(--energy-gas-color);
+    }
+    .water path,
+    .water circle {
+      stroke: var(--energy-water-color);
+    }
+    circle.water {
+      stroke-width: 4;
+      fill: var(--energy-water-color);
+    }
+    .water .circle {
+      border-color: var(--energy-water-color);
     }
     .solar {
       color: var(--energy-solar-color);

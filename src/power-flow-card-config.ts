@@ -7,6 +7,8 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
     battery_charge?: string;
     grid: string | ComboEntity;
     solar?: string;
+    gas?: string;
+    water?: string;
   };
   dashboard_link?: string;
   inverted_entities: string | string[];
