@@ -6,9 +6,11 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/ulic75/power-flow-card/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/ulic75)
 
-This card for [Home Assistant](https://home-assistant.io/) Dashboards is designed to provide power distribution in an identical style to the Official Energy Distribution card included by Home Assistant.
+## Goal/Scope
 
-![power-flow-2 4 0](https://user-images.githubusercontent.com/5641964/169116530-f5ddefc4-6ee1-46cc-b89e-a8d8fabaa892.png)
+Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible. As such additional features that fall outside of that scope will not be included.
+
+![screenshot](https://user-images.githubusercontent.com/5641964/202307818-4fb8923e-7fea-451f-bb5a-c840cfcc2dae.png)
 
 ## Install
 
