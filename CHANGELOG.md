@@ -1,3 +1,10 @@
+### [2.6.1](https://github.com/ulic75/power-distribution-card/compare/v2.6.0...v2.6.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* **entity:** allowed for background again ([#116](https://github.com/ulic75/power-distribution-card/issues/116)) ([84335be](https://github.com/ulic75/power-distribution-card/commit/84335be83d30156c7526591cf1915cdc59665d3d))
+
 ## [2.6.0](https://github.com/ulic75/power-distribution-card/compare/v2.5.1...v2.6.0) (2022-11-16)
 
 
