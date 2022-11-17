@@ -610,8 +610,8 @@ export class PowerFlowCard extends LitElement {
           ${hasSolarProduction
             ? html`<div
                 class="lines ${classMap({
-                  battery: hasBattery,
-                  high: !hasBattery && hasGas && hasWater,
+                  high: hasBattery,
+                  "water-gas": !hasBattery && hasGas && hasWater,
                 })}"
               >
                 <svg
@@ -651,8 +651,8 @@ export class PowerFlowCard extends LitElement {
           ${hasReturnToGrid && hasSolarProduction
             ? html`<div
                 class="lines ${classMap({
-                  battery: hasBattery,
-                  high: !hasBattery && hasGas && hasWater,
+                  high: hasBattery,
+                  "water-gas": !hasBattery && hasGas && hasWater,
                 })}"
               >
                 <svg
@@ -690,8 +690,8 @@ export class PowerFlowCard extends LitElement {
           ${hasBattery && hasSolarProduction
             ? html`<div
                 class="lines ${classMap({
-                  battery: hasBattery,
-                  high: !hasBattery && hasGas && hasWater,
+                  high: hasBattery,
+                  "water-gas": !hasBattery && hasGas && hasWater,
                 })}"
               >
                 <svg
@@ -727,8 +727,8 @@ export class PowerFlowCard extends LitElement {
           ${hasGrid
             ? html`<div
                 class="lines ${classMap({
-                  battery: hasBattery,
-                  high: !hasBattery && hasGas && hasWater,
+                  high: hasBattery,
+                  "water-gas": !hasBattery && hasGas && hasWater,
                 })}"
               >
                 <svg
@@ -768,8 +768,8 @@ export class PowerFlowCard extends LitElement {
           ${hasBattery
             ? html`<div
                 class="lines ${classMap({
-                  battery: hasBattery,
-                  high: !hasBattery && hasGas && hasWater,
+                  high: hasBattery,
+                  "water-gas": !hasBattery && hasGas && hasWater,
                 })}"
               >
                 <svg
@@ -805,8 +805,8 @@ export class PowerFlowCard extends LitElement {
           ${hasGrid && hasBattery
             ? html`<div
                 class="lines ${classMap({
-                  battery: hasBattery,
-                  high: !hasBattery && hasGas && hasWater,
+                  high: hasBattery,
+                  "water-gas": !hasBattery && hasGas && hasWater,
                 })}"
               >
                 <svg
@@ -894,12 +894,11 @@ export class PowerFlowCard extends LitElement {
       padding: 0 16px 16px;
       box-sizing: border-box;
     }
-    .lines.battery {
-      bottom: 100px;
-      height: 156px;
+    .lines.water-gas {
+      bottom: 110px;
     }
     .lines.high {
-      bottom: 107px;
+      bottom: 100px;
       height: 156px;
     }
     .lines svg {
@@ -958,8 +957,6 @@ export class PowerFlowCard extends LitElement {
       position: relative;
       text-decoration: none;
       color: var(--primary-text-color);
-      background-color: var(--card-background-color);
-      z-index: 1;
     }
     ha-svg-icon {
       padding-bottom: 2px;
