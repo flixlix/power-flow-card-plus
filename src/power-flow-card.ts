@@ -111,10 +111,15 @@ export class PowerFlowCard extends LitElement {
   };
 
   private displayValue = (value: number | null) => {
-    if (value === null) return 0;
-    return value >= this._config!.watt_threshold
-      ? `${round(value / 1000, this._config!.kw_decimals)} kW`
-      : `${round(value, this._config!.w_decimals)} W`;
+    if (value === null) return "0";
+    const isKW = value >= this._config!.watt_threshold;
+    const v = formatNumber(
+      isKW
+        ? round(value / 1000, this._config!.kw_decimals)
+        : round(value, this._config!.w_decimals),
+      this.hass.locale
+    );
+    return `${v} ${isKW ? "kW" : "W"}`;
   };
 
   protected render(): TemplateResult {
