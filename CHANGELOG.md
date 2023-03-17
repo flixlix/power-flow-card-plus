@@ -1,3 +1,10 @@
+### [2.6.2](https://github.com/ulic75/power-distribution-card/compare/v2.6.1...v2.6.2) (2023-03-17)
+
+
+### Bug Fixes
+
+* number formatting ([#148](https://github.com/ulic75/power-distribution-card/issues/148)) ([4254bf7](https://github.com/ulic75/power-distribution-card/commit/4254bf754f516c1bcbb3bbb598165961493388bd)), closes [#147](https://github.com/ulic75/power-distribution-card/issues/147)
+
 ### [2.6.1](https://github.com/ulic75/power-distribution-card/compare/v2.6.0...v2.6.1) (2022-11-17)
 
 
