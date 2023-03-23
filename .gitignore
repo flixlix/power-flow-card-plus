@@ -27,3 +27,4 @@ _site/
 
 storybook-static
 custom-elements.json
+package-lock.json
