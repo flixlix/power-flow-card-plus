@@ -13,7 +13,7 @@ import {
   mdiSolarPower,
   mdiTransmissionTower,
   mdiCarElectric,
-  mdiMotorbikeElectric 
+  mdiMotorbikeElectric,
 } from "@mdi/js";
 import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
@@ -132,8 +132,8 @@ export class PowerFlowCard extends LitElement {
     const hasGrid = entities.grid !== undefined;
 
     const hasBattery = entities.battery !== undefined;
-    const hasGas = entities.gas !== undefined;
-    const hasWater = entities.water !== undefined;
+    const hasIndividual2 = entities.individual2 !== undefined;
+    const hasIndividual1 = entities.individual1 !== undefined;
     const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid =
       hasGrid &&
@@ -153,26 +153,28 @@ export class PowerFlowCard extends LitElement {
       }
     }
 
-    let gasUnit: string | null = null;
-    let gasUsage: number | null = null;
-    if (hasGas) {
-      const gasEntity = this.hass.states[this._config.entities.gas!];
-      const gasState = Number(gasEntity.state);
-      gasUnit = gasEntity.attributes.unit_of_measurement ?? "m³";
-      if (this.entityInverted("gas"))
-        gasUsage = Math.abs(Math.min(gasState, 0));
-      else gasUsage = Math.max(gasState, 0);
+    let individual2Unit: string | null = null;
+    let individual2Usage: number | null = null;
+    if (hasIndividual2) {
+      const individual2Entity =
+        this.hass.states[this._config.entities.individual2!];
+      const individual2State = Number(individual2Entity.state);
+      individual2Unit = individual2Entity.attributes.unit_of_measurement ?? "W";
+      if (this.entityInverted("individual2"))
+        individual2Usage = Math.abs(Math.min(individual2State, 0));
+      else individual2Usage = Math.max(individual2State, 0);
     }
 
-    let waterUnit: string | null = null;
-    let waterUsage: number | null = null;
-    if (hasWater) {
-      const waterEntity = this.hass.states[this._config.entities.water!];
-      const waterState = Number(waterEntity.state);
-      waterUnit = waterEntity.attributes.unit_of_measurement ?? "m³";
-      if (this.entityInverted("water"))
-        waterUsage = Math.abs(Math.min(waterState, 0));
-      else waterUsage = Math.max(waterState, 0);
+    let individual1Unit: string | null = null;
+    let individual1Usage: number | null = null;
+    if (hasIndividual1) {
+      const individual1Entity =
+        this.hass.states[this._config.entities.individual1!];
+      const individual1State = Number(individual1Entity.state);
+      individual1Unit = individual1Entity.attributes.unit_of_measurement ?? "W";
+      if (this.entityInverted("individual1"))
+        individual1Usage = Math.abs(Math.min(individual1State, 0));
+      else individual1Usage = Math.max(individual1State, 0);
     }
 
     let totalSolarProduction: number = 0;
@@ -353,7 +355,7 @@ export class PowerFlowCard extends LitElement {
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
-          ${hasSolarProduction || hasGas || hasWater
+          ${hasSolarProduction || hasIndividual2 || hasIndividual1
             ? html`<div class="row">
                 <div class="spacer"></div>
                 ${hasSolarProduction
@@ -370,56 +372,52 @@ export class PowerFlowCard extends LitElement {
                         >
                       </div>
                     </div>`
-                  : hasGas || hasWater
+                  : hasIndividual2 || hasIndividual1
                   ? html`<div class="spacer"></div>`
                   : ""}
-                ${hasGas
-                  ? html`<div class="circle-container gas">
-                      <span class="label"
-                        >Electric Bike</span
-                      >
+                ${hasIndividual2
+                  ? html`<div class="circle-container individual2">
+                      <span class="label">Motorcycle</span>
                       <div class="circle">
-                        <ha-svg-icon .path=${mdiMotorbikeElectric}></ha-svg-icon>
-                        ${formatNumber(gasUsage || 0, this.hass.locale, {
-                          maximumFractionDigits: 1,
-                        })}
-                        ${gasUnit}
+                        <ha-svg-icon
+                          .path=${mdiMotorbikeElectric}
+                        ></ha-svg-icon>
+                        ${this.displayValue(individual2Usage)}
                       </div>
                       <svg width="80" height="30">
-                        <path d="M40 -10 v50" id="gas" />
-                        ${gasUsage
+                        <path d="M40 -10 v50" id="individual2" />
+                        ${individual2Usage
                           ? svg`<circle
                               r="3.4"
-                              class="gas"
+                              class="individual2"
                               vector-effect="non-scaling-stroke"
                             >
                               <animateMotion
                                 dur="1.66s"
                                 repeatCount="indefinite"
                                 calcMode="linear"
+                                keyPoints="1;0" 
+                                keyTimes="0;1"
                               >
-                                <mpath xlink:href="#gas" />
+                                <mpath xlink:href="#individual2" />
                               </animateMotion>
                             </circle>`
                           : ""}
                       </svg>
                     </div>`
-                  : hasWater
-                  ? html`<div class="circle-container water">
-                      <span class="label">Electric Car</span>
+                  : hasIndividual1
+                  ? html`<div class="circle-container individual1">
+                      <span class="label">Car</span>
                       <div class="circle">
                         <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
-                        ${formatNumber(waterUsage || 0, this.hass.locale, {
-                          maximumFractionDigits: 1,
-                        })}
-                        ${waterUnit}
+                        ${this.displayValue(individual1Usage)}
                       </div>
                       <svg width="80" height="30">
-                        <path d="M40 -10 v40" id="water" />
-                        ${waterUsage
+                        <path d="M40 -10 v40" id="individual1" />
+                        ${individual1Usage
                           ? svg`<circle
                                 r="3.4"
-                                class="water"
+                                class="individual1"
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
@@ -429,7 +427,7 @@ export class PowerFlowCard extends LitElement {
                                   keyPoints="1;0" 
                                   keyTimes="0;1"
                                 >
-                                  <mpath xlink:href="#water" />
+                                  <mpath xlink:href="#individual1" />
                                 </animateMotion>
                               </circle>`
                           : ""}
@@ -522,7 +520,7 @@ export class PowerFlowCard extends LitElement {
                   />
                 </svg>
               </div>
-              ${hasGas && hasWater
+              ${hasIndividual2 && hasIndividual1
                 ? ""
                 : html` <span class="label"
                     >${this.hass.localize(
@@ -531,7 +529,7 @@ export class PowerFlowCard extends LitElement {
                   >`}
             </div>
           </div>
-          ${hasBattery || (hasWater && hasGas)
+          ${hasBattery || (hasIndividual1 && hasIndividual2)
             ? html`<div class="row">
                 <div class="spacer"></div>
                 ${hasBattery
@@ -572,14 +570,14 @@ export class PowerFlowCard extends LitElement {
                       >
                     </div>`
                   : html`<div class="spacer"></div>`}
-                ${hasGas && hasWater
-                  ? html`<div class="circle-container water bottom">
+                ${hasIndividual2 && hasIndividual1
+                  ? html`<div class="circle-container individual1 bottom">
                       <svg width="80" height="30">
-                        <path d="M40 40 v-40" id="water" />
-                        ${waterUsage
+                        <path d="M40 40 v-40" id="individual1" />
+                        ${individual1Usage
                           ? svg`<circle
                                 r="3.4"
-                                class="water"
+                                class="individual1"
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
@@ -589,19 +587,16 @@ export class PowerFlowCard extends LitElement {
                                   keyPoints="1;0" 
                                   keyTimes="0;1"
                                 >
-                                  <mpath xlink:href="#water" />
+                                  <mpath xlink:href="#individual1" />
                                 </animateMotion>
                               </circle>`
                           : ""}
                       </svg>
                       <div class="circle">
                         <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
-                        ${formatNumber(waterUsage || 0, this.hass.locale, {
-                          maximumFractionDigits: 1,
-                        })}
-                        ${waterUnit}
+                        ${this.displayValue(individual1Usage)}
                       </div>
-                      <span class="label">Electric Car</span>
+                      <span class="label">Car</span>
                     </div>`
                   : html`<div class="spacer"></div>`}
               </div>`
@@ -610,7 +605,8 @@ export class PowerFlowCard extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "water-gas": !hasBattery && hasGas && hasWater,
+                  "individual1-individual2":
+                    !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
                 <svg
@@ -651,7 +647,8 @@ export class PowerFlowCard extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "water-gas": !hasBattery && hasGas && hasWater,
+                  "individual1-individual2":
+                    !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
                 <svg
@@ -690,7 +687,8 @@ export class PowerFlowCard extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "water-gas": !hasBattery && hasGas && hasWater,
+                  "individual1-individual2":
+                    !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
                 <svg
@@ -727,7 +725,8 @@ export class PowerFlowCard extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "water-gas": !hasBattery && hasGas && hasWater,
+                  "individual1-individual2":
+                    !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
                 <svg
@@ -768,7 +767,8 @@ export class PowerFlowCard extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "water-gas": !hasBattery && hasGas && hasWater,
+                  "individual1-individual2":
+                    !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
                 <svg
@@ -805,7 +805,8 @@ export class PowerFlowCard extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "water-gas": !hasBattery && hasGas && hasWater,
+                  "individual1-individual2":
+                    !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
                 <svg
@@ -893,7 +894,7 @@ export class PowerFlowCard extends LitElement {
       padding: 0 16px 16px;
       box-sizing: border-box;
     }
-    .lines.water-gas {
+    .lines.individual1-individual2 {
       bottom: 110px;
     }
     .lines.high {
@@ -920,15 +921,15 @@ export class PowerFlowCard extends LitElement {
       margin: 0 4px;
       height: 130px;
     }
-    .circle-container.gas {
+    .circle-container.individual2 {
       margin-left: 4px;
       height: 130px;
     }
-    .circle-container.water {
+    .circle-container.individual1 {
       margin-left: 4px;
       height: 130px;
     }
-    .circle-container.water.bottom {
+    .circle-container.individual1.bottom {
       position: relative;
       top: -20px;
       margin-bottom: -20px;
@@ -982,26 +983,26 @@ export class PowerFlowCard extends LitElement {
       top: 0;
       left: 0;
     }
-    .gas path,
-    .gas circle {
-      stroke: #A20021;
+    .individual2 path,
+    .individual2 circle {
+      stroke: #a20021;
     }
-    circle.gas {
+    circle.individual2 {
       stroke-width: 4;
-      fill: #A20021;
+      fill: #a20021;
     }
-    .gas .circle {
-      border-color: #A20021;
+    .individual2 .circle {
+      border-color: #a20021;
     }
-    .water path,
-    .water circle {
+    .individual1 path,
+    .individual1 circle {
       stroke: #8ea604;
     }
-    circle.water {
+    circle.individual1 {
       stroke-width: 4;
       fill: #8ea604;
     }
-    .water .circle {
+    .individual1 .circle {
       border-color: #8ea604;
     }
     .solar {
