@@ -153,25 +153,25 @@ export class PowerFlowCard extends LitElement {
       }
     }
 
-    let individual2Unit: string | null = null;
     let individual2Usage: number | null = null;
+    const individual2Name: string =
+      this._config.entities.individual2?.name || "Motorcycle";
     if (hasIndividual2) {
       const individual2Entity =
-        this.hass.states[this._config.entities.individual2!];
+        this.hass.states[this._config.entities.individual2?.entity!];
       const individual2State = Number(individual2Entity.state);
-      individual2Unit = individual2Entity.attributes.unit_of_measurement ?? "W";
       if (this.entityInverted("individual2"))
         individual2Usage = Math.abs(Math.min(individual2State, 0));
       else individual2Usage = Math.max(individual2State, 0);
     }
 
-    let individual1Unit: string | null = null;
     let individual1Usage: number | null = null;
+    const individual1Name: string =
+      this._config.entities.individual1?.name || "Car";
     if (hasIndividual1) {
       const individual1Entity =
-        this.hass.states[this._config.entities.individual1!];
+        this.hass.states[this._config.entities.individual1?.entity!];
       const individual1State = Number(individual1Entity.state);
-      individual1Unit = individual1Entity.attributes.unit_of_measurement ?? "W";
       if (this.entityInverted("individual1"))
         individual1Usage = Math.abs(Math.min(individual1State, 0));
       else individual1Usage = Math.max(individual1State, 0);
@@ -377,7 +377,7 @@ export class PowerFlowCard extends LitElement {
                   : ""}
                 ${hasIndividual2
                   ? html`<div class="circle-container individual2">
-                      <span class="label">Motorcycle</span>
+                      <span class="label">${individual2Name}</span>
                       <div class="circle">
                         <ha-svg-icon
                           .path=${mdiMotorbikeElectric}
@@ -407,7 +407,7 @@ export class PowerFlowCard extends LitElement {
                     </div>`
                   : hasIndividual1
                   ? html`<div class="circle-container individual1">
-                      <span class="label">Car</span>
+                      <span class="label">${individual1Name}</span>
                       <div class="circle">
                         <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
                         ${this.displayValue(individual1Usage)}
@@ -596,7 +596,7 @@ export class PowerFlowCard extends LitElement {
                         <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
                         ${this.displayValue(individual1Usage)}
                       </div>
-                      <span class="label">Car</span>
+                      <span class="label">${individual1Name}</span>
                     </div>`
                   : html`<div class="spacer"></div>`}
               </div>`
@@ -957,6 +957,7 @@ export class PowerFlowCard extends LitElement {
       position: relative;
       text-decoration: none;
       color: var(--primary-text-color);
+      cursor: pointer;
     }
     ha-svg-icon {
       padding-bottom: 2px;

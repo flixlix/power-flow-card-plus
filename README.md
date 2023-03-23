@@ -135,6 +135,35 @@ entities:
   solar: sensor.solar_out
 ```
 
+#### Individual Devices Example
+
+Using individual devices for consumption and production.
+
+```yaml
+type: custom:power-flow-card
+entities:
+  grid:
+    production:
+      - sensor.grid_out_power
+    consumption:
+      - sensor.grid_in_power
+  solar:
+    - sensor.solar_power
+  battery_charge:
+    - sensor.battery_state_of_charge
+  battery:
+    production:
+      - sensor.battery_in_power
+    consumption:
+      - sensor.battery_out_power
+  individual1:
+    entity: sensor.car_power
+    name: Car
+  individual2:
+    entity: sensor.motorbike_power
+    name: Motorbike
+```
+
 ### Flow Formula
 
 This formula is based on the offical formula used by the Energy Distribution card.
