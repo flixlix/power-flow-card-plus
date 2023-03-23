@@ -139,6 +139,9 @@ entities:
 
 Using individual devices for consumption and production.
 
+![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
+
+
 ```yaml
 type: custom:power-flow-card
 entities:
