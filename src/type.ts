@@ -3,4 +3,9 @@ export type ComboEntity = {
   production?: string;
 };
 
-export type EntityType = "battery" | "gas" | "grid" | "solar" | "water";
+export type EntityType =
+  | "battery"
+  | "individual2"
+  | "grid"
+  | "solar"
+  | "individual1";
