@@ -9,11 +9,11 @@ import {
   mdiBatteryLow,
   mdiBatteryMedium,
   mdiBatteryOutline,
-  mdiFire,
   mdiHome,
   mdiSolarPower,
   mdiTransmissionTower,
-  mdiWater,
+  mdiCarElectric,
+  mdiMotorbikeElectric 
 } from "@mdi/js";
 import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
@@ -376,12 +376,10 @@ export class PowerFlowCard extends LitElement {
                 ${hasGas
                   ? html`<div class="circle-container gas">
                       <span class="label"
-                        >${this.hass.localize(
-                          "ui.panel.lovelace.cards.energy.energy_distribution.gas"
-                        )}</span
+                        >Electric Bike</span
                       >
                       <div class="circle">
-                        <ha-svg-icon .path=${mdiFire}></ha-svg-icon>
+                        <ha-svg-icon .path=${mdiMotorbikeElectric}></ha-svg-icon>
                         ${formatNumber(gasUsage || 0, this.hass.locale, {
                           maximumFractionDigits: 1,
                         })}
@@ -408,13 +406,9 @@ export class PowerFlowCard extends LitElement {
                     </div>`
                   : hasWater
                   ? html`<div class="circle-container water">
-                      <span class="label"
-                        >${this.hass.localize(
-                          "ui.panel.lovelace.cards.energy.energy_distribution.water"
-                        )}</span
-                      >
+                      <span class="label">Electric Car</span>
                       <div class="circle">
-                        <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
+                        <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
                         ${formatNumber(waterUsage || 0, this.hass.locale, {
                           maximumFractionDigits: 1,
                         })}
@@ -432,6 +426,8 @@ export class PowerFlowCard extends LitElement {
                                   dur="1.66s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
+                                  keyPoints="1;0" 
+                                  keyTimes="0;1"
                                 >
                                   <mpath xlink:href="#water" />
                                 </animateMotion>
@@ -590,6 +586,8 @@ export class PowerFlowCard extends LitElement {
                                   dur="1.66s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
+                                  keyPoints="1;0" 
+                                  keyTimes="0;1"
                                 >
                                   <mpath xlink:href="#water" />
                                 </animateMotion>
@@ -597,17 +595,13 @@ export class PowerFlowCard extends LitElement {
                           : ""}
                       </svg>
                       <div class="circle">
-                        <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
+                        <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
                         ${formatNumber(waterUsage || 0, this.hass.locale, {
                           maximumFractionDigits: 1,
                         })}
                         ${waterUnit}
                       </div>
-                      <span class="label"
-                        >${this.hass.localize(
-                          "ui.panel.lovelace.cards.energy.energy_distribution.water"
-                        )}</span
-                      >
+                      <span class="label">Electric Car</span>
                     </div>`
                   : html`<div class="spacer"></div>`}
               </div>`
@@ -990,25 +984,25 @@ export class PowerFlowCard extends LitElement {
     }
     .gas path,
     .gas circle {
-      stroke: var(--energy-gas-color);
+      stroke: #A20021;
     }
     circle.gas {
       stroke-width: 4;
-      fill: var(--energy-gas-color);
+      fill: #A20021;
     }
     .gas .circle {
-      border-color: var(--energy-gas-color);
+      border-color: #A20021;
     }
     .water path,
     .water circle {
-      stroke: var(--energy-water-color);
+      stroke: #8ea604;
     }
     circle.water {
       stroke-width: 4;
-      fill: var(--energy-water-color);
+      fill: #8ea604;
     }
     .water .circle {
-      border-color: var(--energy-water-color);
+      border-color: #8ea604;
     }
     .solar {
       color: var(--primary-text-color);
