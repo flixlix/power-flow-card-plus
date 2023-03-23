@@ -388,7 +388,7 @@ export class PowerFlowCard extends LitElement {
                         <path d="M40 -10 v50" id="individual2" />
                         ${individual2Usage
                           ? svg`<circle
-                              r="3.4"
+                              r="1"
                               class="individual2"
                               vector-effect="non-scaling-stroke"
                             >
@@ -416,7 +416,7 @@ export class PowerFlowCard extends LitElement {
                         <path d="M40 -10 v40" id="individual1" />
                         ${individual1Usage
                           ? svg`<circle
-                                r="3.4"
+                                r="1"
                                 class="individual1"
                                 vector-effect="non-scaling-stroke"
                               >
@@ -576,7 +576,7 @@ export class PowerFlowCard extends LitElement {
                         <path d="M40 40 v-40" id="individual1" />
                         ${individual1Usage
                           ? svg`<circle
-                                r="3.4"
+                                r="1"
                                 class="individual1"
                                 vector-effect="non-scaling-stroke"
                               >
