@@ -77,8 +77,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | battery        | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
 | battery_charge | `string`            | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
 | solar          | `string`            | Entity ID providing a state with the value of generation.                                                                                                                                                       |
-| gas            | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
-| water          | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
+| individual1            | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
+| individual2          | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
 
 #### Split entities
 
