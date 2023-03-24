@@ -12,8 +12,6 @@ import {
   mdiHome,
   mdiSolarPower,
   mdiTransmissionTower,
-  mdiCarElectric,
-  mdiMotorbikeElectric,
 } from "@mdi/js";
 import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
@@ -156,6 +154,8 @@ export class PowerFlowCard extends LitElement {
     let individual2Usage: number | null = null;
     const individual2Name: string =
       this._config.entities.individual2?.name || "Motorcycle";
+    const individual2Icon: undefined | string =
+      this._config.entities.individual2?.icon || "mdi:motorbike-electric";
     if (hasIndividual2) {
       const individual2Entity =
         this.hass.states[this._config.entities.individual2?.entity!];
@@ -168,6 +168,8 @@ export class PowerFlowCard extends LitElement {
     let individual1Usage: number | null = null;
     const individual1Name: string =
       this._config.entities.individual1?.name || "Car";
+    const individual1Icon: undefined | string =
+      this._config.entities.individual1?.icon || "mdi:car-electric";
     if (hasIndividual1) {
       const individual1Entity =
         this.hass.states[this._config.entities.individual1?.entity!];
@@ -379,12 +381,16 @@ export class PowerFlowCard extends LitElement {
                   ? html`<div class="circle-container individual2">
                       <span class="label">${individual2Name}</span>
                       <div class="circle">
-                        <ha-svg-icon
-                          .path=${mdiMotorbikeElectric}
-                        ></ha-svg-icon>
+                        <ha-icon
+                          id="individual2-icon"
+                          .icon=${individual2Icon}
+                        ></ha-icon>
                         ${this.displayValue(individual2Usage)}
                       </div>
-                      <svg width="80" height="30">
+                      <svg
+                        width="80"
+                        height="30"
+                      >
                         <path d="M40 -10 v50" id="individual2" />
                         ${individual2Usage
                           ? svg`<circle
@@ -409,7 +415,10 @@ export class PowerFlowCard extends LitElement {
                   ? html`<div class="circle-container individual1">
                       <span class="label">${individual1Name}</span>
                       <div class="circle">
-                        <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
+                        <ha-icon
+                          id="individual1-icon"
+                          .icon=${individual1Icon}
+                        ></ha-icon>
                         ${this.displayValue(individual1Usage)}
                       </div>
                       <svg width="80" height="30">
@@ -573,7 +582,10 @@ export class PowerFlowCard extends LitElement {
                 ${hasIndividual2 && hasIndividual1
                   ? html`<div class="circle-container individual1 bottom">
                       <svg width="80" height="30">
-                        <path d="M40 40 v-40" id="individual1" />
+                        <path
+                          d="M40 40 v-40"
+                          id="individual1"
+                        />
                         ${individual1Usage
                           ? svg`<circle
                                 r="1"
@@ -593,7 +605,10 @@ export class PowerFlowCard extends LitElement {
                           : ""}
                       </svg>
                       <div class="circle">
-                        <ha-svg-icon .path=${mdiCarElectric}></ha-svg-icon>
+                        <ha-icon
+                          id="individual1-icon"
+                          .icon=${individual1Icon}
+                        ></ha-icon>
                         ${this.displayValue(individual1Usage)}
                       </div>
                       <span class="label">${individual1Name}</span>
