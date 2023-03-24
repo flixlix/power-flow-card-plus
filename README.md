@@ -186,8 +186,43 @@ max - (value / totalLines) * (max - min);
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
 
-## Credits
+### Full Example
 
-- [HA Energy Distribution Card](https://www.home-assistant.io//dashboards/energy/#energy-distribution)
-- [@angular/cdk](https://github.com/angular/components/tree/main/src/cdk)
-- [Jack Moore](https://www.jacklmoore.com/notes/rounding-in-javascript/)
+This example aims to show you what is possible using this card, I don't recommend copying and pasting it without understanding what each property does.
+
+```
+type: custom:power-flow-card
+entities:
+  grid:
+    production:
+      - sensor.grid_out_power
+    consumption:
+      - sensor.grid_in_power
+  solar:
+    - sensor.solar_power
+  battery_charge:
+    - sensor.battery_state_of_charge
+  battery:
+    production:
+      - sensor.battery_in_power
+    consumption:
+      - sensor.battery_out_power
+  individual1:
+    entity: sensor.heater_power
+    name: Heater
+    icon: mdi:radiator
+    color: "#ff0000"
+  individual2:
+    entity: sensor.fridge_power
+    name: Fridge
+    icon: mdi:fridge
+    color: "#0000ff"
+title: Power Flow
+dashboard_link: '/energy'
+w_decimals: 0
+kw_decimals: 2
+min_flow_rate: 1
+max_flow_rate: 3
+watt_threshold: 10000
+clickable_entities: true
+```
