@@ -11,7 +11,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       entity?: string;
       name?: string;
       icon?: string;
-      color?: number;
+      color?: string;
     };
     individual1?: {
       entity?: string;

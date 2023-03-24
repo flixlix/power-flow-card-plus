@@ -156,6 +156,8 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual2?.name || "Motorcycle";
     const individual2Icon: undefined | string =
       this._config.entities.individual2?.icon || "mdi:motorbike-electric";
+    const individual2Color: string = this._config.entities.individual2?.color! || "#964CB5";
+    this.style.setProperty("--individualtwo-color", individual2Color);
     if (hasIndividual2) {
       const individual2Entity =
         this.hass.states[this._config.entities.individual2?.entity!];
@@ -170,6 +172,8 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual1?.name || "Car";
     const individual1Icon: undefined | string =
       this._config.entities.individual1?.icon || "mdi:car-electric";
+    const individual1Color: string = this._config.entities.individual1?.color! || "#D0CC5B";
+    this.style.setProperty("--individualone-color", individual1Color);
     if (hasIndividual1) {
       const individual1Entity =
         this.hass.states[this._config.entities.individual1?.entity!];
@@ -387,10 +391,7 @@ export class PowerFlowCard extends LitElement {
                         ></ha-icon>
                         ${this.displayValue(individual2Usage)}
                       </div>
-                      <svg
-                        width="80"
-                        height="30"
-                      >
+                      <svg width="80" height="30">
                         <path d="M40 -10 v50" id="individual2" />
                         ${individual2Usage
                           ? svg`<circle
@@ -582,10 +583,7 @@ export class PowerFlowCard extends LitElement {
                 ${hasIndividual2 && hasIndividual1
                   ? html`<div class="circle-container individual1 bottom">
                       <svg width="80" height="30">
-                        <path
-                          d="M40 40 v-40"
-                          id="individual1"
-                        />
+                        <path d="M40 40 v-40" id="individual1" />
                         ${individual1Usage
                           ? svg`<circle
                                 r="1"
@@ -895,6 +893,10 @@ export class PowerFlowCard extends LitElement {
     :host {
       --mdc-icon-size: 24px;
     }
+    :root {
+      --individualone-color: #D0CC5B;
+      --individualtwo-color: #964CB5;
+    }
     .card-content {
       position: relative;
     }
@@ -986,7 +988,7 @@ export class PowerFlowCard extends LitElement {
     }
     line,
     path {
-      stroke: var(--primary-text-color);
+      stroke: var(--disabled-text-color);
       stroke-width: 1;
       fill: none;
     }
@@ -1001,25 +1003,25 @@ export class PowerFlowCard extends LitElement {
     }
     .individual2 path,
     .individual2 circle {
-      stroke: #a20021;
+      stroke: var(--individualtwo-color);
     }
     circle.individual2 {
       stroke-width: 4;
-      fill: #a20021;
+      fill: var(--individualtwo-color);
     }
     .individual2 .circle {
-      border-color: #a20021;
+      border-color: var(--individualtwo-color);
     }
     .individual1 path,
     .individual1 circle {
-      stroke: #8ea604;
+      stroke: var(--individualone-color);
     }
     circle.individual1 {
       stroke-width: 4;
-      fill: #8ea604;
+      fill: var(--individualone-color);
     }
     .individual1 .circle {
-      border-color: #8ea604;
+      border-color: var(--individualone-color);
     }
     .solar {
       color: var(--primary-text-color);

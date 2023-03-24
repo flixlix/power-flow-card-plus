@@ -5,7 +5,7 @@ export type ComboEntity = {
 
 export type EntityType =
   | "battery"
-  | "individual2"
   | "grid"
   | "solar"
-  | "individual1";
+  | "individual1"
+  | "individual2";
