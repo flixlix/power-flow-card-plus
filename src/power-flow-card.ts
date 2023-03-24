@@ -138,6 +138,11 @@ export class PowerFlowCard extends LitElement {
 
     const { entities } = this._config;
 
+    this.style.setProperty(
+      "--clickable-cursor",
+      this._config.clickable_entities ? "pointer" : "default"
+    ); /* show pointer if clickable entities is enabled */
+
     const hasGrid = entities.grid !== undefined;
 
     const hasBattery = entities.battery !== undefined;
@@ -169,7 +174,7 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual2?.icon || "mdi:motorbike-electric";
     const individual2Color: string =
       this._config.entities.individual2?.color! || "#964CB5";
-    this.style.setProperty("--individualtwo-color", individual2Color);
+    this.style.setProperty("--individualtwo-color", individual2Color); /* dynamically update color of entity depending on use input */
     if (hasIndividual2) {
       const individual2Entity =
         this.hass.states[this._config.entities.individual2?.entity!];
@@ -186,7 +191,7 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual1?.icon || "mdi:car-electric";
     const individual1Color: string =
       this._config.entities.individual1?.color! || "#D0CC5B";
-    this.style.setProperty("--individualone-color", individual1Color);
+    this.style.setProperty("--individualone-color", individual1Color); /* dynamically update color of entity depending on use input */
     if (hasIndividual1) {
       const individual1Entity =
         this.hass.states[this._config.entities.individual1?.entity!];
@@ -1123,6 +1128,7 @@ export class PowerFlowCard extends LitElement {
     :root {
       --individualone-color: #d0cc5b;
       --individualtwo-color: #964cb5;
+      --clickable-cursor: pointer;
     }
     .card-content {
       position: relative;
@@ -1204,9 +1210,9 @@ export class PowerFlowCard extends LitElement {
       color: var(--primary-text-color);
     }
     .circle-container:not(.home) .circle {
-      cursor: pointer;
+      cursor: var(--clickable-cursor);
     }
-    .battery-to-grid#battery-grid {
+    #battery-grid {
       stroke: var(--energy-grid-return-color);
     }
     ha-svg-icon {
