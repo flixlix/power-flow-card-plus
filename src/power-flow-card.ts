@@ -120,6 +120,17 @@ export class PowerFlowCard extends LitElement {
     return `${v} ${isKW ? "kW" : "W"}`;
   };
 
+  private openDetails(entityId?: string | undefined): void {
+    if (!entityId || !this._config.clickable_entities) return;
+    /* if entity is not available */
+    if (!this.entityAvailable(entityId)) return;
+    const e = new CustomEvent("hass-more-info", {
+      composed: true,
+      detail: { entityId },
+    });
+    this.dispatchEvent(e);
+  }
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -156,7 +167,8 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual2?.name || "Motorcycle";
     const individual2Icon: undefined | string =
       this._config.entities.individual2?.icon || "mdi:motorbike-electric";
-    const individual2Color: string = this._config.entities.individual2?.color! || "#964CB5";
+    const individual2Color: string =
+      this._config.entities.individual2?.color! || "#964CB5";
     this.style.setProperty("--individualtwo-color", individual2Color);
     if (hasIndividual2) {
       const individual2Entity =
@@ -172,7 +184,8 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual1?.name || "Car";
     const individual1Icon: undefined | string =
       this._config.entities.individual1?.icon || "mdi:car-electric";
-    const individual1Color: string = this._config.entities.individual1?.color! || "#D0CC5B";
+    const individual1Color: string =
+      this._config.entities.individual1?.color! || "#D0CC5B";
     this.style.setProperty("--individualone-color", individual1Color);
     if (hasIndividual1) {
       const individual1Entity =
@@ -371,7 +384,22 @@ export class PowerFlowCard extends LitElement {
                           "ui.panel.lovelace.cards.energy.energy_distribution.solar"
                         )}</span
                       >
-                      <div class="circle">
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          this.openDetails(entities.solar![0]);
+                        }}
+                        @keyDown=${(e: {
+                          key: string;
+                          stopPropagation: () => void;
+                        }) => {
+                          if (e.key === "Enter") {
+                            e.stopPropagation();
+                            this.openDetails(entities.solar![0]);
+                          }
+                        }}
+                      >
                         <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
                         <span class="solar">
                           ${this.displayValue(totalSolarProduction)}</span
@@ -384,7 +412,22 @@ export class PowerFlowCard extends LitElement {
                 ${hasIndividual2
                   ? html`<div class="circle-container individual2">
                       <span class="label">${individual2Name}</span>
-                      <div class="circle">
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          this.openDetails(entities.individual2?.entity);
+                        }}
+                        @keyDown=${(e: {
+                          key: string;
+                          stopPropagation: () => void;
+                        }) => {
+                          if (e.key === "Enter") {
+                            e.stopPropagation();
+                            this.openDetails(entities.individual2?.entity);
+                          }
+                        }}
+                      >
                         <ha-icon
                           id="individual2-icon"
                           .icon=${individual2Icon}
@@ -415,7 +458,22 @@ export class PowerFlowCard extends LitElement {
                   : hasIndividual1
                   ? html`<div class="circle-container individual1">
                       <span class="label">${individual1Name}</span>
-                      <div class="circle">
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          this.openDetails(entities.individual1?.entity);
+                        }}
+                        @keyDown=${(e: {
+                          key: string;
+                          stopPropagation: () => void;
+                        }) => {
+                          if (e.key === "Enter") {
+                            e.stopPropagation();
+                            this.openDetails(entities.individual1?.entity);
+                          }
+                        }}
+                      >
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
@@ -449,10 +507,58 @@ export class PowerFlowCard extends LitElement {
           <div class="row">
             ${hasGrid
               ? html` <div class="circle-container grid">
-                  <div class="circle">
+                  <div
+                    class="circle"
+                    @click=${(e: { stopPropagation: () => void }) => {
+                      const target =
+                        typeof entities.grid === "string"
+                          ? entities.grid
+                          : entities.grid?.consumption![0] ||
+                            entities.grid?.production![0];
+                      e.stopPropagation();
+                      this.openDetails(target);
+                    }}
+                    @keyDown=${(e: {
+                      key: string;
+                      stopPropagation: () => void;
+                    }) => {
+                      if (e.key === "Enter") {
+                        const target =
+                          typeof entities.grid === "string"
+                            ? entities.grid
+                            : entities.grid?.consumption![0] ||
+                              entities.grid?.production![0];
+                        e.stopPropagation();
+                        this.openDetails(target);
+                      }
+                    }}
+                  >
                     <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
                     ${returnedToGrid !== null
-                      ? html`<span class="return">
+                      ? html`<span
+                          class="return"
+                          @click=${(e: { stopPropagation: () => void }) => {
+                            const target =
+                              typeof entities.grid === "string"
+                                ? entities.grid
+                                : entities.grid?.production![0];
+                            e.stopPropagation();
+                            this.openDetails(target);
+                          }}
+                          @keyDown=${(e: {
+                            key: string;
+                            stopPropagation: () => void;
+                          }) => {
+                            if (e.key === "Enter") {
+                              const target =
+                                typeof entities.grid === "string"
+                                  ? entities.grid
+                                  : entities.grid?.production![0];
+                              e.stopPropagation();
+                              this.openDetails(target);
+                            }
+                          }}
+                        >
                           <ha-svg-icon
                             class="small"
                             .path=${mdiArrowLeft}
@@ -476,7 +582,7 @@ export class PowerFlowCard extends LitElement {
                 </div>`
               : html`<div class="spacer"></div>`}
             <div class="circle-container home">
-              <div class="circle">
+              <div class="circle" id="home-circle">
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
                 ${this.displayValue(totalHomeConsumption)}
                 <svg>
@@ -544,9 +650,48 @@ export class PowerFlowCard extends LitElement {
                 <div class="spacer"></div>
                 ${hasBattery
                   ? html` <div class="circle-container battery">
-                      <div class="circle">
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          const target = entities.battery_charge![0]
+                            ? entities.battery_charge![0]
+                            : typeof entities.battery === "string"
+                            ? entities.battery
+                            : entities.battery?.production![0];
+                          e.stopPropagation();
+                          this.openDetails(target);
+                        }}
+                        @keyDown=${(e: {
+                          key: string;
+                          stopPropagation: () => void;
+                        }) => {
+                          if (e.key === "Enter") {
+                            const target = entities.battery_charge![0]
+                              ? entities.battery_charge![0]
+                              : typeof entities.battery === "string"
+                              ? entities.battery
+                              : entities.battery?.production![0];
+                            e.stopPropagation();
+                            this.openDetails(target);
+                          }
+                        }}
+                      >
                         ${batteryChargeState !== null
-                          ? html` <span>
+                          ? html` <span
+                              @click=${(e: { stopPropagation: () => void }) => {
+                                e.stopPropagation();
+                                this.openDetails(entities.battery_charge!);
+                              }}
+                              @keyDown=${(e: {
+                                key: string;
+                                stopPropagation: () => void;
+                              }) => {
+                                if (e.key === "Enter") {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.battery_charge!);
+                                }
+                              }}
+                            >
                               ${formatNumber(
                                 batteryChargeState,
                                 this.hass.locale,
@@ -557,15 +702,76 @@ export class PowerFlowCard extends LitElement {
                               )}%
                             </span>`
                           : null}
-                        <ha-svg-icon .path=${batteryIcon}></ha-svg-icon>
-                        <span class="battery-in">
+                        <ha-svg-icon
+                          .path=${batteryIcon}
+                          @click=${(e: { stopPropagation: () => void }) => {
+                            e.stopPropagation();
+                            this.openDetails(entities.battery_charge![0]);
+                          }}
+                          @keyDown=${(e: {
+                            key: string;
+                            stopPropagation: () => void;
+                          }) => {
+                            if (e.key === "Enter") {
+                              e.stopPropagation();
+                              this.openDetails(entities.battery_charge![0]);
+                            }
+                          }}
+                        ></ha-svg-icon>
+                        <span
+                          class="battery-in"
+                          @click=${(e: { stopPropagation: () => void }) => {
+                            const target =
+                              typeof entities.battery === "string"
+                                ? entities.battery
+                                : entities.battery?.production![0];
+                            e.stopPropagation();
+                            this.openDetails(target);
+                          }}
+                          @keyDown=${(e: {
+                            key: string;
+                            stopPropagation: () => void;
+                          }) => {
+                            if (e.key === "Enter") {
+                              const target =
+                                typeof entities.battery === "string"
+                                  ? entities.battery
+                                  : entities.battery?.production![0];
+                              e.stopPropagation();
+                              this.openDetails(target);
+                            }
+                          }}
+                        >
                           <ha-svg-icon
                             class="small"
                             .path=${mdiArrowDown}
                           ></ha-svg-icon
                           >${this.displayValue(totalBatteryIn)}</span
                         >
-                        <span class="battery-out">
+                        <span
+                          class="battery-out"
+                          @click=${(e: { stopPropagation: () => void }) => {
+                            const target =
+                              typeof entities.battery === "string"
+                                ? entities.battery
+                                : entities.battery?.consumption![0];
+                            e.stopPropagation();
+                            this.openDetails(target);
+                          }}
+                          @keyDown=${(e: {
+                            key: string;
+                            stopPropagation: () => void;
+                          }) => {
+                            if (e.key === "Enter") {
+                              const target =
+                                typeof entities.battery === "string"
+                                  ? entities.battery
+                                  : entities.battery?.consumption![0];
+                              e.stopPropagation();
+                              this.openDetails(target);
+                            }
+                          }}
+                        >
                           <ha-svg-icon
                             class="small"
                             .path=${mdiArrowUp}
@@ -589,6 +795,12 @@ export class PowerFlowCard extends LitElement {
                                 r="1"
                                 class="individual1"
                                 vector-effect="non-scaling-stroke"
+                                onClick=${(e) => {
+                                  e.stopPropagation();
+                                  this.openDetails(
+                                    entities.individual1?.entity
+                                  );
+                                }}                                
                               >
                                 <animateMotion
                                   dur="1.66s"
@@ -602,7 +814,22 @@ export class PowerFlowCard extends LitElement {
                               </circle>`
                           : ""}
                       </svg>
-                      <div class="circle">
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          this.openDetails(entities.individual1?.entity);
+                        }}
+                        @keyDown=${(e: {
+                          key: string;
+                          stopPropagation: () => void;
+                        }) => {
+                          if (e.key === "Enter") {
+                            e.stopPropagation();
+                            this.openDetails(entities.individual1?.entity);
+                          }
+                        }}
+                      >
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
@@ -894,8 +1121,8 @@ export class PowerFlowCard extends LitElement {
       --mdc-icon-size: 24px;
     }
     :root {
-      --individualone-color: #D0CC5B;
-      --individualtwo-color: #964CB5;
+      --individualone-color: #d0cc5b;
+      --individualtwo-color: #964cb5;
     }
     .card-content {
       position: relative;
@@ -933,6 +1160,7 @@ export class PowerFlowCard extends LitElement {
       display: flex;
       flex-direction: column;
       align-items: center;
+      z-index: 2;
     }
     .circle-container.solar {
       margin: 0 4px;
@@ -974,7 +1202,12 @@ export class PowerFlowCard extends LitElement {
       position: relative;
       text-decoration: none;
       color: var(--primary-text-color);
+    }
+    .circle-container:not(.home) .circle {
       cursor: pointer;
+    }
+    .battery-to-grid#battery-grid {
+      stroke: var(--energy-grid-return-color);
     }
     ha-svg-icon {
       padding-bottom: 2px;
@@ -1113,6 +1346,33 @@ export class PowerFlowCard extends LitElement {
       transition: stroke-dashoffset 0.4s, stroke-dasharray 0.4s;
       fill: none;
     }
+
+    // TODO fix this
+    /* fixes lines not connecting fully to circles */
+    /*     #solar-home-flow {
+      width: calc(100% - 150px);
+      transform: translate(-3px, -3px);
+      height: calc(100% + 10px);
+    }
+
+    #solar-grid-flow {
+      width: calc(100% - 150px);
+      transform: translate(3px, -3px);
+      height: calc(100% + 10px);
+    }
+
+    #battery-home-flow {
+      width: calc(100% - 150px);
+      transform: translate(-3px, -7px);
+      height: calc(100% + 10px);
+    }
+
+    #battery-grid-flow {
+      width: calc(100% - 150px);
+      transform: translate(3px, -7px);
+      height: calc(100% + 10px);
+    } */
+
     @keyframes rotate-in {
       from {
         stroke-dashoffset: 238.76104;

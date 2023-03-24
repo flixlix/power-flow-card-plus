@@ -27,4 +27,5 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
   max_flow_rate: number;
   w_decimals: number;
   watt_threshold: number;
+  clickable_entities: boolean;
 }
