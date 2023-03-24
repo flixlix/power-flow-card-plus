@@ -866,8 +866,8 @@ export class PowerFlowCard extends LitElement {
                     d="M${hasBattery ? 55 : 53},0 v${hasGrid
                       ? 15
                       : 17} c0,${hasBattery
-                      ? "35 10,30 30,30"
-                      : "40 10,35 30,35"} h25"
+                      ? "30 10,30 30,30"
+                      : "35 10,35 30,35"} h25"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${solarConsumption
@@ -906,8 +906,8 @@ export class PowerFlowCard extends LitElement {
                     id="return"
                     class="return"
                     d="M${hasBattery ? 45 : 47},0 v15 c0,${hasBattery
-                      ? "35 -10,30 -30,30"
-                      : "40 -10,35 -30,35"} h-20"
+                      ? "30 -10,30 -30,30"
+                      : "35 -10,35 -30,35"} h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${solarToGrid && hasSolarProduction
@@ -1025,7 +1025,7 @@ export class PowerFlowCard extends LitElement {
                   <path
                     id="battery-home"
                     class="battery-home"
-                    d="M55,100 v-${hasGrid ? 15 : 17} c0,-35 10,-30 30,-30 h20"
+                    d="M55,100 v-${hasGrid ? 15 : 17} c0,-30 10,-30 30,-30 h20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${batteryConsumption
@@ -1066,7 +1066,7 @@ export class PowerFlowCard extends LitElement {
                       "battery-from-grid": Boolean(batteryFromGrid),
                       "battery-to-grid": Boolean(batteryToGrid),
                     })}
-                    d="M45,100 v-15 c0,-35 -10,-30 -30,-30 h-20"
+                    d="M45,100 v-15 c0,-30 -10,-30 -30,-30 h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${batteryFromGrid
