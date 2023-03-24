@@ -54,18 +54,19 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Card options
 
-| Name              | Type     |   Default    | Description                                                                                                                                                                  |
-| ----------------- | -------- | :----------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type              | `string` | **required** | `custom:power-flow-card`.                                                                                                                                                    |
-| entities          | `object` | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
-| title             | `string` |              | Shows a title at the top of the card.                                                                                                                                        |
-| dashboard_link    | `string` |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| inverted_entities | `string` |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example).            |
-| kw_decimals       | `number` |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
-| w_decimals        | `number` |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
-| min_flow_rate     | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| max_flow_rate     | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| watt_threshold    | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
+| Name               | Type      |   Default    | Description                                                                                                                                                                  |
+| ------------------ | --------- | :----------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type               | `string`  | **required** | `custom:power-flow-card`.                                                                                                                                                    |
+| entities           | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
+| title              | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
+| dashboard_link     | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
+| inverted_entities  | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example).            |
+| kw_decimals        | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
+| w_decimals         | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
+| min_flow_rate      | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
+| max_flow_rate      | `number`  |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
+| watt_threshold     | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
+| clickable_entities | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog.                                                                                                     |
 
 #### Entities object
 
@@ -77,8 +78,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | battery        | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
 | battery_charge | `string`            | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
 | solar          | `string`            | Entity ID providing a state with the value of generation.                                                                                                                                                       |
-| individual1            | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
-| individual2          | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
+| individual1    | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
+| individual2    | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
 
 #### Split entities
 
@@ -140,7 +141,6 @@ entities:
 Using individual devices for consumption and production.
 
 ![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
-
 
 ```yaml
 type: custom:power-flow-card
