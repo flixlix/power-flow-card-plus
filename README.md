@@ -160,11 +160,15 @@ entities:
     consumption:
       - sensor.battery_out_power
   individual1:
-    entity: sensor.car_power
-    name: Car
+    entity: sensor.heater_power
+    name: Heater
+    icon: mdi:radiator
+    color: "#ff0000"
   individual2:
-    entity: sensor.motorbike_power
-    name: Motorbike
+    entity: sensor.fridge_power
+    name: Fridge
+    icon: mdi:fridge
+    color: "#0000ff"
 ```
 
 ### Flow Formula
