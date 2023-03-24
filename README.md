@@ -8,9 +8,9 @@
 
 ## Goal/Scope
 
-Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible. As such, additional features that fall outside of that scope will not be added.
+Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible.
 
-![screenshot](https://user-images.githubusercontent.com/5641964/202307818-4fb8923e-7fea-451f-bb5a-c840cfcc2dae.png)
+![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
 
 ## Install
 
