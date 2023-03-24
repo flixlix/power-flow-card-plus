@@ -78,8 +78,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | battery        | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
 | battery_charge | `string`            | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
 | solar          | `string`            | Entity ID providing a state with the value of generation.                                                                                                                                                       |
-| individual1    | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
-| individual2    | `string`            | Entity ID providing a state value of consumption                                                                                                                                                                |
+| individual1    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
+| individual2    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
 
 #### Split entities
 
@@ -136,11 +136,20 @@ entities:
   solar: sensor.solar_out
 ```
 
-#### Individual Devices Example
+#### Individual Devices
 
-Using individual devices for consumption and production.
+Using individual devices for consumption.
+
+| Name           | Type              | Default   | Description                                                                                                                                                                                                     |
+| -------------- | :------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity           | `string` | `none` | Entity ID of a sensor supporting a single state. |
+| name        | `string` | Car / Motorcycle | Name to appear as a label next to the circle. |
+| icon | `string`            | `mdi:car-electric` / `mdi:motorbike-electric` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
+| color          | `string`        | `#d0cc5b` / `#964cb5` |  HEX Value of a color to display as the stroke of the circle and line connecting to your home. |
 
 ![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
+
+##### Example using individual devices
 
 ```yaml
 type: custom:power-flow-card
