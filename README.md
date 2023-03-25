@@ -4,7 +4,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/flixlix/power-flow-card-plus/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/flixlix)
 
-<img src="https://user-images.githubusercontent.com/61006057/227745087-3ec4b137-1954-46a9-9a13-9091b9f43fea.png" width="70%" />
+<img src="https://user-images.githubusercontent.com/61006057/227745087-3ec4b137-1954-46a9-9a13-9091b9f43fea.png" width="100%" />
 
 ## Additional Features / Enhancements
 
