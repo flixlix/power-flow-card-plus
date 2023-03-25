@@ -75,6 +75,9 @@ export class PowerFlowCard extends LitElement {
       `entity "${entityId ?? "Unknown"}" is not available or misconfigured`
     );
 
+  private entityExists = (entityId: string): boolean =>
+    entityId in this.hass.states;
+
   private entityAvailable = (entityId: string): boolean =>
     isNumberValue(this.hass.states[entityId]?.state);
 
@@ -122,8 +125,8 @@ export class PowerFlowCard extends LitElement {
 
   private openDetails(entityId?: string | undefined): void {
     if (!entityId || !this._config.clickable_entities) return;
-    /* if entity is not available */
-    if (!this.entityAvailable(entityId)) return;
+    /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
+    if (!this.entityExists(entityId)) return;
     const e = new CustomEvent("hass-more-info", {
       composed: true,
       detail: { entityId },
@@ -146,8 +149,18 @@ export class PowerFlowCard extends LitElement {
     const hasGrid = entities.grid !== undefined;
 
     const hasBattery = entities.battery !== undefined;
-    const hasIndividual2 = entities.individual2 !== undefined;
-    const hasIndividual1 = entities.individual1 !== undefined;
+
+    const hasIndividual2 =
+      (entities.individual2 !== undefined &&
+        entities.individual2?.display_zero === true) ||
+      (this.getEntityStateWatts(entities.individual2?.entity) > 0 &&
+        this.entityAvailable(entities.individual2?.entity!));
+
+    const hasIndividual1 =
+      (entities.individual1 !== undefined &&
+        entities.individual1?.display_zero === true) ||
+      (this.getEntityStateWatts(entities.individual1?.entity) > 0 &&
+        this.entityAvailable(entities.individual1?.entity!));
     const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid =
       hasGrid &&
@@ -174,7 +187,10 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual2?.icon || "mdi:motorbike-electric";
     const individual2Color: string =
       this._config.entities.individual2?.color! || "#964CB5";
-    this.style.setProperty("--individualtwo-color", individual2Color); /* dynamically update color of entity depending on use input */
+    this.style.setProperty(
+      "--individualtwo-color",
+      individual2Color
+    ); /* dynamically update color of entity depending on use input */
     if (hasIndividual2) {
       const individual2Entity =
         this.hass.states[this._config.entities.individual2?.entity!];
@@ -191,7 +207,10 @@ export class PowerFlowCard extends LitElement {
       this._config.entities.individual1?.icon || "mdi:car-electric";
     const individual1Color: string =
       this._config.entities.individual1?.color! || "#D0CC5B";
-    this.style.setProperty("--individualone-color", individual1Color); /* dynamically update color of entity depending on use input */
+    this.style.setProperty(
+      "--individualone-color",
+      individual1Color
+    ); /* dynamically update color of entity depending on use input */
     if (hasIndividual1) {
       const individual1Entity =
         this.hass.states[this._config.entities.individual1?.entity!];
