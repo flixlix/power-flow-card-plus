@@ -1,7 +1,7 @@
 {
-  "name": "power-distribution-card",
-  "version": "2.6.2",
-  "description": "A power distribution card for Home Assistant",
+  "name": "power-flow-card-plus",
+  "version": "0.0.8",
+  "description": "A power flow card for Home Assistant",
   "keywords": [
     "home-assistant",
     "homeassistant",
@@ -12,14 +12,14 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ulic75/power-distribution-card.git"
+    "url": "git+https://github.com/flixlix/power-flow-card-plus.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ulic75/power-distribution-card/issues"
+    "url": "https://github.com/flixlix/power-flow-card-plus/issues"
   },
-  "homepage": "https://github.com/ulic75/power-distribution-card#readme",
+  "homepage": "https://github.com/flixlix/power-flow-card-plus#readme",
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint src/*",
