@@ -1,10 +1,14 @@
-# Power Flow Card
+# Power Flow Card Plus
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](https://github.com/hacs/integration)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/ulic75/power-flow-card?style=flat-square)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ulic75/power-flow-card/CI?style=flat-square)
-![GitHub all releases](https://img.shields.io/github/downloads/ulic75/power-flow-card/total?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/flixlix/power-flow-card-plus/CI?style=flat-square)
+![GitHub all releases](https://img.shields.io/github/downloads/flixlix/power-flow-card-plus/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/flixlix)
+
+## Additional Features / Enhancements:
+  - Display Individual power entities
+  - Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
+  - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
 
 ## Goal/Scope
 
