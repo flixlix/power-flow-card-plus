@@ -1,7 +1,6 @@
 # Power Flow Card Plus
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/flixlix/power-flow-card-plus/CI?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/flixlix/power-flow-card-plus/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/flixlix)
 
