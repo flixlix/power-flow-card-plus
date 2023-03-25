@@ -160,6 +160,7 @@ Using individual devices for consumption.
 | name        | `string` | Car / Motorcycle | Name to appear as a label next to the circle. |
 | icon | `string`            | `mdi:car-electric` / `mdi:motorbike-electric` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
 | color          | `string`        | `#d0cc5b` / `#964cb5` |  HEX Value of a color to display as the stroke of the circle and line connecting to your home. |
+| display_zero | `boolean` | `false` | If true, the device will be displayed even if the entity state is 0 or not a number (eg: unavailable). |
 
 ![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
 
