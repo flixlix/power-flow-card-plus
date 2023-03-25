@@ -20,7 +20,7 @@ const serveOptions = {
 
 export default [
   {
-    input: "src/power-flow-card-plus.ts",
+    input: "src/power-flow-card.ts",
     output: [
       {
         dir: "./dist",
