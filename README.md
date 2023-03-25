@@ -5,12 +5,13 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/flixlix/power-flow-card-plus/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/flixlix)
 
-## Additional Features / Enhancements:
-  - Display Individual power entities
-  - Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
-  - Clickable entities
-  - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
-  - Keep color of battery to grid line, even when not returning
+## Additional Features / Enhancements
+
+- Display Individual power entities
+- Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
+- Clickable entities
+- Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
+- Keep color of battery to grid line, even when not returning
 
 ## Goal/Scope
 
@@ -23,15 +24,16 @@ Display current power, gas, and water usage in a display that matches the the of
 ### HACS (recommended)
 
 This card is not direclty available in [HACS](https://hacs.xyz/) (Home Assistant Community Store).
-<small>_HACS is a third party community store and is not included in Home Assistant out of the box._</small>
+_HACS is a third party community store and is not included in Home Assistant out of the box._
 To install this:
-  - Go to HACS 
-  - Click on `Frontend`
-  - Click on the overflow Menu (three vertical dots)
-  - Click on `Custom Repositories`
-  - Type this URL [https://github.com/flixlix/power-flow-card-plus](https://github.com/flixlix/power-flow-card-plus)
-  - In "Category", select `lovelace`
-  - Install via UI
+
+- Go to HACS
+- Click on `Frontend`
+- Click on the overflow Menu (three vertical dots)
+- Click on `Custom Repositories`
+- Type this URL [https://github.com/flixlix/power-flow-card-plus](https://github.com/flixlix/power-flow-card-plus)
+- In "Category", select `lovelace`
+- Install via UI
 
 ### Manual install
 
@@ -215,7 +217,7 @@ I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow
 
 This example aims to show you what is possible using this card, I don't recommend copying and pasting it without understanding what each property does.
 
-```
+```yaml
 type: custom:power-flow-card-plus
 entities:
   grid:
