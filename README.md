@@ -94,6 +94,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | solar          | `string`            | Entity ID providing a state with the value of generation.                                                                                                                                                       |
 | individual1    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
 | individual2    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
+| home          | `string`            | Entity ID providing a state with the value of home consumption. This value will not be displayed in the card. It is only responsible for the dialog that opens when clicking on the home icon |
 
 #### Split entities
 

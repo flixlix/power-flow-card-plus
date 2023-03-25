@@ -587,7 +587,23 @@ export class PowerFlowCard extends LitElement {
                 </div>`
               : html`<div class="spacer"></div>`}
             <div class="circle-container home">
-              <div class="circle" id="home-circle">
+              <div
+                class="circle"
+                id="home-circle"
+                @click=${(e: { stopPropagation: () => void }) => {
+                  e.stopPropagation();
+                  this.openDetails(entities.home![0]);
+                }}
+                @keyDown=${(e: {
+                  key: string;
+                  stopPropagation: () => void;
+                }) => {
+                  if (e.key === "Enter") {
+                    e.stopPropagation();
+                    this.openDetails(entities.home![0]);
+                  }
+                }}
+              >
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
                 ${this.displayValue(totalHomeConsumption)}
                 <svg>
@@ -1209,7 +1225,7 @@ export class PowerFlowCard extends LitElement {
       text-decoration: none;
       color: var(--primary-text-color);
     }
-    .circle-container:not(.home) .circle {
+    .circle-container .circle {
       cursor: var(--clickable-cursor);
     }
     #battery-grid {
