@@ -1434,7 +1434,7 @@ windowWithCards.customCards.push({
   type: "power-flow-card-plus",
   name: "Power Flow Card Plus",
   description:
-    "A power distribution card inspired by the official Energy Distribution card for Home Assistant",
+    "An extended version of the power flow card with richer options and advanced features. Inspired by the Energy Dashboard.",
 });
 
 declare global {

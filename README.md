@@ -253,3 +253,7 @@ max_flow_rate: 3
 watt_threshold: 10000
 clickable_entities: true
 ```
+
+#### Credits
+
+- [power-flow-card](https://github.com/ulic75/power-flow-card) by [ulic75](https://github.com/ulic75)
