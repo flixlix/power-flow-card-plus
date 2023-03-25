@@ -5,6 +5,8 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/flixlix/power-flow-card-plus/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/flixlix)
 
+<img src="https://user-images.githubusercontent.com/61006057/227745087-3ec4b137-1954-46a9-9a13-9091b9f43fea.png" width="50%" />
+
 ## Additional Features / Enhancements
 
 - Display Individual power entities
@@ -20,7 +22,8 @@
 
 Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible.
 
-![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
+
+
 
 ## Install
 
