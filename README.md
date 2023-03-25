@@ -29,7 +29,7 @@ To install this:
   - Click on `Frontend`
   - Click on the overflow Menu (three vertical dots)
   - Click on `Custom Repositories`
-  - Type this URL [https://github.com/flixlix/power-flow-card](https://github.com/flixlix/power-flow-card)
+  - Type this URL [https://github.com/flixlix/power-flow-card-plus](https://github.com/flixlix/power-flow-card-plus)
   - In "Category", select `lovelace`
   - Install via UI
 
