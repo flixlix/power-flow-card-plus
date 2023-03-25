@@ -1434,7 +1434,7 @@ windowWithCards.customCards.push({
   type: "power-flow-card-plus",
   name: "Power Flow Card Plus",
   description:
-    "An extended version of the power flow card with richer options and advanced features. Inspired by the Energy Dashboard.",
+    "An extended version of the power flow card with richer options, advanced features and a few small enhancements. Inspired by the Energy Dashboard.",
 });
 
 declare global {
