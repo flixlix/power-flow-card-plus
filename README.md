@@ -13,6 +13,8 @@
 - Clickable entities (including home)
 - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
 - Keep color of battery to grid line, even when not returning
+- Display Low Carbon Energy from the grid
+- Customize Low Carbon Energy label, icon, circle color, icon color and state type
 
 ## Goal/Scope
 
@@ -98,6 +100,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | individual1    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
 | individual2    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
 | home          | `string`            | Entity ID providing a state with the value of home consumption. This value will not be displayed in the card. It is only responsible for the dialog that opens when clicking on the home icon |
+| fossil_fuel_percentage | `object`            | Check [Fossil Fuel Percentage](#fossil-fuel-percentage) for more information. |
+
 
 #### Split entities
 
@@ -214,6 +218,19 @@ max - (value / totalLines) * (max - min);
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
 
+### Fossil Fuel Percentage
+
+
+| Name           | Type              | Default   | Description                                                                                                                                                                                                     |
+| -------------- | :------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity           | `string` | `none` | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be 100 when all the energy from the grid comes from high emission sources and 0 when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
+| name        | `string` | Low-carbon | Name to appear as a label on top of the circle. |
+| icon | `string`            | `mdi:leaf` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
+| color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
+| color_icon | `boolean` | `false` | If true, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
+| display_zero | `boolean` | `false` | If true, the device will be displayed even if the entity state is 0 or not a number (eg: unavailable). |
+| state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
+
 ### Full Example
 
 This example aims to show you what is possible using this card, I don't recommend copying and pasting it without understanding what each property does.
@@ -247,6 +264,14 @@ entities:
     icon: mdi:fridge
     color: "#0000ff"
     display_zero: false
+  fossil_fuel_percentage:
+    entity: sensor.co2signal_co2_intensity
+    name: Low-carbon
+    icon: mdi:leaf
+    color: "#0f9d58"
+    color_icon: false
+    display_zero: false
+    state_type: power
 title: Power Flow
 dashboard_link: '/energy'
 w_decimals: 0
