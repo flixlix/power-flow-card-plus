@@ -223,12 +223,12 @@ I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow
 
 | Name           | Type              | Default   | Description                                                                                                                                                                                                     |
 | -------------- | :------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity           | `string` | `none` | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be 100 when all the energy from the grid comes from high emission sources and 0 when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
+| entity           | `string` | `none` | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be `100` when all the energy from the grid comes from high emission sources and `0` when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
 | name        | `string` | Low-carbon | Name to appear as a label on top of the circle. |
 | icon | `string`            | `mdi:leaf` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
 | color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
-| color_icon | `boolean` | `false` | If true, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
-| display_zero | `boolean` | `false` | If true, the device will be displayed even if the entity state is 0 or not a number (eg: unavailable). |
+| color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
+| display_zero | `boolean` | `false` | If `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
 
 ### Full Example
