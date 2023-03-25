@@ -9,7 +9,8 @@
 
 - Display Individual power entities
 - Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
-- Clickable entities
+- Configure wether to hide Individual Entity when state is 0 or unavailable
+- Clickable entities (including home)
 - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
 - Keep color of battery to grid line, even when not returning
 
@@ -239,11 +240,13 @@ entities:
     name: Heater
     icon: mdi:radiator
     color: "#ff0000"
+    display_zero: true
   individual2:
     entity: sensor.fridge_power
     name: Fridge
     icon: mdi:fridge
     color: "#0000ff"
+    display_zero: false
 title: Power Flow
 dashboard_link: '/energy'
 w_decimals: 0
