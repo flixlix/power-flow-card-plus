@@ -8,6 +8,7 @@
 ## Additional Features / Enhancements:
   - Display Individual power entities
   - Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
+  - Clickable entities
   - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
   - Keep color of battery to grid line, even when not returning
 
