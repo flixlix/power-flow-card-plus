@@ -111,6 +111,43 @@ export class PowerFlowCard extends LitElement {
     return value * 1000;
   };
 
+  private displayNonFossilState = (entity: string | undefined): string => {
+    if (!entity || !this.entityAvailable(entity)) {
+      this.unavailableOrMisconfiguredError(entity);
+      return "NaN";
+    }
+    const unitOfMeasurement: "W" | "%" =
+      this._config!.entities.fossil_fuel_percentage?.state_type === "percentage"
+        ? "%"
+        : "W" || "W";
+    const nonFossilFuelDecimal: number = 1 - this.getEntityState(entity) / 100;
+    let gridConsumption: number;
+    if (typeof this._config!.entities.grid === "string") {
+      gridConsumption =
+        this.getEntityStateWatts(this._config!.entities!.grid) > 0
+          ? this.getEntityStateWatts(this._config!.entities!.grid)
+          : 0;
+    } else {
+      gridConsumption =
+        this.getEntityStateWatts(this._config!.entities!.grid!.consumption) > 0
+          ? this.getEntityStateWatts(this._config!.entities!.grid!.consumption)
+          : 0;
+    }
+    /* based on choice, change output from watts to % */
+    let result: string;
+    if (unitOfMeasurement === "W") {
+      const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
+      result = this.displayValue(nonFossilFuelWatts);
+    } else {
+      const nonFossilFuelPercentage: number = 100 - this.getEntityState(entity);
+      result = nonFossilFuelPercentage
+        .toFixed(0)
+        .toString()
+        .concat(unitOfMeasurement);
+    }
+    return result;
+  };
+
   private displayValue = (value: number | null) => {
     if (value === null) return "0";
     const isKW = value >= this._config!.watt_threshold;
@@ -395,12 +432,100 @@ export class PowerFlowCard extends LitElement {
       this.previousDur[flowName] = newDur[flowName];
     });
 
+    const hasNonFossilFuelUsage =
+      gridConsumption * 1 -
+        this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 >
+        0 &&
+      entities.fossil_fuel_percentage?.entity !== undefined &&
+      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
+
+    const hasFossilFuelPercentage =
+      (entities.fossil_fuel_percentage?.entity !== undefined &&
+        entities.fossil_fuel_percentage?.display_zero === true) ||
+      hasNonFossilFuelUsage;
+
+    this.style.setProperty(
+      "--non-fossil-color",
+      this._config.entities.fossil_fuel_percentage?.color ||
+        "var(--energy-non-fossil-color)"
+    );
+    this.style.setProperty(
+      "--icon-non-fossil-color",
+      this._config.entities.fossil_fuel_percentage?.color_icon === true
+        ? "var(--non-fossil-color)"
+        : "var(--primary-text-color)" || "var(--non-fossil-color)"
+    );
+
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
           ${hasSolarProduction || hasIndividual2 || hasIndividual1
             ? html`<div class="row">
-                <div class="spacer"></div>
+                ${!hasFossilFuelPercentage
+                  ? html`<div class="spacer"></div>`
+                  : html`<div class="circle-container low-carbon">
+                      <span class="label"
+                        >${!entities.fossil_fuel_percentage?.name
+                          ? this.hass.localize(
+                              "ui.panel.lovelace.cards.energy.energy_distribution.low_carbon"
+                            )
+                          : entities.fossil_fuel_percentage?.name}</span
+                      >
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          this.openDetails(
+                            entities.fossil_fuel_percentage?.entity
+                          );
+                        }}
+                        @keyDown=${(e: {
+                          key: string;
+                          stopPropagation: () => void;
+                        }) => {
+                          if (e.key === "Enter") {
+                            e.stopPropagation();
+                            this.openDetails(
+                              entities.fossil_fuel_percentage?.entity
+                            );
+                          }
+                        }}
+                      >
+                        <ha-icon
+                          .icon=${!entities.fossil_fuel_percentage?.icon
+                            ? "mdi:leaf"
+                            : entities.fossil_fuel_percentage?.icon}
+                          class="low-carbon"
+                        ></ha-icon>
+                        <span class="low-carbon"
+                          >${this.displayNonFossilState(
+                            entities!.fossil_fuel_percentage!.entity
+                          )}</span
+                        >
+                      </div>
+                      <svg width="80" height="30">
+                        <path
+                          d="M40 -10 v40"
+                          class="low-carbon"
+                          id="low-carbon"
+                        />
+                        ${hasNonFossilFuelUsage
+                          ? svg`<circle
+                              r="2.4"
+                              class="low-carbon"
+                              vector-effect="non-scaling-stroke"
+                            >
+                                <animateMotion
+                                  dur="1.66s"
+                                  repeatCount="indefinite"
+                                  calcMode="linear"
+                                >
+                                  <mpath xlink:href="#low-carbon" />
+                                </animateMotion>
+                            </circle>`
+                          : ""}
+                      </svg>
+                    </div>`}
                 ${hasSolarProduction
                   ? html`<div class="circle-container solar">
                       <span class="label"
@@ -462,7 +587,7 @@ export class PowerFlowCard extends LitElement {
                         <path d="M40 -10 v50" id="individual2" />
                         ${individual2Usage
                           ? svg`<circle
-                              r="1"
+                              r="2.4"
                               class="individual2"
                               vector-effect="non-scaling-stroke"
                             >
@@ -508,7 +633,7 @@ export class PowerFlowCard extends LitElement {
                         <path d="M40 -10 v40" id="individual1" />
                         ${individual1Usage
                           ? svg`<circle
-                                r="1"
+                                r="2.4"
                                 class="individual1"
                                 vector-effect="non-scaling-stroke"
                               >
@@ -832,15 +957,9 @@ export class PowerFlowCard extends LitElement {
                         <path d="M40 40 v-40" id="individual1" />
                         ${individual1Usage
                           ? svg`<circle
-                                r="1"
+                                r="2.4"
                                 class="individual1"
-                                vector-effect="non-scaling-stroke"
-                                onClick=${(e) => {
-                                  e.stopPropagation();
-                                  this.openDetails(
-                                    entities.individual1?.entity
-                                  );
-                                }}                                
+                                vector-effect="non-scaling-stroke"                              
                               >
                                 <animateMotion
                                   dur="1.66s"
@@ -1164,6 +1283,8 @@ export class PowerFlowCard extends LitElement {
       --individualone-color: #d0cc5b;
       --individualtwo-color: #964cb5;
       --clickable-cursor: pointer;
+      --non-fossil-color: var(--energy-non-fossil-color, #0f9d58);
+      --icon-non-fossil-color: var(--non-fossil-color, #0f9d58);
     }
     .card-content {
       position: relative;
@@ -1296,6 +1417,20 @@ export class PowerFlowCard extends LitElement {
     }
     .individual1 .circle {
       border-color: var(--individualone-color);
+    }
+    .low-carbon path {
+      stroke: var(--non-fossil-color);
+    }
+    .low-carbon .circle {
+      border-color: var(--non-fossil-color);
+    }
+    .low-carbon ha-icon {
+      color: var(--icon-non-fossil-color);
+    }
+    circle.low-carbon {
+      stroke-width: 4;
+      fill: var(--non-fossil-color);
+      stroke: var(--non-fossil-color);
     }
     .solar {
       color: var(--primary-text-color);

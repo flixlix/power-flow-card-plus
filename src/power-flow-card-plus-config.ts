@@ -8,6 +8,15 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
     grid: string | ComboEntity;
     solar?: string;
     home?: string;
+    fossil_fuel_percentage?: {
+      entity?: string;
+      name?: string;
+      icon?: string;
+      color?: string;
+      display_zero?: boolean;
+      state_type?: "percentage" | "power";
+      color_icon?: boolean;
+    };
     individual2?: {
       entity?: string;
       name?: string;
