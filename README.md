@@ -1,3 +1,4 @@
+
 # Power Flow Card Plus
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
@@ -113,6 +114,9 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | icon | `string` | `mdi:transmission-tower` | Icon path for the icon inside the Grid Circle. |
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
+| display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+																					
+
 
 #### Solar Configuration
 
@@ -128,12 +132,13 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 
 | Name        | Type    | Default  | Description                                                                                       |
 | ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entities](#split-entities). Examples of both can be found below. |
 | state_of_charge | `string` | `undefined` required | Entity ID providing a state with the state of charge of the battery in percent (state of  `100` for a full battery). |
 | name  | `string` | `Battery` | Label for the battery option. If you don't populate this option, the label will continue to update based on the language selected. |
 | icon | `string` | `mdi:battery` or dynamic based on state of the battery | Icon path for the icon inside the Battery Circle. |
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
+| display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
 
 #### Individual Configuration
 
