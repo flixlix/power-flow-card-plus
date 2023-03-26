@@ -1,18 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import {
-  mdiArrowDown,
-  mdiArrowLeft,
-  mdiArrowRight,
-  mdiArrowUp,
-  mdiBattery,
-  mdiBatteryHigh,
-  mdiBatteryLow,
-  mdiBatteryMedium,
-  mdiBatteryOutline,
-  mdiHome,
-  mdiSolarPower,
-  mdiTransmissionTower,
-} from "@mdi/js";
 import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
@@ -384,15 +370,15 @@ export class PowerFlowCard extends LitElement {
       ? this.getEntityState(entities.battery_charge)
       : null;
 
-    let batteryIcon = mdiBatteryHigh;
+    let batteryIcon = "mdi:battery-high";
     if (batteryChargeState === null) {
-      batteryIcon = mdiBattery;
+      batteryIcon = "mdi:battery";
     } else if (batteryChargeState <= 72 && batteryChargeState > 44) {
-      batteryIcon = mdiBatteryMedium;
+      batteryIcon = "mdi:battery-medium";
     } else if (batteryChargeState <= 44 && batteryChargeState > 16) {
-      batteryIcon = mdiBatteryLow;
+      batteryIcon = "mdi:battery-low";
     } else if (batteryChargeState <= 16) {
-      batteryIcon = mdiBatteryOutline;
+      batteryIcon = "mdi:battery-outline";
     }
 
     const newDur = {
@@ -549,7 +535,7 @@ export class PowerFlowCard extends LitElement {
                           }
                         }}
                       >
-                        <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
+                        <ha-icon .icon=${"mdi:solar-power"}></ha-icon>
                         <span class="solar">
                           ${this.displayValue(totalSolarProduction)}</span
                         >
@@ -682,7 +668,7 @@ export class PowerFlowCard extends LitElement {
                       }
                     }}
                   >
-                    <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
+                    <ha-icon .icon=${"mdi:transmission-tower"}></ha-icon>
                     ${returnedToGrid !== null
                       ? html`<span
                           class="return"
@@ -708,18 +694,15 @@ export class PowerFlowCard extends LitElement {
                             }
                           }}
                         >
-                          <ha-svg-icon
+                          <ha-icon
                             class="small"
-                            .path=${mdiArrowLeft}
-                          ></ha-svg-icon
-                          >${this.displayValue(returnedToGrid)}
+                            .icon=${"mdi:arrow-left"}
+                          ></ha-icon>
+                          ${this.displayValue(returnedToGrid)}
                         </span>`
                       : null}
                     <span class="consumption">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowRight}
-                      ></ha-svg-icon
+                      <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon
                       >${this.displayValue(totalFromGrid)}
                     </span>
                   </div>
@@ -748,7 +731,7 @@ export class PowerFlowCard extends LitElement {
                   }
                 }}
               >
-                <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
+                <ha-icon .icon=${"mdi:home"}></ha-icon>
                 ${this.displayValue(totalHomeConsumption)}
                 <svg>
                   ${homeSolarCircumference !== undefined
@@ -867,8 +850,8 @@ export class PowerFlowCard extends LitElement {
                               )}%
                             </span>`
                           : null}
-                        <ha-svg-icon
-                          .path=${batteryIcon}
+                        <ha-icon
+                          .icon=${batteryIcon}
                           @click=${(e: { stopPropagation: () => void }) => {
                             e.stopPropagation();
                             this.openDetails(entities.battery_charge![0]);
@@ -882,7 +865,7 @@ export class PowerFlowCard extends LitElement {
                               this.openDetails(entities.battery_charge![0]);
                             }
                           }}
-                        ></ha-svg-icon>
+                        ></ha-icon>
                         <span
                           class="battery-in"
                           @click=${(e: { stopPropagation: () => void }) => {
@@ -907,11 +890,11 @@ export class PowerFlowCard extends LitElement {
                             }
                           }}
                         >
-                          <ha-svg-icon
+                          <ha-icon
                             class="small"
-                            .path=${mdiArrowDown}
-                          ></ha-svg-icon
-                          >${this.displayValue(totalBatteryIn)}</span
+                            .icon=${"mdi:arrow-down"}
+                          ></ha-icon>
+                          ${this.displayValue(totalBatteryIn)}</span
                         >
                         <span
                           class="battery-out"
@@ -937,11 +920,8 @@ export class PowerFlowCard extends LitElement {
                             }
                           }}
                         >
-                          <ha-svg-icon
-                            class="small"
-                            .path=${mdiArrowUp}
-                          ></ha-svg-icon
-                          >${this.displayValue(totalBatteryOut)}</span
+                          <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
+                          ${this.displayValue(totalBatteryOut)}</span
                         >
                       </div>
                       <span class="label"
@@ -1371,10 +1351,10 @@ export class PowerFlowCard extends LitElement {
     #battery-grid {
       stroke: var(--energy-grid-return-color);
     }
-    ha-svg-icon, ha-icon {
+    ha-icon {
       padding-bottom: 2px;
     }
-    ha-svg-icon.small {
+    ha-icon.small {
       --mdc-icon-size: 12px;
     }
     .label {

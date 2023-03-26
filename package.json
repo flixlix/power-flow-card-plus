@@ -27,7 +27,6 @@
     "start": "rollup -wc"
   },
   "dependencies": {
-    "@mdi/js": "^6.6.96",
     "custom-card-helpers": "^1.9.0",
     "home-assistant-js-websocket": "^7.0.3",
     "lit": "^2.2.2",
