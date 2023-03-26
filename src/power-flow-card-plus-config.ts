@@ -10,6 +10,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       icon?: string;
       color?: ComboEntity;
       color_icon?: boolean | "production" | "consumption";
+      display_state?: "two_way" | "one_way" | "one_way_no_zero";
     }
     grid?: {
       entity: string | ComboEntity;
@@ -17,6 +18,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       icon?: string;
       color?: ComboEntity;
       color_icon?: boolean | "production" | "consumption";
+      display_state?: "two_way" | "one_way" | "one_way_no_zero";
     };
     solar?: {
       entity: string;

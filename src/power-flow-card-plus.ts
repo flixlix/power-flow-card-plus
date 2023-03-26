@@ -401,15 +401,15 @@ export class PowerFlowCard extends LitElement {
     }
 
     if (this._config.entities.battery?.color?.consumption !== undefined)
-    this.style.setProperty(
-      "--energy-battery-out-color",
-      this._config.entities.battery?.color?.consumption || "#4db6ac"
-    );
+      this.style.setProperty(
+        "--energy-battery-out-color",
+        this._config.entities.battery?.color?.consumption || "#4db6ac"
+      );
     if (this._config.entities.battery?.color?.production !== undefined)
-    this.style.setProperty(
-      "--energy-battery-in-color",
-      this._config.entities.battery?.color?.production || "#a280db"
-    );
+      this.style.setProperty(
+        "--energy-battery-in-color",
+        this._config.entities.battery?.color?.production || "#a280db"
+      );
     const batteryIconColorType = this._config.entities.battery?.color_icon;
     this.style.setProperty(
       "--icon-battery-color",
@@ -794,7 +794,14 @@ export class PowerFlowCard extends LitElement {
                     <ha-icon
                       .icon=${entities.grid?.icon || "mdi:transmission-tower"}
                     ></ha-icon>
-                    ${totalToGrid !== null
+                    ${(entities.grid?.display_state === "two_way" ||
+                      entities.grid?.display_state === undefined ||
+                      (entities.grid?.display_state === "one_way" &&
+                        totalToGrid > 0) ||
+                      (entities.grid?.display_state === "one_way_no_zero" &&
+                        (totalFromGrid === null || totalFromGrid === 0) &&
+                        totalToGrid !== 0)) &&
+                    totalToGrid !== null
                       ? html`<span
                           class="return"
                           @click=${(e: { stopPropagation: () => void }) => {
@@ -826,13 +833,21 @@ export class PowerFlowCard extends LitElement {
                           ${this.displayValue(totalToGrid)}
                         </span>`
                       : null}
-                    <span class="consumption">
-                      <ha-icon
-                        class="small"
-                        .icon=${"mdi:arrow-right"}
-                      ></ha-icon
-                      >${this.displayValue(totalFromGrid)}
-                    </span>
+                    ${(entities.grid?.display_state === "two_way" ||
+                      entities.grid?.display_state === undefined ||
+                      (entities.grid?.display_state === "one_way" &&
+                        totalFromGrid > 0) ||
+                      (entities.grid?.display_state === "one_way_no_zero" &&
+                        (totalToGrid === null || totalToGrid === 0))) &&
+                    totalFromGrid !== null
+                      ? html` <span class="consumption">
+                          <ha-icon
+                            class="small"
+                            .icon=${"mdi:arrow-right"}
+                          ></ha-icon
+                          >${this.displayValue(totalFromGrid)}
+                        </span>`
+                      : ""}
                   </div>
                   <span class="label"
                     >${entities.grid!.name ||
@@ -986,6 +1001,10 @@ export class PowerFlowCard extends LitElement {
                           : null}
                         <ha-icon
                           .icon=${batteryIcon}
+                          style=${entities.battery?.display_state ===
+                            "one_way" && totalBatteryIn > 0
+                            ? "padding-top: 0px; padding-bottom: 2px;"
+                            : "padding-top: 2px; padding-bottom: 0px;"}
                           @click=${(e: { stopPropagation: () => void }) => {
                             e.stopPropagation();
                             this.openDetails(
@@ -1004,66 +1023,86 @@ export class PowerFlowCard extends LitElement {
                             }
                           }}
                         ></ha-icon>
-                        <span
-                          class="battery-in"
-                          @click=${(e: { stopPropagation: () => void }) => {
-                            const target =
-                              typeof entities.battery!.entity === "string"
-                                ? entities.battery!.entity!
-                                : entities.battery!.entity!.production!;
-                            e.stopPropagation();
-                            this.openDetails(target);
-                          }}
-                          @keyDown=${(e: {
-                            key: string;
-                            stopPropagation: () => void;
-                          }) => {
-                            if (e.key === "Enter") {
-                              const target =
-                                typeof entities.battery!.entity === "string"
-                                  ? entities.battery!.entity!
-                                  : entities.battery!.entity!.production!;
-                              e.stopPropagation();
-                              this.openDetails(target);
-                            }
-                          }}
-                        >
-                          <ha-icon
-                            class="small"
-                            .icon=${"mdi:arrow-down"}
-                          ></ha-icon>
-                          ${this.displayValue(totalBatteryIn)}</span
-                        >
-                        <span
-                          class="battery-out"
-                          @click=${(e: { stopPropagation: () => void }) => {
-                            const target =
-                              typeof entities.battery!.entity === "string"
-                                ? entities.battery!.entity!
-                                : entities.battery!.entity!.consumption!;
-                            e.stopPropagation();
-                            this.openDetails(target);
-                          }}
-                          @keyDown=${(e: {
-                            key: string;
-                            stopPropagation: () => void;
-                          }) => {
-                            if (e.key === "Enter") {
-                              const target =
-                                typeof entities.battery!.entity === "string"
-                                  ? entities.battery!.entity!
-                                  : entities.battery!.entity!.consumption!;
-                              e.stopPropagation();
-                              this.openDetails(target);
-                            }
-                          }}
-                        >
-                          <ha-icon
-                            class="small"
-                            .icon=${"mdi:arrow-up"}
-                          ></ha-icon>
-                          ${this.displayValue(totalBatteryOut)}</span
-                        >
+                        ${(entities.battery?.display_state === "two_way" ||
+                          entities.battery?.display_state === undefined ||
+                          (entities.battery?.display_state === "one_way" &&
+                            totalBatteryIn > 0) ||
+                          (entities.grid?.display_state === "one_way_no_zero" &&
+                            (totalBatteryOut === null ||
+                              totalBatteryOut === 0) &&
+                            totalBatteryIn !== 0)) &&
+                        totalToGrid !== null
+                          ? html`<span
+                              class="battery-in"
+                              @click=${(e: { stopPropagation: () => void }) => {
+                                const target =
+                                  typeof entities.battery!.entity === "string"
+                                    ? entities.battery!.entity!
+                                    : entities.battery!.entity!.production!;
+                                e.stopPropagation();
+                                this.openDetails(target);
+                              }}
+                              @keyDown=${(e: {
+                                key: string;
+                                stopPropagation: () => void;
+                              }) => {
+                                if (e.key === "Enter") {
+                                  const target =
+                                    typeof entities.battery!.entity === "string"
+                                      ? entities.battery!.entity!
+                                      : entities.battery!.entity!.production!;
+                                  e.stopPropagation();
+                                  this.openDetails(target);
+                                }
+                              }}
+                            >
+                              <ha-icon
+                                class="small"
+                                .icon=${"mdi:arrow-down"}
+                              ></ha-icon>
+                              ${this.displayValue(totalBatteryIn)}</span
+                            >`
+                          : ""}
+                        ${(entities.battery?.display_state === "two_way" ||
+                          entities.battery?.display_state === undefined ||
+                          (entities.battery?.display_state === "one_way" &&
+                            totalBatteryOut > 0) ||
+                          (entities.battery?.display_state ===
+                            "one_way_no_zero" &&
+                            (totalBatteryIn === null ||
+                              totalBatteryIn === 0))) &&
+                        totalBatteryOut !== null
+                          ? html`<span
+                              class="battery-out"
+                              @click=${(e: { stopPropagation: () => void }) => {
+                                const target =
+                                  typeof entities.battery!.entity === "string"
+                                    ? entities.battery!.entity!
+                                    : entities.battery!.entity!.consumption!;
+                                e.stopPropagation();
+                                this.openDetails(target);
+                              }}
+                              @keyDown=${(e: {
+                                key: string;
+                                stopPropagation: () => void;
+                              }) => {
+                                if (e.key === "Enter") {
+                                  const target =
+                                    typeof entities.battery!.entity === "string"
+                                      ? entities.battery!.entity!
+                                      : entities.battery!.entity!.consumption!;
+                                  e.stopPropagation();
+                                  this.openDetails(target);
+                                }
+                              }}
+                            >
+                              <ha-icon
+                                class="small"
+                                .icon=${"mdi:arrow-up"}
+                              ></ha-icon>
+                              ${this.displayValue(totalBatteryOut)}</span
+                            >`
+                          : ""}
                       </div>
                       <span class="label"
                         >${entities.battery!.name ||
