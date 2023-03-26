@@ -68,6 +68,8 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 ## Using the card
 
+> ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
+
 I recommend looking at the [Example usage section](#example-usage) to understand the basics to configure this card.
 (also) pay attention to the **required** options mentioned below.
 
@@ -95,14 +97,83 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 
 | Name           | Type                | Description                                                                                                                                                                                                     |
 | -------------- | :------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| grid           | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
-| battery        | `string` / `object` | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
-| battery_charge | `string`            | Entity ID providing a state with the current percentage of charge on the battery.                                                                                                                               |
-| solar          | `string`            | Entity ID providing a state with the value of generation.                                                                                                                                                       |
-| individual1    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
-| individual2    | `object`            | Check [Individual Devices](#individual-devices) for more information. |
-| home          | `string`            | Entity ID providing a state with the value of home consumption. This value will not be displayed in the card. It is only responsible for the dialog that opens when clicking on the home icon |
-| fossil_fuel_percentage | `object`            | Check [Fossil Fuel Percentage](#fossil-fuel-percentage) for more information. |
+| grid           | `object` | Check [Grid Configuration](#grid-configuration) for more information. |
+| solar          | `object` | Check [Solar Configuration](#solar-configuration) for more information. |
+| battery        | `object` | Check [Battery Configuration](#battery-configuration) for more information. |
+| individual1    | `object` | Check [Individual Devices](#individual-configuration) for more information. |
+| individual2    | `object` | Check [Individual Devices](#individual-configuration) for more information. |
+| home           | `object` | Check [Home Configuration](#home-configuration) for more information. |
+| fossil_fuel_percentage | `object` | Check [Fossil Fuel Percentage](#fossil-fuel-configuration) for more information. |
+
+#### Grid Configuration
+
+| Name        | Type    | Default  | Description                                                                                       |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| name  | `string` | `Grid` | If you don't populate this option, the label will continue to update based on the language selected. |
+| icon | `string` | `mdi:transmission-tower` | Icon path for the icon inside the Grid Circle. |
+| color | `object` |  | Check [Color Objects](#color-object) for more information. |
+| color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
+
+#### Solar Configuration
+
+| Name        | Type    | Default  | Description                                                                                       |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity | `string` | `undefined` required | Entity ID providing a state with the value of solar production. |
+| name  | `string` | `Solar` | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected. |
+| icon | `string` | `mdi:solar-power` | Icon path for the icon inside the Solar Circle. |
+| color | `string` |  | HEX value of the color for circles labels and lines of solar production. |
+| color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
+
+#### Battery Configuration
+
+| Name        | Type    | Default  | Description                                                                                       |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
+| state_of_charge | `string` | `undefined` required | Entity ID providing a state with the state of charge of the battery in percent (state of  `100` for a full battery). |
+| name  | `string` | `Battery` | Label for the battery option. If you don't populate this option, the label will continue to update based on the language selected. |
+| icon | `string` | `mdi:battery` or dynamic based on state of the battery | Icon path for the icon inside the Battery Circle. |
+| color | `object` |  | Check [Color Objects](#color-object) for more information. |
+| color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
+
+#### Individual Configuration
+
+| Name        | Type    | Default  | Description                                                                                       |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity | `string` or `object` | `undefined` required | Entity ID providing a state with the value of an individual consumption. |
+| name  | `string` | `Car` or `Motorcycle` | Label for the individual device option. If you don't populate this option, the label will continue to update based on the language selected. |
+| icon | `string` | `mdi:car-electric` or `mdi:motorbike-electric` | Icon path for the icon inside the Individual Device Circle. |
+| color | `string` | `#d0cc5b` or `#964cb5` | HEX value of the color for circles labels and lines of the individual device. |
+| color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
+| display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+
+#### Home Configuration
+
+| Name        | Type    | Default  | Description                                                                                       |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity | `string` or `object` | `undefined` required | Entity ID providing a state with the value of your home's consumption. Note that this entity will not be displayed and will only be used for the more info dialog when clicking the home section. |
+| name  | `string` | `Home` | Label for the home option. If you don't populate this option, the label will continue to update based on the language selected. |
+| icon | `string` | `mdi:home` | Icon path for the icon inside the Home Circle. |
+| color_icon | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, icon color will match the highest value. If set to `solar`, icon color will match the color of solar. If set to `grid`, icon color will match the color of the grid consumption. If set to `battery`, icon color will match the color of the battery consumption. |
+
+#### Fossil Fuel Configuration
+
+| Name        | Type    | Default  | Description                                                                                       |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity           | `string` | `none` required | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be `100` when all the energy from the grid comes from high emission sources and `0` when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
+| name        | `string` | Low-carbon | Name to appear as a label on top of the circle. |
+| icon | `string`            | `mdi:leaf` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
+| color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
+| color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
+| display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
+
+#### Color Object
+
+| Name        | Type    | Description                                                                                       |
+| ----------- | ------- | ------------------------------------------------------------------------------------------------- |
+| production | `string` | HEX value of the color for circles labels and lines of production. |
+| consumption | `string` | HEX value of the color for circles labels and lines of consumption. |
 
 
 #### Split entities
@@ -114,97 +185,121 @@ Can be use with either Grid or Battery configuration. The same `unit_of_measurem
 | consumption | `string` | Entity ID providing a state value for consumption, this is required if using a split grid object. |
 | production  | `string` | Entity ID providing a state value for production                                                  |
 
-### Example usage
+### Minimal Configuration
 
-#### Combined Entites Example
+> Don't forget to change the entity ids
 
-Using combined entities for grid, battery and solor that support positive state values for consumption and negative state values for production.
+The following configurations will allow you to achieve your results with the least amount of lines of code / complexity.
+In these examples I decided to use the Split entities option, but feel free to use the combined entity option. [More Info](#split-entities)
 
-```yaml
-type: custom:power-flow-card-plus
-entities:
-  battery: sensor.battery_in_out
-  battery_charge: sensor.battery_percent
-  grid: sensor.grid_in_out
-  solar: sensor.solar_out
-```
-
-#### Inverted Entities Example
-
-Using combined entites as above but where the battery and grid entities are inverted (negative = consumption and positive = production).
-
-```yaml
-type: custom:power-flow-card-plus
-entities:
-  battery: sensor.battery_in_out
-  battery_charge: sensor.battery_percent
-  grid: sensor.grid_in_out
-  solar: sensor.solar_out
-inverted_entities: battery, grid
-```
-
-#### Split Entites Example
-
-Using split entities for grid and battery where each consumption and production entity state has a positive value.
-
-```yaml
-type: custom:power-flow-card-plus
-entities:
-  battery:
-    consumption: sensor.battery_out
-    production: sensor.battery_in
-  battery_charge: sensor.battery_percent
-  grid:
-    consumption: sensor.grid_out
-    production: sensor.grid_in
-  solar: sensor.solar_out
-```
-
-#### Individual Devices
-
-Using individual devices for consumption.
-
-| Name           | Type              | Default   | Description                                                                                                                                                                                                     |
-| -------------- | :------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity           | `string` | `none` | Entity ID of a sensor supporting a single state. |
-| name        | `string` | Car / Motorcycle | Name to appear as a label next to the circle. |
-| icon | `string`            | `mdi:car-electric` / `mdi:motorbike-electric` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
-| color          | `string`        | `#d0cc5b` / `#964cb5` |  HEX Value of a color to display as the stroke of the circle and line connecting to your home. |
-| display_zero | `boolean` | `false` | If true, the device will be displayed even if the entity state is 0 or not a number (eg: unavailable). |
-
-<img src="https://user-images.githubusercontent.com/61006057/227745087-3ec4b137-1954-46a9-9a13-9091b9f43fea.png" width="100%" />
-
-
-##### Example using individual devices
+##### Only Grid
 
 ```yaml
 type: custom:power-flow-card-plus
 entities:
   grid:
-    production:
-      - sensor.grid_out_power
-    consumption:
-      - sensor.grid_in_power
+    entity:
+      consumption: sensor.grid_consumption
+```
+This should give you something like this:
+![minimal_config_only_grid](https://user-images.githubusercontent.com/61006057/227788281-992670a5-e2b7-4ea7-8166-0039d7a6526d.png)
+
+
+##### Grid and Solar
+
+```yaml
+type: custom:power-flow-card-plus
+entities:
+  grid:
+    entity:
+      consumption: sensor.grid_consumption
+      production: sensor.grid_production
   solar:
-    - sensor.solar_power
-  battery_charge:
-    - sensor.battery_state_of_charge
-  battery:
-    production:
-      - sensor.battery_in_power
-    consumption:
-      - sensor.battery_out_power
-  individual1:
-    entity: sensor.heater_power
-    name: Heater
-    icon: mdi:radiator
-    color: "#ff0000"
-  individual2:
-    entity: sensor.fridge_power
-    name: Fridge
-    icon: mdi:fridge
-    color: "#0000ff"
+    entity: sensor.solar_production
 ```
+This should give you something like this:
+![minimal_config_grid_solar](https://user-images.githubusercontent.com/61006057/227788602-460a01d3-6310-40b2-b432-d1b5d324245f.png)
+
+
+##### Grid, Solar and Battery
+
+
+```yaml
+type: custom:power-flow-card-plus
+entities:
+  grid:
+    entity:
+      consumption: sensor.grid_consumption
+      production: sensor.grid_production
+  solar:
+    entity: sensor.solar_production
+  battery:
+    entity:
+       consumption: sensor.battery_consumption
+       production: sensor.battery_production
+    state_of_charge: sensor.battery_state_of_charge
+```
+This should give you something like this:
+![minimal_config_grid_solar_battery](https://user-images.githubusercontent.com/61006057/227788820-25f2ee65-ad56-4c05-94b3-9f056d3a0bc2.png)
+
+
+
+### Mix & Match Config aka "Full Config"
+
+> This Configuration is a little bit random, it's just here to demonstrate the capabilities of this card.
+
+```yaml
+type: custom:power-flow-card-plus
+entities:
+  home:
+    entity: sensor.home_consumption
+    color_icon: solar
+  fossil_fuel_percentage:
+    entity: sensor.fossil_fuel_percentage
+    icon: mdi:pine-tree
+    color_icon: true
+    display_zero: true
+    name: Non Fossil
+    state_type: power
+  grid:
+    icon: mdi:ab-testing
+    name: Provider
+    entity:
+      production: sensor.grid_production
+      consumption: sensor.grid_consumption
+  solar:
+    icon: mdi:solar-panel-large
+    entity: sensor.solar_production
+  battery:
+    name: Bateria
+    icon: mdi:bat
+    entity:
+      consumption: sensor.battery_consumption
+      production: sensor.battery_production
+  individual1:
+    entity: sensor.car_power
+    icon: mdi:car-electric
+    color: '#80b8ff'
+    name: Denim Flash
+    color_icon: false
+  individual2:
+    entity: sensor.motorbike_power
+    name: Qivi
+    color_icon: true
+    display_zero: true
+    color: '#ff8080'
+    icon: mdi:motorbike-electric
+w_decimals: 0
+kw_decimals: 2
+min_flow_rate: 0.9
+max_flow_rate: 6
+watt_threshold: 10000
+clickable_entities: true
+title: Power Flow Card Plus
+```
+This should give you something like this:
+![minimal_config_full](https://user-images.githubusercontent.com/61006057/227789815-41f15dd4-3d24-4eb8-96ca-c7f7f01a4f46.png)
+
 
 ### Flow Formula
 
@@ -220,70 +315,6 @@ max - (value / totalLines) * (max - min);
 ```
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
-
-### Fossil Fuel Percentage
-
-
-| Name           | Type              | Default   | Description                                                                                                                                                                                                     |
-| -------------- | :------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity           | `string` | `none` | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be `100` when all the energy from the grid comes from high emission sources and `0` when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
-| name        | `string` | Low-carbon | Name to appear as a label on top of the circle. |
-| icon | `string`            | `mdi:leaf` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
-| color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
-| color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
-| display_zero | `boolean` | `false` | If `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
-| state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
-
-### Full Example
-
-This example aims to show you what is possible using this card, I don't recommend copying and pasting it without understanding what each property does.
-
-```yaml
-type: custom:power-flow-card-plus
-entities:
-  grid:
-    production:
-      - sensor.grid_out_power
-    consumption:
-      - sensor.grid_in_power
-  solar:
-    - sensor.solar_power
-  battery_charge:
-    - sensor.battery_state_of_charge
-  battery:
-    production:
-      - sensor.battery_in_power
-    consumption:
-      - sensor.battery_out_power
-  individual1:
-    entity: sensor.heater_power
-    name: Heater
-    icon: mdi:radiator
-    color: "#ff0000"
-    display_zero: true
-  individual2:
-    entity: sensor.fridge_power
-    name: Fridge
-    icon: mdi:fridge
-    color: "#0000ff"
-    display_zero: false
-  fossil_fuel_percentage:
-    entity: sensor.co2signal_co2_intensity
-    name: Low-carbon
-    icon: mdi:leaf
-    color: "#0f9d58"
-    color_icon: false
-    display_zero: false
-    state_type: power
-title: Power Flow
-dashboard_link: '/energy'
-w_decimals: 0
-kw_decimals: 2
-min_flow_rate: 1
-max_flow_rate: 3
-watt_threshold: 10000
-clickable_entities: true
-```
 
 #### Credits
 
