@@ -96,7 +96,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 
 | Name           | Type                | Description                                                                                                                                                                                                     |
 | -------------- | :------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| grid           | `object` | Check [Grid Configuration](#grid-configuration) for more information. |
+| grid           | `object` required | Check [Grid Configuration](#grid-configuration) for more information. |
 | solar          | `object` | Check [Solar Configuration](#solar-configuration) for more information. |
 | battery        | `object` | Check [Battery Configuration](#battery-configuration) for more information. |
 | individual1    | `object` | Check [Individual Devices](#individual-configuration) for more information. |
