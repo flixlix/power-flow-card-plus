@@ -3,13 +3,36 @@ import { ComboEntity } from "./type.js";
 
 export interface PowerFlowCardConfig extends LovelaceCardConfig {
   entities: {
-    battery?: string | ComboEntity;
-    battery_charge?: string;
-    grid: string | ComboEntity;
-    solar?: string;
-    home?: string;
+    battery?: {
+      entity: string | ComboEntity;
+      state_of_charge?: string;
+      name?: string;
+      icon?: string;
+      color?: ComboEntity;
+      color_icon?: boolean | "production" | "consumption";
+    }
+    grid?: {
+      entity: string | ComboEntity;
+      name?: string;
+      icon?: string;
+      color?: ComboEntity;
+      color_icon?: boolean | "production" | "consumption";
+    };
+    solar?: {
+      entity: string;
+      name?: string;
+      icon?: string;
+      color?: string;
+      color_icon?: boolean;
+    };
+    home?: {
+      entity: string;
+      name?: string;
+      icon?: string;
+      color_icon?: boolean | "solar" | "grid" | "battery";
+    };
     fossil_fuel_percentage?: {
-      entity?: string;
+      entity: string;
       name?: string;
       icon?: string;
       color?: string;
@@ -17,18 +40,20 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       state_type?: "percentage" | "power";
       color_icon?: boolean;
     };
-    individual2?: {
-      entity?: string;
+    individual1?: {
+      entity: string;
       name?: string;
       icon?: string;
       color?: string;
+      color_icon?: boolean;
       display_zero?: boolean;
     };
-    individual1?: {
-      entity?: string;
+    individual2?: {
+      entity: string;
       name?: string;
       icon?: string;
       color?: string;
+      color_icon?: boolean;
       display_zero?: boolean;
     };
   };
