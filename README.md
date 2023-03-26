@@ -16,6 +16,7 @@
 - Keep color of battery to grid line, even when not returning
 - Display Low Carbon Energy from the grid
 - Customize Low Carbon Energy label, icon, circle color, icon color and state type
+- Customize Battery, Solar and Home's color, icon, color of icon and label
 
 ## Goal/Scope
 
@@ -70,8 +71,6 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
-I recommend looking at the [Example usage section](#example-usage) to understand the basics to configure this card.
-(also) pay attention to the **required** options mentioned below.
 
 ### Options
 
