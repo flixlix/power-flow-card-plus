@@ -201,6 +201,7 @@ entities:
       consumption: sensor.grid_consumption
 ```
 This should give you something like this:
+
 ![minimal_config_only_grid](https://user-images.githubusercontent.com/61006057/227788281-992670a5-e2b7-4ea7-8166-0039d7a6526d.png)
 
 
@@ -217,6 +218,7 @@ entities:
     entity: sensor.solar_production
 ```
 This should give you something like this:
+
 ![minimal_config_grid_solar](https://user-images.githubusercontent.com/61006057/227788602-460a01d3-6310-40b2-b432-d1b5d324245f.png)
 
 
@@ -239,6 +241,7 @@ entities:
     state_of_charge: sensor.battery_state_of_charge
 ```
 This should give you something like this:
+
 ![minimal_config_grid_solar_battery](https://user-images.githubusercontent.com/61006057/227788820-25f2ee65-ad56-4c05-94b3-9f056d3a0bc2.png)
 
 
