@@ -400,6 +400,16 @@ export class PowerFlowCard extends LitElement {
       batteryConsumption = (totalBatteryOut ?? 0) - (batteryToGrid ?? 0);
     }
 
+    if (this._config.entities.battery?.color?.consumption !== undefined)
+    this.style.setProperty(
+      "--energy-battery-out-color",
+      this._config.entities.battery?.color?.consumption || "#4db6ac"
+    );
+    if (this._config.entities.battery?.color?.production !== undefined)
+    this.style.setProperty(
+      "--energy-battery-in-color",
+      this._config.entities.battery?.color?.production || "#a280db"
+    );
     const batteryIconColorType = this._config.entities.battery?.color_icon;
     this.style.setProperty(
       "--icon-battery-color",
