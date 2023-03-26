@@ -1371,7 +1371,7 @@ export class PowerFlowCard extends LitElement {
     #battery-grid {
       stroke: var(--energy-grid-return-color);
     }
-    ha-svg-icon {
+    ha-svg-icon, ha-icon {
       padding-bottom: 2px;
     }
     ha-svg-icon.small {
