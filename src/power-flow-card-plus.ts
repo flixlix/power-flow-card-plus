@@ -420,38 +420,13 @@ export class PowerFlowCard extends LitElement {
       gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0),
       0
     );
-    const homeIconColorType = this._config.entities.home?.color_icon;
-    const homeLargestSource:
-      | "var(--energy-solar-color)"
-      | "var(--energy-battery-out-color)"
-      | "var(--energy-grid-consumption-color)" =
-      /* see which number is the largest out of three different numbers */
-      totalSolarProduction >= batteryConsumption &&
-      totalSolarProduction >= totalFromGrid
-        ? "var(--energy-solar-color)"
-        : batteryConsumption >= totalSolarProduction &&
-        batteryConsumption >= totalFromGrid
-        ? "var(--energy-battery-out-color)"
-        : "var(--energy-grid-consumption-color)";
 
-    let iconHomeColor: string = "var(--primary-text-color)";
-    if (homeIconColorType === "solar") {
-      iconHomeColor = "var(--energy-solar-color)";
-    } else if (homeIconColorType === "battery") {
-      iconHomeColor = "var(--energy-battery-out-color)";
-    } else if (homeIconColorType === "grid") {
-      iconHomeColor = "var(--energy-grid-consumption-color)";
-    } else if (homeIconColorType === true) {
-      iconHomeColor = homeLargestSource;
-    }
-    this.style.setProperty("--icon-home-color", iconHomeColor);
-
-    let homeBatteryCircumference: number | undefined;
+    let homeBatteryCircumference: number = 0;
     if (batteryConsumption)
       homeBatteryCircumference =
         CIRCLE_CIRCUMFERENCE * (batteryConsumption / totalHomeConsumption);
 
-    let homeSolarCircumference: number | undefined;
+    let homeSolarCircumference: number = 0;
     if (hasSolarProduction) {
       homeSolarCircumference =
         CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
@@ -551,9 +526,31 @@ export class PowerFlowCard extends LitElement {
         : "var(--primary-text-color)" || "var(--non-fossil-color)"
     );
 
-  
-    console.log("totalBatteryOut",totalBatteryOut);
-    console.log("totalSolarProduction",totalSolarProduction);
+    const homeIconColorType = this._config.entities.home?.color_icon;
+    const homeLargestSource:
+      | "var(--energy-solar-color)"
+      | "var(--energy-battery-out-color)"
+      | "var(--energy-grid-consumption-color)" =
+      /* see which number is the largest out of three different numbers */
+      homeSolarCircumference >= homeBatteryCircumference &&
+      homeSolarCircumference >= homeGridCircumference
+        ? "var(--energy-solar-color)"
+        : homeBatteryCircumference >= homeSolarCircumference &&
+          homeBatteryCircumference >= homeGridCircumference
+        ? "var(--energy-battery-out-color)"
+        : "var(--energy-grid-consumption-color)";
+
+    let iconHomeColor: string = "var(--primary-text-color)";
+    if (homeIconColorType === "solar") {
+      iconHomeColor = "var(--energy-solar-color)";
+    } else if (homeIconColorType === "battery") {
+      iconHomeColor = "var(--energy-battery-out-color)";
+    } else if (homeIconColorType === "grid") {
+      iconHomeColor = "var(--energy-grid-consumption-color)";
+    } else if (homeIconColorType === true) {
+      iconHomeColor = homeLargestSource;
+    }
+    this.style.setProperty("--icon-home-color", iconHomeColor);
 
     return html`
       <ha-card .header=${this._config.title}>
