@@ -4,7 +4,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/flixlix/power-flow-card-plus/total?style=flat-square)
 [![ko-fi support](https://img.shields.io/badge/support-me-ff5e5b?style=flat-square&logo=ko-fi)](https://ko-fi.com/flixlix)
 
-<img src="https://user-images.githubusercontent.com/61006057/227745087-3ec4b137-1954-46a9-9a13-9091b9f43fea.png" width="100%" />
+![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 
 ## Additional Features / Enhancements
 
@@ -172,7 +172,8 @@ Using individual devices for consumption.
 | color          | `string`        | `#d0cc5b` / `#964cb5` |  HEX Value of a color to display as the stroke of the circle and line connecting to your home. |
 | display_zero | `boolean` | `false` | If true, the device will be displayed even if the entity state is 0 or not a number (eg: unavailable). |
 
-![image](https://user-images.githubusercontent.com/61006057/227382826-7918ecdc-f578-421e-8d5e-6400e366802e.png)
+<img src="https://user-images.githubusercontent.com/61006057/227745087-3ec4b137-1954-46a9-9a13-9091b9f43fea.png" width="100%" />
+
 
 ##### Example using individual devices
 
