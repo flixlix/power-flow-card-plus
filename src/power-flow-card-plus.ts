@@ -1730,6 +1730,10 @@ export class PowerFlowCard extends LitElement {
     .individual1 .circle {
       border-color: var(--individualone-color);
     }
+    .circle-container.low-carbon {
+      margin-right: 4px;
+      height: 130px;
+    }
     .low-carbon path {
       stroke: var(--non-fossil-color);
     }
