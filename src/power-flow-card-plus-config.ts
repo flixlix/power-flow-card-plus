@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { ComboEntity, IndividualDeviceType } from "./type.js";
+import { ComboEntity } from "./type.js";
 
 export interface PowerFlowCardConfig extends LovelaceCardConfig {
   entities: {
@@ -42,8 +42,24 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       state_type?: "percentage" | "power";
       color_icon?: boolean;
     };
-    individual1?: IndividualDeviceType;
-    individual2?: IndividualDeviceType;
+    individual1?: {
+      entity: string;
+      name?: string;
+      icon?: string;
+      color?: string;
+      color_icon?: boolean;
+      display_zero?: boolean;
+      inverted_animation?: boolean;
+    };
+    individual2?: {
+      entity: string;
+      name?: string;
+      icon?: string;
+      color?: string;
+      color_icon?: boolean;
+      display_zero?: boolean;
+      inverted_animation?: boolean;
+    };
   };
   dashboard_link?: string;
   inverted_entities: string | string[];

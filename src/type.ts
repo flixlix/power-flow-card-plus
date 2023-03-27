@@ -3,15 +3,14 @@ export type ComboEntity = {
   production: string;
 };
 
-export type IndividualDeviceType = {
-  entity: string;
+export type Bubble = {
+  entity: string | ComboEntity;
   name?: string;
   icon?: string;
   color?: string;
-  color_icon?: boolean;
+  color_icon?: string;
   display_zero?: boolean;
-  inverted_animation?: boolean;
-  unit_of_measurement?: string;
+  state_type?: "percentage" | "power";
 };
 
 export type EntityType =
