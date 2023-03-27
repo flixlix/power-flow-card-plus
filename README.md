@@ -23,6 +23,9 @@
 
 Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible.
 
+
+
+
 ## Install
 
 ### HACS (recommended)
@@ -69,6 +72,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
+
 ### Options
 
 #### Card options
@@ -79,7 +83,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | entities           | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
 | title              | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
 | dashboard_link     | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| inverted_entities  | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production).            |
+| inverted_entities  | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example).            |
 | kw_decimals        | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
 | w_decimals         | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate      | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
@@ -146,6 +150,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | unit_of_measurement | `string` | `W`or `kW` (dynamic) | Sets the unit of measurement to show in the corresponding circle |
 | inverted_animation |`boolean` | `false` | If set to true, the small dots will flow in the opposite direction. |
+| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration)
 
 #### Home Configuration
 
@@ -183,6 +188,17 @@ Can be use with either Grid or Battery configuration. The same `unit_of_measurem
 | ----------- | -------- | ------------------------------------------------------------------------------------------------- |
 | consumption | `string` | Entity ID providing a state value for consumption, this is required if using a split grid object. |
 | production  | `string` | Entity ID providing a state value for production                                                  |
+
+#### Secondary Info Configuration
+
+This Feature allows you to configure an additional small text for each Individual Device. Here you can put , for example, the state of charge of an electric car.
+
+| Name        | Type     | Description                                                                                       |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity| `string` required | Entity ID providing a state value that is going to be displayed. |
+| unit_of_measurement | `string` | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes) |
+| icon | `string` | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed. |
+| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`.
 
 ### Minimal Configuration
 

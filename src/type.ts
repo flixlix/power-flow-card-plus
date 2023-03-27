@@ -12,6 +12,12 @@ export type IndividualDeviceType = {
   display_zero?: boolean;
   inverted_animation?: boolean;
   unit_of_measurement?: string;
+  secondary_info?: {
+    entity: string;
+    unit_of_measurement?: string;
+    icon?: string;
+    display_zero?: boolean;
+  };
 };
 
 export type EntityType =
@@ -19,4 +25,6 @@ export type EntityType =
   | "grid"
   | "solar"
   | "individual1"
-  | "individual2";
+  | "individual1Secondary"
+  | "individual2"
+  | "individual2Secondary";
