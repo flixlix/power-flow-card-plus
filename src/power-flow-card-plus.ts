@@ -97,22 +97,23 @@ export class PowerFlowCard extends LitElement {
     return value * 1000;
   };
 
-  private displayNonFossilState = (entity: string | undefined): string => {
-    if (!entity || !this.entityAvailable(entity)) {
-      this.unavailableOrMisconfiguredError(entity);
+  private displayNonFossilState = (
+    entityFossil: string,
+    totalFromGrid: number
+  ): string => {
+    if (!entityFossil || !this.entityAvailable(entityFossil)) {
+      this.unavailableOrMisconfiguredError(entityFossil);
       return "NaN";
     }
     const unitOfMeasurement: "W" | "%" =
       this._config!.entities.fossil_fuel_percentage?.state_type === "percentage"
         ? "%"
         : "W" || "W";
-    const nonFossilFuelDecimal: number = 1 - this.getEntityState(entity) / 100;
+    const nonFossilFuelDecimal: number =
+      1 - this.getEntityState(entityFossil) / 100;
     let gridConsumption: number;
     if (typeof this._config!.entities.grid!.entity === "string") {
-      gridConsumption =
-        this.getEntityStateWatts(this._config!.entities!.grid!.entity) > 0
-          ? this.getEntityStateWatts(this._config!.entities!.grid!.entity)
-          : 0;
+      gridConsumption = totalFromGrid;
     } else {
       gridConsumption =
         this.getEntityStateWatts(
@@ -125,7 +126,8 @@ export class PowerFlowCard extends LitElement {
       const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
       result = this.displayValue(nonFossilFuelWatts);
     } else {
-      const nonFossilFuelPercentage: number = 100 - this.getEntityState(entity);
+      const nonFossilFuelPercentage: number =
+        100 - this.getEntityState(entityFossil);
       result = nonFossilFuelPercentage
         .toFixed(0)
         .toString()
@@ -648,7 +650,8 @@ export class PowerFlowCard extends LitElement {
                         ></ha-icon>
                         <span class="low-carbon"
                           >${this.displayNonFossilState(
-                            entities!.fossil_fuel_percentage!.entity
+                            entities!.fossil_fuel_percentage!.entity,
+                            totalFromGrid
                           )}</span
                         >
                       </div>
