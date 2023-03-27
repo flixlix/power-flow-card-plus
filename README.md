@@ -23,9 +23,6 @@
 
 Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible.
 
-
-
-
 ## Install
 
 ### HACS (recommended)
@@ -72,7 +69,6 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
-
 ### Options
 
 #### Card options
@@ -83,7 +79,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | entities           | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
 | title              | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
 | dashboard_link     | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| inverted_entities  | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example).            |
+| inverted_entities  | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production).            |
 | kw_decimals        | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
 | w_decimals         | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate      | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
@@ -115,8 +111,6 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
 | display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
-																					
-
 
 #### Solar Configuration
 
@@ -150,6 +144,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color | `string` | `#d0cc5b` or `#964cb5` | HEX value of the color for circles labels and lines of the individual device. |
 | color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
 | display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| unit_of_measurement | `string` | `W`or `kW` (dynamic) | Sets the unit of measurement to show in the corresponding circle |
+| inverted_animation |`boolean` | `false` | If set to true, the small dots will flow in the opposite direction. |
 
 #### Home Configuration
 
@@ -179,7 +175,6 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | production | `string` | HEX value of the color for circles labels and lines of production. |
 | consumption | `string` | HEX value of the color for circles labels and lines of consumption. |
 
-
 #### Split entities
 
 Can be use with either Grid or Battery configuration. The same `unit_of_measurement` rule as above applies.
@@ -205,10 +200,10 @@ entities:
     entity:
       consumption: sensor.grid_consumption
 ```
+
 This should give you something like this:
 
 ![minimal_config_only_grid](https://user-images.githubusercontent.com/61006057/227788281-992670a5-e2b7-4ea7-8166-0039d7a6526d.png)
-
 
 ##### Grid and Solar
 
@@ -222,13 +217,12 @@ entities:
   solar:
     entity: sensor.solar_production
 ```
+
 This should give you something like this:
 
 ![minimal_config_grid_solar](https://user-images.githubusercontent.com/61006057/227788602-460a01d3-6310-40b2-b432-d1b5d324245f.png)
 
-
 ##### Grid, Solar and Battery
-
 
 ```yaml
 type: custom:power-flow-card-plus
@@ -245,11 +239,10 @@ entities:
        production: sensor.battery_production
     state_of_charge: sensor.battery_state_of_charge
 ```
+
 This should give you something like this:
 
 ![minimal_config_grid_solar_battery](https://user-images.githubusercontent.com/61006057/227788820-25f2ee65-ad56-4c05-94b3-9f056d3a0bc2.png)
-
-
 
 ### Mix & Match Config aka "Full Config"
 
@@ -304,9 +297,9 @@ watt_threshold: 10000
 clickable_entities: true
 title: Power Flow Card Plus
 ```
+
 This should give you something like this:
 ![minimal_config_full](https://user-images.githubusercontent.com/61006057/227789815-41f15dd4-3d24-4eb8-96ca-c7f7f01a4f46.png)
-
 
 ### Flow Formula
 
