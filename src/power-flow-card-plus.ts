@@ -134,16 +134,16 @@ export class PowerFlowCard extends LitElement {
     return result;
   };
 
-  private displayValue = (value: number | null) => {
+  private displayValue = (value: number | null, unit?: string | undefined) => {
     if (value === null) return "0";
-    const isKW = value >= this._config!.watt_threshold;
+    const isKW = unit === undefined && value >= this._config!.watt_threshold;
     const v = formatNumber(
       isKW
         ? round(value / 1000, this._config!.kw_decimals)
         : round(value, this._config!.w_decimals),
       this.hass.locale
     );
-    return `${v} ${isKW ? "kW" : "W"}`;
+    return `${v} ${unit || (isKW ? "kW" : "W")}`;
   };
 
   private openDetails(entityId?: string | undefined): void {
@@ -690,7 +690,13 @@ export class PowerFlowCard extends LitElement {
                           id="individual2-icon"
                           .icon=${individual2Icon}
                         ></ha-icon>
-                        ${this.displayValue(individual2Usage)}
+                        ${this._config.entities.individual2?.unit_of_measurement
+                          ? this.displayValue(
+                              individual2Usage,
+                              this._config.entities.individual2
+                                ?.unit_of_measurement
+                            )
+                          : this.displayValue(individual2Usage)}
                       </div>
                       <svg width="80" height="30">
                         <path d="M40 -10 v50" id="individual2" />
@@ -740,7 +746,13 @@ export class PowerFlowCard extends LitElement {
                           id="individual1-icon"
                           .icon=${individual1Icon}
                         ></ha-icon>
-                        ${this.displayValue(individual1Usage)}
+                        ${this._config.entities.individual1?.unit_of_measurement
+                          ? this.displayValue(
+                              individual1Usage,
+                              this._config.entities.individual1
+                                ?.unit_of_measurement
+                            )
+                          : this.displayValue(individual1Usage)}
                       </div>
                       <svg width="80" height="30">
                         <path d="M40 -10 v40" id="individual1" />
@@ -1009,10 +1021,13 @@ export class PowerFlowCard extends LitElement {
                           : null}
                         <ha-icon
                           .icon=${batteryIcon}
-                          style=${entities.battery?.display_state ===
-                            "one_way" && totalBatteryIn > 0
+                          style=${entities.battery?.display_state === "two_way"
                             ? "padding-top: 0px; padding-bottom: 2px;"
-                            : "padding-top: 2px; padding-bottom: 0px;"}
+                            : entities.battery?.display_state === "one_way" &&
+                              totalBatteryIn === 0 &&
+                              totalBatteryOut === 0
+                            ? "padding-top: 2px; padding-bottom: 0px;"
+                            : "padding-top: 2px; padding-bottom: 2px;"}
                           @click=${(e: { stopPropagation: () => void }) => {
                             e.stopPropagation();
                             this.openDetails(
@@ -1031,15 +1046,13 @@ export class PowerFlowCard extends LitElement {
                             }
                           }}
                         ></ha-icon>
-                        ${(entities.battery?.display_state === "two_way" ||
-                          entities.battery?.display_state === undefined ||
-                          (entities.battery?.display_state === "one_way" &&
-                            totalBatteryIn > 0) ||
-                          (entities.grid?.display_state === "one_way_no_zero" &&
-                            (totalBatteryOut === null ||
-                              totalBatteryOut === 0) &&
-                            totalBatteryIn !== 0)) &&
-                        totalToGrid !== null
+                        ${entities.battery?.display_state === "two_way" ||
+                        entities.battery?.display_state === undefined ||
+                        (entities.battery?.display_state === "one_way" &&
+                          totalBatteryIn > 0) ||
+                        (entities.battery?.display_state ===
+                          "one_way_no_zero" &&
+                          totalBatteryIn !== 0)
                           ? html`<span
                               class="battery-in"
                               @click=${(e: { stopPropagation: () => void }) => {
@@ -1071,15 +1084,13 @@ export class PowerFlowCard extends LitElement {
                               ${this.displayValue(totalBatteryIn)}</span
                             >`
                           : ""}
-                        ${(entities.battery?.display_state === "two_way" ||
-                          entities.battery?.display_state === undefined ||
-                          (entities.battery?.display_state === "one_way" &&
-                            totalBatteryOut > 0) ||
-                          (entities.battery?.display_state ===
-                            "one_way_no_zero" &&
-                            (totalBatteryIn === null ||
-                              totalBatteryIn === 0))) &&
-                        totalBatteryOut !== null
+                        ${entities.battery?.display_state === "two_way" ||
+                        entities.battery?.display_state === undefined ||
+                        (entities.battery?.display_state === "one_way" &&
+                          totalBatteryOut > 0) ||
+                        (entities.battery?.display_state ===
+                          "one_way_no_zero" &&
+                          (totalBatteryIn === 0 || totalBatteryOut !== 0))
                           ? html`<span
                               class="battery-out"
                               @click=${(e: { stopPropagation: () => void }) => {
@@ -1166,7 +1177,13 @@ export class PowerFlowCard extends LitElement {
                           id="individual1-icon"
                           .icon=${individual1Icon}
                         ></ha-icon>
-                        ${this.displayValue(individual1Usage)}
+                        ${this._config.entities.individual1?.unit_of_measurement
+                          ? this.displayValue(
+                              individual1Usage,
+                              this._config.entities.individual1
+                                ?.unit_of_measurement
+                            )
+                          : this.displayValue(individual1Usage)}
                       </div>
                       <span class="label">${individual1Name}</span>
                     </div>`
