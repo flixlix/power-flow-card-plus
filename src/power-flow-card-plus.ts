@@ -178,12 +178,21 @@ export class PowerFlowCard extends LitElement {
         entities.individual2?.display_zero === true) ||
       (this.getEntityStateWatts(entities.individual2?.entity) > 0 &&
         this.entityAvailable(entities.individual2?.entity!));
+    const hasIndividual2Secondary =
+      entities.individual2?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.individual2?.secondary_info?.entity) > 0 ||
+        entities.individual2.secondary_info.display_zero === true);
 
     const hasIndividual1 =
       (entities.individual1 !== undefined &&
         entities.individual1?.display_zero === true) ||
       (this.getEntityStateWatts(entities.individual1?.entity) > 0 &&
         this.entityAvailable(entities.individual1?.entity!));
+    const hasIndividual1Secondary =
+      entities.individual1?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.individual1?.secondary_info?.entity) > 0 ||
+        entities.individual1.secondary_info.display_zero === true);
+
     const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid =
       hasGrid &&
@@ -254,6 +263,7 @@ export class PowerFlowCard extends LitElement {
     );
 
     let individual1Usage: number | null = null;
+    let individual1SecondaryUsage: number | null = null;
     const individual1Name: string =
       this._config.entities.individual1?.name || "Car";
     const individual1Icon: undefined | string =
@@ -278,8 +288,25 @@ export class PowerFlowCard extends LitElement {
         individual1Usage = Math.abs(Math.min(individual1State, 0));
       else individual1Usage = Math.max(individual1State, 0);
     }
+    if (hasIndividual1Secondary) {
+      const individual1SecondaryEntity =
+        this.hass.states[
+          this._config.entities.individual1?.secondary_info?.entity!
+        ];
+      const individual1SecondaryState = Number(
+        individual1SecondaryEntity.state
+      );
+      if (this.entityInverted("individual1Secondary")) {
+        individual1SecondaryUsage = Math.abs(
+          Math.min(individual1SecondaryState, 0)
+        );
+      } else {
+        individual1SecondaryUsage = Math.max(individual1SecondaryState, 0);
+      }
+    }
 
     let individual2Usage: number | null = null;
+    let individual2SecondaryUsage: number | null = null;
     const individual2Name: string =
       this._config.entities.individual2?.name || "Motorcycle";
     const individual2Icon: undefined | string =
@@ -303,6 +330,22 @@ export class PowerFlowCard extends LitElement {
       if (this.entityInverted("individual2"))
         individual2Usage = Math.abs(Math.min(individual2State, 0));
       else individual2Usage = Math.max(individual2State, 0);
+    }
+    if (hasIndividual2Secondary) {
+      const individual2SecondaryEntity =
+        this.hass.states[
+          this._config.entities.individual2?.secondary_info?.entity!
+        ];
+      const individual2SecondaryState = Number(
+        individual2SecondaryEntity.state
+      );
+      if (this.entityInverted("individual2Secondary")) {
+        individual2SecondaryUsage = Math.abs(
+          Math.min(individual2SecondaryState, 0)
+        );
+      } else {
+        individual2SecondaryUsage = Math.max(individual2SecondaryState, 0);
+      }
     }
 
     let totalSolarProduction: number = 0;
@@ -686,17 +729,35 @@ export class PowerFlowCard extends LitElement {
                           }
                         }}
                       >
+                        ${hasIndividual2Secondary
+                          ? html`
+                              <span class="secondary-info individual2">
+                                ${entities.individual2?.secondary_info?.icon
+                                  ? html`<ha-icon
+                                      class="secondary-info small"
+                                      .icon=${entities.individual2
+                                        ?.secondary_info?.icon}
+                                    ></ha-icon>`
+                                  : ""}
+                                ${this.displayValue(
+                                  individual2SecondaryUsage,
+                                  entities.individual2?.secondary_info
+                                    ?.unit_of_measurement
+                                )}
+                              </span>
+                            `
+                          : ""}
                         <ha-icon
                           id="individual2-icon"
                           .icon=${individual2Icon}
+                          style=${hasIndividual2Secondary
+                            ? "padding-top: 2px;"
+                            : "padding-top: 0px;"}
                         ></ha-icon>
-                        ${this._config.entities.individual2?.unit_of_measurement
-                          ? this.displayValue(
-                              individual2Usage,
-                              this._config.entities.individual2
-                                ?.unit_of_measurement
-                            )
-                          : this.displayValue(individual2Usage)}
+                        ${this.displayValue(
+                          individual2Usage,
+                          this._config.entities.individual2?.unit_of_measurement
+                        )}
                       </div>
                       <svg width="80" height="30">
                         <path d="M40 -10 v50" id="individual2" />
@@ -742,9 +803,30 @@ export class PowerFlowCard extends LitElement {
                           }
                         }}
                       >
+                        ${hasIndividual1Secondary
+                          ? html`
+                              <span class="secondary-info individual1">
+                                ${entities.individual1?.secondary_info?.icon
+                                  ? html`<ha-icon
+                                      class="secondary-info small"
+                                      .icon=${entities.individual1
+                                        ?.secondary_info?.icon}
+                                    ></ha-icon>`
+                                  : ""}
+                                ${this.displayValue(
+                                  individual1SecondaryUsage,
+                                  entities.individual1?.secondary_info
+                                    ?.unit_of_measurement
+                                )}
+                              </span>
+                            `
+                          : ""}
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
+                          style=${hasIndividual1Secondary
+                            ? "padding-top: 2px;"
+                            : "padding-top: 0px;"}
                         ></ha-icon>
                         ${this._config.entities.individual1?.unit_of_measurement
                           ? this.displayValue(
@@ -1173,9 +1255,30 @@ export class PowerFlowCard extends LitElement {
                           }
                         }}
                       >
+                        ${hasIndividual1Secondary
+                          ? html`
+                              <span class="secondary-info individual1">
+                                ${entities.individual1?.secondary_info?.icon
+                                  ? html`<ha-icon
+                                      class="secondary-info small"
+                                      .icon=${entities.individual1
+                                        ?.secondary_info?.icon}
+                                    ></ha-icon>`
+                                  : ""}
+                                ${this.displayValue(
+                                  individual1SecondaryUsage,
+                                  entities.individual1?.secondary_info
+                                    ?.unit_of_measurement
+                                )}
+                              </span>
+                            `
+                          : ""}
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
+                          style=${hasIndividual1Secondary
+                            ? "padding-top: 2px;"
+                            : "padding-top: 0px;"}
                         ></ha-icon>
                         ${this._config.entities.individual1?.unit_of_measurement
                           ? this.displayValue(
@@ -1592,6 +1695,12 @@ export class PowerFlowCard extends LitElement {
       top: 0;
       left: 0;
     }
+
+    span.secondary-info {
+      color: var(--secondary-text-color);
+      font-size: 10px;
+    }
+
     .individual2 path,
     .individual2 circle {
       stroke: var(--individualtwo-color);
