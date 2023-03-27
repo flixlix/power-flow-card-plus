@@ -143,7 +143,7 @@ export class PowerFlowCard extends LitElement {
         : round(value, this._config!.w_decimals),
       this.hass.locale
     );
-    return `${v} ${unit || (isKW ? "kW" : "W")}`;
+    return `${v}${unit || (isKW ? "kW" : "W")}`;
   };
 
   private openDetails(entityId?: string | undefined): void {
@@ -1697,8 +1697,8 @@ export class PowerFlowCard extends LitElement {
     }
 
     span.secondary-info {
-      color: var(--secondary-text-color);
-      font-size: 10px;
+      color: var(--primary-text-color);
+      font-size: 12px;
     }
 
     .individual2 path,
