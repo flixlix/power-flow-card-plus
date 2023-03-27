@@ -704,7 +704,11 @@ export class PowerFlowCard extends LitElement {
                                 dur="1.66s"
                                 repeatCount="indefinite"
                                 calcMode="linear"
-                                keyPoints="1;0" 
+                                keyPoints=${
+                                  entities.individual2?.inverted_animation
+                                    ? "0;1"
+                                    : "1;0"
+                                }
                                 keyTimes="0;1"
                               >
                                 <mpath xlink:href="#individual2" />
@@ -749,9 +753,13 @@ export class PowerFlowCard extends LitElement {
                                 <animateMotion
                                   dur="1.66s"
                                   repeatCount="indefinite"
-                                  calcMode="linear"
-                                  keyPoints="1;0" 
+                                  keyPoints=${
+                                    entities.individual1?.inverted_animation
+                                      ? "0;1"
+                                      : "1;0"
+                                  }
                                   keyTimes="0;1"
+                                  
                                 >
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
@@ -1126,8 +1134,12 @@ export class PowerFlowCard extends LitElement {
                                   dur="1.66s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints="1;0" 
-                                  keyTimes="0;1"
+                                  keyPoints=${
+                                    entities.individual1?.inverted_animation
+                                      ? "0;1"
+                                      : "1;0"
+                                  }
+                                  keyTimes="0;1" 
                                 >
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
