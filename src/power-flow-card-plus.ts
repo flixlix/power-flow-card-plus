@@ -1,17 +1,14 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-nested-ternary */
-import { formatNumber, HomeAssistant } from "custom-card-helpers";
+import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config.js";
-import {
-  coerceNumber,
-  coerceStringArray,
-  round,
-  isNumberValue,
-} from "./utils.js";
+import { coerceNumber, coerceStringArray, round, isNumberValue } from "./utils.js";
 import { EntityType } from "./type.js";
 import { logError } from "./logging.js";
+import "./ui-editor/ui-editor";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;
@@ -20,7 +17,7 @@ const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
 
 @customElement("power-flow-card-plus")
-export class PowerFlowCardPlus extends LitElement {
+class PowerFlowCardPlus extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config = {} as PowerFlowCardPlusConfig;
 
@@ -31,20 +28,9 @@ export class PowerFlowCardPlus extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  /* static getConfigElement() {
-    return document.createElement("power-flow-card-plus-editor");
-  } */
-
   setConfig(config: PowerFlowCardPlusConfig): void {
-    if (
-      !config.entities ||
-      (!config.entities.battery &&
-        !config.entities.grid &&
-        !config.entities.solar)
-    ) {
-      throw new Error(
-        "At least one entity for battery, grid or solar must be defined"
-      );
+    if (!config.entities || (!config.entities.battery && !config.entities.grid && !config.entities.solar)) {
+      throw new Error("At least one entity for battery, grid or solar must be defined");
     }
     this._config = {
       ...config,
@@ -57,22 +43,22 @@ export class PowerFlowCardPlus extends LitElement {
     };
   }
 
+  static async getConfigElement(): Promise<LovelaceCardEditor> {
+    await import("./ui-editor/ui-editor");
+    return document.createElement("power-flow-card-plus-editor");
+  }
+
   public getCardSize(): Promise<number> | number {
     return 3;
   }
   private unavailableOrMisconfiguredError = (entityId: string | undefined) =>
-    logError(
-      `entity "${entityId ?? "Unknown"}" is not available or misconfigured`
-    );
+    logError(`entity "${entityId ?? "Unknown"}" is not available or misconfigured`);
 
-  private entityExists = (entityId: string): boolean =>
-    entityId in this.hass.states;
+  private entityExists = (entityId: string): boolean => entityId in this.hass.states;
 
-  private entityAvailable = (entityId: string): boolean =>
-    isNumberValue(this.hass.states[entityId]?.state);
+  private entityAvailable = (entityId: string): boolean => isNumberValue(this.hass.states[entityId]?.state);
 
-  private entityInverted = (entityType: EntityType) =>
-    this._config!.inverted_entities.includes(entityType);
+  private entityInverted = (entityType: EntityType) => this._config!.inverted_entities.includes(entityType);
 
   private previousDur: { [name: string]: number } = {};
 
@@ -101,28 +87,18 @@ export class PowerFlowCardPlus extends LitElement {
     return value * 1000;
   };
 
-  private displayNonFossilState = (
-    entityFossil: string,
-    totalFromGrid: number
-  ): string => {
+  private displayNonFossilState = (entityFossil: string, totalFromGrid: number): string => {
     if (!entityFossil || !this.entityAvailable(entityFossil)) {
       this.unavailableOrMisconfiguredError(entityFossil);
       return "NaN";
     }
-    const unitOfMeasurement: "W" | "%" =
-      this._config!.entities.fossil_fuel_percentage?.state_type === "percentage"
-        ? "%"
-        : "W" || "W";
-    const nonFossilFuelDecimal: number =
-      1 - this.getEntityState(entityFossil) / 100;
+    const unitOfMeasurement: "W" | "%" = this._config!.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
+    const nonFossilFuelDecimal: number = 1 - this.getEntityState(entityFossil) / 100;
     let gridConsumption: number;
     if (typeof this._config!.entities.grid!.entity === "string") {
       gridConsumption = totalFromGrid;
     } else {
-      gridConsumption =
-        this.getEntityStateWatts(
-          this._config!.entities!.grid!.entity!.consumption
-        ) || 0;
+      gridConsumption = this.getEntityStateWatts(this._config!.entities!.grid!.entity!.consumption) || 0;
     }
     /* based on choice, change output from watts to % */
     let result: string;
@@ -130,32 +106,17 @@ export class PowerFlowCardPlus extends LitElement {
       const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
       result = this.displayValue(nonFossilFuelWatts);
     } else {
-      const nonFossilFuelPercentage: number =
-        100 - this.getEntityState(entityFossil);
-      result = nonFossilFuelPercentage
-        .toFixed(0)
-        .toString()
-        .concat(unitOfMeasurement);
+      const nonFossilFuelPercentage: number = 100 - this.getEntityState(entityFossil);
+      result = nonFossilFuelPercentage.toFixed(0).toString().concat(unitOfMeasurement);
     }
     return result;
   };
 
-  private displayValue = (
-    value: number | null,
-    unit?: string | undefined,
-    unitWhiteSpace?: boolean | undefined
-  ) => {
+  private displayValue = (value: number | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
     if (value === null) return "0";
     const isKW = unit === undefined && value >= this._config!.watt_threshold;
-    const v = formatNumber(
-      isKW
-        ? round(value / 1000, this._config!.kw_decimals)
-        : round(value, this._config!.w_decimals),
-      this.hass.locale
-    );
-    return `${v}${unitWhiteSpace === false ? "" : " "}${
-      unit || (isKW ? "kW" : "W")
-    }`;
+    const v = formatNumber(isKW ? round(value / 1000, this._config!.kw_decimals) : round(value, this._config!.w_decimals), this.hass.locale);
+    return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
   };
 
   private openDetails(entityId?: string | undefined): void {
@@ -186,30 +147,21 @@ export class PowerFlowCardPlus extends LitElement {
     const hasBattery = entities.battery !== undefined;
 
     const hasIndividual2 =
-      (entities.individual2 !== undefined &&
-        entities.individual2?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual2?.entity) > 0 &&
-        this.entityAvailable(entities.individual2?.entity!));
+      (entities.individual2 !== undefined && entities.individual2?.display_zero === true) ||
+      (this.getEntityStateWatts(entities.individual2?.entity) > 0 && this.entityAvailable(entities.individual2?.entity!));
     const hasIndividual2Secondary =
       entities.individual2?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.individual2?.secondary_info?.entity) > 0 ||
-        entities.individual2.secondary_info.display_zero === true);
+      (this.getEntityState(entities.individual2?.secondary_info?.entity) > 0 || entities.individual2.secondary_info.display_zero === true);
 
     const hasIndividual1 =
-      (entities.individual1 !== undefined &&
-        entities.individual1?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual1?.entity) > 0 &&
-        this.entityAvailable(entities.individual1?.entity!));
+      (entities.individual1 !== undefined && entities.individual1?.display_zero === true) ||
+      (this.getEntityStateWatts(entities.individual1?.entity) > 0 && this.entityAvailable(entities.individual1?.entity!));
     const hasIndividual1Secondary =
       entities.individual1?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.individual1?.secondary_info?.entity) > 0 ||
-        entities.individual1.secondary_info.display_zero === true);
+      (this.getEntityState(entities.individual1?.secondary_info?.entity) > 0 || entities.individual1.secondary_info.display_zero === true);
 
     const hasSolarProduction = entities.solar !== undefined;
-    const hasReturnToGrid =
-      hasGrid &&
-      (typeof entities.grid!.entity === "string" ||
-        entities.grid!.entity!.production);
+    const hasReturnToGrid = hasGrid && (typeof entities.grid!.entity === "string" || entities.grid!.entity!.production);
 
     let totalFromGrid: number | null = 0;
     let totalToGrid: number | null = 0;
@@ -217,45 +169,27 @@ export class PowerFlowCardPlus extends LitElement {
     if (this._config.entities.grid?.color?.consumption !== undefined)
       this.style.setProperty(
         "--energy-grid-consumption-color",
-        this._config.entities.grid?.color?.consumption ||
-          "var(--energy-grid-consumption-color)" ||
-          "#488fc2"
+        this._config.entities.grid?.color?.consumption || "var(--energy-grid-consumption-color)" || "#488fc2"
       );
 
     if (hasGrid) {
       if (typeof entities.grid!.entity === "string") {
-        if (this.entityInverted("grid"))
-          totalFromGrid = Math.abs(
-            Math.min(this.getEntityStateWatts(entities.grid?.entity), 0)
-          );
-        else
-          totalFromGrid = Math.max(
-            this.getEntityStateWatts(entities.grid?.entity),
-            0
-          );
+        if (this.entityInverted("grid")) totalFromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
+        else totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
       } else {
-        totalFromGrid = this.getEntityStateWatts(
-          entities.grid!.entity!.consumption
-        );
+        totalFromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
       }
     }
 
     if (this._config.entities.grid?.color?.production !== undefined)
-      this.style.setProperty(
-        "--energy-grid-return-color",
-        this._config.entities.grid?.color?.production || "#a280db"
-      );
+      this.style.setProperty("--energy-grid-return-color", this._config.entities.grid?.color?.production || "#a280db");
     if (hasReturnToGrid) {
       if (typeof entities.grid!.entity === "string") {
         totalToGrid = this.entityInverted("grid")
           ? Math.max(this.getEntityStateWatts(entities.grid!.entity), 0)
-          : Math.abs(
-              Math.min(this.getEntityStateWatts(entities.grid!.entity), 0)
-            );
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.grid!.entity), 0));
       } else {
-        totalToGrid = this.getEntityStateWatts(
-          entities.grid?.entity.production
-        );
+        totalToGrid = this.getEntityStateWatts(entities.grid?.entity.production);
       }
     }
 
@@ -276,42 +210,25 @@ export class PowerFlowCardPlus extends LitElement {
 
     let individual1Usage: number | null = null;
     let individual1SecondaryUsage: number | null = null;
-    const individual1Name: string =
-      this._config.entities.individual1?.name || "Car";
-    const individual1Icon: undefined | string =
-      this._config.entities.individual1?.icon || "mdi:car-electric";
-    const individual1Color: string =
-      this._config.entities.individual1?.color! || "#D0CC5B";
-    this.style.setProperty(
-      "--individualone-color",
-      individual1Color
-    ); /* dynamically update color of entity depending on use input */
+    const individual1Name: string = this._config.entities.individual1?.name || "Car";
+    const individual1Icon: undefined | string = this._config.entities.individual1?.icon || "mdi:car-electric";
+    const individual1Color: string = this._config.entities.individual1?.color! || "#D0CC5B";
+    this.style.setProperty("--individualone-color", individual1Color); /* dynamically update color of entity depending on use input */
     this.style.setProperty(
       "--icon-individualone-color",
-      this._config.entities.individual1?.color_icon
-        ? "var(--individualone-color)"
-        : "var(--primary-text-color)"
+      this._config.entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)"
     );
     if (hasIndividual1) {
-      const individual1Entity =
-        this.hass.states[this._config.entities.individual1?.entity!];
+      const individual1Entity = this.hass.states[this._config.entities.individual1?.entity!];
       const individual1State = Number(individual1Entity.state);
-      if (this.entityInverted("individual1"))
-        individual1Usage = Math.abs(Math.min(individual1State, 0));
+      if (this.entityInverted("individual1")) individual1Usage = Math.abs(Math.min(individual1State, 0));
       else individual1Usage = Math.max(individual1State, 0);
     }
     if (hasIndividual1Secondary) {
-      const individual1SecondaryEntity =
-        this.hass.states[
-          this._config.entities.individual1?.secondary_info?.entity!
-        ];
-      const individual1SecondaryState = Number(
-        individual1SecondaryEntity.state
-      );
+      const individual1SecondaryEntity = this.hass.states[this._config.entities.individual1?.secondary_info?.entity!];
+      const individual1SecondaryState = Number(individual1SecondaryEntity.state);
       if (this.entityInverted("individual1Secondary")) {
-        individual1SecondaryUsage = Math.abs(
-          Math.min(individual1SecondaryState, 0)
-        );
+        individual1SecondaryUsage = Math.abs(Math.min(individual1SecondaryState, 0));
       } else {
         individual1SecondaryUsage = Math.max(individual1SecondaryState, 0);
       }
@@ -319,42 +236,25 @@ export class PowerFlowCardPlus extends LitElement {
 
     let individual2Usage: number | null = null;
     let individual2SecondaryUsage: number | null = null;
-    const individual2Name: string =
-      this._config.entities.individual2?.name || "Motorcycle";
-    const individual2Icon: undefined | string =
-      this._config.entities.individual2?.icon || "mdi:motorbike-electric";
-    const individual2Color: string =
-      this._config.entities.individual2?.color! || "#964CB5";
-    this.style.setProperty(
-      "--individualtwo-color",
-      individual2Color
-    ); /* dynamically update color of entity depending on use input */
+    const individual2Name: string = this._config.entities.individual2?.name || "Motorcycle";
+    const individual2Icon: undefined | string = this._config.entities.individual2?.icon || "mdi:motorbike-electric";
+    const individual2Color: string = this._config.entities.individual2?.color! || "#964CB5";
+    this.style.setProperty("--individualtwo-color", individual2Color); /* dynamically update color of entity depending on use input */
     this.style.setProperty(
       "--icon-individualtwo-color",
-      this._config.entities.individual2?.color_icon
-        ? "var(--individualtwo-color)"
-        : "var(--primary-text-color)"
+      this._config.entities.individual2?.color_icon ? "var(--individualtwo-color)" : "var(--primary-text-color)"
     );
     if (hasIndividual2) {
-      const individual2Entity =
-        this.hass.states[this._config.entities.individual2?.entity!];
+      const individual2Entity = this.hass.states[this._config.entities.individual2?.entity!];
       const individual2State = Number(individual2Entity.state);
-      if (this.entityInverted("individual2"))
-        individual2Usage = Math.abs(Math.min(individual2State, 0));
+      if (this.entityInverted("individual2")) individual2Usage = Math.abs(Math.min(individual2State, 0));
       else individual2Usage = Math.max(individual2State, 0);
     }
     if (hasIndividual2Secondary) {
-      const individual2SecondaryEntity =
-        this.hass.states[
-          this._config.entities.individual2?.secondary_info?.entity!
-        ];
-      const individual2SecondaryState = Number(
-        individual2SecondaryEntity.state
-      );
+      const individual2SecondaryEntity = this.hass.states[this._config.entities.individual2?.secondary_info?.entity!];
+      const individual2SecondaryState = Number(individual2SecondaryEntity.state);
       if (this.entityInverted("individual2Secondary")) {
-        individual2SecondaryUsage = Math.abs(
-          Math.min(individual2SecondaryState, 0)
-        );
+        individual2SecondaryUsage = Math.abs(Math.min(individual2SecondaryState, 0));
       } else {
         individual2SecondaryUsage = Math.max(individual2SecondaryState, 0);
       }
@@ -362,26 +262,11 @@ export class PowerFlowCardPlus extends LitElement {
 
     let totalSolarProduction: number = 0;
     if (this._config.entities.solar?.color !== undefined)
-      this.style.setProperty(
-        "--energy-solar-color",
-        this._config.entities.solar?.color || "#ff9800"
-      );
-    this.style.setProperty(
-      "--icon-solar-color",
-      this._config.entities.solar?.color_icon
-        ? "var(--energy-solar-color)"
-        : "var(--primary-text-color)"
-    );
+      this.style.setProperty("--energy-solar-color", this._config.entities.solar?.color || "#ff9800");
+    this.style.setProperty("--icon-solar-color", this._config.entities.solar?.color_icon ? "var(--energy-solar-color)" : "var(--primary-text-color)");
     if (hasSolarProduction) {
-      if (this.entityInverted("solar"))
-        totalSolarProduction = Math.abs(
-          Math.min(this.getEntityStateWatts(entities.solar?.entity), 0)
-        );
-      else
-        totalSolarProduction = Math.max(
-          this.getEntityStateWatts(entities.solar?.entity),
-          0
-        );
+      if (this.entityInverted("solar")) totalSolarProduction = Math.abs(Math.min(this.getEntityStateWatts(entities.solar?.entity), 0));
+      else totalSolarProduction = Math.max(this.getEntityStateWatts(entities.solar?.entity), 0);
     }
 
     let totalBatteryIn: number | null = 0;
@@ -390,28 +275,19 @@ export class PowerFlowCardPlus extends LitElement {
       if (typeof entities.battery?.entity === "string") {
         totalBatteryIn = this.entityInverted("battery")
           ? Math.max(this.getEntityStateWatts(entities.battery!.entity), 0)
-          : Math.abs(
-              Math.min(this.getEntityStateWatts(entities.battery!.entity), 0)
-            );
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0));
         totalBatteryOut = this.entityInverted("battery")
-          ? Math.abs(
-              Math.min(this.getEntityStateWatts(entities.battery!.entity), 0)
-            )
+          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0))
           : Math.max(this.getEntityStateWatts(entities.battery!.entity), 0);
       } else {
-        totalBatteryIn = this.getEntityStateWatts(
-          entities.battery?.entity?.production
-        );
-        totalBatteryOut = this.getEntityStateWatts(
-          entities.battery?.entity?.consumption
-        );
+        totalBatteryIn = this.getEntityStateWatts(entities.battery?.entity?.production);
+        totalBatteryOut = this.getEntityStateWatts(entities.battery?.entity?.consumption);
       }
     }
 
     let solarConsumption: number | null = null;
     if (hasSolarProduction) {
-      solarConsumption =
-        totalSolarProduction - (totalToGrid ?? 0) - (totalBatteryIn ?? 0);
+      solarConsumption = totalSolarProduction - (totalToGrid ?? 0) - (totalBatteryIn ?? 0);
     }
 
     let batteryFromGrid: null | number = null;
@@ -433,13 +309,7 @@ export class PowerFlowCardPlus extends LitElement {
     let solarToBattery: null | number = null;
     if (hasSolarProduction && hasBattery) {
       if (!batteryToGrid) {
-        batteryToGrid = Math.max(
-          0,
-          (totalToGrid || 0) -
-            (totalSolarProduction || 0) -
-            (totalBatteryIn || 0) -
-            (batteryFromGrid || 0)
-        );
+        batteryToGrid = Math.max(0, (totalToGrid || 0) - (totalSolarProduction || 0) - (totalBatteryIn || 0) - (batteryFromGrid || 0));
       }
       solarToBattery = totalBatteryIn! - (batteryFromGrid || 0);
     } else if (!hasSolarProduction && hasBattery) {
@@ -447,8 +317,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     let solarToGrid = 0;
-    if (hasSolarProduction && totalToGrid)
-      solarToGrid = totalToGrid - (batteryToGrid ?? 0);
+    if (hasSolarProduction && totalToGrid) solarToGrid = totalToGrid - (batteryToGrid ?? 0);
 
     let batteryConsumption: number = 0;
     if (hasBattery) {
@@ -456,15 +325,9 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (this._config.entities.battery?.color?.consumption !== undefined)
-      this.style.setProperty(
-        "--energy-battery-out-color",
-        this._config.entities.battery?.color?.consumption || "#4db6ac"
-      );
+      this.style.setProperty("--energy-battery-out-color", this._config.entities.battery?.color?.consumption || "#4db6ac");
     if (this._config.entities.battery?.color?.production !== undefined)
-      this.style.setProperty(
-        "--energy-battery-in-color",
-        this._config.entities.battery?.color?.production || "#a280db"
-      );
+      this.style.setProperty("--energy-battery-in-color", this._config.entities.battery?.color?.production || "#a280db");
     const batteryIconColorType = this._config.entities.battery?.color_icon;
     this.style.setProperty(
       "--icon-battery-color",
@@ -481,28 +344,18 @@ export class PowerFlowCardPlus extends LitElement {
 
     const gridConsumption = Math.max(totalFromGrid - (batteryFromGrid ?? 0), 0);
 
-    const totalHomeConsumption = Math.max(
-      gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0),
-      0
-    );
+    const totalHomeConsumption = Math.max(gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
-    if (batteryConsumption)
-      homeBatteryCircumference =
-        CIRCLE_CIRCUMFERENCE * (batteryConsumption / totalHomeConsumption);
+    if (batteryConsumption) homeBatteryCircumference = CIRCLE_CIRCUMFERENCE * (batteryConsumption / totalHomeConsumption);
 
     let homeSolarCircumference: number = 0;
     if (hasSolarProduction) {
-      homeSolarCircumference =
-        CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
+      homeSolarCircumference = CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
     }
 
     const homeGridCircumference =
-      CIRCLE_CIRCUMFERENCE *
-      ((totalHomeConsumption -
-        (batteryConsumption ?? 0) -
-        (solarConsumption ?? 0)) /
-        totalHomeConsumption);
+      CIRCLE_CIRCUMFERENCE * ((totalHomeConsumption - (batteryConsumption ?? 0) - (solarConsumption ?? 0)) / totalHomeConsumption);
 
     const totalLines =
       gridConsumption +
@@ -513,9 +366,7 @@ export class PowerFlowCardPlus extends LitElement {
       (batteryFromGrid ?? 0) +
       (batteryToGrid ?? 0);
 
-    const batteryChargeState = entities.battery?.state_of_charge?.length
-      ? this.getEntityState(entities.battery?.state_of_charge)
-      : null;
+    const batteryChargeState = entities.battery?.state_of_charge?.length ? this.getEntityState(entities.battery?.state_of_charge) : null;
 
     let batteryIcon = "mdi:battery-high";
     if (batteryChargeState === null) {
@@ -527,14 +378,10 @@ export class PowerFlowCardPlus extends LitElement {
     } else if (batteryChargeState <= 16) {
       batteryIcon = "mdi:battery-outline";
     }
-    if (entities.battery?.icon !== undefined)
-      batteryIcon = entities.battery?.icon;
+    if (entities.battery?.icon !== undefined) batteryIcon = entities.battery?.icon;
 
     const newDur = {
-      batteryGrid: this.circleRate(
-        batteryFromGrid ?? batteryToGrid ?? 0,
-        totalLines
-      ),
+      batteryGrid: this.circleRate(batteryFromGrid ?? batteryToGrid ?? 0, totalLines),
       batteryToHome: this.circleRate(batteryConsumption ?? 0, totalLines),
       gridToHome: this.circleRate(gridConsumption, totalLines),
       solarToBattery: this.circleRate(solarToBattery ?? 0, totalLines),
@@ -543,65 +390,36 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     // Smooth duration changes
-    [
-      "batteryGrid",
-      "batteryToHome",
-      "gridToHome",
-      "solarToBattery",
-      "solarToGrid",
-      "solarToHome",
-    ].forEach((flowName) => {
+    ["batteryGrid", "batteryToHome", "gridToHome", "solarToBattery", "solarToGrid", "solarToHome"].forEach((flowName) => {
       const flowSVGElement = this[`${flowName}Flow`] as SVGSVGElement;
-      if (
-        flowSVGElement &&
-        this.previousDur[flowName] &&
-        this.previousDur[flowName] !== newDur[flowName]
-      ) {
+      if (flowSVGElement && this.previousDur[flowName] && this.previousDur[flowName] !== newDur[flowName]) {
         flowSVGElement.pauseAnimations();
-        flowSVGElement.setCurrentTime(
-          flowSVGElement.getCurrentTime() *
-            (newDur[flowName] / this.previousDur[flowName])
-        );
+        flowSVGElement.setCurrentTime(flowSVGElement.getCurrentTime() * (newDur[flowName] / this.previousDur[flowName]));
         flowSVGElement.unpauseAnimations();
       }
       this.previousDur[flowName] = newDur[flowName];
     });
 
     const hasNonFossilFuelUsage =
-      gridConsumption * 1 -
-        this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 >
-        0 &&
+      gridConsumption * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
       entities.fossil_fuel_percentage?.entity !== undefined &&
       this.entityAvailable(entities.fossil_fuel_percentage?.entity);
 
     const hasFossilFuelPercentage =
-      (entities.fossil_fuel_percentage?.entity !== undefined &&
-        entities.fossil_fuel_percentage?.display_zero === true) ||
-      hasNonFossilFuelUsage;
+      (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) || hasNonFossilFuelUsage;
 
-    this.style.setProperty(
-      "--non-fossil-color",
-      this._config.entities.fossil_fuel_percentage?.color ||
-        "var(--energy-non-fossil-color)"
-    );
+    this.style.setProperty("--non-fossil-color", this._config.entities.fossil_fuel_percentage?.color || "var(--energy-non-fossil-color)");
     this.style.setProperty(
       "--icon-non-fossil-color",
-      this._config.entities.fossil_fuel_percentage?.color_icon
-        ? "var(--non-fossil-color)"
-        : "var(--primary-text-color)" || "var(--non-fossil-color)"
+      this._config.entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)" || "var(--non-fossil-color)"
     );
 
     const homeIconColorType = this._config.entities.home?.color_icon;
-    const homeLargestSource:
-      | "var(--energy-solar-color)"
-      | "var(--energy-battery-out-color)"
-      | "var(--energy-grid-consumption-color)" =
+    const homeLargestSource: "var(--energy-solar-color)" | "var(--energy-battery-out-color)" | "var(--energy-grid-consumption-color)" =
       /* see which number is the largest out of three different numbers */
-      homeSolarCircumference >= homeBatteryCircumference &&
-      homeSolarCircumference >= homeGridCircumference
+      homeSolarCircumference >= homeBatteryCircumference && homeSolarCircumference >= homeGridCircumference
         ? "var(--energy-solar-color)"
-        : homeBatteryCircumference >= homeSolarCircumference &&
-          homeBatteryCircumference >= homeGridCircumference
+        : homeBatteryCircumference >= homeSolarCircumference && homeBatteryCircumference >= homeGridCircumference
         ? "var(--energy-battery-out-color)"
         : "var(--energy-grid-consumption-color)";
 
@@ -627,50 +445,30 @@ export class PowerFlowCardPlus extends LitElement {
                   : html`<div class="circle-container low-carbon">
                       <span class="label"
                         >${!entities.fossil_fuel_percentage?.name
-                          ? this.hass.localize(
-                              "ui.panel.lovelace.cards.energy.energy_distribution.low_carbon"
-                            )
+                          ? this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.low_carbon")
                           : entities.fossil_fuel_percentage?.name}</span
                       >
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
                           e.stopPropagation();
-                          this.openDetails(
-                            entities.fossil_fuel_percentage?.entity
-                          );
+                          this.openDetails(entities.fossil_fuel_percentage?.entity);
                         }}
-                        @keyDown=${(e: {
-                          key: string;
-                          stopPropagation: () => void;
-                        }) => {
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
                             e.stopPropagation();
-                            this.openDetails(
-                              entities.fossil_fuel_percentage?.entity
-                            );
+                            this.openDetails(entities.fossil_fuel_percentage?.entity);
                           }
                         }}
                       >
                         <ha-icon
-                          .icon=${!entities.fossil_fuel_percentage?.icon
-                            ? "mdi:leaf"
-                            : entities.fossil_fuel_percentage?.icon}
+                          .icon=${!entities.fossil_fuel_percentage?.icon ? "mdi:leaf" : entities.fossil_fuel_percentage?.icon}
                           class="low-carbon"
                         ></ha-icon>
-                        <span class="low-carbon"
-                          >${this.displayNonFossilState(
-                            entities!.fossil_fuel_percentage!.entity,
-                            totalFromGrid
-                          )}</span
-                        >
+                        <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
                       </div>
                       <svg width="80" height="30">
-                        <path
-                          d="M40 -10 v40"
-                          class="low-carbon"
-                          id="low-carbon"
-                        />
+                        <path d="M40 -10 v40" class="low-carbon" id="low-carbon" />
                         ${hasNonFossilFuelUsage
                           ? svg`<circle
                               r="2.4"
@@ -691,10 +489,7 @@ export class PowerFlowCardPlus extends LitElement {
                 ${hasSolarProduction
                   ? html`<div class="circle-container solar">
                       <span class="label"
-                        >${entities.solar!.name ||
-                        this.hass.localize(
-                          "ui.panel.lovelace.cards.energy.energy_distribution.solar"
-                        )}</span
+                        >${entities.solar!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")}</span
                       >
                       <div
                         class="circle"
@@ -702,22 +497,15 @@ export class PowerFlowCardPlus extends LitElement {
                           e.stopPropagation();
                           this.openDetails(entities.solar!.entity);
                         }}
-                        @keyDown=${(e: {
-                          key: string;
-                          stopPropagation: () => void;
-                        }) => {
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
                             e.stopPropagation();
                             this.openDetails(entities.solar!.entity);
                           }
                         }}
                       >
-                        <ha-icon
-                          .icon=${entities.solar!.icon || "mdi:solar-power"}
-                        ></ha-icon>
-                        <span class="solar">
-                          ${this.displayValue(totalSolarProduction)}</span
-                        >
+                        <ha-icon .icon=${entities.solar!.icon || "mdi:solar-power"}></ha-icon>
+                        <span class="solar"> ${this.displayValue(totalSolarProduction)}</span>
                       </div>
                     </div>`
                   : hasIndividual2 || hasIndividual1
@@ -732,10 +520,7 @@ export class PowerFlowCardPlus extends LitElement {
                           e.stopPropagation();
                           this.openDetails(entities.individual2?.entity);
                         }}
-                        @keyDown=${(e: {
-                          key: string;
-                          stopPropagation: () => void;
-                        }) => {
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
                             e.stopPropagation();
                             this.openDetails(entities.individual2?.entity);
@@ -746,18 +531,12 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html`
                               <span class="secondary-info individual2">
                                 ${entities.individual2?.secondary_info?.icon
-                                  ? html`<ha-icon
-                                      class="secondary-info small"
-                                      .icon=${entities.individual2
-                                        ?.secondary_info?.icon}
-                                    ></ha-icon>`
+                                  ? html`<ha-icon class="secondary-info small" .icon=${entities.individual2?.secondary_info?.icon}></ha-icon>`
                                   : ""}
                                 ${this.displayValue(
                                   individual2SecondaryUsage,
-                                  entities.individual2?.secondary_info
-                                    ?.unit_of_measurement,
-                                  entities.individual2?.secondary_info
-                                    ?.unit_white_space
+                                  entities.individual2?.secondary_info?.unit_of_measurement,
+                                  entities.individual2?.secondary_info?.unit_white_space
                                 )}
                               </span>
                             `
@@ -765,14 +544,9 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual2-icon"
                           .icon=${individual2Icon}
-                          style=${hasIndividual2Secondary
-                            ? "padding-top: 2px;"
-                            : "padding-top: 0px;"}
+                          style=${hasIndividual2Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
                         ></ha-icon>
-                        ${this.displayValue(
-                          individual2Usage,
-                          this._config.entities.individual2?.unit_of_measurement
-                        )}
+                        ${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
                       </div>
                       <svg width="80" height="30">
                         <path d="M40 -10 v50" id="individual2" />
@@ -786,11 +560,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 dur="1.66s"
                                 repeatCount="indefinite"
                                 calcMode="linear"
-                                keyPoints=${
-                                  entities.individual2?.inverted_animation
-                                    ? "0;1"
-                                    : "1;0"
-                                }
+                                keyPoints=${entities.individual2?.inverted_animation ? "0;1" : "1;0"}
                                 keyTimes="0;1"
                               >
                                 <mpath xlink:href="#individual2" />
@@ -808,10 +578,7 @@ export class PowerFlowCardPlus extends LitElement {
                           e.stopPropagation();
                           this.openDetails(entities.individual1?.entity);
                         }}
-                        @keyDown=${(e: {
-                          key: string;
-                          stopPropagation: () => void;
-                        }) => {
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
                             e.stopPropagation();
                             this.openDetails(entities.individual1?.entity);
@@ -822,18 +589,12 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html`
                               <span class="secondary-info individual1">
                                 ${entities.individual1?.secondary_info?.icon
-                                  ? html`<ha-icon
-                                      class="secondary-info small"
-                                      .icon=${entities.individual1
-                                        ?.secondary_info?.icon}
-                                    ></ha-icon>`
+                                  ? html`<ha-icon class="secondary-info small" .icon=${entities.individual1?.secondary_info?.icon}></ha-icon>`
                                   : ""}
                                 ${this.displayValue(
                                   individual1SecondaryUsage,
-                                  entities.individual1?.secondary_info
-                                    ?.unit_of_measurement,
-                                  entities.individual1?.secondary_info
-                                    ?.unit_white_space
+                                  entities.individual1?.secondary_info?.unit_of_measurement,
+                                  entities.individual1?.secondary_info?.unit_white_space
                                 )}
                               </span>
                             `
@@ -841,16 +602,10 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
-                          style=${hasIndividual1Secondary
-                            ? "padding-top: 2px;"
-                            : "padding-top: 0px;"}
+                          style=${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
                         ></ha-icon>
                         ${this._config.entities.individual1?.unit_of_measurement
-                          ? this.displayValue(
-                              individual1Usage,
-                              this._config.entities.individual1
-                                ?.unit_of_measurement
-                            )
+                          ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
                           : this.displayValue(individual1Usage)}
                       </div>
                       <svg width="80" height="30">
@@ -864,11 +619,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 <animateMotion
                                   dur="1.66s"
                                   repeatCount="indefinite"
-                                  keyPoints=${
-                                    entities.individual1?.inverted_animation
-                                      ? "0;1"
-                                      : "1;0"
-                                  }
+                                  keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
                                   
                                 >
@@ -890,90 +641,57 @@ export class PowerFlowCardPlus extends LitElement {
                       const target: string =
                         typeof entities.grid!.entity === "string"
                           ? entities.grid!.entity
-                          : entities.grid!.entity!.consumption! ||
-                            entities.grid!.entity!.production!;
+                          : entities.grid!.entity!.consumption! || entities.grid!.entity!.production!;
                       e.stopPropagation();
                       this.openDetails(target);
                     }}
-                    @keyDown=${(e: {
-                      key: string;
-                      stopPropagation: () => void;
-                    }) => {
+                    @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                       if (e.key === "Enter") {
                         const target: string =
                           typeof entities.grid!.entity === "string"
                             ? entities.grid!.entity
-                            : entities.grid!.entity!.consumption! ||
-                              entities.grid!.entity!.production!;
+                            : entities.grid!.entity!.consumption! || entities.grid!.entity!.production!;
                         e.stopPropagation();
                         this.openDetails(target);
                       }
                     }}
                   >
-                    <ha-icon
-                      .icon=${entities.grid?.icon || "mdi:transmission-tower"}
-                    ></ha-icon>
+                    <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
-                      (entities.grid?.display_state === "one_way" &&
-                        totalToGrid > 0) ||
-                      (entities.grid?.display_state === "one_way_no_zero" &&
-                        (totalFromGrid === null || totalFromGrid === 0) &&
-                        totalToGrid !== 0)) &&
+                      (entities.grid?.display_state === "one_way" && totalToGrid > 0) ||
+                      (entities.grid?.display_state === "one_way_no_zero" && (totalFromGrid === null || totalFromGrid === 0) && totalToGrid !== 0)) &&
                     totalToGrid !== null
                       ? html`<span
                           class="return"
                           @click=${(e: { stopPropagation: () => void }) => {
-                            const target =
-                              typeof entities.grid!.entity === "string"
-                                ? entities.grid!.entity
-                                : entities.grid!.entity.production!;
+                            const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
                             e.stopPropagation();
                             this.openDetails(target);
                           }}
-                          @keyDown=${(e: {
-                            key: string;
-                            stopPropagation: () => void;
-                          }) => {
+                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                             if (e.key === "Enter") {
-                              const target =
-                                typeof entities.grid!.entity === "string"
-                                  ? entities.grid!.entity
-                                  : entities.grid!.entity.production!;
+                              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
                               e.stopPropagation();
                               this.openDetails(target);
                             }
                           }}
                         >
-                          <ha-icon
-                            class="small"
-                            .icon=${"mdi:arrow-left"}
-                          ></ha-icon>
+                          <ha-icon class="small" .icon=${"mdi:arrow-left"}></ha-icon>
                           ${this.displayValue(totalToGrid)}
                         </span>`
                       : null}
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
-                      (entities.grid?.display_state === "one_way" &&
-                        totalFromGrid > 0) ||
-                      (entities.grid?.display_state === "one_way_no_zero" &&
-                        (totalToGrid === null || totalToGrid === 0))) &&
+                      (entities.grid?.display_state === "one_way" && totalFromGrid > 0) ||
+                      (entities.grid?.display_state === "one_way_no_zero" && (totalToGrid === null || totalToGrid === 0))) &&
                     totalFromGrid !== null
                       ? html` <span class="consumption">
-                          <ha-icon
-                            class="small"
-                            .icon=${"mdi:arrow-right"}
-                          ></ha-icon
-                          >${this.displayValue(totalFromGrid)}
+                          <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(totalFromGrid)}
                         </span>`
                       : ""}
                   </div>
-                  <span class="label"
-                    >${entities.grid!.name ||
-                    this.hass.localize(
-                      "ui.panel.lovelace.cards.energy.energy_distribution.grid"
-                    )}</span
-                  >
+                  <span class="label">${entities.grid!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")}</span>
                 </div>`
               : html`<div class="spacer"></div>`}
             <div class="circle-container home">
@@ -984,10 +702,7 @@ export class PowerFlowCardPlus extends LitElement {
                   e.stopPropagation();
                   this.openDetails(entities.home?.entity);
                 }}
-                @keyDown=${(e: {
-                  key: string;
-                  stopPropagation: () => void;
-                }) => {
+                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                   if (e.key === "Enter") {
                     e.stopPropagation();
                     this.openDetails(entities.home?.entity);
@@ -1003,13 +718,9 @@ export class PowerFlowCardPlus extends LitElement {
                             cx="40"
                             cy="40"
                             r="38"
-                            stroke-dasharray="${homeSolarCircumference} ${
-                        CIRCLE_CIRCUMFERENCE - homeSolarCircumference
-                      }"
+                            stroke-dasharray="${homeSolarCircumference} ${CIRCLE_CIRCUMFERENCE - homeSolarCircumference}"
                             shape-rendering="geometricPrecision"
-                            stroke-dashoffset="-${
-                              CIRCLE_CIRCUMFERENCE - homeSolarCircumference
-                            }"
+                            stroke-dashoffset="-${CIRCLE_CIRCUMFERENCE - homeSolarCircumference}"
                           />`
                     : ""}
                   ${homeBatteryCircumference
@@ -1018,14 +729,8 @@ export class PowerFlowCardPlus extends LitElement {
                             cx="40"
                             cy="40"
                             r="38"
-                            stroke-dasharray="${homeBatteryCircumference} ${
-                        CIRCLE_CIRCUMFERENCE - homeBatteryCircumference
-                      }"
-                            stroke-dashoffset="-${
-                              CIRCLE_CIRCUMFERENCE -
-                              homeBatteryCircumference -
-                              (homeSolarCircumference || 0)
-                            }"
+                            stroke-dasharray="${homeBatteryCircumference} ${CIRCLE_CIRCUMFERENCE - homeBatteryCircumference}"
+                            stroke-dashoffset="-${CIRCLE_CIRCUMFERENCE - homeBatteryCircumference - (homeSolarCircumference || 0)}"
                             shape-rendering="geometricPrecision"
                           />`
                     : ""}
@@ -1035,13 +740,9 @@ export class PowerFlowCardPlus extends LitElement {
                     cy="40"
                     r="38"
                     stroke-dasharray="${homeGridCircumference ??
-                    CIRCLE_CIRCUMFERENCE -
-                      homeSolarCircumference! -
-                      (homeBatteryCircumference ||
-                        0)} ${homeGridCircumference !== undefined
+                    CIRCLE_CIRCUMFERENCE - homeSolarCircumference! - (homeBatteryCircumference || 0)} ${homeGridCircumference !== undefined
                       ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
-                      : homeSolarCircumference! +
-                        (homeBatteryCircumference || 0)}"
+                      : homeSolarCircumference! + (homeBatteryCircumference || 0)}"
                     stroke-dashoffset="0"
                     shape-rendering="geometricPrecision"
                   />
@@ -1050,10 +751,7 @@ export class PowerFlowCardPlus extends LitElement {
               ${hasIndividual2 && hasIndividual1
                 ? ""
                 : html` <span class="label"
-                    >${entities.home?.name ||
-                    this.hass.localize(
-                      "ui.panel.lovelace.cards.energy.energy_distribution.home"
-                    )}</span
+                    >${entities.home?.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")}</span
                   >`}
             </div>
           </div>
@@ -1073,10 +771,7 @@ export class PowerFlowCardPlus extends LitElement {
                           e.stopPropagation();
                           this.openDetails(target);
                         }}
-                        @keyDown=${(e: {
-                          key: string;
-                          stopPropagation: () => void;
-                        }) => {
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
                             const target = entities.battery?.state_of_charge!
                               ? entities.battery?.state_of_charge!
@@ -1092,144 +787,92 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html` <span
                               @click=${(e: { stopPropagation: () => void }) => {
                                 e.stopPropagation();
-                                this.openDetails(
-                                  entities.battery?.state_of_charge!
-                                );
+                                this.openDetails(entities.battery?.state_of_charge!);
                               }}
-                              @keyDown=${(e: {
-                                key: string;
-                                stopPropagation: () => void;
-                              }) => {
+                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                                 if (e.key === "Enter") {
                                   e.stopPropagation();
-                                  this.openDetails(
-                                    entities.battery?.state_of_charge!
-                                  );
+                                  this.openDetails(entities.battery?.state_of_charge!);
                                 }
                               }}
                             >
-                              ${formatNumber(
-                                batteryChargeState,
-                                this.hass.locale,
-                                {
-                                  maximumFractionDigits: 0,
-                                  minimumFractionDigits: 0,
-                                }
-                              )}${this._config.entities?.battery
-                                ?.state_of_charge_unit_white_space === false
-                                ? ""
-                                : " "}%
+                              ${formatNumber(batteryChargeState, this.hass.locale, {
+                                maximumFractionDigits: 0,
+                                minimumFractionDigits: 0,
+                              })}${this._config.entities?.battery?.state_of_charge_unit_white_space === false ? "" : " "}%
                             </span>`
                           : null}
                         <ha-icon
                           .icon=${batteryIcon}
                           style=${entities.battery?.display_state === "two_way"
                             ? "padding-top: 0px; padding-bottom: 2px;"
-                            : entities.battery?.display_state === "one_way" &&
-                              totalBatteryIn === 0 &&
-                              totalBatteryOut === 0
+                            : entities.battery?.display_state === "one_way" && totalBatteryIn === 0 && totalBatteryOut === 0
                             ? "padding-top: 2px; padding-bottom: 0px;"
                             : "padding-top: 2px; padding-bottom: 2px;"}
                           @click=${(e: { stopPropagation: () => void }) => {
                             e.stopPropagation();
-                            this.openDetails(
-                              entities.battery?.state_of_charge!
-                            );
+                            this.openDetails(entities.battery?.state_of_charge!);
                           }}
-                          @keyDown=${(e: {
-                            key: string;
-                            stopPropagation: () => void;
-                          }) => {
+                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                             if (e.key === "Enter") {
                               e.stopPropagation();
-                              this.openDetails(
-                                entities.battery?.state_of_charge!
-                              );
+                              this.openDetails(entities.battery?.state_of_charge!);
                             }
                           }}
                         ></ha-icon>
                         ${entities.battery?.display_state === "two_way" ||
                         entities.battery?.display_state === undefined ||
-                        (entities.battery?.display_state === "one_way" &&
-                          totalBatteryIn > 0) ||
-                        (entities.battery?.display_state ===
-                          "one_way_no_zero" &&
-                          totalBatteryIn !== 0)
+                        (entities.battery?.display_state === "one_way" && totalBatteryIn > 0) ||
+                        (entities.battery?.display_state === "one_way_no_zero" && totalBatteryIn !== 0)
                           ? html`<span
                               class="battery-in"
                               @click=${(e: { stopPropagation: () => void }) => {
                                 const target =
-                                  typeof entities.battery!.entity === "string"
-                                    ? entities.battery!.entity!
-                                    : entities.battery!.entity!.production!;
+                                  typeof entities.battery!.entity === "string" ? entities.battery!.entity! : entities.battery!.entity!.production!;
                                 e.stopPropagation();
                                 this.openDetails(target);
                               }}
-                              @keyDown=${(e: {
-                                key: string;
-                                stopPropagation: () => void;
-                              }) => {
+                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                                 if (e.key === "Enter") {
                                   const target =
-                                    typeof entities.battery!.entity === "string"
-                                      ? entities.battery!.entity!
-                                      : entities.battery!.entity!.production!;
+                                    typeof entities.battery!.entity === "string" ? entities.battery!.entity! : entities.battery!.entity!.production!;
                                   e.stopPropagation();
                                   this.openDetails(target);
                                 }
                               }}
                             >
-                              <ha-icon
-                                class="small"
-                                .icon=${"mdi:arrow-down"}
-                              ></ha-icon>
+                              <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
                               ${this.displayValue(totalBatteryIn)}</span
                             >`
                           : ""}
                         ${entities.battery?.display_state === "two_way" ||
                         entities.battery?.display_state === undefined ||
-                        (entities.battery?.display_state === "one_way" &&
-                          totalBatteryOut > 0) ||
-                        (entities.battery?.display_state ===
-                          "one_way_no_zero" &&
-                          (totalBatteryIn === 0 || totalBatteryOut !== 0))
+                        (entities.battery?.display_state === "one_way" && totalBatteryOut > 0) ||
+                        (entities.battery?.display_state === "one_way_no_zero" && (totalBatteryIn === 0 || totalBatteryOut !== 0))
                           ? html`<span
                               class="battery-out"
                               @click=${(e: { stopPropagation: () => void }) => {
                                 const target =
-                                  typeof entities.battery!.entity === "string"
-                                    ? entities.battery!.entity!
-                                    : entities.battery!.entity!.consumption!;
+                                  typeof entities.battery!.entity === "string" ? entities.battery!.entity! : entities.battery!.entity!.consumption!;
                                 e.stopPropagation();
                                 this.openDetails(target);
                               }}
-                              @keyDown=${(e: {
-                                key: string;
-                                stopPropagation: () => void;
-                              }) => {
+                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                                 if (e.key === "Enter") {
                                   const target =
-                                    typeof entities.battery!.entity === "string"
-                                      ? entities.battery!.entity!
-                                      : entities.battery!.entity!.consumption!;
+                                    typeof entities.battery!.entity === "string" ? entities.battery!.entity! : entities.battery!.entity!.consumption!;
                                   e.stopPropagation();
                                   this.openDetails(target);
                                 }
                               }}
                             >
-                              <ha-icon
-                                class="small"
-                                .icon=${"mdi:arrow-up"}
-                              ></ha-icon>
+                              <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
                               ${this.displayValue(totalBatteryOut)}</span
                             >`
                           : ""}
                       </div>
                       <span class="label"
-                        >${entities.battery!.name ||
-                        this.hass.localize(
-                          "ui.panel.lovelace.cards.energy.energy_distribution.battery"
-                        )}</span
+                        >${entities.battery!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.battery")}</span
                       >
                     </div>`
                   : html`<div class="spacer"></div>`}
@@ -1247,11 +890,7 @@ export class PowerFlowCardPlus extends LitElement {
                                   dur="1.66s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints=${
-                                    entities.individual1?.inverted_animation
-                                      ? "0;1"
-                                      : "1;0"
-                                  }
+                                  keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
                                   keyTimes="0;1" 
                                 >
                                   <mpath xlink:href="#individual1" />
@@ -1265,10 +904,7 @@ export class PowerFlowCardPlus extends LitElement {
                           e.stopPropagation();
                           this.openDetails(entities.individual1?.entity);
                         }}
-                        @keyDown=${(e: {
-                          key: string;
-                          stopPropagation: () => void;
-                        }) => {
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
                             e.stopPropagation();
                             this.openDetails(entities.individual1?.entity);
@@ -1279,18 +915,12 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html`
                               <span class="secondary-info individual1">
                                 ${entities.individual1?.secondary_info?.icon
-                                  ? html`<ha-icon
-                                      class="secondary-info small"
-                                      .icon=${entities.individual1
-                                        ?.secondary_info?.icon}
-                                    ></ha-icon>`
+                                  ? html`<ha-icon class="secondary-info small" .icon=${entities.individual1?.secondary_info?.icon}></ha-icon>`
                                   : ""}
                                 ${this.displayValue(
                                   individual1SecondaryUsage,
-                                  entities.individual1?.secondary_info
-                                    ?.unit_of_measurement,
-                                  entities.individual1?.secondary_info
-                                    ?.unit_white_space
+                                  entities.individual1?.secondary_info?.unit_of_measurement,
+                                  entities.individual1?.secondary_info?.unit_white_space
                                 )}
                               </span>
                             `
@@ -1298,16 +928,10 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
-                          style=${hasIndividual1Secondary
-                            ? "padding-top: 2px;"
-                            : "padding-top: 0px;"}
+                          style=${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
                         ></ha-icon>
                         ${this._config.entities.individual1?.unit_of_measurement
-                          ? this.displayValue(
-                              individual1Usage,
-                              this._config.entities.individual1
-                                ?.unit_of_measurement
-                            )
+                          ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
                           : this.displayValue(individual1Usage)}
                       </div>
                       <span class="label">${individual1Name}</span>
@@ -1319,24 +943,14 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "individual1-individual2":
-                    !hasBattery && hasIndividual2 && hasIndividual1,
+                  "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="xMidYMid slice"
-                  id="solar-home-flow"
-                >
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-home-flow">
                   <path
                     id="solar"
                     class="solar"
-                    d="M${hasBattery ? 55 : 53},0 v${hasGrid
-                      ? 15
-                      : 17} c0,${hasBattery
-                      ? "30 10,30 30,30"
-                      : "35 10,35 30,35"} h25"
+                    d="M${hasBattery ? 55 : 53},0 v${hasGrid ? 15 : 17} c0,${hasBattery ? "30 10,30 30,30" : "35 10,35 30,35"} h25"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${solarConsumption
@@ -1361,22 +975,14 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "individual1-individual2":
-                    !hasBattery && hasIndividual2 && hasIndividual1,
+                  "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="xMidYMid slice"
-                  id="solar-grid-flow"
-                >
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-grid-flow">
                   <path
                     id="return"
                     class="return"
-                    d="M${hasBattery ? 45 : 47},0 v15 c0,${hasBattery
-                      ? "30 -10,30 -30,30"
-                      : "35 -10,35 -30,35"} h-20"
+                    d="M${hasBattery ? 45 : 47},0 v15 c0,${hasBattery ? "30 -10,30 -30,30" : "35 -10,35 -30,35"} h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${solarToGrid && hasSolarProduction
@@ -1401,22 +1007,11 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "individual1-individual2":
-                    !hasBattery && hasIndividual2 && hasIndividual1,
+                  "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="xMidYMid slice"
-                  id="solar-battery-flow"
-                >
-                  <path
-                    id="battery-solar"
-                    class="battery-solar"
-                    d="M50,0 V100"
-                    vector-effect="non-scaling-stroke"
-                  ></path>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-battery-flow">
+                  <path id="battery-solar" class="battery-solar" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
                   ${solarToBattery
                     ? svg`<circle
                             r="1"
@@ -1439,24 +1034,14 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "individual1-individual2":
-                    !hasBattery && hasIndividual2 && hasIndividual1,
+                  "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="xMidYMid slice"
-                  id="grid-home-flow"
-                >
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow">
                   <path
                     class="grid"
                     id="grid"
-                    d="M0,${hasBattery
-                      ? 50
-                      : hasSolarProduction
-                      ? 56
-                      : 53} H100"
+                    d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   ${gridConsumption
@@ -1481,16 +1066,10 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "individual1-individual2":
-                    !hasBattery && hasIndividual2 && hasIndividual1,
+                  "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="xMidYMid slice"
-                  id="battery-home-flow"
-                >
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-home-flow">
                   <path
                     id="battery-home"
                     class="battery-home"
@@ -1519,16 +1098,10 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
-                  "individual1-individual2":
-                    !hasBattery && hasIndividual2 && hasIndividual1,
+                  "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="xMidYMid slice"
-                  id="battery-grid-flow"
-                >
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-grid-flow">
                   <path
                     id="battery-grid"
                     class=${classMap({
@@ -1577,11 +1150,7 @@ export class PowerFlowCardPlus extends LitElement {
           ? html`
               <div class="card-actions">
                 <a href=${this._config.dashboard_link}
-                  ><mwc-button>
-                    ${this.hass.localize(
-                      "ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard"
-                    )}
-                  </mwc-button></a
+                  ><mwc-button> ${this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard")} </mwc-button></a
                 >
               </div>
             `
