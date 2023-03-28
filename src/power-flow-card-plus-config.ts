@@ -11,6 +11,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color?: ComboEntity;
       color_icon?: boolean | "production" | "consumption";
       display_state?: "two_way" | "one_way" | "one_way_no_zero";
+      state_of_charge_unit_white_space?: boolean;
     };
     grid?: {
       entity: string | ComboEntity;

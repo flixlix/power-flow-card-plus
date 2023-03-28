@@ -31,9 +31,9 @@ export class PowerFlowCardPlus extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  static getConfigElement() {
+  /* static getConfigElement() {
     return document.createElement("power-flow-card-plus-editor");
-  }
+  } */
 
   setConfig(config: PowerFlowCardPlusConfig): void {
     if (
@@ -140,7 +140,11 @@ export class PowerFlowCardPlus extends LitElement {
     return result;
   };
 
-  private displayValue = (value: number | null, unit?: string | undefined) => {
+  private displayValue = (
+    value: number | null,
+    unit?: string | undefined,
+    unitWhiteSpace?: boolean | undefined
+  ) => {
     if (value === null) return "0";
     const isKW = unit === undefined && value >= this._config!.watt_threshold;
     const v = formatNumber(
@@ -149,7 +153,9 @@ export class PowerFlowCardPlus extends LitElement {
         : round(value, this._config!.w_decimals),
       this.hass.locale
     );
-    return `${v}${unit || (isKW ? "kW" : "W")}`;
+    return `${v}${unitWhiteSpace === false ? "" : " "}${
+      unit || (isKW ? "kW" : "W")
+    }`;
   };
 
   private openDetails(entityId?: string | undefined): void {
@@ -749,7 +755,9 @@ export class PowerFlowCardPlus extends LitElement {
                                 ${this.displayValue(
                                   individual2SecondaryUsage,
                                   entities.individual2?.secondary_info
-                                    ?.unit_of_measurement
+                                    ?.unit_of_measurement,
+                                  entities.individual2?.secondary_info
+                                    ?.unit_white_space
                                 )}
                               </span>
                             `
@@ -823,7 +831,9 @@ export class PowerFlowCardPlus extends LitElement {
                                 ${this.displayValue(
                                   individual1SecondaryUsage,
                                   entities.individual1?.secondary_info
-                                    ?.unit_of_measurement
+                                    ?.unit_of_measurement,
+                                  entities.individual1?.secondary_info
+                                    ?.unit_white_space
                                 )}
                               </span>
                             `
@@ -1105,7 +1115,10 @@ export class PowerFlowCardPlus extends LitElement {
                                   maximumFractionDigits: 0,
                                   minimumFractionDigits: 0,
                                 }
-                              )}%
+                              )}${this._config.entities?.battery
+                                ?.state_of_charge_unit_white_space === false
+                                ? ""
+                                : " "}%
                             </span>`
                           : null}
                         <ha-icon
@@ -1275,7 +1288,9 @@ export class PowerFlowCardPlus extends LitElement {
                                 ${this.displayValue(
                                   individual1SecondaryUsage,
                                   entities.individual1?.secondary_info
-                                    ?.unit_of_measurement
+                                    ?.unit_of_measurement,
+                                  entities.individual1?.secondary_info
+                                    ?.unit_white_space
                                 )}
                               </span>
                             `

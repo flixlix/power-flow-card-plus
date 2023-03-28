@@ -137,6 +137,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
 | display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+| state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge. |
 
 #### Individual Configuration
 
@@ -147,7 +148,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | icon | `string` | `mdi:car-electric` or `mdi:motorbike-electric` | Icon path for the icon inside the Individual Device Circle. |
 | color | `string` | `#d0cc5b` or `#964cb5` | HEX value of the color for circles labels and lines of the individual device. |
 | color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
-| display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | unit_of_measurement | `string` | `W`or `kW` (dynamic) | Sets the unit of measurement to show in the corresponding circle |
 | inverted_animation |`boolean` | `false` | If set to true, the small dots will flow in the opposite direction. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration)
@@ -198,7 +199,8 @@ This Feature allows you to configure an additional small text for each Individua
 | entity| `string` required | Entity ID providing a state value that is going to be displayed. |
 | unit_of_measurement | `string` | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes) |
 | icon | `string` | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed. |
-| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`.
+| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`. |
+| unit_white_space | `boolean` |  Default is `true`. If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
 
 ### Minimal Configuration
 
