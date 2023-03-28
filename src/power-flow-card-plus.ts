@@ -1115,7 +1115,10 @@ export class PowerFlowCardPlus extends LitElement {
                                   maximumFractionDigits: 0,
                                   minimumFractionDigits: 0,
                                 }
-                              )}%
+                              )}${this._config.entities?.battery
+                                ?.state_of_charge_unit_white_space === false
+                                ? ""
+                                : " "}%
                             </span>`
                           : null}
                         <ha-icon
