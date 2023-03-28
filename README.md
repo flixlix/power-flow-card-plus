@@ -198,7 +198,8 @@ This Feature allows you to configure an additional small text for each Individua
 | entity| `string` required | Entity ID providing a state value that is going to be displayed. |
 | unit_of_measurement | `string` | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes) |
 | icon | `string` | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed. |
-| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`.
+| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`. |
+| unit_white_space | `boolean` |  Default is `true`. If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
 
 ### Minimal Configuration
 
