@@ -3,7 +3,7 @@ import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { PowerFlowCardConfig } from "./power-flow-card-plus-config.js";
+import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config.js";
 import {
   coerceNumber,
   coerceStringArray,
@@ -20,9 +20,9 @@ const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
 
 @customElement("power-flow-card-plus")
-export class PowerFlowCard extends LitElement {
+export class PowerFlowCardPlus extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
-  @state() private _config = {} as PowerFlowCardConfig;
+  @state() private _config = {} as PowerFlowCardPlusConfig;
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -31,7 +31,11 @@ export class PowerFlowCard extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  setConfig(config: PowerFlowCardConfig): void {
+  static getConfigElement() {
+    return document.createElement("power-flow-card-plus-editor");
+  }
+
+  setConfig(config: PowerFlowCardPlusConfig): void {
     if (
       !config.entities ||
       (!config.entities.battery &&
@@ -1905,6 +1909,6 @@ windowWithCards.customCards.push({
 
 declare global {
   interface HTMLElementTagNameMap {
-    "power-flow-card-plus": PowerFlowCard;
+    "power-flow-card-plus": PowerFlowCardPlus;
   }
 }

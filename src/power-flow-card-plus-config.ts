@@ -1,7 +1,7 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 import { ComboEntity, IndividualDeviceType } from "./type.js";
 
-export interface PowerFlowCardConfig extends LovelaceCardConfig {
+export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   entities: {
     battery?: {
       entity: string | ComboEntity;
