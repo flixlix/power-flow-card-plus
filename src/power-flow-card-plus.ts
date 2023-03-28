@@ -31,9 +31,9 @@ export class PowerFlowCardPlus extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  static getConfigElement() {
+  /* static getConfigElement() {
     return document.createElement("power-flow-card-plus-editor");
-  }
+  } */
 
   setConfig(config: PowerFlowCardPlusConfig): void {
     if (
