@@ -72,7 +72,6 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
-
 ### Options
 
 #### Card options
@@ -88,7 +87,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate       | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
 | max_flow_rate       | `number`  |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| max_expected_flow_w | `number`  |    8000      | Represents the maximum amount of current expected to flow through the system at a given moment, see [flow formula](#flow-formula).                                           |
+| max_expected_flow_w | `number`  |    8000      | Represents the maximum amount of power expected to flow through the system at a given moment, see [flow formula](#flow-formula).                                           |
 | watt_threshold      | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
 | clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog.                                                                                                     |
 
@@ -333,12 +332,12 @@ max - (value / totalLines) * (max - min);
 // )
 ```
 
-The previous version of this lacked the max_expected_flow_w configuration, so when the current across the entire system
+The previous version of this lacked the max_expected_flow_w configuration, so when the power across the entire system
 was low it would show animations as quickly as when the entire system running hot. This was because it was previously
 only relative to the current behaviour.
 
 The animation will not run any faster once this value has been exceeded, so you may wish to tweak max_expected_flow_w
-if you expect your system to have a higher total current than 8kw. 
+if you expect your system to have a higher total power than 8kw.
 
 #### Credits
 

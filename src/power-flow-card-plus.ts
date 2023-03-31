@@ -18,7 +18,7 @@ const KW_DECIMALS = 1;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
-const MAX_EXPECTED_FLOW_W = 8000;
+const MAX_EXPECTED_FLOW_W = 5000;
 
 @customElement("power-flow-card-plus")
 export class PowerFlowCard extends LitElement {
