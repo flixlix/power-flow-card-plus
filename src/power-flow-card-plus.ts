@@ -632,13 +632,6 @@ export class PowerFlowCardPlus extends LitElement {
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
 
-    console.log(
-      homeBatteryCircumference,
-      homeSolarCircumference,
-      homeGridCircumference,
-      homeNonFossilCircumference
-    );
-
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
