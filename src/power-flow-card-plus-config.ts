@@ -39,9 +39,10 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       name?: string;
       icon?: string;
       color?: string;
-      display_zero?: boolean;
       state_type?: "percentage" | "power";
       color_icon?: boolean;
+      display_zero?: boolean;
+      display_zero_tolerance?: number;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
@@ -51,6 +52,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   kw_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;
+  max_expected_flow_w: number;
   w_decimals: number;
   watt_threshold: number;
   clickable_entities: boolean;
