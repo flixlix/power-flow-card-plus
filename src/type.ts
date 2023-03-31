@@ -9,14 +9,16 @@ export type IndividualDeviceType = {
   icon?: string;
   color?: string;
   color_icon?: boolean;
-  display_zero?: boolean;
   inverted_animation?: boolean;
   unit_of_measurement?: string;
+  display_zero?: boolean;
+  display_zero_tolerance?: number;
   secondary_info?: {
     entity: string;
     unit_of_measurement?: string;
     icon?: string;
     display_zero?: boolean;
+    display_zero_tolerance?: number;
   };
 };
 

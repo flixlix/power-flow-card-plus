@@ -38,9 +38,10 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       name?: string;
       icon?: string;
       color?: string;
-      display_zero?: boolean;
       state_type?: "percentage" | "power";
       color_icon?: boolean;
+      display_zero?: boolean;
+      display_zero_tolerance?: number;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
