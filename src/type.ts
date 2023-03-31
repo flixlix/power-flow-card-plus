@@ -18,7 +18,9 @@ export type IndividualDeviceType = {
     unit_of_measurement?: string;
     icon?: string;
     display_zero?: boolean;
+    unit_white_space?: boolean;
     display_zero_tolerance?: number;
+    display-zero-threshold?: number;
   };
 };
 

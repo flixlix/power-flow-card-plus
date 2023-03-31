@@ -72,24 +72,24 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
-
 ### Options
 
 #### Card options
 
-| Name               | Type      |   Default    | Description                                                                                                                                                                  |
-| ------------------ | --------- | :----------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type               | `string`  | **required** | `custom:power-flow-card-plus`.                                                                                                                                                    |
-| entities           | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
-| title              | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
-| dashboard_link     | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| inverted_entities  | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). See [example usage](#inverted-entities-example).            |
-| kw_decimals        | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
-| w_decimals         | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
-| min_flow_rate      | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| max_flow_rate      | `number`  |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| watt_threshold     | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
-| clickable_entities | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog.                                                                                                     |
+| Name                | Type      |   Default    | Description                                                                                                                                                                  |
+|---------------------| --------- |:------------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type                | `string`  | **required** | `custom:power-flow-card-plus`.                                                                                                                                               |
+| entities            | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
+| title               | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
+| dashboard_link      | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
+| inverted_entities   | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production).            |
+| kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
+| w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
+| min_flow_rate       | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
+| max_flow_rate       | `number`  |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
+| max_expected_flow_w | `number`  |    5000      | Represents the maximum amount of power expected to flow through the system at a given moment, see [flow formula](#flow-formula).                                           |
+| watt_threshold      | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
+| clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog.                                                                                                     |
 
 #### Entities object
 
@@ -137,6 +137,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
 | display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+| state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge. |
 
 #### Individual Configuration
 
@@ -147,7 +148,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | icon | `string` | `mdi:car-electric` or `mdi:motorbike-electric` | Icon path for the icon inside the Individual Device Circle. |
 | color | `string` | `#d0cc5b` or `#964cb5` | HEX value of the color for circles labels and lines of the individual device. |
 | color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
-| display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | unit_of_measurement | `string` | `W`or `kW` (dynamic) | Sets the unit of measurement to show in the corresponding circle |
 | inverted_animation |`boolean` | `false` | If set to true, the small dots will flow in the opposite direction. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration)
@@ -198,7 +199,8 @@ This Feature allows you to configure an additional small text for each Individua
 | entity| `string` required | Entity ID providing a state value that is going to be displayed. |
 | unit_of_measurement | `string` | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes) |
 | icon | `string` | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed. |
-| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`.
+| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`. |
+| unit_white_space | `boolean` |  Default is `true`. If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
 
 ### Minimal Configuration
 
@@ -319,18 +321,25 @@ This should give you something like this:
 
 ### Flow Formula
 
-This formula is based on the offical formula used by the Energy Distribution card.
+This formula is based on the official formula used by the Energy Distribution card.
 
 ```js
 max - (value / totalLines) * (max - min);
 // max = max_flow_rate
 // min = min_flow_rate
 // value = line value, solar to grid for example
-// totalLines = gridConsumption + solarConsumption + solarToBattery +
-//   solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid
+// totalLines = Math.max(
+//     gridConsumption + solarConsumption + solarToBattery + solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid,
+//     config.max_expected_flow_w
+// )
 ```
 
-I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
+The previous version of this lacked the max_expected_flow_w configuration, so when the power across the entire system
+was low it would show animations as quickly as when the entire system running hot. This was because it was previously
+only relative to the current behaviour.
+
+The animation will not run any faster once this value has been exceeded, so you may wish to tweak max_expected_flow_w
+if you expect your system to have a higher total power than 8kw.
 
 #### Credits
 

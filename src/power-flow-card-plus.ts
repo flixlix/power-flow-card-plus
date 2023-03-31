@@ -3,7 +3,7 @@ import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { PowerFlowCardConfig } from "./power-flow-card-plus-config.js";
+import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config.js";
 import {
   coerceNumber,
   coerceStringArray,
@@ -18,11 +18,12 @@ const KW_DECIMALS = 1;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
+const MAX_EXPECTED_FLOW_W = 5000;
 
 @customElement("power-flow-card-plus")
-export class PowerFlowCard extends LitElement {
+export class PowerFlowCardPlus extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
-  @state() private _config = {} as PowerFlowCardConfig;
+  @state() private _config = {} as PowerFlowCardPlusConfig;
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -31,7 +32,11 @@ export class PowerFlowCard extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  setConfig(config: PowerFlowCardConfig): void {
+  /* static getConfigElement() {
+    return document.createElement("power-flow-card-plus-editor");
+  } */
+
+  setConfig(config: PowerFlowCardPlusConfig): void {
     if (
       !config.entities ||
       (!config.entities.battery &&
@@ -50,6 +55,7 @@ export class PowerFlowCard extends LitElement {
       max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
       w_decimals: coerceNumber(config.w_decimals, W_DECIMALS),
       watt_threshold: coerceNumber(config.watt_threshold),
+      max_expected_flow_w: coerceNumber(config.max_expected_flow_w, MAX_EXPECTED_FLOW_W)
     };
   }
 
@@ -75,7 +81,7 @@ export class PowerFlowCard extends LitElement {
   private circleRate = (value: number, total: number): number => {
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
-    return max - (value / total) * (max - min);
+    return max - (value / Math.max(this._config?.max_expected_flow_w, total)) * (max - min);
   };
 
   private getEntityState = (entity: string | undefined): number => {
@@ -97,22 +103,23 @@ export class PowerFlowCard extends LitElement {
     return value * 1000;
   };
 
-  private displayNonFossilState = (entity: string | undefined): string => {
-    if (!entity || !this.entityAvailable(entity)) {
-      this.unavailableOrMisconfiguredError(entity);
+  private displayNonFossilState = (
+    entityFossil: string,
+    totalFromGrid: number
+  ): string => {
+    if (!entityFossil || !this.entityAvailable(entityFossil)) {
+      this.unavailableOrMisconfiguredError(entityFossil);
       return "NaN";
     }
     const unitOfMeasurement: "W" | "%" =
       this._config!.entities.fossil_fuel_percentage?.state_type === "percentage"
         ? "%"
         : "W" || "W";
-    const nonFossilFuelDecimal: number = 1 - this.getEntityState(entity) / 100;
+    const nonFossilFuelDecimal: number =
+      1 - this.getEntityState(entityFossil) / 100;
     let gridConsumption: number;
     if (typeof this._config!.entities.grid!.entity === "string") {
-      gridConsumption =
-        this.getEntityStateWatts(this._config!.entities!.grid!.entity) > 0
-          ? this.getEntityStateWatts(this._config!.entities!.grid!.entity)
-          : 0;
+      gridConsumption = totalFromGrid;
     } else {
       gridConsumption =
         this.getEntityStateWatts(
@@ -125,7 +132,8 @@ export class PowerFlowCard extends LitElement {
       const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
       result = this.displayValue(nonFossilFuelWatts);
     } else {
-      const nonFossilFuelPercentage: number = 100 - this.getEntityState(entity);
+      const nonFossilFuelPercentage: number =
+        100 - this.getEntityState(entityFossil);
       result = nonFossilFuelPercentage
         .toFixed(0)
         .toString()
@@ -134,7 +142,11 @@ export class PowerFlowCard extends LitElement {
     return result;
   };
 
-  private displayValue = (value: number | null, unit?: string | undefined) => {
+  private displayValue = (
+    value: number | null,
+    unit?: string | undefined,
+    unitWhiteSpace?: boolean | undefined
+  ) => {
     if (value === null) return "0";
     const isKW = unit === undefined && value >= this._config!.watt_threshold;
     const v = formatNumber(
@@ -143,7 +155,9 @@ export class PowerFlowCard extends LitElement {
         : round(value, this._config!.w_decimals),
       this.hass.locale
     );
-    return `${v}${unit || (isKW ? "kW" : "W")}`;
+    return `${v}${unitWhiteSpace === false ? "" : " "}${
+      unit || (isKW ? "kW" : "W")
+    }`;
   };
 
   private openDetails(entityId?: string | undefined): void {
@@ -486,12 +500,36 @@ export class PowerFlowCard extends LitElement {
         CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
     }
 
+    const hasNonFossilFuelUsage =
+      gridConsumption * 1 -
+        this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 >
+        0 &&
+      entities.fossil_fuel_percentage?.entity !== undefined &&
+      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
+
+    const hasFossilFuelPercentage =
+      (entities.fossil_fuel_percentage?.entity !== undefined &&
+        entities.fossil_fuel_percentage?.display_zero === true) ||
+      hasNonFossilFuelUsage;
+
+    let nonFossilFuelPower: number | undefined;
+    let homeNonFossilCircumference: number | undefined;
+
+    if (hasNonFossilFuelUsage) {
+      const nonFossilFuelDecimal: number =
+        1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
+      nonFossilFuelPower = gridConsumption * nonFossilFuelDecimal;
+      homeNonFossilCircumference =
+        CIRCLE_CIRCUMFERENCE * (nonFossilFuelPower / totalHomeConsumption);
+    }
     const homeGridCircumference =
       CIRCLE_CIRCUMFERENCE *
       ((totalHomeConsumption -
+        (nonFossilFuelPower ?? 0) -
         (batteryConsumption ?? 0) -
         (solarConsumption ?? 0)) /
         totalHomeConsumption);
+
 
     const totalLines =
       gridConsumption +
@@ -556,18 +594,6 @@ export class PowerFlowCard extends LitElement {
       this.previousDur[flowName] = newDur[flowName];
     });
 
-    const hasNonFossilFuelUsage =
-      gridConsumption * 1 -
-        this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 >
-        0 &&
-      entities.fossil_fuel_percentage?.entity !== undefined &&
-      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
-
-    const hasFossilFuelPercentage =
-      (entities.fossil_fuel_percentage?.entity !== undefined &&
-        entities.fossil_fuel_percentage?.display_zero === true) ||
-      hasNonFossilFuelUsage;
-
     this.style.setProperty(
       "--non-fossil-color",
       this._config.entities.fossil_fuel_percentage?.color ||
@@ -605,6 +631,13 @@ export class PowerFlowCard extends LitElement {
       iconHomeColor = homeLargestSource;
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
+
+    console.log(
+      homeBatteryCircumference,
+      homeSolarCircumference,
+      homeGridCircumference,
+      homeNonFossilCircumference
+    );
 
     return html`
       <ha-card .header=${this._config.title}>
@@ -649,7 +682,8 @@ export class PowerFlowCard extends LitElement {
                         ></ha-icon>
                         <span class="low-carbon"
                           >${this.displayNonFossilState(
-                            entities!.fossil_fuel_percentage!.entity
+                            entities!.fossil_fuel_percentage!.entity,
+                            totalFromGrid
                           )}</span
                         >
                       </div>
@@ -743,7 +777,9 @@ export class PowerFlowCard extends LitElement {
                                 ${this.displayValue(
                                   individual2SecondaryUsage,
                                   entities.individual2?.secondary_info
-                                    ?.unit_of_measurement
+                                    ?.unit_of_measurement,
+                                  entities.individual2?.secondary_info
+                                    ?.unit_white_space
                                 )}
                               </span>
                             `
@@ -817,7 +853,9 @@ export class PowerFlowCard extends LitElement {
                                 ${this.displayValue(
                                   individual1SecondaryUsage,
                                   entities.individual1?.secondary_info
-                                    ?.unit_of_measurement
+                                    ?.unit_of_measurement,
+                                  entities.individual1?.secondary_info
+                                    ?.unit_white_space
                                 )}
                               </span>
                             `
@@ -854,7 +892,7 @@ export class PowerFlowCard extends LitElement {
                                       : "1;0"
                                   }
                                   keyTimes="0;1"
-                                  
+
                                 >
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
@@ -1013,6 +1051,24 @@ export class PowerFlowCard extends LitElement {
                             shape-rendering="geometricPrecision"
                           />`
                     : ""}
+                  ${homeNonFossilCircumference !== undefined
+                    ? svg`<circle
+                            class="low-carbon"
+                            cx="40"
+                            cy="40"
+                            r="38"
+                            stroke-dasharray="${homeNonFossilCircumference} ${
+                        CIRCLE_CIRCUMFERENCE - homeNonFossilCircumference
+                      }"
+                            stroke-dashoffset="-${
+                              CIRCLE_CIRCUMFERENCE -
+                              homeNonFossilCircumference -
+                              (homeBatteryCircumference || 0) -
+                              (homeSolarCircumference || 0)
+                            }"
+                            shape-rendering="geometricPrecision"
+                          />`
+                    : ""}
                   <circle
                     class="grid"
                     cx="40"
@@ -1099,7 +1155,10 @@ export class PowerFlowCard extends LitElement {
                                   maximumFractionDigits: 0,
                                   minimumFractionDigits: 0,
                                 }
-                              )}%
+                              )}${this._config.entities?.battery
+                                ?.state_of_charge_unit_white_space === false
+                                ? ""
+                                : " "}%
                             </span>`
                           : null}
                         <ha-icon
@@ -1222,7 +1281,7 @@ export class PowerFlowCard extends LitElement {
                           ? svg`<circle
                                 r="2.4"
                                 class="individual1"
-                                vector-effect="non-scaling-stroke"                              
+                                vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
                                   dur="1.66s"
@@ -1233,7 +1292,7 @@ export class PowerFlowCard extends LitElement {
                                       ? "0;1"
                                       : "1;0"
                                   }
-                                  keyTimes="0;1" 
+                                  keyTimes="0;1"
                                 >
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
@@ -1269,7 +1328,9 @@ export class PowerFlowCard extends LitElement {
                                 ${this.displayValue(
                                   individual1SecondaryUsage,
                                   entities.individual1?.secondary_info
-                                    ?.unit_of_measurement
+                                    ?.unit_of_measurement,
+                                  entities.individual1?.secondary_info
+                                    ?.unit_white_space
                                 )}
                               </span>
                             `
@@ -1903,6 +1964,6 @@ windowWithCards.customCards.push({
 
 declare global {
   interface HTMLElementTagNameMap {
-    "power-flow-card-plus": PowerFlowCard;
+    "power-flow-card-plus": PowerFlowCardPlus;
   }
 }

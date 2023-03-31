@@ -1,7 +1,7 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 import { ComboEntity, IndividualDeviceType } from "./type.js";
 
-export interface PowerFlowCardConfig extends LovelaceCardConfig {
+export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   entities: {
     battery?: {
       entity: string | ComboEntity;
@@ -11,6 +11,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
       color?: ComboEntity;
       color_icon?: boolean | "production" | "consumption";
       display_state?: "two_way" | "one_way" | "one_way_no_zero";
+      state_of_charge_unit_white_space?: boolean;
     };
     grid?: {
       entity: string | ComboEntity;
@@ -51,6 +52,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
   kw_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;
+  max_expected_flow_w: number;
   w_decimals: number;
   watt_threshold: number;
   clickable_entities: boolean;
