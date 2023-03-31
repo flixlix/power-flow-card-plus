@@ -497,12 +497,36 @@ export class PowerFlowCardPlus extends LitElement {
         CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
     }
 
+    const hasNonFossilFuelUsage =
+      gridConsumption * 1 -
+        this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 >
+        0 &&
+      entities.fossil_fuel_percentage?.entity !== undefined &&
+      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
+
+    const hasFossilFuelPercentage =
+      (entities.fossil_fuel_percentage?.entity !== undefined &&
+        entities.fossil_fuel_percentage?.display_zero === true) ||
+      hasNonFossilFuelUsage;
+
+    let nonFossilFuelPower: number | undefined;
+    let homeNonFossilCircumference: number | undefined;
+
+    if (hasNonFossilFuelUsage) {
+      const nonFossilFuelDecimal: number =
+        1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
+      nonFossilFuelPower = gridConsumption * nonFossilFuelDecimal;
+      homeNonFossilCircumference =
+        CIRCLE_CIRCUMFERENCE * (nonFossilFuelPower / totalHomeConsumption);
+    }
     const homeGridCircumference =
       CIRCLE_CIRCUMFERENCE *
       ((totalHomeConsumption -
+        (nonFossilFuelPower ?? 0) -
         (batteryConsumption ?? 0) -
         (solarConsumption ?? 0)) /
         totalHomeConsumption);
+
 
     const totalLines =
       gridConsumption +
@@ -567,18 +591,6 @@ export class PowerFlowCardPlus extends LitElement {
       this.previousDur[flowName] = newDur[flowName];
     });
 
-    const hasNonFossilFuelUsage =
-      gridConsumption * 1 -
-        this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 >
-        0 &&
-      entities.fossil_fuel_percentage?.entity !== undefined &&
-      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
-
-    const hasFossilFuelPercentage =
-      (entities.fossil_fuel_percentage?.entity !== undefined &&
-        entities.fossil_fuel_percentage?.display_zero === true) ||
-      hasNonFossilFuelUsage;
-
     this.style.setProperty(
       "--non-fossil-color",
       this._config.entities.fossil_fuel_percentage?.color ||
@@ -616,6 +628,13 @@ export class PowerFlowCardPlus extends LitElement {
       iconHomeColor = homeLargestSource;
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
+
+    console.log(
+      homeBatteryCircumference,
+      homeSolarCircumference,
+      homeGridCircumference,
+      homeNonFossilCircumference
+    );
 
     return html`
       <ha-card .header=${this._config.title}>
@@ -1024,6 +1043,24 @@ export class PowerFlowCardPlus extends LitElement {
                             stroke-dashoffset="-${
                               CIRCLE_CIRCUMFERENCE -
                               homeBatteryCircumference -
+                              (homeSolarCircumference || 0)
+                            }"
+                            shape-rendering="geometricPrecision"
+                          />`
+                    : ""}
+                  ${homeNonFossilCircumference !== undefined
+                    ? svg`<circle
+                            class="low-carbon"
+                            cx="40"
+                            cy="40"
+                            r="38"
+                            stroke-dasharray="${homeNonFossilCircumference} ${
+                        CIRCLE_CIRCUMFERENCE - homeNonFossilCircumference
+                      }"
+                            stroke-dashoffset="-${
+                              CIRCLE_CIRCUMFERENCE -
+                              homeNonFossilCircumference -
+                              (homeBatteryCircumference || 0) -
                               (homeSolarCircumference || 0)
                             }"
                             shape-rendering="geometricPrecision"
