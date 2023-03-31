@@ -18,6 +18,7 @@ const KW_DECIMALS = 1;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
+const MAX_EXPECTED_FLOW_W = 5000;
 
 @customElement("power-flow-card-plus")
 export class PowerFlowCardPlus extends LitElement {
@@ -54,6 +55,7 @@ export class PowerFlowCardPlus extends LitElement {
       max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
       w_decimals: coerceNumber(config.w_decimals, W_DECIMALS),
       watt_threshold: coerceNumber(config.watt_threshold),
+      max_expected_flow_w: coerceNumber(config.max_expected_flow_w, MAX_EXPECTED_FLOW_W)
     };
   }
 
@@ -79,7 +81,7 @@ export class PowerFlowCardPlus extends LitElement {
   private circleRate = (value: number, total: number): number => {
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
-    return max - (value / total) * (max - min);
+    return max - (value / Math.max(this._config?.max_expected_flow_w, total)) * (max - min);
   };
 
   private getEntityState = (entity: string | undefined): number => {
@@ -870,7 +872,7 @@ export class PowerFlowCardPlus extends LitElement {
                                       : "1;0"
                                   }
                                   keyTimes="0;1"
-                                  
+
                                 >
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
@@ -1241,7 +1243,7 @@ export class PowerFlowCardPlus extends LitElement {
                           ? svg`<circle
                                 r="2.4"
                                 class="individual1"
-                                vector-effect="non-scaling-stroke"                              
+                                vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
                                   dur="1.66s"
@@ -1252,7 +1254,7 @@ export class PowerFlowCardPlus extends LitElement {
                                       ? "0;1"
                                       : "1;0"
                                   }
-                                  keyTimes="0;1" 
+                                  keyTimes="0;1"
                                 >
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
