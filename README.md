@@ -87,7 +87,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate       | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
 | max_flow_rate       | `number`  |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| max_expected_flow_w | `number`  |    8000      | Represents the maximum amount of power expected to flow through the system at a given moment, see [flow formula](#flow-formula).                                           |
+| max_expected_flow_w | `number`  |    5000      | Represents the maximum amount of power expected to flow through the system at a given moment, see [flow formula](#flow-formula).                                           |
 | watt_threshold      | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
 | clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog.                                                                                                     |
 
