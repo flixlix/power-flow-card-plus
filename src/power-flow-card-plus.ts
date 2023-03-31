@@ -55,7 +55,10 @@ export class PowerFlowCardPlus extends LitElement {
       max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
       w_decimals: coerceNumber(config.w_decimals, W_DECIMALS),
       watt_threshold: coerceNumber(config.watt_threshold),
-      max_expected_flow_w: coerceNumber(config.max_expected_flow_w, MAX_EXPECTED_FLOW_W)
+      max_expected_flow_w: coerceNumber(
+        config.max_expected_flow_w,
+        MAX_EXPECTED_FLOW_W
+      ),
     };
   }
 
@@ -81,7 +84,10 @@ export class PowerFlowCardPlus extends LitElement {
   private circleRate = (value: number, total: number): number => {
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
-    return max - (value / Math.max(this._config?.max_expected_flow_w, total)) * (max - min);
+    return (
+      max -
+      (value / Math.max(this._config?.max_expected_flow_w, total)) * (max - min)
+    );
   };
 
   private getEntityState = (entity: string | undefined): number => {
@@ -195,17 +201,20 @@ export class PowerFlowCardPlus extends LitElement {
         this.entityAvailable(entities.individual2?.entity!));
     const hasIndividual2Secondary =
       entities.individual2?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.individual2?.secondary_info?.entity) > 0 ||
+      (this.getEntityState(entities.individual2?.secondary_info?.entity) >
+        (entities?.individual2?.secondary_info?.display_zero_tolerance ?? 0) ||
         entities.individual2.secondary_info?.display_zero === true);
 
     const hasIndividual1 =
       (entities.individual1 !== undefined &&
         entities.individual1?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual1?.entity) > 0 &&
+      (this.getEntityStateWatts(entities.individual1?.entity) >
+        (entities?.individual1?.display_zero_tolerance ?? 0) &&
         this.entityAvailable(entities.individual1?.entity!));
     const hasIndividual1Secondary =
       entities.individual1?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.individual1?.secondary_info?.entity) > 0 ||
+      (this.getEntityState(entities.individual1?.secondary_info?.entity) >
+        (entities?.individual1?.secondary_info?.display_zero_tolerance ?? 0) ||
         entities.individual1.secondary_info.display_zero === true);
 
     const hasSolarProduction = entities.solar !== undefined;
@@ -530,7 +539,6 @@ export class PowerFlowCardPlus extends LitElement {
         (solarConsumption ?? 0)) /
         totalHomeConsumption);
 
-
     const totalLines =
       gridConsumption +
       (solarConsumption ?? 0) +
@@ -631,13 +639,6 @@ export class PowerFlowCardPlus extends LitElement {
       iconHomeColor = homeLargestSource;
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
-
-    console.log(
-      homeBatteryCircumference,
-      homeSolarCircumference,
-      homeGridCircumference,
-      homeNonFossilCircumference
-    );
 
     return html`
       <ha-card .header=${this._config.title}>

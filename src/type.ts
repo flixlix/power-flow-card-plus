@@ -20,7 +20,6 @@ export type IndividualDeviceType = {
     display_zero?: boolean;
     unit_white_space?: boolean;
     display_zero_tolerance?: number;
-    display-zero-threshold?: number;
   };
 };
 
