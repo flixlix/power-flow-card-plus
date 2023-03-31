@@ -190,12 +190,13 @@ export class PowerFlowCardPlus extends LitElement {
     const hasIndividual2 =
       (entities.individual2 !== undefined &&
         entities.individual2?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual2?.entity) > 0 &&
+      (this.getEntityStateWatts(entities.individual2?.entity) >
+        (entities.individual2?.display_zero_tolerance ?? 0) &&
         this.entityAvailable(entities.individual2?.entity!));
     const hasIndividual2Secondary =
       entities.individual2?.secondary_info?.entity !== undefined &&
       (this.getEntityState(entities.individual2?.secondary_info?.entity) > 0 ||
-        entities.individual2.secondary_info.display_zero === true);
+        entities.individual2.secondary_info?.display_zero === true);
 
     const hasIndividual1 =
       (entities.individual1 !== undefined &&
