@@ -37,7 +37,7 @@ export const cardConfigStruct = assign(
                 production: optional(string()),
               })
             ),
-            color_icon: optional(string() || boolean()),
+            color_icon: optional(any()),
             display_state: optional(string()),
             state_of_charge_unit_white_space: optional(boolean()),
           })
@@ -53,7 +53,7 @@ export const cardConfigStruct = assign(
                 production: optional(string()),
               })
             ),
-            color_icon: optional(string() || boolean()),
+            color_icon: optional(any()),
             display_state: optional(string()),
           })
         ),
