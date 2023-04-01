@@ -330,18 +330,11 @@ max - (value / totalLines) * (max - min);
 // max = max_flow_rate
 // min = min_flow_rate
 // value = line value, solar to grid for example
-// totalLines = Math.max(
-//     gridConsumption + solarConsumption + solarToBattery + solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid,
-//     config.max_expected_flow_w
-// )
+// totalLines = gridConsumption + solarConsumption + solarToBattery +
+//   solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid
 ```
 
-The previous version of this lacked the max_expected_flow_w configuration, so when the power across the entire system
-was low it would show animations as quickly as when the entire system running hot. This was because it was previously
-only relative to the current behaviour.
-
-The animation will not run any faster once this value has been exceeded, so you may wish to tweak max_expected_flow_w
-if you expect your system to have a higher total power than 8kw.
+I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
 
 #### Credits
 

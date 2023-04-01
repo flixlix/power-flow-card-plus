@@ -67,7 +67,7 @@ class PowerFlowCardPlus extends LitElement {
   private circleRate = (value: number, total: number): number => {
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
-    return max - (value / Math.max(this._config?.max_expected_flow_w, total)) * (max - min);
+    return max - (value / total) * (max - min);
   };
 
   private getEntityState = (entity: string | undefined): number => {
