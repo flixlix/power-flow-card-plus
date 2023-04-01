@@ -71,7 +71,7 @@ export const cardConfigStruct = assign(
             entity: optional(entityId()),
             name: optional(string()),
             icon: optional(string()),
-            color_icon: optional(string() || boolean()),
+            color_icon: optional(any()),
           })
         ),
         fossil_fuel_percentage: optional(
