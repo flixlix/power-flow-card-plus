@@ -1,80 +1,12 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable import/extensions */
 
-import { LitElement, html, nothing } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
-import { any, assert, assign, boolean, object, optional, refine, string } from "superstruct";
+import { assert } from "superstruct";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-
-export const baseLovelaceCardConfig = object({
-  type: string(),
-  view_layout: any(),
-});
-
-const isEntityId = (value: string): boolean => value.includes(".");
-
-export const entityId = () => refine(string(), "entity ID (domain.entity)", isEntityId);
-
-const cardConfigStruct = assign(
-  baseLovelaceCardConfig,
-  object({
-    entity: optional(entityId()),
-    title: optional(string()),
-    show_name: optional(boolean()),
-    icon: optional(string()),
-    show_icon: optional(boolean()),
-    icon_height: optional(string()),
-    theme: optional(string()),
-    show_state: optional(boolean()),
-  })
-);
-
-const SCHEMA = [
-  { name: "title", selector: { text: {} } },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "entity", selector: { entity: {} } },
-      {
-        name: "icon",
-        selector: {
-          icon: {},
-        },
-        context: {
-          icon_entity: "entity",
-        },
-      },
-    ],
-  },
-  {
-    name: "",
-    type: "grid",
-    column_min_width: "100px",
-    schema: [
-      { name: "show_name", selector: { boolean: {} } },
-      { name: "show_state", selector: { boolean: {} } },
-      { name: "show_icon", selector: { boolean: {} } },
-    ],
-  },
-  {
-    name: "",
-    type: "grid",
-    schema: [
-      { name: "icon_height", selector: { text: { suffix: "px" } } },
-      { name: "theme", selector: { theme: {} } },
-    ],
-  },
-  {
-    name: "tap_action",
-    selector: { "ui-action": {} },
-  },
-  {
-    name: "hold_action",
-    selector: { "ui-action": {} },
-  },
-] as const;
+import { cardConfigStruct, SCHEMA } from "./schema";
 
 export const loadHaForm = async () => {
   if (customElements.get("ha-form")) return;
@@ -107,19 +39,24 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       return nothing;
     }
     const data = {
-      show_name: true,
-      show_icon: true,
       ...this._config,
     };
 
     return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${data}
-        .schema=${SCHEMA}
-        .computeLabel=${this._computeLabelCallback}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
+      <div class="card-config">
+        <ha-icon-button @click=${() => window.open("https://github.com/flixlix/power-flow-card-plus", "_blank")} style="align-self: flex-end;">
+          <ha-icon icon="hass:help-circle"></ha-icon>
+        </ha-icon-button>
+
+        <ha-form
+          .hass=${this.hass}
+          .data=${data}
+          .schema=${SCHEMA}
+          .computeLabel=${this._computeLabelCallback}
+          @value-changed=${this._valueChanged}
+          .documentationUrl="https://github.com/flixlix/power-flow-card-plus"
+        ></ha-form>
+      </div>
     `;
   }
   private _valueChanged(ev: any): void {
@@ -127,19 +64,35 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     if (!this._config || !this.hass) {
       return;
     }
-    if (ev.target) {
-      const { target } = ev;
-      if (target.configValue) {
-        this._config = {
-          ...this._config,
-          [target.configValue]: target.checked !== undefined ? target.checked : target.value,
-        };
-      }
-    }
     fireEvent(this, "config-changed", { config });
   }
 
-  private _computeLabelCallback = (schema) => this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}`);
+  private _computeLabelCallback = (schema) => schema.label || this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}`);
+
+  static get styles() {
+    return css`
+      ha-form {
+        width: 100%;
+      }
+
+      ha-icon {
+        padding-bottom: 2px;
+      }
+
+      .card-config {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      ha-svg-icon {
+        top: -4px;
+        right: 1px;
+      }
+    `;
+  }
 }
 
 declare global {
