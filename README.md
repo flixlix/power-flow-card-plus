@@ -9,6 +9,7 @@
 
 ## Additional Features / Enhancements
 
+- UI Editor!!! 🥳 (Beta)
 - Display Individual power entities
 - Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
 - Configure wether to hide Individual Entity when state is 0 or unavailable
