@@ -48,6 +48,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
     individual2?: IndividualDeviceType;
   };
   dashboard_link?: string;
+  dashboard_link_label?: string;
   inverted_entities: string | string[];
   kw_decimals: number;
   min_flow_rate: number;

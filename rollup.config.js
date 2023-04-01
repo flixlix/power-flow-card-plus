@@ -20,10 +20,11 @@ const serveOptions = {
 
 export default [
   {
-    input: "src/power-flow-card-plus.ts",
+    input: ["src/power-flow-card-plus.ts"],
     output: [
       {
-        dir: "./dist",
+        dir: "dist",
+        format: "es",
       },
     ],
     plugins: [
