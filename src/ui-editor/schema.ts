@@ -385,6 +385,11 @@ const baseIndividualConfigSchema = [
     },
   },
   {
+    name: "display_zero",
+    label: "Display Zero",
+    selector: { boolean: {} },
+  },
+  {
     name: "display_zero_tolerance",
     label: "Display Zero with Tolerance",
     selector: {
@@ -500,6 +505,11 @@ export const individual2ConfigSchema = [
 ] as const;
 
 export const otherConfigSchema = [
+  {
+    name: "clickable_entities",
+    label: "Clickable Entities",
+    selector: { boolean: {} },
+  },
   {
     name: "",
     type: "grid",
