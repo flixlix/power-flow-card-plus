@@ -11,7 +11,7 @@
 
 - UI Editor!!! 🥳 (Beta)
 - Display Individual power entities
-- Customize Individual entities's label, icon and color (Unit of measurement is on the To-Do List)
+- Customize Individual entities's label, icon and color
 - Configure wether to hide Individual Entity when state is 0 or unavailable
 - Clickable entities (including home)
 - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
