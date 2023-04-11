@@ -20,7 +20,10 @@ export type IndividualDeviceType = {
     display_zero?: boolean;
     unit_white_space?: boolean;
     display_zero_tolerance?: number;
+    color_value?: boolean;
   };
+  color_value?: boolean;
+  color_label?: boolean;
 };
 
 export type EntityType =

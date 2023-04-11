@@ -200,7 +200,6 @@ class PowerFlowCardPlus extends LitElement {
     }
 
     const gridIconColorType = this._config.entities.grid?.color_icon;
-
     this.style.setProperty(
       "--icon-grid-color",
       gridIconColorType === "consumption"
@@ -213,6 +212,20 @@ class PowerFlowCardPlus extends LitElement {
           : "var(--energy-grid-return-color)"
         : "var(--primary-text-color)"
     );
+
+      const gridCircleColorType = this._config.entities.grid?.color_circle;
+      this.style.setProperty(
+        "--circle-grid-color",
+        gridCircleColorType === "consumption"
+          ? "var(--energy-grid-consumption-color)"
+          : gridCircleColorType === "production"
+          ? "var(--energy-grid-return-color)"
+          : gridCircleColorType === true
+          ? totalFromGrid >= totalToGrid
+            ? "var(--energy-grid-consumption-color)"
+            : "var(--energy-grid-return-color)"
+          : "var(--energy-grid-consumption-color)"
+      );
 
     let individual1Usage: number | null = null;
     let individual1SecondaryUsage: number | null = null;
@@ -348,6 +361,34 @@ class PowerFlowCardPlus extends LitElement {
         : "var(--primary-text-color)"
     );
 
+    const batteryStateOfChargeColorType = this._config.entities.battery?.color_state_of_charge_value;
+    this.style.setProperty(
+      "--text-battery-state-of-charge-color",
+      batteryStateOfChargeColorType === "consumption"
+        ? "var(--energy-battery-in-color)"
+        : batteryStateOfChargeColorType === "production"
+        ? "var(--energy-battery-out-color)"
+        : batteryStateOfChargeColorType === true
+        ? totalBatteryIn >= totalBatteryOut
+          ? "var(--energy-battery-in-color)"
+          : "var(--energy-battery-out-color)"
+        : "var(--primary-text-color)"
+    );
+
+    const batteryCircleColorType = this._config.entities.battery?.color_circle;
+    this.style.setProperty(
+      "--circle-battery-color",
+      batteryCircleColorType === "consumption"
+        ? "var(--energy-battery-in-color)"
+        : batteryCircleColorType === "production"
+        ? "var(--energy-battery-out-color)"
+        : batteryCircleColorType === true
+        ? totalBatteryIn >= totalBatteryOut
+          ? "var(--energy-battery-in-color)"
+          : "var(--energy-battery-out-color)"
+        : "var(--energy-battery-in-color)"
+    );
+
     const gridConsumption = Math.max(totalFromGrid - (batteryFromGrid ?? 0), 0);
 
     const totalHomeConsumption = Math.max(gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0), 0);
@@ -449,6 +490,45 @@ class PowerFlowCardPlus extends LitElement {
       iconHomeColor = homeLargestSource;
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
+
+    const homeTextColorType = this._config.entities.home?.color_value;
+    let textHomeColor: string = "var(--primary-text-color)";
+    if (homeTextColorType === "solar") {
+      textHomeColor = "var(--energy-solar-color)";
+    } else if (homeTextColorType === "battery") {
+      textHomeColor = "var(--energy-battery-out-color)";
+    } else if (homeTextColorType === "grid") {
+      textHomeColor = "var(--energy-grid-consumption-color)";
+    } else if (homeTextColorType === true) {
+      textHomeColor = homeLargestSource;
+    }
+    this.style.setProperty("--text-home-color", textHomeColor);
+
+    this.style.setProperty(
+      "--text-solar-color",
+      this._config.entities.solar?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--text-non-fossil-color",
+      this._config.entities.fossil_fuel_percentage?.color_value ? "var(--energy-non-fossil-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--text-individualone-color",
+      this._config.entities.individual1?.color_value ? "var(--individualone-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--text-individualtwo-color",
+      this._config.entities.individual2?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
+    );
+
+    this.style.setProperty(
+      "--secondary-text-individualone-color",
+      this._config.entities.individual1?.secondary_info?.color_value ? "var(--individualone-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--secondary-text-individualtwo-color",
+      this._config.entities.individual2?.secondary_info?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
+    );
 
     return html`
       <ha-card .header=${this._config.title}>
@@ -823,6 +903,7 @@ class PowerFlowCardPlus extends LitElement {
                                   this.openDetails(entities.battery?.state_of_charge!);
                                 }
                               }}
+                              id="battery-state-of-charge-text"
                             >
                               ${formatNumber(batteryChargeState, this.hass.locale, {
                                 maximumFractionDigits: 0,
@@ -1204,6 +1285,16 @@ class PowerFlowCardPlus extends LitElement {
       --icon-grid-color: var(--energy-grid-consumption-color, #488fc2);
       --icon-battery-color: var(--energy-battery-in-color, #f06292);
       --icon-home-color: var(--energy-grid-consumption-color, #488fc2);
+      --text-solar-color: var(--primary-text-color);
+      --text-non-fossil-color: var(--primary-text-color);
+      --text-individualone-color: var(--primary-text-color);
+      --text-individualtwo-color: var(--primary-text-color);
+      --text-home-color: var(--primary-text-color);
+      --secondary-text-individualone-color: var(--primary-text-color);
+      --secondary-text-individualtwo-color: var(--primary-text-color);
+      --text-battery-state-of-charge-color: var(--primary-text-color);
+      --cirlce-grid-color: var(--energy-grid-consumption-color, #488fc2);
+      --circle-battery-color: var(--energy-battery-in-color, #f06292);
     }
     :root {
     }
@@ -1388,7 +1479,7 @@ class PowerFlowCardPlus extends LitElement {
       fill: var(--energy-solar-color);
     }
     .battery .circle {
-      border-color: var(--energy-battery-in-color);
+      border-color: var(--circle-battery-color);
     }
     circle.battery,
     path.battery {
@@ -1425,6 +1516,7 @@ class PowerFlowCardPlus extends LitElement {
     .battery ha-icon:not(.small) {
       color: var(--icon-battery-color);
     }
+
     path.return,
     circle.return,
     circle.battery-to-grid {
@@ -1439,7 +1531,7 @@ class PowerFlowCardPlus extends LitElement {
       color: var(--energy-grid-return-color);
     }
     .grid .circle {
-      border-color: var(--energy-grid-consumption-color);
+      border-color: var(--circle-grid-color);
     }
     .consumption {
       color: var(--energy-grid-consumption-color);
@@ -1472,32 +1564,37 @@ class PowerFlowCardPlus extends LitElement {
       transition: stroke-dashoffset 0.4s, stroke-dasharray 0.4s;
       fill: none;
     }
-
-    // TODO fix this
-    /* fixes lines not connecting fully to circles */
-    /*     #solar-home-flow {
-      width: calc(100% - 150px);
-      transform: translate(-3px, -3px);
-      height: calc(100% + 10px);
+    span.solar {
+      color: var(--text-solar-color);
     }
 
-    #solar-grid-flow {
-      width: calc(100% - 150px);
-      transform: translate(3px, -3px);
-      height: calc(100% + 10px);
+    span.low-carbon {
+      color: var(--text-non-fossil-color);
     }
 
-    #battery-home-flow {
-      width: calc(100% - 150px);
-      transform: translate(-3px, -7px);
-      height: calc(100% + 10px);
+    #home-circle {
+      color: var(--text-home-color);
     }
 
-    #battery-grid-flow {
-      width: calc(100% - 150px);
-      transform: translate(3px, -7px);
-      height: calc(100% + 10px);
-    } */
+    .individual1 .circle {
+      color: var(--text-individualone-color);
+    }
+
+    .individual2 .circle {
+      color: var(--text-individualtwo-color);
+    }
+
+    .individual1 span.secondary-info {
+      color: var(--secondary-text-individualone-color);
+    }
+
+    .individual2 span.secondary-info {
+      color: var(--secondary-text-individualtwo-color);
+    }
+
+    #battery-state-of-charge-text {
+      color: var(--text-battery-state-of-charge-color);
+    }
 
     @keyframes rotate-in {
       from {
@@ -1505,6 +1602,7 @@ class PowerFlowCardPlus extends LitElement {
         stroke-dasharray: 238.76104;
       }
     }
+
     .card-actions a {
       text-decoration: none;
     }
