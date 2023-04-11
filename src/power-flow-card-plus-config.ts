@@ -12,6 +12,8 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_icon?: boolean | "production" | "consumption";
       display_state?: "two_way" | "one_way" | "one_way_no_zero";
       state_of_charge_unit_white_space?: boolean;
+      color_state_of_charge_value?: boolean | "production" | "consumption";
+      color_circle: boolean | "production" | "consumption";
     };
     grid?: {
       entity: string | ComboEntity;
@@ -20,6 +22,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color?: ComboEntity;
       color_icon?: boolean | "production" | "consumption";
       display_state?: "two_way" | "one_way" | "one_way_no_zero";
+      color_circle: boolean | "production" | "consumption";
     };
     solar?: {
       entity: string;
@@ -27,12 +30,15 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       icon?: string;
       color?: string;
       color_icon?: boolean;
+      color_value?: boolean;
+      color_label?: boolean;
     };
     home?: {
       entity: string;
       name?: string;
       icon?: string;
       color_icon?: boolean | "solar" | "grid" | "battery";
+      color_value?: boolean | "solar" | "grid" | "battery";
     };
     fossil_fuel_percentage?: {
       entity: string;
@@ -43,6 +49,9 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_icon?: boolean;
       display_zero?: boolean;
       display_zero_tolerance?: number;
+      color_text?: boolean;
+      color_value?: boolean;
+      color_label?: boolean;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
