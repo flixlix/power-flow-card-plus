@@ -1,4 +1,5 @@
 
+
 # Power Flow Card Plus
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
@@ -10,6 +11,8 @@
 ## Additional Features / Enhancements
 
 - UI Editor!!! 🥳 (Beta)
+- Secondary Information for all power circles
+- Choose wether or not to color icons, text, etc.
 - Display Individual power entities
 - Customize Individual entities's label, icon and color
 - Configure wether to hide Individual Entity when state is 0 or unavailable
@@ -116,6 +119,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
 | display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+| color_circle | `boolean` or "production" or "consumption" | `false` | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption. |
+| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 
 #### Solar Configuration
 
@@ -126,6 +131,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | icon | `string` | `mdi:solar-power` | Icon path for the icon inside the Solar Circle. |
 | color | `string` |  | HEX value of the color for circles labels and lines of solar production. |
 | color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
+| color_value | `boolean` | `false` | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.  |
+| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 
 #### Battery Configuration
 
@@ -139,6 +146,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
 | display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
 | state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge. |
+| color_state_of_charge_value | `boolean` or "production" or "consumption" | If set to `true`, state of charge text color will match the highest value. If set to `production`, state of charge text color will match the production. If set to `consumption`, state of charge text color will match the consumption. |
+| color_circle | `boolean` or "production" or "consumption" | If set to `true`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption. |
 
 #### Individual Configuration
 
@@ -154,6 +163,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
+| color_value | `boolean` | `false` | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.  |
 
 #### Home Configuration
 
@@ -163,6 +173,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | name  | `string` | `Home` | Label for the home option. If you don't populate this option, the label will continue to update based on the language selected. |
 | icon | `string` | `mdi:home` | Icon path for the icon inside the Home Circle. |
 | color_icon | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, icon color will match the highest value. If set to `solar`, icon color will match the color of solar. If set to `grid`, icon color will match the color of the grid consumption. If set to `battery`, icon color will match the color of the battery consumption. |
+| color_value | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, state text color will match the highest value. If set to `solar`, state text color will match the color of solar. If set to `grid`, state text color will match the color of the grid consumption. If set to `battery`, state text color will match the color of the battery consumption. |
+| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 
 #### Fossil Fuel Configuration
 
