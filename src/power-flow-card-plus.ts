@@ -166,6 +166,16 @@ class PowerFlowCardPlus extends LitElement {
       (this.getEntityState(entities.individual1?.secondary_info?.entity) > (entities?.individual1?.secondary_info?.display_zero_tolerance ?? 0) ||
         entities.individual1.secondary_info.display_zero === true);
 
+    const hasSolarSecondary =
+      entities.solar?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.solar?.secondary_info?.entity) > (entities?.solar?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.solar.secondary_info.display_zero === true);
+
+    const hasHomeSecondary =
+      entities.home?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.home?.secondary_info?.entity) > (entities?.home?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.home.secondary_info.display_zero === true);
+
     const hasSolarProduction = entities.solar !== undefined;
     const hasReturnToGrid = hasGrid && (typeof entities.grid!.entity === "string" || entities.grid!.entity!.production);
 
@@ -184,6 +194,22 @@ class PowerFlowCardPlus extends LitElement {
         else totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
       } else {
         totalFromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
+      }
+    }
+
+    const hasGridSecondary =
+      entities.grid?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.grid?.secondary_info?.entity) > (entities?.grid?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.grid.secondary_info.display_zero === true);
+
+    let gridSecondaryUsage: number | null = null;
+    if (hasGridSecondary) {
+      const gridSecondaryEntity = this.hass.states[this._config.entities.grid!.secondary_info!.entity];
+      const gridSecondaryState = Number(gridSecondaryEntity.state);
+      if (this.entityInverted("gridSecondary")) {
+        gridSecondaryUsage = Math.abs(Math.min(gridSecondaryState, 0));
+      } else {
+        gridSecondaryUsage = Math.max(gridSecondaryState, 0);
       }
     }
 
@@ -213,19 +239,33 @@ class PowerFlowCardPlus extends LitElement {
         : "var(--primary-text-color)"
     );
 
-      const gridCircleColorType = this._config.entities.grid?.color_circle;
-      this.style.setProperty(
-        "--circle-grid-color",
-        gridCircleColorType === "consumption"
+    const gridSecondaryValueColorType = this._config.entities.grid?.secondary_info?.color_value;
+    this.style.setProperty(
+      "--secondary-text-grid-color",
+      gridSecondaryValueColorType === "consumption"
+        ? "var(--energy-grid-consumption-color)"
+        : gridSecondaryValueColorType === "production"
+        ? "var(--energy-grid-return-color)"
+        : gridSecondaryValueColorType === true
+        ? totalFromGrid >= totalToGrid
           ? "var(--energy-grid-consumption-color)"
-          : gridCircleColorType === "production"
-          ? "var(--energy-grid-return-color)"
-          : gridCircleColorType === true
-          ? totalFromGrid >= totalToGrid
-            ? "var(--energy-grid-consumption-color)"
-            : "var(--energy-grid-return-color)"
-          : "var(--energy-grid-consumption-color)"
-      );
+          : "var(--energy-grid-return-color)"
+        : "var(--primary-text-color)"
+    );
+
+    const gridCircleColorType = this._config.entities.grid?.color_circle;
+    this.style.setProperty(
+      "--circle-grid-color",
+      gridCircleColorType === "consumption"
+        ? "var(--energy-grid-consumption-color)"
+        : gridCircleColorType === "production"
+        ? "var(--energy-grid-return-color)"
+        : gridCircleColorType === true
+        ? totalFromGrid >= totalToGrid
+          ? "var(--energy-grid-consumption-color)"
+          : "var(--energy-grid-return-color)"
+        : "var(--energy-grid-consumption-color)"
+    );
 
     let individual1Usage: number | null = null;
     let individual1SecondaryUsage: number | null = null;
@@ -279,6 +319,28 @@ class PowerFlowCardPlus extends LitElement {
       }
     }
 
+    let solarSecondaryProduction: number | null = null;
+    if (hasSolarSecondary) {
+      const solarSecondaryEntity = this.hass.states[this._config.entities.solar?.secondary_info?.entity!];
+      const solarSecondaryState = Number(solarSecondaryEntity.state);
+      if (this.entityInverted("solarSecondary")) {
+        solarSecondaryProduction = Math.abs(Math.min(solarSecondaryState, 0));
+      } else {
+        solarSecondaryProduction = Math.max(solarSecondaryState, 0);
+      }
+    }
+
+    let homeSecondaryUsage: number | null = null;
+
+    if (hasHomeSecondary) {
+      const homeSecondaryEntity = this.hass.states[this._config.entities.home?.secondary_info?.entity!];
+      const homeSecondaryState = Number(homeSecondaryEntity.state);
+      if (this.entityInverted("homeSecondary")) {
+        homeSecondaryUsage = Math.abs(Math.min(homeSecondaryState, 0));
+      } else {
+        homeSecondaryUsage = Math.max(homeSecondaryState, 0);
+      }
+    }
     let totalSolarProduction: number = 0;
     if (this._config.entities.solar?.color !== undefined)
       this.style.setProperty("--energy-solar-color", this._config.entities.solar?.color || "#ff9800");
@@ -410,7 +472,7 @@ class PowerFlowCardPlus extends LitElement {
       (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) || hasNonFossilFuelUsage;
 
     let nonFossilFuelPower: number | undefined;
-    let homeNonFossilCircumference: number | undefined;
+    let homeNonFossilCircumference: number = 0;
 
     if (hasNonFossilFuelUsage) {
       const nonFossilFuelDecimal: number = 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
@@ -471,13 +533,27 @@ class PowerFlowCardPlus extends LitElement {
     );
 
     const homeIconColorType = this._config.entities.home?.color_icon;
-    const homeLargestSource: "var(--energy-solar-color)" | "var(--energy-battery-out-color)" | "var(--energy-grid-consumption-color)" =
-      /* see which number is the largest out of three different numbers */
-      homeSolarCircumference >= homeBatteryCircumference && homeSolarCircumference >= homeGridCircumference
-        ? "var(--energy-solar-color)"
-        : homeBatteryCircumference >= homeSolarCircumference && homeBatteryCircumference >= homeGridCircumference
-        ? "var(--energy-battery-out-color)"
-        : "var(--energy-grid-consumption-color)";
+    const homeSources = {
+      battery: {
+        value: homeBatteryCircumference,
+        color: "var(--energy-battery-out-color)",
+      },
+      solar: {
+        value: homeSolarCircumference,
+        color: "var(--energy-solar-color)",
+      },
+      grid: {
+        value: homeGridCircumference,
+        color: "var(--energy-grid-consumption-color)",
+      },
+      gridNonFossil: {
+        value: homeNonFossilCircumference,
+        color: "var(--energy-non-fossil-color)",
+      },
+    }
+
+    /* return source object with largest value property */
+    const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
 
     let iconHomeColor: string = "var(--primary-text-color)";
     if (homeIconColorType === "solar") {
@@ -487,7 +563,7 @@ class PowerFlowCardPlus extends LitElement {
     } else if (homeIconColorType === "grid") {
       iconHomeColor = "var(--energy-grid-consumption-color)";
     } else if (homeIconColorType === true) {
-      iconHomeColor = homeLargestSource;
+      iconHomeColor = homeSources[homeLargestSource].color;
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
 
@@ -528,6 +604,16 @@ class PowerFlowCardPlus extends LitElement {
     this.style.setProperty(
       "--secondary-text-individualtwo-color",
       this._config.entities.individual2?.secondary_info?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
+    );
+
+    this.style.setProperty(
+      "--secondary-text-solar-color",
+      this._config.entities.solar?.secondary_info?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
+    );
+
+    this.style.setProperty(
+      "--secondary-text-home-color",
+      this._config.entities.home?.secondary_info?.color_value ? "var(--text-home-color)" : "var(--primary-text-color)"
     );
 
     return html`
@@ -599,7 +685,22 @@ class PowerFlowCardPlus extends LitElement {
                           }
                         }}
                       >
-                        <ha-icon .icon=${entities.solar!.icon || "mdi:solar-power"}></ha-icon>
+                        ${hasSolarSecondary
+                          ? html`
+                              <span class="secondary-info solar">
+                                ${entities.solar?.secondary_info?.icon
+                                  ? html`<ha-icon class="secondary-info small" .icon=${entities.solar?.secondary_info?.icon}></ha-icon>`
+                                  : ""}
+                                ${this.displayValue(
+                                  solarSecondaryProduction,
+                                  entities.solar?.secondary_info?.unit_of_measurement,
+                                  entities.solar?.secondary_info?.unit_white_space
+                                )}
+                              </span>
+                            `
+                          : ""}
+
+                        <ha-icon id="solar-icon" .icon=${entities.solar!.icon || "mdi:solar-power"}></ha-icon>
                         <span class="solar"> ${this.displayValue(totalSolarProduction)}</span>
                       </div>
                     </div>`
@@ -751,6 +852,20 @@ class PowerFlowCardPlus extends LitElement {
                       }
                     }}
                   >
+                    ${hasGridSecondary
+                      ? html`
+                          <span class="secondary-info grid">
+                            ${entities.grid?.secondary_info?.icon
+                              ? html`<ha-icon class="secondary-info small" .icon=${entities.grid?.secondary_info?.icon}></ha-icon>`
+                              : ""}
+                            ${this.displayValue(
+                              gridSecondaryUsage,
+                              entities.grid?.secondary_info?.unit_of_measurement,
+                              entities.grid?.secondary_info?.unit_white_space
+                            )}
+                          </span>
+                        `
+                      : ""}
                     <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
@@ -804,6 +919,20 @@ class PowerFlowCardPlus extends LitElement {
                   }
                 }}
               >
+                ${hasHomeSecondary
+                  ? html`
+                      <span class="secondary-info home">
+                        ${entities.home?.secondary_info?.icon
+                          ? html`<ha-icon class="secondary-info small" .icon=${entities.home?.secondary_info?.icon}></ha-icon>`
+                          : ""}
+                        ${this.displayValue(
+                          homeSecondaryUsage,
+                          entities.home?.secondary_info?.unit_of_measurement,
+                          entities.home?.secondary_info?.unit_white_space
+                        )}
+                      </span>
+                    `
+                  : ""}
                 <ha-icon .icon=${entities.home?.icon || "mdi:home"}></ha-icon>
                 ${this.displayValue(totalHomeConsumption)}
                 <svg>
@@ -1295,6 +1424,9 @@ class PowerFlowCardPlus extends LitElement {
       --text-battery-state-of-charge-color: var(--primary-text-color);
       --cirlce-grid-color: var(--energy-grid-consumption-color, #488fc2);
       --circle-battery-color: var(--energy-battery-in-color, #f06292);
+      --secondary-text-solar-color: var(--primary-text-color);
+      --secondary-text-grid-color: var(--primary-text-color);
+      --secondary-text-home-color: var(--primary-text-color);
     }
     :root {
     }
@@ -1425,6 +1557,9 @@ class PowerFlowCardPlus extends LitElement {
     #individual2-icon {
       color: var(--icon-individualtwo-color);
     }
+    #solar-icon {
+      color: var(--icon-solar-color);
+    }
     circle.individual2 {
       stroke-width: 4;
       fill: var(--individualtwo-color);
@@ -1467,7 +1602,7 @@ class PowerFlowCardPlus extends LitElement {
     .solar .circle {
       border-color: var(--energy-solar-color);
     }
-    .solar ha-icon {
+    .solar ha-icon:not(.small) {
       color: var(--icon-solar-color);
     }
     circle.solar,
@@ -1556,7 +1691,7 @@ class PowerFlowCardPlus extends LitElement {
     .home .circle.border {
       border-width: 2px;
     }
-    .home ha-icon {
+    .home ha-icon:not(.small) {
       color: var(--icon-home-color);
     }
     .circle svg circle {
@@ -1590,6 +1725,18 @@ class PowerFlowCardPlus extends LitElement {
 
     .individual2 span.secondary-info {
       color: var(--secondary-text-individualtwo-color);
+    }
+
+    .solar span.secondary-info {
+      color: var(--secondary-text-solar-color);
+    }
+
+    .grid span.secondary-info {
+      color: var(--secondary-text-grid-color);
+    }
+
+    .home span.secondary-info {
+      color: var(--secondary-text-home-color);
     }
 
     #battery-state-of-charge-text {

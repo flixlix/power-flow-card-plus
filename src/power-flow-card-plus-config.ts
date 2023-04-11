@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { ComboEntity, IndividualDeviceType } from "./type.js";
+import { ComboEntity, IndividualDeviceType, SecondaryInfoType } from "./type.js";
 
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   entities: {
@@ -23,6 +23,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_icon?: boolean | "production" | "consumption";
       display_state?: "two_way" | "one_way" | "one_way_no_zero";
       color_circle: boolean | "production" | "consumption";
+      secondary_info?: SecondaryInfoType;
     };
     solar?: {
       entity: string;
@@ -32,6 +33,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_icon?: boolean;
       color_value?: boolean;
       color_label?: boolean;
+      secondary_info?: SecondaryInfoType;
     };
     home?: {
       entity: string;
@@ -39,6 +41,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       icon?: string;
       color_icon?: boolean | "solar" | "grid" | "battery";
       color_value?: boolean | "solar" | "grid" | "battery";
+      secondary_info?: SecondaryInfoType;
     };
     fossil_fuel_percentage?: {
       entity: string;
