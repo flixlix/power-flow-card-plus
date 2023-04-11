@@ -349,6 +349,25 @@ max - (value / totalLines) * (max - min);
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
 
+### To-Do List
+
+
+
+Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
+
+- Change Flow Rate / Speed Formula to something more intuitive
+- Add UI Editor
+- Display Tolerance for grid Values (do not display anything for small values [#52](https://github.com/flixlix/power-flow-card-plus/issues/52)
+- Display Home Power Excluding individual devices (make this an optional configuration) [#57](https://github.com/flixlix/power-flow-card-plus/issues/57)
+- More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
+- More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
+- Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)
+
+I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
+
 #### Credits
 
 - [power-flow-card](https://github.com/ulic75/power-flow-card) by [ulic75](https://github.com/ulic75)
+
+
+
