@@ -14,6 +14,8 @@
 
 - UI Editor!!! 🥳 (Beta)
 - Secondary Information for all power circles
+- Add Grid Tolerance for small values, to not display the battery correcting grid values
+- New and improved Flow Rate Model
 - Choose wether or not to color icons, text, etc.
 - Display Individual power entities
 - Customize Individual entities's label, icon and color
