@@ -1,4 +1,5 @@
 
+
 # Power Flow Card Plus
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
@@ -84,11 +85,13 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | inverted_entities   | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production).            |
 | kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
 | w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
-| min_flow_rate       | `number`  |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| max_flow_rate       | `number`  |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
-| max_expected_flow_w | `number`  |    5000      | Represents the maximum amount of power expected to flow through the system at a given moment, see [flow formula](#flow-formula).                                           |
-| watt_threshold      | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
-| clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog.                                                                                                     |
+| min_flow_rate       | `number`  |     .75      | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds. |
+| max_flow_rate       | `number`  |      6       | Represents how much time it takes for the slowest dot to travel from one end to the other in seconds. |
+| watt_threshold      | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts. |
+| clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog. |
+| min_expected_power | `number`  |    0.01 | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
+| max_expected_power | `number`  | 2000 | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
+| use_new_flow_rate_model | `boolean` | false | If set to true, the card will use the [New Flow Formula](#new-flow-formula).
 
 #### Entities object
 
@@ -343,15 +346,47 @@ max - (value / totalLines) * (max - min);
 //   solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid
 ```
 
-I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
+### New Flow Formula
+
+In contrast to the old flow formula, this formula calculates the flow rate independently from other lines, making it more intuitive to interpret the perceived power. This means that a state of `10W` will always flow with the same velocity, no matter what other lines are doing. In other words this flow rate is calculated in absolute and not relative values.
+
+To get this new Flow Formula to work, simply set `use_new_flow_rate_model` in the main configuration to true. You may want to play around with the `max_expected_power`, `min_expected_power`, `max_flow_rate` and `min_flow_rate` to get the speeds that you wish
+
+```js
+if(value > maxIn) return maxOut; // In case power exceeds maximum expected power, use the fastest speed and ignore the rest.
+return ((value  -  minIn) * (maxOut  -  minOut)) / (maxIn  -  minIn) +  minOut;
+
+// value = value of the current line to calculate (eg: grid to home)
+//
+// minIn = amount of watts at which the lowest speed will be selected. 
+//   ↳ In your configuration this is `min_expected_power`
+//   ↳ eg: setting this at `100` means that at `100` watts, the dots will still flow at the lowest speed
+// maxIn = amount of watts at which the highest speed will be selected. 
+//   ↳ In your configuration this is `max_expected_power`
+//   ↳ eg: setting this at `2000` means that everything more than `2000` will flow at the highest speed selected
+//
+// minOut = amount of watts at which the lowest speed will be selected. 
+//   ↳ In your configuration this is `max_flow_rate`
+//   ↳ eg: setting this at `5` means that one dot will take `5` second to travel
+// maxOut = amount of watts at which the highest speed will be selected. 
+//   ↳ In your configuration this is `min_flow_rate`
+//   ↳ eg: setting this at `1` means that one dot will take `1` second to travel
+```
+
+The following video aims to show the diffence between the two flow formulas:
+
+https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4
+
+Notice that when the Power changes to only coming from the sun, the old formula accelerates to maintain a constant amount of dots/second. 
+Using the new formula is more intuitive, since you can immediately see that the Solar Power is relatively low since the dots are flowing very slowly.
+On the old Flow Formula you might think that the sun is producing a lot of power, which in this case is not true.
+
+At the end of the day these are two options and depending on what you're interested, one might suit you better than the other, that's why I kept the old formula, you have the choice. 🙂
 
 ### To-Do List
 
-
-
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
-- Change Flow Rate / Speed Formula to something more intuitive
 - Add UI Editor
 - Secondary info for text States instead of numbers [#63](https://github.com/flixlix/power-flow-card-plus/issues/63)
 - Display Tolerance for grid Values (do not display anything for small values [#52](https://github.com/flixlix/power-flow-card-plus/issues/52)

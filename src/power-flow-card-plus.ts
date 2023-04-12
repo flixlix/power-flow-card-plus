@@ -16,7 +16,8 @@ const KW_DECIMALS = 1;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
-const MAX_EXPECTED_FLOW_W = 5000;
+const minExpectedPower = 0.01;
+const maxExpectedPower = 2000;
 
 @customElement("power-flow-card-plus")
 class PowerFlowCardPlus extends LitElement {
@@ -42,7 +43,8 @@ class PowerFlowCardPlus extends LitElement {
       max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
       w_decimals: coerceNumber(config.w_decimals, W_DECIMALS),
       watt_threshold: coerceNumber(config.watt_threshold),
-      max_expected_flow_w: coerceNumber(config.max_expected_flow_w, MAX_EXPECTED_FLOW_W),
+      max_expected_power: coerceNumber(config.max_expected_power, maxExpectedPower),
+      min_expected_power: coerceNumber(config.min_expected_power, minExpectedPower),
     };
   }
 
@@ -56,7 +58,7 @@ class PowerFlowCardPlus extends LitElement {
     return 3;
   }
   private unavailableOrMisconfiguredError = (entityId: string | undefined) =>
-    logError(`entity "${entityId ?? "Unknown"}" is not available or misconfigured`);
+    logError(`Entity "${entityId ?? "Unknown"}" is not available or misconfigured`);
 
   private entityExists = (entityId: string): boolean => entityId in this.hass.states;
 
@@ -66,7 +68,19 @@ class PowerFlowCardPlus extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
+  private mapRange(value: number, minOut: number, maxOut: number, minIn: number, maxIn: number): number {
+    if (value > maxIn) return maxOut;
+    return ((value - minIn) * (maxOut - minOut)) / (maxIn - minIn) + minOut;
+  }
+
   private circleRate = (value: number, total: number): number => {
+    if (this._config.use_new_flow_rate_model) {
+      const maxPower = this._config.max_expected_power;
+      const minPower = this._config.min_expected_power;
+      const maxRate = this._config.max_flow_rate;
+      const minRate = this._config.min_flow_rate;
+      return this.mapRange(value, maxRate, minRate, minPower, maxPower);
+    }
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
     return max - (value / total) * (max - min);
@@ -441,9 +455,9 @@ class PowerFlowCardPlus extends LitElement {
         : batteryIconColorType === "production"
         ? "var(--energy-battery-out-color)"
         : batteryIconColorType === true
-        ? totalBatteryIn >= totalBatteryOut
-          ? "var(--energy-battery-in-color)"
-          : "var(--energy-battery-out-color)"
+        ? totalBatteryOut >= totalBatteryIn
+          ? "var(--energy-battery-out-color)"
+          : "var(--energy-battery-in-color)"
         : "var(--primary-text-color)"
     );
 
@@ -455,9 +469,9 @@ class PowerFlowCardPlus extends LitElement {
         : batteryStateOfChargeColorType === "production"
         ? "var(--energy-battery-out-color)"
         : batteryStateOfChargeColorType === true
-        ? totalBatteryIn >= totalBatteryOut
-          ? "var(--energy-battery-in-color)"
-          : "var(--energy-battery-out-color)"
+        ? totalBatteryOut >= totalBatteryIn
+          ? "var(--energy-battery-out-color)"
+          : "var(--energy-battery-in-color)"
         : "var(--primary-text-color)"
     );
 
@@ -469,9 +483,9 @@ class PowerFlowCardPlus extends LitElement {
         : batteryCircleColorType === "production"
         ? "var(--energy-battery-out-color)"
         : batteryCircleColorType === true
-        ? totalBatteryIn >= totalBatteryOut
-          ? "var(--energy-battery-in-color)"
-          : "var(--energy-battery-out-color)"
+        ? totalBatteryOut >= totalBatteryIn
+          ? "var(--energy-battery-out-color)"
+          : "var(--energy-battery-in-color)"
         : "var(--energy-battery-in-color)"
     );
 

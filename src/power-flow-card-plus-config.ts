@@ -66,8 +66,10 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   kw_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;
-  max_expected_flow_w: number;
   w_decimals: number;
   watt_threshold: number;
   clickable_entities: boolean;
+  max_expected_power: number;
+  min_expected_power: number;
+  use_new_flow_rate_model?: boolean;
 }
