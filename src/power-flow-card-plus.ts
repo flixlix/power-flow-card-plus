@@ -105,7 +105,7 @@ class PowerFlowCardPlus extends LitElement {
     return value * 1000;
   };
 
-  private displayNonFossilState = (entityFossil: string, totalFromGrid: number): string => {
+  private displayNonFossilState = (entityFossil: string, totalFromGrid: number): string | number => {
     if (!entityFossil || !this.entityAvailable(entityFossil)) {
       this.unavailableOrMisconfiguredError(entityFossil);
       return "NaN";
@@ -120,7 +120,7 @@ class PowerFlowCardPlus extends LitElement {
       gridConsumption = this.getEntityStateWatts(this._config!.entities!.grid!.entity!.consumption) || 0;
     }
     /* based on choice, change output from watts to % */
-    let result: string;
+    let result: string | number;
     if (unitOfMeasurement === "W") {
       const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
       result = this.displayValue(nonFossilFuelWatts, "W", unitWhiteSpace);
@@ -137,9 +137,13 @@ class PowerFlowCardPlus extends LitElement {
 
   private displayValue = (value: number | string | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
     if (value === null) return "0";
-    if (typeof value === "string") return value;
-    const isKW = unit === undefined && value >= this._config!.watt_threshold;
-    const v = formatNumber(isKW ? round(value / 1000, this._config!.kw_decimals) : round(value, this._config!.w_decimals), this.hass.locale);
+    if (Number.isNaN(value)) return value;
+    const valueInNumber = Number(value);
+    const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
+    const v = formatNumber(
+      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, this._config!.w_decimals),
+      this.hass.locale
+    );
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
   };
 
