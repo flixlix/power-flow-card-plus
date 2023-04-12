@@ -116,6 +116,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
 | color_circle | `boolean` or "production" or "consumption" | `false` | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
+| display_zero_tolerance | `number` | `0` | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid. |
 
 #### Solar Configuration
 
