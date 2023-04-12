@@ -491,6 +491,8 @@ class PowerFlowCardPlus extends LitElement {
 
     const gridConsumption = Math.max(totalFromGrid - (batteryFromGrid ?? 0), 0);
 
+    const totalIndividualConsumption = (individual1Usage ?? 0) + (individual2Usage ?? 0);
+
     const totalHomeConsumption = Math.max(gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
@@ -972,7 +974,9 @@ class PowerFlowCardPlus extends LitElement {
                     `
                   : ""}
                 <ha-icon .icon=${entities.home?.icon || "mdi:home"}></ha-icon>
-                ${this.displayValue(totalHomeConsumption)}
+                ${this._config.entities.home?.subtract_individual
+                  ? this.displayValue(totalHomeConsumption - totalIndividualConsumption)
+                  : this.displayValue(totalHomeConsumption)}
                 <svg>
                   ${homeSolarCircumference !== undefined
                     ? svg`<circle
