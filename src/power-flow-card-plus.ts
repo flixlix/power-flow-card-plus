@@ -614,7 +614,7 @@ class PowerFlowCardPlus extends LitElement {
     } else if (homeTextColorType === "grid") {
       textHomeColor = "var(--energy-grid-consumption-color)";
     } else if (homeTextColorType === true) {
-      textHomeColor = homeLargestSource;
+      textHomeColor = homeSources[homeLargestSource].color;
     }
     this.style.setProperty("--text-home-color", textHomeColor);
 
