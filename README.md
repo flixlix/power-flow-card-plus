@@ -37,7 +37,8 @@ Display current power, gas, and water usage in a display that matches the the of
 This card is directly available through [HACS](https://hacs.xyz). To install HACS, follow these [instructions](https://hacs.xyz/docs/setup/prerequisites).
 After having HACS installed, simply search for "Power Flow Card Plus" and download it using the UI 🙂
 
-### Manual install
+<details>
+<summary>Manual install</summary>
 
 1. Download and copy `power-flow-card-plus.js` from the [latest release](https://github.com/flixlix/power-flow-card-plus/releases/latest) into your `config/www` directory.
 
@@ -62,8 +63,9 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 5. Hit (+ ADD RESOURCE) icon
 6. Enter URL `/local/power-flow-card-plus.js` and select type "JavaScript Module".
    (Use `/hacsfiles/power-flow-card-plus/power-flow-card-plus.js` and select "JavaScript Module" for HACS install if HACS didn't do it already)
+</details>
 
-## Using the card
+## Usage
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
