@@ -110,6 +110,7 @@ class PowerFlowCardPlus extends LitElement {
       this.unavailableOrMisconfiguredError(entityFossil);
       return "NaN";
     }
+    const unitWhiteSpace = this._config!.entities.fossil_fuel_percentage?.unit_white_space ?? true;
     const unitOfMeasurement: "W" | "%" = this._config!.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
     const nonFossilFuelDecimal: number = 1 - this.getEntityState(entityFossil) / 100;
     let gridConsumption: number;
@@ -122,10 +123,14 @@ class PowerFlowCardPlus extends LitElement {
     let result: string;
     if (unitOfMeasurement === "W") {
       const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
-      result = this.displayValue(nonFossilFuelWatts);
+      result = this.displayValue(nonFossilFuelWatts, "W", unitWhiteSpace);
     } else {
       const nonFossilFuelPercentage: number = 100 - this.getEntityState(entityFossil);
-      result = nonFossilFuelPercentage.toFixed(0).toString().concat(unitOfMeasurement);
+      result = nonFossilFuelPercentage
+        .toFixed(0)
+        .toString()
+        .concat(unitWhiteSpace === false ? "" : " ")
+        .concat(unitOfMeasurement);
     }
     return result;
   };
