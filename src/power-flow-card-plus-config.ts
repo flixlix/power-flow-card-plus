@@ -57,6 +57,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_text?: boolean;
       color_value?: boolean;
       color_label?: boolean;
+      unit_white_space?: boolean;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
