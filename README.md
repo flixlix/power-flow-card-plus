@@ -389,9 +389,6 @@ At the end of the day these are two options and depending on what you're interes
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
 - Add UI Editor
-- Secondary info for text States instead of numbers [#63](https://github.com/flixlix/power-flow-card-plus/issues/63)
-- Display Tolerance for grid Values (do not display anything for small values [#52](https://github.com/flixlix/power-flow-card-plus/issues/52)
-- Display Home Power Excluding individual devices (make this an optional configuration) [#57](https://github.com/flixlix/power-flow-card-plus/issues/57)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
 - Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)
