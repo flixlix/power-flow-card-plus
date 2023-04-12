@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-nested-ternary */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
@@ -115,8 +116,9 @@ class PowerFlowCardPlus extends LitElement {
     return result;
   };
 
-  private displayValue = (value: number | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
+  private displayValue = (value: number | string | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
     if (value === null) return "0";
+    if (typeof value === "string") return value;
     const isKW = unit === undefined && value >= this._config!.watt_threshold;
     const v = formatNumber(isKW ? round(value / 1000, this._config!.kw_decimals) : round(value, this._config!.w_decimals), this.hass.locale);
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
@@ -154,18 +156,20 @@ class PowerFlowCardPlus extends LitElement {
       (this.getEntityStateWatts(entities.individual2?.entity) > (entities.individual2?.display_zero_tolerance ?? 0) &&
         this.entityAvailable(entities.individual2?.entity!));
     const hasIndividual2Secondary =
-      entities.individual2?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.individual2?.secondary_info?.entity) > (entities?.individual2?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.individual2.secondary_info?.display_zero === true);
+      (entities.individual2?.secondary_info?.entity !== undefined &&
+        (this.getEntityState(entities.individual2?.secondary_info?.entity) > (entities?.individual2?.secondary_info?.display_zero_tolerance ?? 0) ||
+          entities.individual2.secondary_info?.display_zero === true)) ||
+      typeof this.hass.states[entities.individual2?.secondary_info?.entity!]?.state === "string";
 
     const hasIndividual1 =
       (entities.individual1 !== undefined && entities.individual1?.display_zero === true) ||
       (this.getEntityStateWatts(entities.individual1?.entity) > (entities?.individual1?.display_zero_tolerance ?? 0) &&
         this.entityAvailable(entities.individual1?.entity!));
     const hasIndividual1Secondary =
-      entities.individual1?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.individual1?.secondary_info?.entity) > (entities?.individual1?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.individual1.secondary_info.display_zero === true);
+      (entities.individual1?.secondary_info?.entity !== undefined &&
+        (this.getEntityState(entities.individual1?.secondary_info?.entity) > (entities?.individual1?.secondary_info?.display_zero_tolerance ?? 0) ||
+          entities.individual1.secondary_info.display_zero === true)) ||
+      typeof this.hass.states[entities.individual1?.secondary_info?.entity!]?.state === "string";
 
     const hasSolarSecondary =
       entities.solar?.secondary_info?.entity !== undefined &&
@@ -280,7 +284,7 @@ class PowerFlowCardPlus extends LitElement {
     );
 
     let individual1Usage: number | null = null;
-    let individual1SecondaryUsage: number | null = null;
+    let individual1SecondaryUsage: number | string | null = null;
     const individual1Name: string = this._config.entities.individual1?.name || "Car";
     const individual1Icon: undefined | string = this._config.entities.individual1?.icon || "mdi:car-electric";
     const individual1Color: string = this._config.entities.individual1?.color! || "#D0CC5B";
@@ -297,16 +301,20 @@ class PowerFlowCardPlus extends LitElement {
     }
     if (hasIndividual1Secondary) {
       const individual1SecondaryEntity = this.hass.states[this._config.entities.individual1?.secondary_info?.entity!];
-      const individual1SecondaryState = Number(individual1SecondaryEntity.state);
-      if (this.entityInverted("individual1Secondary")) {
-        individual1SecondaryUsage = Math.abs(Math.min(individual1SecondaryState, 0));
-      } else {
-        individual1SecondaryUsage = Math.max(individual1SecondaryState, 0);
+      const individual1SecondaryState = individual1SecondaryEntity.state;
+      if (typeof individual1SecondaryState === "number") {
+        if (this.entityInverted("individual1Secondary")) {
+          individual1SecondaryUsage = Math.abs(Math.min(individual1SecondaryState, 0));
+        } else {
+          individual1SecondaryUsage = Math.max(individual1SecondaryState, 0);
+        }
+      } else if (typeof individual1SecondaryState === "string") {
+        individual1SecondaryUsage = individual1SecondaryState;
       }
     }
 
     let individual2Usage: number | null = null;
-    let individual2SecondaryUsage: number | null = null;
+    let individual2SecondaryUsage: number | string | null = null;
     const individual2Name: string = this._config.entities.individual2?.name || "Motorcycle";
     const individual2Icon: undefined | string = this._config.entities.individual2?.icon || "mdi:motorbike-electric";
     const individual2Color: string = this._config.entities.individual2?.color! || "#964CB5";
@@ -323,11 +331,15 @@ class PowerFlowCardPlus extends LitElement {
     }
     if (hasIndividual2Secondary) {
       const individual2SecondaryEntity = this.hass.states[this._config.entities.individual2?.secondary_info?.entity!];
-      const individual2SecondaryState = Number(individual2SecondaryEntity.state);
-      if (this.entityInverted("individual2Secondary")) {
-        individual2SecondaryUsage = Math.abs(Math.min(individual2SecondaryState, 0));
-      } else {
-        individual2SecondaryUsage = Math.max(individual2SecondaryState, 0);
+      const individual2SecondaryState = individual2SecondaryEntity.state;
+      if (typeof individual2SecondaryState === "number") {
+        if (this.entityInverted("individual2Secondary")) {
+          individual2SecondaryUsage = Math.abs(Math.min(individual2SecondaryState, 0));
+        } else {
+          individual2SecondaryUsage = Math.max(individual2SecondaryState, 0);
+        }
+      } else if (typeof individual2SecondaryState === "string") {
+        individual2SecondaryUsage = individual2SecondaryState;
       }
     }
 
@@ -1556,6 +1568,11 @@ class PowerFlowCardPlus extends LitElement {
     span.secondary-info {
       color: var(--primary-text-color);
       font-size: 12px;
+      max-width: 60px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      text-transform: capitalize;
     }
 
     .individual2 path,
