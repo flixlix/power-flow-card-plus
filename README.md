@@ -187,6 +187,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
 | display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
+| unit_white_space | `boolean` | `true` | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
 
 #### Color Object
 
