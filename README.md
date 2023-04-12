@@ -34,17 +34,8 @@ Display current power, gas, and water usage in a display that matches the the of
 
 ### HACS (recommended)
 
-This card is not direclty available in [HACS](https://hacs.xyz/) (Home Assistant Community Store).
-_HACS is a third party community store and is not included in Home Assistant out of the box._
-To install this:
-
-- Go to HACS
-- Click on `Frontend`
-- Click on the overflow Menu (three vertical dots)
-- Click on `Custom Repositories`
-- Type this URL [https://github.com/flixlix/power-flow-card-plus](https://github.com/flixlix/power-flow-card-plus)
-- In "Category", select `lovelace`
-- Install via UI
+This card is directly available through [HACS](https://hacs.xyz). To install HACS, follow these [instructions](https://hacs.xyz/docs/setup/prerequisites).
+After having HACS installed, simply search for "Power Flow Card Plus" and download it using the UI 🙂
 
 ### Manual install
 
