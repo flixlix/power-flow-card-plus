@@ -352,6 +352,7 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 
 - Change Flow Rate / Speed Formula to something more intuitive
 - Add UI Editor
+- Secondary info for text States instead of numbers [#63](https://github.com/flixlix/power-flow-card-plus/issues/63)
 - Display Tolerance for grid Values (do not display anything for small values [#52](https://github.com/flixlix/power-flow-card-plus/issues/52)
 - Display Home Power Excluding individual devices (make this an optional configuration) [#57](https://github.com/flixlix/power-flow-card-plus/issues/57)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
