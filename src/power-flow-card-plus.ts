@@ -45,10 +45,11 @@ class PowerFlowCardPlus extends LitElement {
     };
   }
 
-  static async getConfigElement(): Promise<LovelaceCardEditor> {
+  // do not use ui editor for now, as it is not working
+  /* static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
     return document.createElement("power-flow-card-plus-editor");
-  }
+  } */
 
   public getCardSize(): Promise<number> | number {
     return 3;
@@ -190,11 +191,18 @@ class PowerFlowCardPlus extends LitElement {
 
     if (hasGrid) {
       if (typeof entities.grid!.entity === "string") {
-        if (this.entityInverted("grid")) totalFromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
-        else totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
+        if (this.entityInverted("grid")) {
+          totalFromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
+        } else {
+          totalFromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
+        }
       } else {
         totalFromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
       }
+    }
+
+    if (this._config.entities.grid?.display_zero_tolerance !== undefined) {
+      totalFromGrid = totalFromGrid! > this._config.entities.grid?.display_zero_tolerance ? totalFromGrid : 0;
     }
 
     const hasGridSecondary =
@@ -223,6 +231,10 @@ class PowerFlowCardPlus extends LitElement {
       } else {
         totalToGrid = this.getEntityStateWatts(entities.grid?.entity.production);
       }
+    }
+
+    if (this._config.entities.grid?.display_zero_tolerance !== undefined) {
+      totalToGrid = totalToGrid! > this._config.entities.grid?.display_zero_tolerance ? totalToGrid : 0;
     }
 
     const gridIconColorType = this._config.entities.grid?.color_icon;
@@ -550,7 +562,7 @@ class PowerFlowCardPlus extends LitElement {
         value: homeNonFossilCircumference,
         color: "var(--energy-non-fossil-color)",
       },
-    }
+    };
 
     /* return source object with largest value property */
     const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
