@@ -336,6 +336,10 @@ title: Power Flow Card Plus
 This should give you something like this:
 ![minimal_config_full](https://user-images.githubusercontent.com/61006057/227789815-41f15dd4-3d24-4eb8-96ca-c7f7f01a4f46.png)
 
+### Random Configuration
+
+![Apr-13-2023 12-43-31](https://user-images.githubusercontent.com/61006057/231735404-61a5dc2b-0a01-4ec5-9ac4-545c1edfe556.gif)
+
 ### Flow Formula
 
 This formula is based on the official formula used by the Energy Distribution card.
