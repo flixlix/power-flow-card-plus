@@ -39,8 +39,8 @@ Add any other context about the problem here.
 
 **Please make sure all of this applies and check the checkboxes, by writing "X" inside of them.**
 
-- [] I understand that this is a channel for reporting bugs, not a support forum (If you need help configuring the card, go to: [Discussions](https://github.com/flixlix/power-flow-card-plus/discussions)).
+- [ ] I understand that this is a channel for reporting bugs, not a support forum (If you need help configuring the card, go to: [Discussions](https://github.com/flixlix/power-flow-card-plus/discussions)).
 
-- [] I have the latest version of the card installed.
+- [ ] I have the latest version of the card installed.
 
-- [] I have cleared my browser cache **after** installing, updating and configuring the card.
+- [ ] I have cleared my browser cache **after** installing, updating and configuring the card.
