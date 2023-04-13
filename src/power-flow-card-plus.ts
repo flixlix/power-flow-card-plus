@@ -137,7 +137,7 @@ class PowerFlowCardPlus extends LitElement {
 
   private displayValue = (value: number | string | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
     if (value === null) return "0";
-    if (Number.isNaN(value)) return value;
+    if (Number.isNaN(+value)) return value;
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
     const v = formatNumber(
