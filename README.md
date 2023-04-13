@@ -233,8 +233,7 @@ In these examples I decided to use the Split entities option, but feel free to u
 type: custom:power-flow-card-plus
 entities:
   grid:
-    entity:
-      consumption: sensor.grid_consumption
+    entity: sensor.grid_power
 ```
 
 This should give you something like this:
