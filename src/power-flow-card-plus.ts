@@ -1,28 +1,44 @@
+/* eslint-disable wc/guard-super-call */
 /* eslint-disable import/extensions */
 /* eslint-disable no-nested-ternary */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
-import { css, html, LitElement, svg, TemplateResult } from "lit";
+import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config.js";
 import { coerceNumber, coerceStringArray, round, isNumberValue } from "./utils.js";
 import { EntityType } from "./type.js";
 import { logError } from "./logging.js";
-import "./ui-editor/ui-editor";
+import { registerCustomCard } from "./utils/register-custom-card.js";
+import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
+import getDefaultConfig from "./utils/get-default-config.js";
+import { styles } from "./style.js";
 
-const CIRCLE_CIRCUMFERENCE = 238.76104;
-const KW_DECIMALS = 1;
-const MAX_FLOW_RATE = 6;
-const MIN_FLOW_RATE = 0.75;
-const W_DECIMALS = 1;
+const circleCircumference = 238.76104;
+const maxFlowRate = 6;
+const minFlowRate = 0.75;
+const wattDecimals = 1;
+const kilowattDecimals = 1;
 const minExpectedPower = 0.01;
 const maxExpectedPower = 2000;
 
+registerCustomCard({
+  type: "power-flow-card-plus",
+  name: "Power Flow Card Plus",
+  description:
+    "An extended version of the power flow card with richer options, advanced features and a few small UI enhancements. Inspired by the Energy Dashboard.",
+});
+
 @customElement("power-flow-card-plus")
-class PowerFlowCardPlus extends LitElement {
+export class PowerFlowCardPlus extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config = {} as PowerFlowCardPlusConfig;
+
+  @state() private _templateResults: Partial<Record<string, RenderTemplateResult>> = {};
+  @state() private _unsubRenderTemplate?: Promise<UnsubscribeFunc>;
+  @state() private _unsubRenderTemplates?: Map<string, Promise<UnsubscribeFunc>> = new Map();
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -38,20 +54,34 @@ class PowerFlowCardPlus extends LitElement {
     this._config = {
       ...config,
       inverted_entities: coerceStringArray(config.inverted_entities, ","),
-      kw_decimals: coerceNumber(config.kw_decimals, KW_DECIMALS),
-      min_flow_rate: coerceNumber(config.min_flow_rate, MIN_FLOW_RATE),
-      max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
-      w_decimals: coerceNumber(config.w_decimals, W_DECIMALS),
+      kw_decimals: coerceNumber(config.kw_decimals, kilowattDecimals),
+      min_flow_rate: coerceNumber(config.min_flow_rate, minFlowRate),
+      max_flow_rate: coerceNumber(config.max_flow_rate, maxFlowRate),
+      w_decimals: coerceNumber(config.w_decimals, wattDecimals),
       watt_threshold: coerceNumber(config.watt_threshold),
       max_expected_power: coerceNumber(config.max_expected_power, maxExpectedPower),
       min_expected_power: coerceNumber(config.min_expected_power, minExpectedPower),
     };
   }
 
+  public connectedCallback() {
+    super.connectedCallback();
+    this._tryConnectAll();
+  }
+
+  public disconnectedCallback() {
+    this._tryDisconnectAll();
+  }
+
   // do not use ui editor for now, as it is not working
-  /* static async getConfigElement(): Promise<LovelaceCardEditor> {
+  /* public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
     return document.createElement("power-flow-card-plus-editor");
+  }
+
+  public static getStubConfig(hass: HomeAssistant): object {
+    // get available power entities
+    return getDefaultConfig(hass);
   } */
 
   public getCardSize(): Promise<number> | number {
@@ -239,7 +269,7 @@ class PowerFlowCardPlus extends LitElement {
 
     let gridSecondaryUsage: number | null = null;
     if (hasGridSecondary) {
-      const gridSecondaryEntity = this.hass.states[this._config.entities.grid!.secondary_info!.entity];
+      const gridSecondaryEntity = this.hass.states[this._config.entities.grid?.secondary_info?.entity ?? 0];
       const gridSecondaryState = Number(gridSecondaryEntity.state);
       if (this.entityInverted("gridSecondary")) {
         gridSecondaryUsage = Math.abs(Math.min(gridSecondaryState, 0));
@@ -505,11 +535,11 @@ class PowerFlowCardPlus extends LitElement {
     const totalHomeConsumption = Math.max(gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
-    if (batteryConsumption) homeBatteryCircumference = CIRCLE_CIRCUMFERENCE * (batteryConsumption / totalHomeConsumption);
+    if (batteryConsumption) homeBatteryCircumference = circleCircumference * (batteryConsumption / totalHomeConsumption);
 
     let homeSolarCircumference: number = 0;
     if (hasSolarProduction) {
-      homeSolarCircumference = CIRCLE_CIRCUMFERENCE * (solarConsumption! / totalHomeConsumption);
+      homeSolarCircumference = circleCircumference * (solarConsumption! / totalHomeConsumption);
     }
 
     const hasNonFossilFuelUsage =
@@ -526,10 +556,10 @@ class PowerFlowCardPlus extends LitElement {
     if (hasNonFossilFuelUsage) {
       const nonFossilFuelDecimal: number = 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
       nonFossilFuelPower = gridConsumption * nonFossilFuelDecimal;
-      homeNonFossilCircumference = CIRCLE_CIRCUMFERENCE * (nonFossilFuelPower / totalHomeConsumption);
+      homeNonFossilCircumference = circleCircumference * (nonFossilFuelPower / totalHomeConsumption);
     }
     const homeGridCircumference =
-      CIRCLE_CIRCUMFERENCE *
+      circleCircumference *
       ((totalHomeConsumption - (nonFossilFuelPower ?? 0) - (batteryConsumption ?? 0) - (solarConsumption ?? 0)) / totalHomeConsumption);
 
     const totalLines =
@@ -664,6 +694,14 @@ class PowerFlowCardPlus extends LitElement {
       "--secondary-text-home-color",
       this._config.entities.home?.secondary_info?.color_value ? "var(--text-home-color)" : "var(--primary-text-color)"
     );
+
+    const templatesObj = {
+      gridSecondary: this._templateResults.gridSecondary?.result,
+      solarSecondary: this._templateResults.solarSecondary?.result,
+      homeSecondary: this._templateResults.homeSecondary?.result,
+      individual1Secondary: this._templateResults.individual1Secondary?.result,
+      individual2Secondary: this._templateResults.individual2Secondary?.result,
+    };
 
     return html`
       <ha-card .header=${this._config.title}>
@@ -915,6 +953,8 @@ class PowerFlowCardPlus extends LitElement {
                             )}
                           </span>
                         `
+                      : entities.grid?.secondary_info?.template
+                      ? templatesObj.gridSecondary
                       : ""}
                     <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
@@ -994,9 +1034,9 @@ class PowerFlowCardPlus extends LitElement {
                             cx="40"
                             cy="40"
                             r="38"
-                            stroke-dasharray="${homeSolarCircumference} ${CIRCLE_CIRCUMFERENCE - homeSolarCircumference}"
+                            stroke-dasharray="${homeSolarCircumference} ${circleCircumference - homeSolarCircumference}"
                             shape-rendering="geometricPrecision"
-                            stroke-dashoffset="-${CIRCLE_CIRCUMFERENCE - homeSolarCircumference}"
+                            stroke-dashoffset="-${circleCircumference - homeSolarCircumference}"
                           />`
                     : ""}
                   ${homeBatteryCircumference
@@ -1005,8 +1045,8 @@ class PowerFlowCardPlus extends LitElement {
                             cx="40"
                             cy="40"
                             r="38"
-                            stroke-dasharray="${homeBatteryCircumference} ${CIRCLE_CIRCUMFERENCE - homeBatteryCircumference}"
-                            stroke-dashoffset="-${CIRCLE_CIRCUMFERENCE - homeBatteryCircumference - (homeSolarCircumference || 0)}"
+                            stroke-dasharray="${homeBatteryCircumference} ${circleCircumference - homeBatteryCircumference}"
+                            stroke-dashoffset="-${circleCircumference - homeBatteryCircumference - (homeSolarCircumference || 0)}"
                             shape-rendering="geometricPrecision"
                           />`
                     : ""}
@@ -1016,9 +1056,9 @@ class PowerFlowCardPlus extends LitElement {
                             cx="40"
                             cy="40"
                             r="38"
-                            stroke-dasharray="${homeNonFossilCircumference} ${CIRCLE_CIRCUMFERENCE - homeNonFossilCircumference}"
+                            stroke-dasharray="${homeNonFossilCircumference} ${circleCircumference - homeNonFossilCircumference}"
                             stroke-dashoffset="-${
-                              CIRCLE_CIRCUMFERENCE - homeNonFossilCircumference - (homeBatteryCircumference || 0) - (homeSolarCircumference || 0)
+                              circleCircumference - homeNonFossilCircumference - (homeBatteryCircumference || 0) - (homeSolarCircumference || 0)
                             }"
                             shape-rendering="geometricPrecision"
                           />`
@@ -1029,8 +1069,8 @@ class PowerFlowCardPlus extends LitElement {
                     cy="40"
                     r="38"
                     stroke-dasharray="${homeGridCircumference ??
-                    CIRCLE_CIRCUMFERENCE - homeSolarCircumference! - (homeBatteryCircumference || 0)} ${homeGridCircumference !== undefined
-                      ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
+                    circleCircumference - homeSolarCircumference! - (homeBatteryCircumference || 0)} ${homeGridCircumference !== undefined
+                      ? circleCircumference - homeGridCircumference
                       : homeSolarCircumference! + (homeBatteryCircumference || 0)}"
                     stroke-dashoffset="0"
                     shape-rendering="geometricPrecision"
@@ -1452,380 +1492,103 @@ class PowerFlowCardPlus extends LitElement {
     `;
   }
 
-  static styles = css`
-    :host {
-      --mdc-icon-size: 24px;
-      --clickable-cursor: pointer;
-      --individualone-color: #d0cc5b;
-      --individualtwo-color: #964cb5;
-      --non-fossil-color: var(--energy-non-fossil-color, #0f9d58);
-      --icon-non-fossil-color: var(--non-fossil-color, #0f9d58);
-      --icon-solar-color: var(--energy-solar-color, #ff9800);
-      --icon-individualone-color: var(--individualone-color, #d0cc5b);
-      --icon-individualtwo-color: var(--individualtwo-color, #964cb5);
-      --icon-grid-color: var(--energy-grid-consumption-color, #488fc2);
-      --icon-battery-color: var(--energy-battery-in-color, #f06292);
-      --icon-home-color: var(--energy-grid-consumption-color, #488fc2);
-      --text-solar-color: var(--primary-text-color);
-      --text-non-fossil-color: var(--primary-text-color);
-      --text-individualone-color: var(--primary-text-color);
-      --text-individualtwo-color: var(--primary-text-color);
-      --text-home-color: var(--primary-text-color);
-      --secondary-text-individualone-color: var(--primary-text-color);
-      --secondary-text-individualtwo-color: var(--primary-text-color);
-      --text-battery-state-of-charge-color: var(--primary-text-color);
-      --cirlce-grid-color: var(--energy-grid-consumption-color, #488fc2);
-      --circle-battery-color: var(--energy-battery-in-color, #f06292);
-      --secondary-text-solar-color: var(--primary-text-color);
-      --secondary-text-grid-color: var(--primary-text-color);
-      --secondary-text-home-color: var(--primary-text-color);
-    }
-    :root {
-    }
-    .card-content {
-      position: relative;
-    }
-    .lines {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 146px;
-      display: flex;
-      justify-content: center;
-      padding: 0 16px 16px;
-      box-sizing: border-box;
-    }
-    .lines.individual1-individual2 {
-      bottom: 110px;
-    }
-    .lines.high {
-      bottom: 100px;
-      height: 156px;
-    }
-    .lines svg {
-      width: calc(100% - 160px);
-      height: 100%;
-      max-width: 340px;
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    .circle-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 2;
-    }
-    .circle-container.solar {
-      margin: 0 4px;
-      height: 130px;
-    }
-    .circle-container.individual2 {
-      margin-left: 4px;
-      height: 130px;
-    }
-    .circle-container.individual1 {
-      margin-left: 4px;
-      height: 130px;
-    }
-    .circle-container.individual1.bottom {
-      position: relative;
-      top: -20px;
-      margin-bottom: -20px;
-    }
-    .circle-container.battery {
-      height: 110px;
-      justify-content: flex-end;
-    }
-    .spacer {
-      width: 84px;
-    }
-    .circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      box-sizing: border-box;
-      border: 2px solid;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 12px;
-      line-height: 12px;
-      position: relative;
-      text-decoration: none;
-      color: var(--primary-text-color);
-    }
-    .circle-container .circle {
-      cursor: var(--clickable-cursor);
-    }
-    #battery-grid {
-      stroke: var(--energy-grid-return-color);
-    }
-    ha-icon {
-      padding-bottom: 2px;
-    }
-    ha-icon.small {
-      --mdc-icon-size: 12px;
-    }
-    .label {
-      color: var(--secondary-text-color);
-      font-size: 12px;
-    }
-    line,
-    path {
-      stroke: var(--disabled-text-color);
-      stroke-width: 1;
-      fill: none;
-    }
-    .circle svg {
-      position: absolute;
-      fill: none;
-      stroke-width: 4px;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
+  protected updated(changedProps: PropertyValues): void {
+    super.updated(changedProps);
+    if (!this._config || !this.hass) {
+      return;
     }
 
-    span.secondary-info {
-      color: var(--primary-text-color);
-      font-size: 12px;
-      max-width: 60px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      text-transform: capitalize;
-    }
+    this._tryConnectAll();
+  }
 
-    .individual2 path,
-    .individual2 circle {
-      stroke: var(--individualtwo-color);
-    }
+  private _tryConnectAll() {
+    const { entities } = this._config;
+    const templatesObj = {
+      gridSecondary: entities.grid?.secondary_info?.template,
+      solarSecondary: entities.solar?.secondary_info?.template,
+      homeSecondary: entities.home?.secondary_info?.template,
+      individual1Secondary: entities.individual1?.secondary_info?.template,
+      individual2Secondary: entities.individual2?.secondary_info?.template,
+    };
 
-    #individual1-icon {
-      color: var(--icon-individualone-color);
-    }
-    #individual2-icon {
-      color: var(--icon-individualtwo-color);
-    }
-    #solar-icon {
-      color: var(--icon-solar-color);
-    }
-    circle.individual2 {
-      stroke-width: 4;
-      fill: var(--individualtwo-color);
-    }
-    .individual2 .circle {
-      border-color: var(--individualtwo-color);
-    }
-    .individual1 path,
-    .individual1 circle {
-      stroke: var(--individualone-color);
-    }
-    circle.individual1 {
-      stroke-width: 4;
-      fill: var(--individualone-color);
-    }
-    .individual1 .circle {
-      border-color: var(--individualone-color);
-    }
-    .circle-container.low-carbon {
-      margin-right: 4px;
-      height: 130px;
-    }
-    .low-carbon path {
-      stroke: var(--non-fossil-color);
-    }
-    .low-carbon .circle {
-      border-color: var(--non-fossil-color);
-    }
-    .low-carbon ha-icon {
-      color: var(--icon-non-fossil-color);
-    }
-    circle.low-carbon {
-      stroke-width: 4;
-      fill: var(--non-fossil-color);
-      stroke: var(--non-fossil-color);
-    }
-    .solar {
-      color: var(--primary-text-color);
-    }
-    .solar .circle {
-      border-color: var(--energy-solar-color);
-    }
-    .solar ha-icon:not(.small) {
-      color: var(--icon-solar-color);
-    }
-    circle.solar,
-    path.solar {
-      stroke: var(--energy-solar-color);
-    }
-    circle.solar {
-      stroke-width: 4;
-      fill: var(--energy-solar-color);
-    }
-    .battery .circle {
-      border-color: var(--circle-battery-color);
-    }
-    circle.battery,
-    path.battery {
-      stroke: var(--energy-battery-out-color);
-    }
-    path.battery-home,
-    circle.battery-home {
-      stroke: var(--energy-battery-out-color);
-    }
-    circle.battery-home {
-      stroke-width: 4;
-      fill: var(--energy-battery-out-color);
-    }
-    path.battery-solar,
-    circle.battery-solar {
-      stroke: var(--energy-battery-in-color);
-    }
-    circle.battery-solar {
-      stroke-width: 4;
-      fill: var(--energy-battery-in-color);
-    }
-    .battery-in {
-      color: var(--energy-battery-in-color);
-    }
-    .battery-out {
-      color: var(--energy-battery-out-color);
-    }
-    path.battery-from-grid {
-      stroke: var(--energy-grid-consumption-color);
-    }
-    path.battery-to-grid {
-      stroke: var(--energy-grid-return-color);
-    }
-    .battery ha-icon:not(.small) {
-      color: var(--icon-battery-color);
-    }
-
-    path.return,
-    circle.return,
-    circle.battery-to-grid {
-      stroke: var(--energy-grid-return-color);
-    }
-    circle.return,
-    circle.battery-to-grid {
-      stroke-width: 4;
-      fill: var(--energy-grid-return-color);
-    }
-    .return {
-      color: var(--energy-grid-return-color);
-    }
-    .grid .circle {
-      border-color: var(--circle-grid-color);
-    }
-    .consumption {
-      color: var(--energy-grid-consumption-color);
-    }
-    circle.grid,
-    circle.battery-from-grid,
-    path.grid {
-      stroke: var(--energy-grid-consumption-color);
-    }
-    circle.grid,
-    circle.battery-from-grid {
-      stroke-width: 4;
-      fill: var(--energy-grid-consumption-color);
-    }
-    .grid ha-icon:not(.small) {
-      color: var(--icon-grid-color);
-    }
-    .home .circle {
-      border-width: 0;
-      border-color: var(--primary-color);
-    }
-    .home .circle.border {
-      border-width: 2px;
-    }
-    .home ha-icon:not(.small) {
-      color: var(--icon-home-color);
-    }
-    .circle svg circle {
-      animation: rotate-in 0.6s ease-in;
-      transition: stroke-dashoffset 0.4s, stroke-dasharray 0.4s;
-      fill: none;
-    }
-    span.solar {
-      color: var(--text-solar-color);
-    }
-
-    span.low-carbon {
-      color: var(--text-non-fossil-color);
-    }
-
-    #home-circle {
-      color: var(--text-home-color);
-    }
-
-    .individual1 .circle {
-      color: var(--text-individualone-color);
-    }
-
-    .individual2 .circle {
-      color: var(--text-individualtwo-color);
-    }
-
-    .individual1 span.secondary-info {
-      color: var(--secondary-text-individualone-color);
-    }
-
-    .individual2 span.secondary-info {
-      color: var(--secondary-text-individualtwo-color);
-    }
-
-    .solar span.secondary-info {
-      color: var(--secondary-text-solar-color);
-    }
-
-    .grid span.secondary-info {
-      color: var(--secondary-text-grid-color);
-    }
-
-    .home span.secondary-info {
-      color: var(--secondary-text-home-color);
-    }
-
-    #battery-state-of-charge-text {
-      color: var(--text-battery-state-of-charge-color);
-    }
-
-    @keyframes rotate-in {
-      from {
-        stroke-dashoffset: 238.76104;
-        stroke-dasharray: 238.76104;
+    for (const [key, value] of Object.entries(templatesObj)) {
+      if (value) {
+        this._tryConnect(value, key);
       }
     }
-
-    .card-actions a {
-      text-decoration: none;
-    }
-  `;
-}
-
-const windowWithCards = window as unknown as Window & {
-  customCards: unknown[];
-};
-windowWithCards.customCards = windowWithCards.customCards || [];
-windowWithCards.customCards.push({
-  type: "power-flow-card-plus",
-  name: "Power Flow Card Plus",
-  description:
-    "An extended version of the power flow card with richer options, advanced features and a few small enhancements. Inspired by the Energy Dashboard.",
-});
-
-declare global {
-  interface HTMLElementTagNameMap {
-    "power-flow-card-plus": PowerFlowCardPlus;
   }
+
+  private async _tryConnect(inputTemplate: string, topic: string): Promise<void> {
+    if (!this.hass || !this._config || this._unsubRenderTemplates?.get(topic) !== undefined || inputTemplate === "") {
+      return;
+    }
+
+    try {
+      const sub = subscribeRenderTemplate(
+        this.hass.connection,
+        (result) => {
+          this._templateResults[topic] = result;
+        },
+        {
+          template: inputTemplate,
+          entity_ids: this._config.entity_id,
+          variables: {
+            config: this._config,
+            user: this.hass.user!.name,
+          },
+          strict: true,
+        }
+      );
+      this._unsubRenderTemplates?.set(topic, sub);
+      await sub;
+    } catch (_err) {
+      this._templateResults = {
+        ...this._templateResults,
+        [topic]: {
+          result: inputTemplate,
+          listeners: { all: false, domains: [], entities: [], time: false },
+        },
+      };
+      this._unsubRenderTemplates?.delete(topic);
+    }
+  }
+
+  private async _tryDisconnectAll() {
+    const { entities } = this._config;
+    const templatesObj = {
+      gridSecondary: entities.grid?.secondary_info?.template,
+      solarSecondary: entities.solar?.secondary_info?.template,
+      homeSecondary: entities.home?.secondary_info?.template,
+
+      individual1Secondary: entities.individual1?.secondary_info?.template,
+      individual2Secondary: entities.individual2?.secondary_info?.template,
+    };
+
+    for (const [key, value] of Object.entries(templatesObj)) {
+      if (value) {
+        this._tryDisconnect(key);
+      }
+    }
+  }
+
+  private async _tryDisconnect(topic: string): Promise<void> {
+    const unsubRenderTemplate = this._unsubRenderTemplates?.get(topic);
+    if (!unsubRenderTemplate) {
+      return;
+    }
+
+    try {
+      const unsub = await unsubRenderTemplate;
+      unsub();
+      this._unsubRenderTemplates?.delete(topic);
+    } catch (err: any) {
+      if (err.code === "not_found" || err.code === "template_error") {
+        // If we get here, the connection was probably already closed. Ignore.
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  static styles = styles;
 }
