@@ -950,6 +950,16 @@ class PowerFlowCardPlus extends LitElement {
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(totalFromGrid)}
                         </span>`
                       : ""}
+                    ${(entities.grid?.offline_entity != null && 
+                      entities.grid?.offline_value != null) &&
+                      ((typeof this.hass.states[entities.grid?.offline_entity] === 'number' && 
+                      this.hass.states[entities.grid?.offline_entity]?.state?.toString() === entities.grid?.offline_value) ||
+                      (this.hass.states[entities.grid?.offline_entity]?.state === entities.grid?.offline_value))
+                      ? html` <span class="offline">
+                          <ha-icon class="small" .icon=${"mdi:transmission-tower-off"}></ha-icon>
+                          ${entities.grid?.offline_label !== undefined ? entities.grid?.offline_label : this.hass.states[entities.grid?.offline_entity]?.state}
+                        </span>`
+                      : ""}
                   </div>
                   <span class="label">${entities.grid!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")}</span>
                 </div>`
