@@ -864,6 +864,7 @@ class PowerFlowCardPlus extends LitElement {
                                 <animateMotion
                                   dur="1.66s"
                                   repeatCount="indefinite"
+                                  calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
 
