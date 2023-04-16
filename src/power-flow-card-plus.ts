@@ -211,6 +211,9 @@ export class PowerFlowCardPlus extends LitElement {
     ); /* show pointer if clickable entities is enabled */
 
     const hasGrid = entities?.grid?.entity !== undefined;
+    const hasGridPowerOutage = this.hasField(entities.grid?.power_outage, true);
+    const isGridPowerOutage =
+      hasGridPowerOutage && this.hass.states[entities.grid!.power_outage!.entity!].state === (entities.grid?.power_outage.state_alert ?? "on");
 
     const hasBattery = entities?.battery?.entity !== undefined;
 
@@ -987,12 +990,17 @@ export class PowerFlowCardPlus extends LitElement {
                       : entities.grid?.secondary_info?.template
                       ? html`<span class="secondary-info grid"> ${templatesObj.gridSecondary} </span>`
                       : ""}
-                    <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
+                    <ha-icon
+                      .icon=${isGridPowerOutage
+                        ? entities.grid?.power_outage.icon_alert || "mdi:transmission-tower-off"
+                        : entities.grid?.icon || "mdi:transmission-tower"}
+                    ></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way" && totalToGrid > 0) ||
                       (entities.grid?.display_state === "one_way_no_zero" && (totalFromGrid === null || totalFromGrid === 0) && totalToGrid !== 0)) &&
-                    totalToGrid !== null
+                    totalToGrid !== null &&
+                    !isGridPowerOutage
                       ? html`<span
                           class="return"
                           @click=${(e: { stopPropagation: () => void }) => {
@@ -1016,20 +1024,14 @@ export class PowerFlowCardPlus extends LitElement {
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way" && totalFromGrid > 0) ||
                       (entities.grid?.display_state === "one_way_no_zero" && (totalToGrid === null || totalToGrid === 0))) &&
-                    totalFromGrid !== null
+                    totalFromGrid !== null &&
+                    !isGridPowerOutage
                       ? html` <span class="consumption">
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(totalFromGrid)}
                         </span>`
                       : ""}
-                    ${(entities.grid?.offline_entity != null && 
-                      entities.grid?.offline_value != null) &&
-                      ((typeof this.hass.states[entities.grid?.offline_entity] === 'number' && 
-                      this.hass.states[entities.grid?.offline_entity]?.state?.toString() === entities.grid?.offline_value) ||
-                      (this.hass.states[entities.grid?.offline_entity]?.state === entities.grid?.offline_value))
-                      ? html` <span class="offline">
-                          <ha-icon class="small" .icon=${"mdi:transmission-tower-off"}></ha-icon>
-                          ${entities.grid?.offline_label !== undefined ? entities.grid?.offline_label : this.hass.states[entities.grid?.offline_entity]?.state}
-                        </span>`
+                    ${isGridPowerOutage
+                      ? html`<span class="grid power-outage"> ${entities.grid?.power_outage.label_alert || html`Power<br />Outage`} </span>`
                       : ""}
                   </div>
                   <span class="label">${entities.grid!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")}</span>
