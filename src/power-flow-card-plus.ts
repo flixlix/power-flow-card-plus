@@ -762,8 +762,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           .icon=${!entities.fossil_fuel_percentage?.icon ? "mdi:leaf" : entities.fossil_fuel_percentage?.icon}
                           class="low-carbon"
+                          style="${hasNonFossilFuelSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
+                        ${entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0
+                          ? html`
+                              <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
+                            `
+                          : ""}
                       </div>
                       ${this.showLine(nonFossilFuelPower || 0)
                         ? html`
@@ -823,8 +831,17 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html`<span class="secondary-info solar"> ${templatesObj.solarSecondary} </span>`
                           : ""}
 
-                        <ha-icon id="solar-icon" .icon=${entities.solar!.icon || "mdi:solar-power"}></ha-icon>
-                        <span class="solar"> ${this.displayValue(totalSolarProduction)}</span>
+                        <ha-icon
+                          id="solar-icon"
+                          .icon=${entities.solar!.icon || "mdi:solar-power"}
+                          style="${hasSolarSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.solar?.display_zero_state !== false || (totalSolarProduction || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
+                        ></ha-icon>
+                        ${entities.solar?.display_zero_state !== false || (totalSolarProduction || 0) > 0
+                          ? html` <span class="solar"> ${this.displayValue(totalSolarProduction)}</span>`
+                          : ""}
                       </div>
                     </div>`
                   : hasIndividual2 || hasIndividual1
@@ -865,9 +882,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual2-icon"
                           .icon=${individual2Icon}
-                          style=${hasIndividual2Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          style="${hasIndividual2Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual2?.display_zero_state !== false || (individual2Usage || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
+                        ${entities.individual2?.display_zero_state !== false || (individual2Usage || 0) > 0
+                          ? html` <span class="individual2"
+                              >${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
+                            </span>`
+                          : ""}
                       </div>
                       ${this.showLine(individual2Usage || 0)
                         ? html`
@@ -929,11 +953,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
-                          style=${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          style="${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${this._config.entities.individual1?.unit_of_measurement
-                          ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
-                          : this.displayValue(individual1Usage)}
+                        ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                          ? html` <span class="individual1"
+                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
+                            </span>`
+                          : ""}
                       </div>
                       ${this.showLine(individual1Usage || 0)
                         ? html`
@@ -1314,11 +1343,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
-                          style=${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          style="${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${this._config.entities.individual1?.unit_of_measurement
-                          ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
-                          : this.displayValue(individual1Usage)}
+                        ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                          ? html` <span class="individual1"
+                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
+                            </span>`
+                          : ""}
                       </div>
                       <span class="label">${individual1Name}</span>
                     </div>`
