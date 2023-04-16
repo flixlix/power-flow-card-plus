@@ -131,8 +131,8 @@ export class PowerFlowCardPlus extends LitElement {
     }
     const stateObj = this.hass.states[entity];
     const value = coerceNumber(stateObj.state);
-    if (stateObj.attributes.unit_of_measurement === "W") return value;
-    return value * 1000;
+    if (stateObj.attributes.unit_of_measurement === "kW") return value * 1000;
+    return value;
   };
 
   private displayNonFossilState = (entityFossil: string, totalFromGrid: number): string | number => {
@@ -188,6 +188,16 @@ export class PowerFlowCardPlus extends LitElement {
     this.dispatchEvent(e);
   }
 
+  private hasField(field?: any, acceptStringState?: boolean): boolean {
+    return (
+      (field !== undefined && field?.display_zero === true) ||
+      (this.getEntityStateWatts(field?.entity) > (field?.display_zero_tolerance ?? 0) && this.entityAvailable(field?.entity)) ||
+      acceptStringState
+        ? typeof this.hass.states[field?.entity]?.state === "string"
+        : false
+    ) as boolean;
+  }
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -204,37 +214,17 @@ export class PowerFlowCardPlus extends LitElement {
 
     const hasBattery = entities?.battery?.entity !== undefined;
 
-    const hasIndividual2 =
-      (entities.individual2 !== undefined && entities.individual2?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual2?.entity) > (entities.individual2?.display_zero_tolerance ?? 0) &&
-        this.entityAvailable(entities.individual2?.entity!));
-    const hasIndividual2Secondary =
-      (entities.individual2?.secondary_info?.entity !== undefined &&
-        (this.getEntityState(entities.individual2?.secondary_info?.entity) > (entities?.individual2?.secondary_info?.display_zero_tolerance ?? 0) ||
-          entities.individual2.secondary_info?.display_zero === true)) ||
-      typeof this.hass.states[entities.individual2?.secondary_info?.entity!]?.state === "string";
+    const hasIndividual2 = this.hasField(entities.individual2);
+    const hasIndividual2Secondary = this.hasField(entities.individual2?.secondary_info, true);
 
-    const hasIndividual1 =
-      (entities.individual1 !== undefined && entities.individual1?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual1?.entity) > (entities?.individual1?.display_zero_tolerance ?? 0) &&
-        this.entityAvailable(entities.individual1?.entity!));
-    const hasIndividual1Secondary =
-      (entities.individual1?.secondary_info?.entity !== undefined &&
-        (this.getEntityState(entities.individual1?.secondary_info?.entity) > (entities?.individual1?.secondary_info?.display_zero_tolerance ?? 0) ||
-          entities.individual1.secondary_info.display_zero === true)) ||
-      typeof this.hass.states[entities.individual1?.secondary_info?.entity!]?.state === "string";
-
-    const hasSolarSecondary =
-      entities.solar?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.solar?.secondary_info?.entity) > (entities?.solar?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.solar.secondary_info.display_zero === true);
-
-    const hasHomeSecondary =
-      entities.home?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.home?.secondary_info?.entity) > (entities?.home?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.home.secondary_info.display_zero === true);
+    const hasIndividual1 = this.hasField(entities.individual1);
+    const hasIndividual1Secondary = this.hasField(entities.individual1?.secondary_info, true);
 
     const hasSolarProduction = entities.solar !== undefined;
+    const hasSolarSecondary = this.hasField(entities.solar?.secondary_info);
+
+    const hasHomeSecondary = this.hasField(entities.home?.secondary_info);
+
     const hasReturnToGrid = hasGrid && (typeof entities.grid!.entity === "string" || entities.grid!.entity!.production);
 
     let totalFromGrid: number | null = 0;
@@ -262,10 +252,7 @@ export class PowerFlowCardPlus extends LitElement {
       totalFromGrid = totalFromGrid! > this._config.entities.grid?.display_zero_tolerance ? totalFromGrid : 0;
     }
 
-    const hasGridSecondary =
-      entities.grid?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.grid?.secondary_info?.entity) > (entities?.grid?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.grid.secondary_info.display_zero === true);
+    const hasGridSecondary = this.hasField(entities.grid?.secondary_info);
 
     let gridSecondaryUsage: number | null = null;
     if (hasGridSecondary) {
@@ -542,27 +529,23 @@ export class PowerFlowCardPlus extends LitElement {
       homeSolarCircumference = circleCircumference * (solarConsumption! / totalHomeConsumption);
     }
 
-    const hasNonFossilFuelSecondary =
-      (entities.fossil_fuel_percentage?.secondary_info?.entity !== undefined &&
-        (this.getEntityState(entities.fossil_fuel_percentage?.secondary_info?.entity) > (entities?.fossil_fuel_percentage?.secondary_info?.display_zero_tolerance ?? 0) ||
-          entities.fossil_fuel_percentage.secondary_info.display_zero === true)) ||
-      typeof this.hass.states[entities.fossil_fuel_percentage?.secondary_info?.entity!]?.state === "string";
+    const hasNonFossilFuelSecondary = this.hasField(entities.fossil_fuel_percentage?.secondary_info, true);
 
     let nonFossilFuelSecondaryUsage: number | string | null = null;
 
-      if (hasNonFossilFuelSecondary) {
-        const nonFossilFuelSecondaryEntity = this.hass.states[this._config.entities.fossil_fuel_percentage?.secondary_info?.entity!];
-        const nonFossilFuelSecondaryState = nonFossilFuelSecondaryEntity.state;
-        if (typeof nonFossilFuelSecondaryState === "number") {
-          if (this.entityInverted("nonFossilSecondary")) {
-            nonFossilFuelSecondaryUsage = Math.abs(Math.min(nonFossilFuelSecondaryState, 0));
-          } else {
-            nonFossilFuelSecondaryUsage = Math.max(nonFossilFuelSecondaryState, 0);
-          }
-        } else if (typeof nonFossilFuelSecondaryState === "string") {
-          nonFossilFuelSecondaryUsage = nonFossilFuelSecondaryState;
+    if (hasNonFossilFuelSecondary) {
+      const nonFossilFuelSecondaryEntity = this.hass.states[this._config.entities.fossil_fuel_percentage?.secondary_info?.entity!];
+      const nonFossilFuelSecondaryState = nonFossilFuelSecondaryEntity.state;
+      if (typeof nonFossilFuelSecondaryState === "number") {
+        if (this.entityInverted("nonFossilSecondary")) {
+          nonFossilFuelSecondaryUsage = Math.abs(Math.min(nonFossilFuelSecondaryState, 0));
+        } else {
+          nonFossilFuelSecondaryUsage = Math.max(nonFossilFuelSecondaryState, 0);
         }
+      } else if (typeof nonFossilFuelSecondaryState === "string") {
+        nonFossilFuelSecondaryUsage = nonFossilFuelSecondaryState;
       }
+    }
 
     const hasNonFossilFuelUsage =
       gridConsumption * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
@@ -752,11 +735,14 @@ export class PowerFlowCardPlus extends LitElement {
                           }
                         }}
                       >
-                      ${hasNonFossilFuelSecondary
+                        ${hasNonFossilFuelSecondary
                           ? html`
                               <span class="secondary-info low-carbon">
                                 ${entities.fossil_fuel_percentage?.secondary_info?.icon
-                                  ? html`<ha-icon class="secondary-info small" .icon=${entities.fossil_fuel_percentage?.secondary_info?.icon}></ha-icon>`
+                                  ? html`<ha-icon
+                                      class="secondary-info small"
+                                      .icon=${entities.fossil_fuel_percentage?.secondary_info?.icon}
+                                    ></ha-icon>`
                                   : ""}
                                 ${this.displayValue(
                                   nonFossilFuelSecondaryUsage,
