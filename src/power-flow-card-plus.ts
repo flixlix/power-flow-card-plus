@@ -77,12 +77,12 @@ export class PowerFlowCardPlus extends LitElement {
   /* public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
     return document.createElement("power-flow-card-plus-editor");
-  }
+  } */
 
   public static getStubConfig(hass: HomeAssistant): object {
     // get available power entities
     return getDefaultConfig(hass);
-  } */
+  }
 
   public getCardSize(): Promise<number> | number {
     return 3;
@@ -542,6 +542,28 @@ export class PowerFlowCardPlus extends LitElement {
       homeSolarCircumference = circleCircumference * (solarConsumption! / totalHomeConsumption);
     }
 
+    const hasNonFossilFuelSecondary =
+      (entities.fossil_fuel_percentage?.secondary_info?.entity !== undefined &&
+        (this.getEntityState(entities.fossil_fuel_percentage?.secondary_info?.entity) > (entities?.fossil_fuel_percentage?.secondary_info?.display_zero_tolerance ?? 0) ||
+          entities.fossil_fuel_percentage.secondary_info.display_zero === true)) ||
+      typeof this.hass.states[entities.fossil_fuel_percentage?.secondary_info?.entity!]?.state === "string";
+
+    let nonFossilFuelSecondaryUsage: number | string | null = null;
+
+      if (hasNonFossilFuelSecondary) {
+        const nonFossilFuelSecondaryEntity = this.hass.states[this._config.entities.fossil_fuel_percentage?.secondary_info?.entity!];
+        const nonFossilFuelSecondaryState = nonFossilFuelSecondaryEntity.state;
+        if (typeof nonFossilFuelSecondaryState === "number") {
+          if (this.entityInverted("nonFossilSecondary")) {
+            nonFossilFuelSecondaryUsage = Math.abs(Math.min(nonFossilFuelSecondaryState, 0));
+          } else {
+            nonFossilFuelSecondaryUsage = Math.max(nonFossilFuelSecondaryState, 0);
+          }
+        } else if (typeof nonFossilFuelSecondaryState === "string") {
+          nonFossilFuelSecondaryUsage = nonFossilFuelSecondaryState;
+        }
+      }
+
     const hasNonFossilFuelUsage =
       gridConsumption * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
       entities.fossil_fuel_percentage?.entity !== undefined &&
@@ -701,6 +723,7 @@ export class PowerFlowCardPlus extends LitElement {
       homeSecondary: this._templateResults.homeSecondary?.result,
       individual1Secondary: this._templateResults.individual1Secondary?.result,
       individual2Secondary: this._templateResults.individual2Secondary?.result,
+      nonFossilFuelSecondary: this._templateResults.nonFossilFuelSecondary?.result,
     };
 
     return html`
@@ -729,6 +752,22 @@ export class PowerFlowCardPlus extends LitElement {
                           }
                         }}
                       >
+                      ${hasNonFossilFuelSecondary
+                          ? html`
+                              <span class="secondary-info low-carbon">
+                                ${entities.fossil_fuel_percentage?.secondary_info?.icon
+                                  ? html`<ha-icon class="secondary-info small" .icon=${entities.fossil_fuel_percentage?.secondary_info?.icon}></ha-icon>`
+                                  : ""}
+                                ${this.displayValue(
+                                  nonFossilFuelSecondaryUsage,
+                                  entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
+                                  entities.fossil_fuel_percentage?.secondary_info?.unit_white_space
+                                )}
+                              </span>
+                            `
+                          : entities.fossil_fuel_percentage?.secondary_info?.template
+                          ? html`<span class="secondary-info low-carbon"> ${templatesObj.nonFossilFuelSecondary} </span>`
+                          : ""}
                         <ha-icon
                           .icon=${!entities.fossil_fuel_percentage?.icon ? "mdi:leaf" : entities.fossil_fuel_percentage?.icon}
                           class="low-carbon"
@@ -785,6 +824,8 @@ export class PowerFlowCardPlus extends LitElement {
                                 )}
                               </span>
                             `
+                          : entities.solar?.secondary_info?.template
+                          ? html`<span class="secondary-info solar"> ${templatesObj.solarSecondary} </span>`
                           : ""}
 
                         <ha-icon id="solar-icon" .icon=${entities.solar!.icon || "mdi:solar-power"}></ha-icon>
@@ -823,6 +864,8 @@ export class PowerFlowCardPlus extends LitElement {
                                 )}
                               </span>
                             `
+                          : entities.individual2?.secondary_info?.template
+                          ? html`<span class="secondary-info individual2"> ${templatesObj.individual2Secondary} </span>`
                           : ""}
                         <ha-icon
                           id="individual2-icon"
@@ -881,6 +924,8 @@ export class PowerFlowCardPlus extends LitElement {
                                 )}
                               </span>
                             `
+                          : entities.individual1?.secondary_info?.template
+                          ? html`<span class="secondary-info individual1"> ${templatesObj.individual1Secondary} </span>`
                           : ""}
                         <ha-icon
                           id="individual1-icon"
@@ -954,7 +999,7 @@ export class PowerFlowCardPlus extends LitElement {
                           </span>
                         `
                       : entities.grid?.secondary_info?.template
-                      ? templatesObj.gridSecondary
+                      ? html`<span class="secondary-info grid"> ${templatesObj.gridSecondary} </span>`
                       : ""}
                     <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
@@ -1022,6 +1067,8 @@ export class PowerFlowCardPlus extends LitElement {
                         )}
                       </span>
                     `
+                  : entities.home?.secondary_info?.template
+                  ? html`<span class="secondary-info home"> ${templatesObj.homeSecondary} </span>`
                   : ""}
                 <ha-icon .icon=${entities.home?.icon || "mdi:home"}></ha-icon>
                 ${this._config.entities.home?.subtract_individual
@@ -1254,6 +1301,8 @@ export class PowerFlowCardPlus extends LitElement {
                                 )}
                               </span>
                             `
+                          : entities.individual1?.secondary_info?.template
+                          ? html`<span class="secondary-info individual1"> ${templatesObj.individual1Secondary} </span>`
                           : ""}
                         <ha-icon
                           id="individual1-icon"
@@ -1509,6 +1558,7 @@ export class PowerFlowCardPlus extends LitElement {
       homeSecondary: entities.home?.secondary_info?.template,
       individual1Secondary: entities.individual1?.secondary_info?.template,
       individual2Secondary: entities.individual2?.secondary_info?.template,
+      nonFossilFuelSecondary: entities.fossil_fuel_percentage?.secondary_info?.template,
     };
 
     for (const [key, value] of Object.entries(templatesObj)) {
