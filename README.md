@@ -1,5 +1,6 @@
 
 
+
 # Power Flow Card Plus
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
@@ -124,9 +125,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_circle | `boolean` or "production" or "consumption" | `false` | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | display_zero_tolerance | `number` | `0` | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid. |
-| offline_entity | `object` | `undefined` | Entity ID of a sensor providing grid-connection state. |
-| offline_value | `string` | `undefined` | Value of grid-connection sensor indicating the grid is offline. |
-| offline_label | `string` | `undefined` | Label to display when the grid is offline. If not specified, the actual sensor value is displayed. |
+| power_outage | `object` | `undefined` | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.
 
 #### Solar Configuration
 
@@ -225,6 +224,17 @@ This Feature allows you to configure an additional small text for each Individua
 | display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`. |
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set. No need to set `display_zero` property to true. |
 | template | `string` | `undefined` | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
+
+#### Power Outage
+
+This feature allows you to configure how the card handles a Grid Power Outage scenario.
+
+| Name        | Type     | Description                                                                                       |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity| `string` required | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor. |
+| state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
+| icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower`. |
+| label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
 
 ### Minimal Configuration
 
