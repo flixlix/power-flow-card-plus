@@ -74,5 +74,6 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   clickable_entities: boolean;
   max_expected_power: number;
   min_expected_power: number;
+  hide_inactive_lines?: boolean;
   use_new_flow_rate_model?: boolean;
 }

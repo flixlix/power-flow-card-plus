@@ -198,6 +198,11 @@ export class PowerFlowCardPlus extends LitElement {
     ) as boolean;
   }
 
+  private showLine(power: number): boolean {
+    if (this._config?.hide_inactive_lines !== true) return true;
+    return power > 0;
+  }
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -1304,7 +1309,7 @@ export class PowerFlowCardPlus extends LitElement {
                   : html`<div class="spacer"></div>`}
               </div>`
             : html`<div class="spacer"></div>`}
-          ${hasSolarProduction
+          ${hasSolarProduction && this.showLine(solarConsumption || 0)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1336,7 +1341,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasReturnToGrid && hasSolarProduction
+          ${hasReturnToGrid && hasSolarProduction && this.showLine(solarToGrid)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1368,7 +1373,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasBattery && hasSolarProduction
+          ${hasBattery && hasSolarProduction && this.showLine(solarToBattery || 0)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1395,7 +1400,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasGrid
+          ${hasGrid && this.showLine(gridConsumption)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1427,7 +1432,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : null}
-          ${hasBattery
+          ${hasBattery && this.showLine(batteryConsumption)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1459,7 +1464,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasGrid && hasBattery
+          ${hasGrid && hasBattery && this.showLine(Math.max(batteryFromGrid || 0, batteryToGrid || 0))
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
