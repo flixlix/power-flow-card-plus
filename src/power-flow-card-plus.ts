@@ -199,7 +199,7 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   private showLine(power: number): boolean {
-    if (this._config?.hide_inactive_lines !== true) return true;
+    if (this._config?.display_zero_lines !== true) return true;
     return power > 0;
   }
 
