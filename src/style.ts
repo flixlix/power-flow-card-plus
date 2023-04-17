@@ -148,7 +148,6 @@ export const styles = css`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    text-transform: capitalize;
   }
 
   .individual2 path,
