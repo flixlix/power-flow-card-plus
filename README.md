@@ -273,8 +273,8 @@ entities:
     entity:
       consumption: sensor.grid_consumption
       production: sensor.grid_production
-      display_state: one_way
-      color_circle: true
+    display_state: one_way
+    color_circle: true
   solar:
     entity: sensor.solar_production
   battery:
