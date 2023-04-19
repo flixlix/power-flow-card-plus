@@ -23,9 +23,12 @@ export type IndividualDeviceType = {
   inverted_animation?: boolean;
   unit_of_measurement?: string;
   display_zero?: boolean;
+  display_zero_state?: boolean;
   display_zero_tolerance?: number;
   secondary_info?: SecondaryInfoType;
   color_value?: boolean;
+  color_label?: boolean;
+  calculate_flow_rate?: boolean;
 };
 
 export type EntityType =

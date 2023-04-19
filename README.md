@@ -1,5 +1,6 @@
 
 
+
 # Power Flow Card Plus
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flixlix/power-flow-card-plus?style=flat-square)
@@ -26,6 +27,7 @@
 - Display Low Carbon Energy from the grid
 - Customize Low Carbon Energy label, icon, circle color, icon color and state type
 - Customize Battery, Solar and Home's color, icon, color of icon and label
+- Customize Grid Offline label
 - Template functionality: [Home Assistant Templates](https://www.home-assistant.io/docs/configuration/templating/)
 
 ## Goal/Scope
@@ -124,6 +126,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_circle | `boolean` or "production" or "consumption" | `false` | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | display_zero_tolerance | `number` | `0` | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid. |
+| power_outage | `object` | `undefined` | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.
 
 #### Solar Configuration
 
@@ -136,6 +139,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
 | color_value | `boolean` | `false` | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.  |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
+| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 
 #### Battery Configuration
 
@@ -166,6 +170,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration). The `secondary_info` entity can provide a number or a string (eg: EV State `charging` and `discharging`). |
 | display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
+| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 | color_value | `boolean` | `false` | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.  |
 
 #### Home Configuration
@@ -190,8 +195,10 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
 | color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
 | display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 | state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
 | unit_white_space | `boolean` | `true` | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
+| calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
 #### Color Object
 
@@ -223,6 +230,18 @@ This Feature allows you to configure an additional small text for each Individua
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set. No need to set `display_zero` property to true. |
 | template | `string` | `undefined` | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
 
+#### Power Outage
+
+This feature allows you to configure how the card handles a Grid Power Outage scenario.
+
+| Name        | Type     | Description                                                                                       |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
+| entity| `string` required | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor. |
+| state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
+| icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower`. |
+| label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
+| calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
+
 ### Minimal Configuration
 
 > Don't forget to change the entity ids
@@ -237,11 +256,16 @@ type: custom:power-flow-card-plus
 entities:
   grid:
     entity: sensor.grid_power
+    power_outage:
+      entity: sensor.power_outage
+    display_state: one_way
+    color_circle: true
+watt_threshold: 10000
 ```
 
 This should give you something like this:
 
-![minimal_config_only_grid](https://user-images.githubusercontent.com/61006057/227788281-992670a5-e2b7-4ea7-8166-0039d7a6526d.png)
+![demo_only_grid-2](https://user-images.githubusercontent.com/61006057/232316687-70962cf8-3a94-4e01-a556-f4cf7d978969.gif)
 
 ##### Grid and Solar
 
@@ -252,13 +276,15 @@ entities:
     entity:
       consumption: sensor.grid_consumption
       production: sensor.grid_production
+      display_state: one_way
+      color_circle: true
   solar:
     entity: sensor.solar_production
 ```
 
 This should give you something like this:
 
-![minimal_config_grid_solar](https://user-images.githubusercontent.com/61006057/227788602-460a01d3-6310-40b2-b432-d1b5d324245f.png)
+![demo_solar_and_grid](https://user-images.githubusercontent.com/61006057/232317682-e20c83e9-9b51-45b0-bcf5-13447d2e93b1.gif)
 
 ##### Grid, Solar and Battery
 
@@ -269,6 +295,8 @@ entities:
     entity:
       consumption: sensor.grid_consumption
       production: sensor.grid_production
+    display_state: one_way
+    color_circle: true
   solar:
     entity: sensor.solar_production
   battery:
@@ -276,11 +304,16 @@ entities:
        consumption: sensor.battery_consumption
        production: sensor.battery_production
     state_of_charge: sensor.battery_state_of_charge
+    display_state: one_way
+    color_circle: true
+  home:
+    color_icon: true
+watt_threshold: 10000
 ```
 
 This should give you something like this:
 
-![minimal_config_grid_solar_battery](https://user-images.githubusercontent.com/61006057/227788820-25f2ee65-ad56-4c05-94b3-9f056d3a0bc2.png)
+![demo_grid_solar_bat-2](https://user-images.githubusercontent.com/61006057/232319141-06ac61c7-daed-461e-9fdb-5ce84606bde6.gif)
 
 ### Mix & Match Config aka "Full Config"
 
@@ -341,7 +374,7 @@ This should give you something like this:
 
 ### Random Configuration
 
-![Apr-13-2023 12-43-31](https://user-images.githubusercontent.com/61006057/231735404-61a5dc2b-0a01-4ec5-9ac4-545c1edfe556.gif)
+![demo](https://user-images.githubusercontent.com/61006057/232316110-eff64095-e147-4462-abfc-961c88d5ada8.gif)
 
 ### Flow Formula
 
@@ -385,6 +418,7 @@ return ((value  -  minIn) * (maxOut  -  minOut)) / (maxIn  -  minIn) +  minOut;
 
 The following video aims to show the diffence between the two flow formulas:
 
+
 https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4
 
 Notice that when the Power changes to only coming from the sun, the old formula accelerates to maintain a constant amount of dots/second. 
@@ -397,7 +431,7 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
-- Add UI Editor
+- Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
 - Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)

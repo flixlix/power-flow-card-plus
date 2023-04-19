@@ -116,6 +116,15 @@ export class PowerFlowCardPlus extends LitElement {
       return undefined;
     }
     return this.hass.states[entity];
+
+  private additionalCircleRate = (entry?: boolean | number, value?: number) => {
+    if (entry === true && value) {
+      return value;
+    }
+    if (isNumberValue(entry)) {
+      return entry;
+    }
+    return 1.66;
   };
 
   private getEntityState = (entity: string | undefined): number => {
@@ -222,6 +231,9 @@ export class PowerFlowCardPlus extends LitElement {
     ); /* show pointer if clickable entities is enabled */
 
     const hasGrid = entities?.grid?.entity !== undefined;
+    const hasGridPowerOutage = this.hasField(entities.grid?.power_outage, true);
+    const isGridPowerOutage =
+      hasGridPowerOutage && this.hass.states[entities.grid!.power_outage!.entity!].state === (entities.grid?.power_outage.state_alert ?? "on");
 
     const hasBattery = entities?.battery?.entity !== undefined;
 
@@ -230,6 +242,16 @@ export class PowerFlowCardPlus extends LitElement {
 
     const hasIndividual1 = this.hasField(entities.individual1);
     const hasIndividual1Secondary = this.hasField(entities.individual1?.secondary_info, true);
+
+    const hasSolarSecondary =
+      entities.solar?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.solar?.secondary_info?.entity) > (entities?.solar?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.solar.secondary_info.display_zero === true);
+
+    const hasHomeSecondary =
+      entities.home?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.home?.secondary_info?.entity) > (entities?.home?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.home.secondary_info.display_zero === true);
 
     const hasSolarProduction = entities.solar !== undefined;
     const hasSolarSecondary = this.hasField(entities.solar?.secondary_info);
@@ -636,6 +658,9 @@ export class PowerFlowCardPlus extends LitElement {
       solarToBattery: this.circleRate(solarToBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solarToGrid, totalLines),
       solarToHome: this.circleRate(solarConsumption ?? 0, totalLines),
+      individual1: this.circleRate(individual1Usage ?? 0, totalIndividualConsumption),
+      individual2: this.circleRate(individual2Usage ?? 0, totalIndividualConsumption),
+      nonFossil: this.circleRate(nonFossilFuelPower ?? 0, totalLines),
     };
 
     // Smooth duration changes
@@ -800,8 +825,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           .icon=${!entities.fossil_fuel_percentage?.icon ? "mdi:leaf" : entities.fossil_fuel_percentage?.icon}
                           class="low-carbon"
+                          style="${hasNonFossilFuelSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
+                        ${entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0
+                          ? html`
+                              <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
+                            `
+                          : ""}
                       </div>
                       ${this.showLine(nonFossilFuelPower || 0)
                         ? html`
@@ -814,7 +847,7 @@ export class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                 >
@@ -861,8 +894,17 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html`<span class="secondary-info solar"> ${templatesObj.solarSecondary} </span>`
                           : ""}
 
-                        <ha-icon id="solar-icon" .icon=${entities.solar!.icon || "mdi:solar-power"}></ha-icon>
-                        <span class="solar"> ${this.displayValue(totalSolarProduction)}</span>
+                        <ha-icon
+                          id="solar-icon"
+                          .icon=${entities.solar!.icon || "mdi:solar-power"}
+                          style="${hasSolarSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.solar?.display_zero_state !== false || (totalSolarProduction || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
+                        ></ha-icon>
+                        ${entities.solar?.display_zero_state !== false || (totalSolarProduction || 0) > 0
+                          ? html` <span class="solar"> ${this.displayValue(totalSolarProduction)}</span>`
+                          : ""}
                       </div>
                     </div>`
                   : hasIndividual2 || hasIndividual1
@@ -903,9 +945,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual2-icon"
                           .icon=${individual2Icon}
-                          style=${hasIndividual2Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          style="${hasIndividual2Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual2?.display_zero_state !== false || (individual2Usage || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
+                        ${entities.individual2?.display_zero_state !== false || (individual2Usage || 0) > 0
+                          ? html` <span class="individual2"
+                              >${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
+                            </span>`
+                          : ""}
                       </div>
                       ${this.showLine(individual2Usage || 0)
                         ? html`
@@ -918,7 +967,7 @@ export class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                               <animateMotion
-                                dur="1.66s"
+                                dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"    
                                 repeatCount="indefinite"
                                 calcMode="linear"
                                 keyPoints=${entities.individual2?.inverted_animation ? "0;1" : "1;0"}
@@ -967,11 +1016,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
-                          style=${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          style="${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${this._config.entities.individual1?.unit_of_measurement
-                          ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
-                          : this.displayValue(individual1Usage)}
+                        ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                          ? html` <span class="individual1"
+                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
+                            </span>`
+                          : ""}
                       </div>
                       ${this.showLine(individual1Usage || 0)
                         ? html`
@@ -984,7 +1038,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
@@ -1042,12 +1096,17 @@ export class PowerFlowCardPlus extends LitElement {
                       : entities.grid?.secondary_info?.template
                       ? html`<span class="secondary-info grid"> ${templatesObj.gridSecondary} </span>`
                       : ""}
-                    <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
+                    <ha-icon
+                      .icon=${isGridPowerOutage
+                        ? entities.grid?.power_outage.icon_alert || "mdi:transmission-tower-off"
+                        : entities.grid?.icon || "mdi:transmission-tower"}
+                    ></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way" && totalToGrid > 0) ||
                       (entities.grid?.display_state === "one_way_no_zero" && (totalFromGrid === null || totalFromGrid === 0) && totalToGrid !== 0)) &&
-                    totalToGrid !== null
+                    totalToGrid !== null &&
+                    !isGridPowerOutage
                       ? html`<span
                           class="return"
                           @click=${(e: { stopPropagation: () => void }) => {
@@ -1071,10 +1130,14 @@ export class PowerFlowCardPlus extends LitElement {
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way" && totalFromGrid > 0) ||
                       (entities.grid?.display_state === "one_way_no_zero" && (totalToGrid === null || totalToGrid === 0))) &&
-                    totalFromGrid !== null
+                    totalFromGrid !== null &&
+                    !isGridPowerOutage
                       ? html` <span class="consumption">
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(totalFromGrid)}
                         </span>`
+                      : ""}
+                    ${isGridPowerOutage
+                      ? html`<span class="grid power-outage"> ${entities.grid?.power_outage.label_alert || html`Power<br />Outage`} </span>`
                       : ""}
                   </div>
                   <span class="label">${entities.grid!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")}</span>
@@ -1307,7 +1370,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
@@ -1352,11 +1415,16 @@ export class PowerFlowCardPlus extends LitElement {
                         <ha-icon
                           id="individual1-icon"
                           .icon=${individual1Icon}
-                          style=${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          style="${hasIndividual1Secondary ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${this._config.entities.individual1?.unit_of_measurement
-                          ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
-                          : this.displayValue(individual1Usage)}
+                        ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
+                          ? html` <span class="individual1"
+                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
+                            </span>`
+                          : ""}
                       </div>
                       <span class="label">${individual1Name}</span>
                     </div>`
