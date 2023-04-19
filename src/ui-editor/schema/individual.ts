@@ -8,18 +8,7 @@ const mainSchema = {
     {
       name: "color_value",
       label: "Color Value",
-      selector: {
-        select: {
-          options: [
-            { value: "true", label: "True" },
-            { value: "false", label: "False" },
-            { value: "solar", label: "Solar" },
-            { value: "grid", label: "Grid" },
-            { value: "battery", label: "Battery" },
-          ],
-          custom_value: true,
-        },
-      },
+      selector: { boolean: {} },
     },
     {
       name: "color_icon",
@@ -29,7 +18,7 @@ const mainSchema = {
     {
       name: "unit_of_measurement",
       label: "Unit of Measurement",
-      selector: { string: {} },
+      selector: { text: {} },
     },
     {
       name: "display_zero",
