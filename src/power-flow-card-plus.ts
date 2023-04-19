@@ -116,6 +116,7 @@ export class PowerFlowCardPlus extends LitElement {
       return undefined;
     }
     return this.hass.states[entity];
+  };
 
   private additionalCircleRate = (entry?: boolean | number, value?: number) => {
     if (entry === true && value) {
@@ -243,15 +244,6 @@ export class PowerFlowCardPlus extends LitElement {
     const hasIndividual1 = this.hasField(entities.individual1);
     const hasIndividual1Secondary = this.hasField(entities.individual1?.secondary_info, true);
 
-    const hasSolarSecondary =
-      entities.solar?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.solar?.secondary_info?.entity) > (entities?.solar?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.solar.secondary_info.display_zero === true);
-
-    const hasHomeSecondary =
-      entities.home?.secondary_info?.entity !== undefined &&
-      (this.getEntityState(entities.home?.secondary_info?.entity) > (entities?.home?.secondary_info?.display_zero_tolerance ?? 0) ||
-        entities.home.secondary_info.display_zero === true);
 
     const hasSolarProduction = entities.solar !== undefined;
     const hasSolarSecondary = this.hasField(entities.solar?.secondary_info);
