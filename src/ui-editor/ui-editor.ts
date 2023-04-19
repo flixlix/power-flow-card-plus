@@ -6,20 +6,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { assert } from "superstruct";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import {
-  cardConfigStruct,
-  generalConfigSchema,
-  gridConfigSchema,
-  batteryConfigSchema,
-  solarConfigSchema,
-  homeConfigSchema,
-  nonFossilConfigSchema,
-  individual1ConfigSchema,
-  individual1SecondaryConfigSchema,
-  individual2ConfigSchema,
-  individual2SecondaryConfigSchema,
-  otherConfigSchema,
-} from "./schema";
+import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema";
 
 export const loadHaForm = async () => {
   if (customElements.get("ha-form")) return;
@@ -35,15 +22,6 @@ export const loadHaForm = async () => {
 export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: PowerFlowCardPlusConfig;
-  @state() private showGrid = false;
-  @state() private showBattery = false;
-  @state() private showSolar = false;
-  @state() private showHome = false;
-  @state() private showNonFossil = false;
-  @state() private showIndividual1 = false;
-  @state() private showIndividual1Secondary = false;
-  @state() private showIndividual2 = false;
-  @state() private showIndividual2Secondary = false;
   @state() private showOther = false;
 
   public async setConfig(config: PowerFlowCardPlusConfig): Promise<void> {
@@ -80,266 +58,36 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
         ></ha-form>
-
-        <div class="grid config-header sub-header">
-          <h3>Grid Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showGrid}
-              @change=${(ev) => {
-                this.showGrid = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showGrid
-          ? html`
-              <ha-form
-                class="grid-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${gridConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            `
-          : nothing}
-
-        <div class="solar config-header sub-header">
-          <h3>Solar Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showSolar}
-              @change=${(ev) => {
-                this.showSolar = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showSolar
-          ? html`
-              <ha-form
-                class="solar-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${solarConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            `
-          : nothing}
-
-        <div class="battery config-header sub-header">
-          <h3>Battery Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showBattery}
-              @change=${(ev) => {
-                this.showBattery = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showBattery
-          ? html`
-              <ha-form
-                class="battery-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${batteryConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            `
-          : nothing}
-
-        <div class="home config-header sub-header">
-          <h3>Home Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showHome}
-              @change=${(ev) => {
-                this.showHome = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showHome
-          ? html`
-              <ha-form
-                class="home-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${homeConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            `
-          : nothing}
-
-        <div class="non-fossil config-header sub-header">
-          <h3>Non-Fossil Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showNonFossil}
-              @change=${(ev) => {
-                this.showNonFossil = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showNonFossil
-          ? html`
-              <ha-form
-                class="non-fossil-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${nonFossilConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            `
-          : nothing}
-
-        <div class="individual1 config-header sub-header">
-          <h3>Individual 1 Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showIndividual1}
-              @change=${(ev) => {
-                this.showIndividual1 = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showIndividual1
-          ? html`
-              <ha-form
-                class="individual1-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${individual1ConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-              <div class="individual1 config-header sub-header">
-                <h4>Secondary Information</h4>
-                <ha-formfield label="Show Configuration">
-                  <ha-switch
-                    .checked=${this.showIndividual1Secondary}
-                    @change=${(ev) => {
-                      this.showIndividual1Secondary = ev.target.checked;
-                      this._valueChanged(ev);
-                    }}
-                  ></ha-switch>
-                </ha-formfield>
-              </div>
-              ${this.showIndividual1Secondary
-                ? html`
-                    <ha-form
-                      class="individual1-secondary-config"
-                      .hass=${this.hass}
-                      .data=${data}
-                      .schema=${individual1SecondaryConfigSchema}
-                      .computeLabel=${this._computeLabelCallback}
-                      @value-changed=${this._valueChanged}
-                    ></ha-form>
-                  `
-                : nothing}
-            `
-          : nothing}
-
-        <div class="individual2 config-header sub-header">
-          <h3>Individual 2 Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showIndividual2}
-              @change=${(ev) => {
-                this.showIndividual2 = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showIndividual2
-          ? html`
-              <ha-form
-                class="individual2-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${individual2ConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-              <div class="individual2 config-header sub-header">
-                <h4>Secondary Information</h4>
-                <ha-formfield label="Show Configuration">
-                  <ha-switch
-                    .checked=${this.showIndividual2Secondary}
-                    @change=${(ev) => {
-                      this.showIndividual2Secondary = ev.target.checked;
-                      this._valueChanged(ev);
-                    }}
-                  ></ha-switch>
-                </ha-formfield>
-              </div>
-              ${this.showIndividual2Secondary
-                ? html`
-                    <ha-form
-                      class="individual2-secondary-config"
-                      .hass=${this.hass}
-                      .data=${data}
-                      .schema=${individual2SecondaryConfigSchema}
-                      .computeLabel=${this._computeLabelCallback}
-                      @value-changed=${this._valueChanged}
-                    ></ha-form>
-                  `
-                : nothing}
-            `
-          : nothing}
-
-        <div class="other config-header sub-header">
-          <h3>Advanced Configuration</h3>
-          <ha-formfield label="Show Configuration">
-            <ha-switch
-              .checked=${this.showOther}
-              @change=${(ev) => {
-                this.showOther = ev.target.checked;
-                this._valueChanged(ev);
-              }}
-            ></ha-switch>
-          </ha-formfield>
-        </div>
-        ${this.showOther
-          ? html`
-              <ha-form
-                class="other-config"
-                .hass=${this.hass}
-                .data=${data}
-                .schema=${otherConfigSchema}
-                .computeLabel=${this._computeLabelCallback}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            `
-          : nothing}
+        <div style="height: 24px"></div>
+        <ha-form
+          .hass=${this.hass}
+          .data=${data}
+          .schema=${entitiesSchema}
+          .computeLabel=${this._computeLabelCallback}
+          @value-changed=${this._valueChanged}
+          class="entities-section"
+        ></ha-form>
+        <div style="height: 24px"></div>
+        <ha-form
+          .hass=${this.hass}
+          .data=${data}
+          .schema=${advancedOptionsSchema}
+          .computeLabel=${this._computeLabelCallback}
+          @value-changed=${this._valueChanged}
+        ></ha-form>
       </div>
     `;
   }
   private _valueChanged(ev: any): void {
-    const config = ev.detail.value;
+    const config = ev.detail.value || "";
     if (!this._config || !this.hass) {
       return;
     }
     fireEvent(this, "config-changed", { config });
   }
 
-  private _computeLabelCallback = (schema) => schema.label || this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}`);
+  private _computeLabelCallback = (schema) =>
+    schema.label || this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}` || schema.name || "");
 
   static get styles() {
     return css`
@@ -349,6 +97,10 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
 
       ha-icon-button {
         align-self: center;
+      }
+
+      .entities-section * {
+        background-color: #f00;
       }
 
       .card-config {

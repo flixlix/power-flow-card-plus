@@ -74,10 +74,10 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   // do not use ui editor for now, as it is not working
-  /* public static async getConfigElement(): Promise<LovelaceCardEditor> {
+  public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
     return document.createElement("power-flow-card-plus-editor");
-  } */
+  }
 
   public static getStubConfig(hass: HomeAssistant): object {
     // get available power entities
