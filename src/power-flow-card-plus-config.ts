@@ -41,6 +41,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_value?: boolean;
       color_label?: boolean;
       secondary_info?: SecondaryInfoType;
+      display_zero_state?: boolean;
     };
     home?: {
       entity?: string;
@@ -59,6 +60,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       state_type?: "percentage" | "power";
       color_icon?: boolean;
       display_zero?: boolean;
+      display_zero_state?: boolean;
       display_zero_tolerance?: number;
       color_text?: boolean;
       color_value?: boolean;

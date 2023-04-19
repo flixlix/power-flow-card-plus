@@ -139,6 +139,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
 | color_value | `boolean` | `false` | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.  |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
+| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 
 #### Battery Configuration
 
@@ -169,6 +170,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration). The `secondary_info` entity can provide a number or a string (eg: EV State `charging` and `discharging`). |
 | display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
+| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 | color_value | `boolean` | `false` | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.  |
 
 #### Home Configuration
@@ -193,6 +195,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
 | color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
 | display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 | state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
 | unit_white_space | `boolean` | `true` | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
 | calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
