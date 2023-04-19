@@ -15,6 +15,7 @@ export function getEntitySeparatedSelectionSchema(field?: string) {
   return {
     type: "expandable",
     title: `Separated ${field || "Grid"} Entities (One for production, one for consumption)`,
+    name: "entity",
     schema: [
       {
         name: "consumption",
