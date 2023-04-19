@@ -1243,7 +1243,7 @@ export class PowerFlowCardPlus extends LitElement {
                   />
                 </svg>
               </div>
-              ${hasIndividual2 && hasIndividual1
+              ${this.showLine(individual1Usage || 0) && hasIndividual2
                 ? ""
                 : html` <span class="label"
                     >${entities.home?.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")}</span
