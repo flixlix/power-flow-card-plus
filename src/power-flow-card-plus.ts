@@ -7,14 +7,14 @@ import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-hel
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config.js";
-import { coerceNumber, coerceStringArray, round, isNumberValue } from "./utils.js";
-import { EntityType } from "./type.js";
-import { logError } from "./logging.js";
-import { registerCustomCard } from "./utils/register-custom-card.js";
+import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
+import { coerceNumber, coerceStringArray, round, isNumberValue } from "./utils/utils";
+import { EntityType } from "./type";
+import { logError } from "./logging";
+import { registerCustomCard } from "./utils/register-custom-card";
 import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
-import { styles } from "./style.js";
-import { defaultValues, getDefaultConfig } from "./utils/get-default-config.js";
+import { styles } from "./style";
+import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
 
 const circleCircumference = 238.76104;
 
