@@ -27,6 +27,7 @@ export const styles = css`
     --secondary-text-solar-color: var(--primary-text-color);
     --secondary-text-grid-color: var(--primary-text-color);
     --secondary-text-home-color: var(--primary-text-color);
+    --secondary-text-non-fossil-color: var(--primary-text-color);
   }
   :root {
   }
@@ -196,7 +197,7 @@ export const styles = css`
   .low-carbon .circle {
     border-color: var(--non-fossil-color);
   }
-  .low-carbon ha-icon {
+  .low-carbon ha-icon:not(.small) {
     color: var(--icon-non-fossil-color);
   }
   circle.low-carbon {
@@ -313,6 +314,10 @@ export const styles = css`
 
   span.low-carbon {
     color: var(--text-non-fossil-color);
+  }
+
+  span.low-carbon.secondary-info {
+    color: var(--secondary-text-non-fossil-color);
   }
 
   #home-circle {

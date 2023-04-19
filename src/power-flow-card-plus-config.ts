@@ -68,6 +68,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       unit_white_space?: boolean;
       secondary_info?: SecondaryInfoType;
       calculate_flow_rate?: boolean | number;
+      seconday_info: SecondaryInfoType;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;

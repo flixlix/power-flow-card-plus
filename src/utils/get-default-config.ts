@@ -49,7 +49,7 @@ export function getDefaultConfig(hass: HomeAssistant): object {
     },
     clickable_entities: true,
     display_zero_lines: true,
-    use_new_flow_rate_model: false,
+    use_new_flow_rate_model: true,
     w_decimals: defaultValues.wattDecimals,
     kw_decimals: defaultValues.kilowattDecimals,
     min_flow_rate: defaultValues.minFlowRate,

@@ -432,8 +432,6 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
-- Add UI Editor
-- Add Option for Home Assistant Templates in `secondary_info` fields
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)

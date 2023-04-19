@@ -244,7 +244,6 @@ export class PowerFlowCardPlus extends LitElement {
     const hasIndividual1 = this.hasField(entities.individual1);
     const hasIndividual1Secondary = this.hasField(entities.individual1?.secondary_info, true);
 
-
     const hasSolarProduction = entities.solar !== undefined;
     const hasSolarSecondary = this.hasField(entities.solar?.secondary_info);
 
@@ -733,6 +732,11 @@ export class PowerFlowCardPlus extends LitElement {
       this._config.entities.fossil_fuel_percentage?.color_value ? "var(--energy-non-fossil-color)" : "var(--primary-text-color)"
     );
     this.style.setProperty(
+      "--secondary-text-non-fossil-color",
+      this._config.entities.fossil_fuel_percentage?.secondary_info?.color_value ? "var(--energy-non-fossil-color)" : "var(--primary-text-color)"
+    );
+
+    this.style.setProperty(
       "--text-individualone-color",
       this._config.entities.individual1?.color_value ? "var(--individualone-color)" : "var(--primary-text-color)"
     );
@@ -1167,7 +1171,9 @@ export class PowerFlowCardPlus extends LitElement {
                   ? html`<span class="secondary-info home"> ${templatesObj.homeSecondary} </span>`
                   : ""}
                 <ha-icon .icon=${entities.home?.icon || "mdi:home"}></ha-icon>
-                ${this._config.entities.home?.subtract_individual
+                ${this._config.entities.home?.override_state && this._config.entities.home.entity
+                  ? this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
+                  : this._config.entities.home?.subtract_individual
                   ? this.displayValue(totalHomeConsumption - totalIndividualConsumption)
                   : this.displayValue(totalHomeConsumption)}
                 <svg>

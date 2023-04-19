@@ -11,8 +11,8 @@ const mainSchema = {
       selector: {
         select: {
           options: [
-            { value: "true", label: "True" },
-            { value: "false", label: "False" },
+            { value: true, label: "Color dynamically" },
+            { value: false, label: "Do Not Color" },
             { value: "solar", label: "Solar" },
             { value: "grid", label: "Grid" },
             { value: "battery", label: "Battery" },
@@ -27,8 +27,8 @@ const mainSchema = {
       selector: {
         select: {
           options: [
-            { value: "true", label: "True" },
-            { value: "false", label: "False" },
+            { value: true, label: "Color dynamically" },
+            { value: false, label: "Do Not Color" },
             { value: "solar", label: "Solar" },
             { value: "grid", label: "Grid" },
             { value: "battery", label: "Battery" },
@@ -47,11 +47,6 @@ const mainSchema = {
       label: "Override State (With Home Entity)",
       selector: { boolean: {} },
     },
-    {
-      name: "display_zero_state",
-      label: "Display State When Zero?",
-      selector: { boolean: {} },
-    }
   ],
 };
 
