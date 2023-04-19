@@ -86,6 +86,16 @@ class PowerFlowCardPlus extends LitElement {
     return max - (value / total) * (max - min);
   };
 
+  private additionalCircleRate = (entry?: boolean | number, value?: number) => {
+    if (entry === true && value) {
+      return value;
+    }
+    if (isNumberValue(entry)) {
+      return entry;
+    }
+    return 1.66;
+  };
+
   private getEntityState = (entity: string | undefined): number => {
     if (!entity || !this.entityAvailable(entity)) {
       this.unavailableOrMisconfiguredError(entity);
@@ -176,7 +186,7 @@ class PowerFlowCardPlus extends LitElement {
 
     const hasIndividual2 =
       (entities.individual2 !== undefined && entities.individual2?.display_zero === true) ||
-      (this.getEntityStateWatts(entities.individual2?.entity) > (entities.individual2?.display_zero_tolerance ?? 0) &&
+      (Math.abs(this.getEntityStateWatts(entities.individual2?.entity)) > (entities.individual2?.display_zero_tolerance ?? 0) &&
         this.entityAvailable(entities.individual2?.entity!));
     const hasIndividual2Secondary =
       (entities.individual2?.secondary_info?.entity !== undefined &&
@@ -562,6 +572,9 @@ class PowerFlowCardPlus extends LitElement {
       solarToBattery: this.circleRate(solarToBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solarToGrid, totalLines),
       solarToHome: this.circleRate(solarConsumption ?? 0, totalLines),
+      individual1: this.circleRate(individual1Usage ?? 0, totalIndividualConsumption),
+      individual2: this.circleRate(individual2Usage ?? 0, totalIndividualConsumption),
+      nonFossil: this.circleRate(nonFossilFuelPower ?? 0, totalLines),
     };
 
     // Smooth duration changes
@@ -706,7 +719,7 @@ class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                 >
@@ -802,7 +815,7 @@ class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                               <animateMotion
-                                dur="1.66s"
+                                dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"    
                                 repeatCount="indefinite"
                                 calcMode="linear"
                                 keyPoints=${entities.individual2?.inverted_animation ? "0;1" : "1;0"}
@@ -862,7 +875,7 @@ class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
@@ -1177,7 +1190,7 @@ class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
