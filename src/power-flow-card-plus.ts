@@ -116,6 +116,16 @@ export class PowerFlowCardPlus extends LitElement {
     return max - (value / total) * (max - min);
   };
 
+  private additionalCircleRate = (entry?: boolean | number, value?: number) => {
+    if (entry === true && value) {
+      return value;
+    }
+    if (isNumberValue(entry)) {
+      return entry;
+    }
+    return 1.66;
+  };
+
   private getEntityState = (entity: string | undefined): number => {
     if (!entity || !this.entityAvailable(entity)) {
       this.unavailableOrMisconfiguredError(entity);
@@ -222,6 +232,16 @@ export class PowerFlowCardPlus extends LitElement {
 
     const hasIndividual1 = this.hasField(entities.individual1);
     const hasIndividual1Secondary = this.hasField(entities.individual1?.secondary_info, true);
+
+    const hasSolarSecondary =
+      entities.solar?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.solar?.secondary_info?.entity) > (entities?.solar?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.solar.secondary_info.display_zero === true);
+
+    const hasHomeSecondary =
+      entities.home?.secondary_info?.entity !== undefined &&
+      (this.getEntityState(entities.home?.secondary_info?.entity) > (entities?.home?.secondary_info?.display_zero_tolerance ?? 0) ||
+        entities.home.secondary_info.display_zero === true);
 
     const hasSolarProduction = entities.solar !== undefined;
     const hasSolarSecondary = this.hasField(entities.solar?.secondary_info);
@@ -600,6 +620,9 @@ export class PowerFlowCardPlus extends LitElement {
       solarToBattery: this.circleRate(solarToBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solarToGrid, totalLines),
       solarToHome: this.circleRate(solarConsumption ?? 0, totalLines),
+      individual1: this.circleRate(individual1Usage ?? 0, totalIndividualConsumption),
+      individual2: this.circleRate(individual2Usage ?? 0, totalIndividualConsumption),
+      nonFossil: this.circleRate(nonFossilFuelPower ?? 0, totalLines),
     };
 
     // Smooth duration changes
@@ -772,7 +795,7 @@ export class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                 >
@@ -872,7 +895,7 @@ export class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                               <animateMotion
-                                dur="1.66s"
+                                dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"    
                                 repeatCount="indefinite"
                                 calcMode="linear"
                                 keyPoints=${entities.individual2?.inverted_animation ? "0;1" : "1;0"}
@@ -934,7 +957,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
@@ -1262,7 +1285,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="1.66s"
+                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}

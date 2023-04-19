@@ -27,6 +27,7 @@ export type IndividualDeviceType = {
   secondary_info?: SecondaryInfoType;
   color_value?: boolean;
   color_label?: boolean;
+  calculate_flow_rate?: boolean;
 };
 
 export type EntityType =

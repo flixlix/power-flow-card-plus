@@ -194,6 +194,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
 | state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
 | unit_white_space | `boolean` | `true` | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
+| calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
 #### Color Object
 
@@ -235,6 +236,7 @@ This feature allows you to configure how the card handles a Grid Power Outage sc
 | state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
 | icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower`. |
 | label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
+| calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
 ### Minimal Configuration
 
@@ -250,11 +252,16 @@ type: custom:power-flow-card-plus
 entities:
   grid:
     entity: sensor.grid_power
+    power_outage:
+      entity: sensor.power_outage
+    display_state: one_way
+    color_circle: true
+watt_threshold: 10000
 ```
 
 This should give you something like this:
 
-![minimal_config_only_grid](https://user-images.githubusercontent.com/61006057/227788281-992670a5-e2b7-4ea7-8166-0039d7a6526d.png)
+![demo_only_grid-2](https://user-images.githubusercontent.com/61006057/232316687-70962cf8-3a94-4e01-a556-f4cf7d978969.gif)
 
 ##### Grid and Solar
 
@@ -265,13 +272,15 @@ entities:
     entity:
       consumption: sensor.grid_consumption
       production: sensor.grid_production
+      display_state: one_way
+      color_circle: true
   solar:
     entity: sensor.solar_production
 ```
 
 This should give you something like this:
 
-![minimal_config_grid_solar](https://user-images.githubusercontent.com/61006057/227788602-460a01d3-6310-40b2-b432-d1b5d324245f.png)
+![demo_solar_and_grid](https://user-images.githubusercontent.com/61006057/232317682-e20c83e9-9b51-45b0-bcf5-13447d2e93b1.gif)
 
 ##### Grid, Solar and Battery
 
@@ -282,6 +291,8 @@ entities:
     entity:
       consumption: sensor.grid_consumption
       production: sensor.grid_production
+    display_state: one_way
+    color_circle: true
   solar:
     entity: sensor.solar_production
   battery:
@@ -289,11 +300,16 @@ entities:
        consumption: sensor.battery_consumption
        production: sensor.battery_production
     state_of_charge: sensor.battery_state_of_charge
+    display_state: one_way
+    color_circle: true
+  home:
+    color_icon: true
+watt_threshold: 10000
 ```
 
 This should give you something like this:
 
-![minimal_config_grid_solar_battery](https://user-images.githubusercontent.com/61006057/227788820-25f2ee65-ad56-4c05-94b3-9f056d3a0bc2.png)
+![demo_grid_solar_bat-2](https://user-images.githubusercontent.com/61006057/232319141-06ac61c7-daed-461e-9fdb-5ce84606bde6.gif)
 
 ### Mix & Match Config aka "Full Config"
 
@@ -354,7 +370,7 @@ This should give you something like this:
 
 ### Random Configuration
 
-![Apr-13-2023 12-43-31](https://user-images.githubusercontent.com/61006057/231735404-61a5dc2b-0a01-4ec5-9ac4-545c1edfe556.gif)
+![demo](https://user-images.githubusercontent.com/61006057/232316110-eff64095-e147-4462-abfc-961c88d5ada8.gif)
 
 ### Flow Formula
 
@@ -398,6 +414,7 @@ return ((value  -  minIn) * (maxOut  -  minOut)) / (maxIn  -  minIn) +  minOut;
 
 The following video aims to show the diffence between the two flow formulas:
 
+
 https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4
 
 Notice that when the Power changes to only coming from the sun, the old formula accelerates to maintain a constant amount of dots/second. 
@@ -410,7 +427,7 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
-- Add UI Editor
+- Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
 - Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)

@@ -43,7 +43,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       secondary_info?: SecondaryInfoType;
     };
     home?: {
-      entity: string;
+      entity?: string;
       name?: string;
       icon?: string;
       color_icon?: boolean | "solar" | "grid" | "battery";
@@ -65,6 +65,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_label?: boolean;
       unit_white_space?: boolean;
       secondary_info?: SecondaryInfoType;
+      calculate_flow_rate?: boolean | number;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
