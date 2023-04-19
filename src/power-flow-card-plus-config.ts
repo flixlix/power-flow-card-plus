@@ -40,7 +40,6 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       entity?: string;
       name?: string;
       icon?: string;
-      override_state?: boolean;
       color_icon?: boolean | "solar" | "grid" | "battery";
       color_value?: boolean | "solar" | "grid" | "battery";
       secondary_info?: SecondaryInfoType;
