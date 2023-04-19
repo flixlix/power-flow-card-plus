@@ -208,6 +208,11 @@ export class PowerFlowCardPlus extends LitElement {
     ) as boolean;
   }
 
+  private showLine(power: number): boolean {
+    if (this._config?.display_zero_lines !== true) return true;
+    return power > 0;
+  }
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -786,10 +791,12 @@ export class PowerFlowCardPlus extends LitElement {
                         ></ha-icon>
                         <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
                       </div>
-                      <svg width="80" height="30">
-                        <path d="M40 -10 v40" class="low-carbon" id="low-carbon" />
-                        ${hasNonFossilFuelUsage
-                          ? svg`<circle
+                      ${this.showLine(nonFossilFuelPower || 0)
+                        ? html`
+                            <svg width="80" height="30">
+                              <path d="M40 -10 v40" class="low-carbon" id="low-carbon" />
+                              ${hasNonFossilFuelUsage
+                                ? svg`<circle
                               r="2.4"
                               class="low-carbon"
                               vector-effect="non-scaling-stroke"
@@ -802,8 +809,10 @@ export class PowerFlowCardPlus extends LitElement {
                                   <mpath xlink:href="#low-carbon" />
                                 </animateMotion>
                             </circle>`
-                          : ""}
-                      </svg>
+                                : ""}
+                            </svg>
+                          `
+                        : ""}
                     </div>`}
                 ${hasSolarProduction
                   ? html`<div class="circle-container solar">
@@ -886,10 +895,12 @@ export class PowerFlowCardPlus extends LitElement {
                         ></ha-icon>
                         ${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
                       </div>
-                      <svg width="80" height="30">
-                        <path d="M40 -10 v50" id="individual2" />
-                        ${individual2Usage
-                          ? svg`<circle
+                      ${this.showLine(individual2Usage || 0)
+                        ? html`
+                            <svg width="80" height="30">
+                              <path d="M40 -10 v50" id="individual2" />
+                              ${individual2Usage
+                                ? svg`<circle
                               r="2.4"
                               class="individual2"
                               vector-effect="non-scaling-stroke"
@@ -904,8 +915,10 @@ export class PowerFlowCardPlus extends LitElement {
                                 <mpath xlink:href="#individual2" />
                               </animateMotion>
                             </circle>`
-                          : ""}
-                      </svg>
+                                : ""}
+                            </svg>
+                          `
+                        : ""}
                     </div>`
                   : hasIndividual1
                   ? html`<div class="circle-container individual1">
@@ -948,10 +961,12 @@ export class PowerFlowCardPlus extends LitElement {
                           ? this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)
                           : this.displayValue(individual1Usage)}
                       </div>
-                      <svg width="80" height="30">
-                        <path d="M40 -10 v40" id="individual1" />
-                        ${individual1Usage
-                          ? svg`<circle
+                      ${this.showLine(individual1Usage || 0)
+                        ? html`
+                            <svg width="80" height="30">
+                              <path d="M40 -10 v40" id="individual1" />
+                              ${individual1Usage
+                                ? svg`<circle
                                 r="2.4"
                                 class="individual1"
                                 vector-effect="non-scaling-stroke"
@@ -967,8 +982,10 @@ export class PowerFlowCardPlus extends LitElement {
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
                               </circle>`
-                          : ""}
-                      </svg>
+                                : ""}
+                            </svg>
+                          `
+                        : html``}
                     </div> `
                   : html`<div class="spacer"></div>`}
               </div>`
@@ -1276,10 +1293,12 @@ export class PowerFlowCardPlus extends LitElement {
                   : html`<div class="spacer"></div>`}
                 ${hasIndividual2 && hasIndividual1
                   ? html`<div class="circle-container individual1 bottom">
-                      <svg width="80" height="30">
-                        <path d="M40 40 v-40" id="individual1" />
-                        ${individual1Usage
-                          ? svg`<circle
+                      ${this.showLine(individual1Usage || 0)
+                        ? html`
+                            <svg width="80" height="30">
+                              <path d="M40 40 v-40" id="individual1" />
+                              ${individual1Usage
+                                ? svg`<circle
                                 r="2.4"
                                 class="individual1"
                                 vector-effect="non-scaling-stroke"
@@ -1294,8 +1313,10 @@ export class PowerFlowCardPlus extends LitElement {
                                   <mpath xlink:href="#individual1" />
                                 </animateMotion>
                               </circle>`
-                          : ""}
-                      </svg>
+                                : ""}
+                            </svg>
+                          `
+                        : html` <svg width="80" height="30"></svg> `}
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
@@ -1339,7 +1360,7 @@ export class PowerFlowCardPlus extends LitElement {
                   : html`<div class="spacer"></div>`}
               </div>`
             : html`<div class="spacer"></div>`}
-          ${hasSolarProduction
+          ${hasSolarProduction && this.showLine(solarConsumption || 0)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1371,7 +1392,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasReturnToGrid && hasSolarProduction
+          ${hasReturnToGrid && hasSolarProduction && this.showLine(solarToGrid)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1403,7 +1424,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasBattery && hasSolarProduction
+          ${hasBattery && hasSolarProduction && this.showLine(solarToBattery || 0)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1430,7 +1451,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasGrid
+          ${hasGrid && this.showLine(gridConsumption)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1462,7 +1483,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : null}
-          ${hasBattery
+          ${hasBattery && this.showLine(batteryConsumption)
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
@@ -1494,7 +1515,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
-          ${hasGrid && hasBattery
+          ${hasGrid && hasBattery && this.showLine(Math.max(batteryFromGrid || 0, batteryToGrid || 0))
             ? html`<div
                 class="lines ${classMap({
                   high: hasBattery,
