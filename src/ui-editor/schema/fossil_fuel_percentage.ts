@@ -1,75 +1,61 @@
 /* eslint-disable import/extensions */
-import { secondaryInfoSchema } from "./_schema-base";
+import { secondaryInfoSchema, getBaseMainConfigSchema } from "./_schema-base";
 
-const mainConfigSchema = {
-  type: "grid",
+const mainSchema = {
+  ...getBaseMainConfigSchema(),
   schema: [
-    { name: "name", selector: { text: {} } },
-    { name: "icon", selector: { icon: {} } },
+    ...getBaseMainConfigSchema().schema,
     {
-      name: "color_icon",
-      label: "Color of Icon",
+      name: "state_type",
+      label: "State Type",
       selector: {
         select: {
           options: [
-            { value: false, label: "Do not Color" },
-            { value: true, label: "Color dynamically" },
-            { value: "production", label: "Color of Production" },
-            { value: "consumption", label: "Color of Consumption" },
+            { value: "power", label: "Power" },
+            { value: "percentage", label: "Percentage" },
           ],
-          custom_value: true,
         },
       },
     },
     {
-      name: "color_circle",
-      label: "Color of Circle",
-      selector: {
-        select: {
-          options: [
-            { value: true, label: "Color dynamically" },
-            { value: false, label: "Color of Consumption" },
-            { value: "production", label: "Color of Production" },
-          ],
-          custom_value: true,
-        },
-      },
+      name: "color_value",
+      label: "Color Value",
+      selector: { boolean: {} },
+    },
+    {
+      name: "color_icon",
+      label: "Color Icon",
+      selector: { boolean: {} },
+    },
+    {
+      name: "display_zero",
+      label: "Display Zero",
+      selector: { boolean: {} },
     },
     {
       name: "display_zero_tolerance",
       label: "Display Zero Tolerance",
-      selector: {
-        number: {
-          min: 0,
-          max: 1000000,
-          step: 1,
-          mode: "box",
-        },
-      },
+      selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
     },
     {
-      name: "display_state",
-      label: "Display State",
-      selector: {
-        select: {
-          options: [
-            { value: "two_way", label: "Two Way" },
-            { value: "one_way", label: "One Way" },
-            { value: "one_way_no_zero", label: "One Way (Show Zero)" },
-          ],
-          custom_value: true,
-        },
-      },
-    },
+      name: "unit_white_space",
+      label: "Unit White Space",
+      selector: { boolean: {} },
+    }
   ],
-} as const;
+};
 
 export const nonFossilSchema = [
   {
     name: "entity",
     selector: { entity: {} },
   },
-  mainConfigSchema,
+  mainSchema,
+  {
+    name: "color",
+    label: "Color",
+    selector: { color_rgb: {} },
+  },
   {
     title: "Secondary Info",
     name: "secondary_info",

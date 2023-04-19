@@ -26,7 +26,6 @@ export type IndividualDeviceType = {
   display_zero_tolerance?: number;
   secondary_info?: SecondaryInfoType;
   color_value?: boolean;
-  color_label?: boolean;
 };
 
 export type EntityType =

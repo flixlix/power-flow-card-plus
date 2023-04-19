@@ -2,7 +2,7 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-nested-ternary */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UnsubscribeFunc } from "home-assistant-js-websocket";
+import { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
@@ -13,16 +13,10 @@ import { EntityType } from "./type.js";
 import { logError } from "./logging.js";
 import { registerCustomCard } from "./utils/register-custom-card.js";
 import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
-import getDefaultConfig from "./utils/get-default-config.js";
 import { styles } from "./style.js";
+import { defaultValues, getDefaultConfig } from "./utils/get-default-config.js";
 
 const circleCircumference = 238.76104;
-const maxFlowRate = 6;
-const minFlowRate = 0.75;
-const wattDecimals = 1;
-const kilowattDecimals = 1;
-const minExpectedPower = 0.01;
-const maxExpectedPower = 2000;
 
 registerCustomCard({
   type: "power-flow-card-plus",
@@ -54,13 +48,13 @@ export class PowerFlowCardPlus extends LitElement {
     this._config = {
       ...config,
       inverted_entities: coerceStringArray(config.inverted_entities, ","),
-      kw_decimals: coerceNumber(config.kw_decimals, kilowattDecimals),
-      min_flow_rate: coerceNumber(config.min_flow_rate, minFlowRate),
-      max_flow_rate: coerceNumber(config.max_flow_rate, maxFlowRate),
-      w_decimals: coerceNumber(config.w_decimals, wattDecimals),
-      watt_threshold: coerceNumber(config.watt_threshold),
-      max_expected_power: coerceNumber(config.max_expected_power, maxExpectedPower),
-      min_expected_power: coerceNumber(config.min_expected_power, minExpectedPower),
+      kw_decimals: coerceNumber(config.kw_decimals, defaultValues.kilowattDecimals),
+      min_flow_rate: coerceNumber(config.min_flow_rate, defaultValues.minFlowRate),
+      max_flow_rate: coerceNumber(config.max_flow_rate, defaultValues.maxFlowRate),
+      w_decimals: coerceNumber(config.w_decimals, defaultValues.wattDecimals),
+      watt_threshold: coerceNumber(config.watt_threshold, defaultValues.wattThreshold),
+      max_expected_power: coerceNumber(config.max_expected_power, defaultValues.maxExpectedPower),
+      min_expected_power: coerceNumber(config.min_expected_power, defaultValues.minExpectedPower),
     };
   }
 
@@ -114,6 +108,14 @@ export class PowerFlowCardPlus extends LitElement {
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
     return max - (value / total) * (max - min);
+  };
+
+  private getEntityStateObj = (entity: string | undefined): HassEntity | undefined => {
+    if (!entity || !this.entityAvailable(entity)) {
+      this.unavailableOrMisconfiguredError(entity);
+      return undefined;
+    }
+    return this.hass.states[entity];
   };
 
   private getEntityState = (entity: string | undefined): number => {
@@ -199,7 +201,7 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   private showLine(power: number): boolean {
-    if (this._config?.display_zero_lines !== true) return true;
+    if (this._config?.display_zero_lines !== false) return true;
     return power > 0;
   }
 
@@ -209,6 +211,10 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     const { entities } = this._config;
+
+    function colorRgbListToHex(rgbList: number[]): string {
+      return "#".concat(rgbList.map((x) => x.toString(16).padStart(2, "0")).join(""));
+    }
 
     this.style.setProperty(
       "--clickable-cursor",
@@ -235,11 +241,13 @@ export class PowerFlowCardPlus extends LitElement {
     let totalFromGrid: number | null = 0;
     let totalToGrid: number | null = 0;
 
-    if (this._config.entities.grid?.color?.consumption !== undefined)
-      this.style.setProperty(
-        "--energy-grid-consumption-color",
-        this._config.entities.grid?.color?.consumption || "var(--energy-grid-consumption-color)" || "#488fc2"
-      );
+    let gridConsumptionColor = this._config.entities.grid?.color?.consumption;
+    if (gridConsumptionColor !== undefined) {
+      if (typeof gridConsumptionColor === "object") {
+        gridConsumptionColor = colorRgbListToHex(gridConsumptionColor);
+      }
+      this.style.setProperty("--energy-grid-consumption-color", gridConsumptionColor || "var(--energy-grid-consumption-color)" || "#488fc2");
+    }
 
     if (hasGrid) {
       if (typeof entities.grid!.entity === "string") {
@@ -270,8 +278,13 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
-    if (this._config.entities.grid?.color?.production !== undefined)
-      this.style.setProperty("--energy-grid-return-color", this._config.entities.grid?.color?.production || "#a280db");
+    let gridProductionColor = this._config.entities.grid?.color?.production;
+    if (gridProductionColor !== undefined) {
+      if (typeof gridProductionColor === "object") {
+        gridProductionColor = colorRgbListToHex(gridProductionColor);
+      }
+      this.style.setProperty("--energy-grid-return-color", gridProductionColor || "#a280db");
+    }
     if (hasReturnToGrid) {
       if (typeof entities.grid!.entity === "string") {
         totalToGrid = this.entityInverted("grid")
@@ -330,10 +343,15 @@ export class PowerFlowCardPlus extends LitElement {
 
     let individual1Usage: number | null = null;
     let individual1SecondaryUsage: number | string | null = null;
-    const individual1Name: string = this._config.entities.individual1?.name || "Car";
-    const individual1Icon: undefined | string = this._config.entities.individual1?.icon || "mdi:car-electric";
-    const individual1Color: string = this._config.entities.individual1?.color! || "#D0CC5B";
-    this.style.setProperty("--individualone-color", individual1Color); /* dynamically update color of entity depending on use input */
+    const individual1Name: string =
+      this._config.entities.individual1?.name || this.getEntityStateObj(entities.individual1?.entity)?.attributes.friendly_name || "Car";
+    const individual1Icon: undefined | string =
+      this._config.entities.individual1?.icon || this.getEntityStateObj(entities.individual1?.entity)?.attributes.icon || "mdi:car-electric";
+    let individual1Color = this._config.entities.individual1?.color;
+    if (individual1Color !== undefined) {
+      if (typeof individual1Color === "object") individual1Color = colorRgbListToHex(individual1Color);
+      this.style.setProperty("--individualone-color", individual1Color); /* dynamically update color of entity depending on user's input */
+    }
     this.style.setProperty(
       "--icon-individualone-color",
       this._config.entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)"
@@ -360,10 +378,17 @@ export class PowerFlowCardPlus extends LitElement {
 
     let individual2Usage: number | null = null;
     let individual2SecondaryUsage: number | string | null = null;
-    const individual2Name: string = this._config.entities.individual2?.name || "Motorcycle";
-    const individual2Icon: undefined | string = this._config.entities.individual2?.icon || "mdi:motorbike-electric";
-    const individual2Color: string = this._config.entities.individual2?.color! || "#964CB5";
-    this.style.setProperty("--individualtwo-color", individual2Color); /* dynamically update color of entity depending on use input */
+    const individual2Name: string =
+      this._config.entities.individual2?.name || this.getEntityStateObj(entities.individual2?.entity)?.attributes.friendly_name || "Motorcycle";
+    const individual2Icon: undefined | string =
+      this._config.entities.individual2?.icon ||
+      this.getEntityStateObj(entities.fossil_fuel_percentage?.entity)?.attributes.icon ||
+      "mdi:motorbike-electric";
+    let individual2Color = this._config.entities.individual2?.color;
+    if (individual2Color !== undefined) {
+      if (typeof individual2Color === "object") individual2Color = colorRgbListToHex(individual2Color);
+      this.style.setProperty("--individualtwo-color", individual2Color); /* dynamically update color of entity depending on user's input */
+    }
     this.style.setProperty(
       "--icon-individualtwo-color",
       this._config.entities.individual2?.color_icon ? "var(--individualtwo-color)" : "var(--primary-text-color)"
@@ -411,8 +436,11 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
     let totalSolarProduction: number = 0;
-    if (this._config.entities.solar?.color !== undefined)
-      this.style.setProperty("--energy-solar-color", this._config.entities.solar?.color || "#ff9800");
+    if (this._config.entities.solar?.color !== undefined) {
+      let solarColor = this._config.entities.solar?.color;
+      if (typeof solarColor === "object") solarColor = colorRgbListToHex(solarColor);
+      this.style.setProperty("--energy-solar-color", solarColor || "#ff9800");
+    }
     this.style.setProperty("--icon-solar-color", this._config.entities.solar?.color_icon ? "var(--energy-solar-color)" : "var(--primary-text-color)");
     if (hasSolarProduction) {
       if (this.entityInverted("solar")) totalSolarProduction = Math.abs(Math.min(this.getEntityStateWatts(entities.solar?.entity), 0));
@@ -474,10 +502,16 @@ export class PowerFlowCardPlus extends LitElement {
       batteryConsumption = (totalBatteryOut ?? 0) - (batteryToGrid ?? 0);
     }
 
-    if (this._config.entities.battery?.color?.consumption !== undefined)
-      this.style.setProperty("--energy-battery-out-color", this._config.entities.battery?.color?.consumption || "#4db6ac");
-    if (this._config.entities.battery?.color?.production !== undefined)
-      this.style.setProperty("--energy-battery-in-color", this._config.entities.battery?.color?.production || "#a280db");
+    let batteryConsumptionColor = this._config.entities.battery?.color?.consumption;
+    if (batteryConsumptionColor !== undefined) {
+      if (typeof batteryConsumptionColor === "object") batteryConsumptionColor = colorRgbListToHex(batteryConsumptionColor);
+      this.style.setProperty("--energy-battery-out-color", batteryConsumptionColor || "#4db6ac");
+    }
+    let batteryProductionColor = this._config.entities.battery?.color?.production;
+    if (batteryProductionColor !== undefined) {
+      if (typeof batteryProductionColor === "object") batteryProductionColor = colorRgbListToHex(batteryProductionColor);
+      this.style.setProperty("--energy-battery-in-color", batteryProductionColor || "#a280db");
+    }
     const batteryIconColorType = this._config.entities.battery?.color_icon;
     this.style.setProperty(
       "--icon-battery-color",
@@ -615,7 +649,11 @@ export class PowerFlowCardPlus extends LitElement {
       this.previousDur[flowName] = newDur[flowName];
     });
 
-    this.style.setProperty("--non-fossil-color", this._config.entities.fossil_fuel_percentage?.color || "var(--energy-non-fossil-color)");
+    let nonFossilColor = this._config.entities.fossil_fuel_percentage?.color;
+    if (nonFossilColor !== undefined) {
+      if (typeof nonFossilColor === "object") nonFossilColor = colorRgbListToHex(nonFossilColor);
+      this.style.setProperty("--non-fossil-color", nonFossilColor || "var(--energy-non-fossil-color)");
+    }
     this.style.setProperty(
       "--icon-non-fossil-color",
       this._config.entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)" || "var(--non-fossil-color)"

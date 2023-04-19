@@ -6,7 +6,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { assert } from "superstruct";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema";
+import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema-all";
 
 export const loadHaForm = async () => {
   if (customElements.get("ha-form")) return;
@@ -45,12 +45,6 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
 
     return html`
       <div class="card-config">
-        <div class="config-header">
-          <h2>Power Flow Card Plus</h2>
-          <ha-icon-button @click=${() => window.open("https://github.com/flixlix/power-flow-card-plus", "_blank")}>
-            <ha-icon icon="hass:help-circle"></ha-icon>
-          </ha-icon-button>
-        </div>
         <ha-form
           .hass=${this.hass}
           .data=${data}
@@ -87,7 +81,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
   }
 
   private _computeLabelCallback = (schema) =>
-    schema.label || this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema.name}` || schema.name || "");
+    schema?.label || this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}` || schema?.name || "");
 
   static get styles() {
     return css`

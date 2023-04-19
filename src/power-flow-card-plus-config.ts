@@ -30,7 +30,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       entity: string;
       name?: string;
       icon?: string;
-      color?: string;
+      color?: any;
       color_icon?: boolean;
       color_value?: boolean;
       color_label?: boolean;
@@ -54,7 +54,6 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_icon?: boolean;
       display_zero?: boolean;
       display_zero_tolerance?: number;
-      color_text?: boolean;
       color_value?: boolean;
       color_label?: boolean;
       unit_white_space?: boolean;

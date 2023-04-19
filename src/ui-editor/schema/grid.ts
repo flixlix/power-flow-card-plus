@@ -1,15 +1,11 @@
 /* eslint-disable import/extensions */
-import { entityCombinedSelectionSchema, entitySeparatedSelectionSchema, secondaryInfoSchema, getBaseMainConfigSchema } from "./_schema-base";
-
-const mainConfigSchema = getBaseMainConfigSchema({
-  name: true,
-  icon: true,
-  colorIcon: true,
-  colorCircle: true, 
-  displayZeroTolerance: true,
-  displayState: true,
-  
-});
+import {
+  getEntityCombinedSelectionSchema,
+  getEntitySeparatedSelectionSchema,
+  secondaryInfoSchema,
+  getBaseMainConfigSchema,
+  customColorsSchema,
+} from "./_schema-base";
 
 const powerOutageGridSchema = [
   {
@@ -18,18 +14,20 @@ const powerOutageGridSchema = [
   },
   {
     type: "grid",
+    column_min_width: "200px",
     schema: [
       { name: "label_alert", label: "Outage Label", selector: { text: {} } },
-      { name: "icon_alert", selector: { icon: {} } },
+      { name: "icon_alert", label: "Outage Icon",  selector: { icon: {} } },
       { name: "state_alert", label: "Outage State", selector: { text: {} } },
     ],
   },
 ] as const;
 
 export const gridSchema = [
-  entityCombinedSelectionSchema,
-  entitySeparatedSelectionSchema,
-  mainConfigSchema,
+  getEntityCombinedSelectionSchema(),
+  getEntitySeparatedSelectionSchema(),
+  getBaseMainConfigSchema("grid"),
+  customColorsSchema,
   {
     title: "Secondary Info",
     name: "secondary_info",

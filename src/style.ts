@@ -124,6 +124,10 @@ export const styles = css`
   .label {
     color: var(--secondary-text-color);
     font-size: 12px;
+    max-width: 80px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
   line,
   path {

@@ -1,6 +1,17 @@
+/* eslint-disable import/extensions */
 import { HomeAssistant } from "custom-card-helpers";
 
-export default function getDefaultConfig(hass: HomeAssistant): object {
+export const defaultValues = {
+  maxFlowRate: 6,
+  minFlowRate: 0.75,
+  wattDecimals: 0,
+  kilowattDecimals: 1,
+  minExpectedPower: 0.01,
+  maxExpectedPower: 2000,
+  wattThreshold: 1000,
+};
+
+export function getDefaultConfig(hass: HomeAssistant): object {
   function checkStrings(entiyId: string, testStrings: string[]): boolean {
     const friendlyName = hass.states[entiyId].attributes.friendly_name;
     return testStrings.some((str) => entiyId.includes(str) || friendlyName?.includes(str));
@@ -34,9 +45,17 @@ export default function getDefaultConfig(hass: HomeAssistant): object {
         state_of_charge: firstBatteryPercentageEntity ?? "",
       },
       grid: firstGridPowerEntity ? { entity: firstGridPowerEntity } : undefined,
-      solar: firstSolarPowerEntity ? { entity: firstSolarPowerEntity } : undefined,
+      solar: firstSolarPowerEntity ? { entity: firstSolarPowerEntity, display_zero_state: true } : undefined,
     },
     clickable_entities: true,
-    watt_threshold: 1000,
+    display_zero_lines: true,
+    use_new_flow_rate_model: false,
+    w_decimals: defaultValues.wattDecimals,
+    kw_decimals: defaultValues.kilowattDecimals,
+    min_flow_rate: defaultValues.minFlowRate,
+    max_flow_rate: defaultValues.maxFlowRate,
+    max_expected_power: defaultValues.maxExpectedPower,
+    min_expected_power: defaultValues.minExpectedPower,
+    watt_threshold: defaultValues.wattThreshold,
   };
 }
