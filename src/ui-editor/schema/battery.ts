@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import { getEntityCombinedSelectionSchema, getEntitySeparatedSelectionSchema, getBaseMainConfigSchema } from "./_schema-base";
+import { getEntityCombinedSelectionSchema, getEntitySeparatedSelectionSchema, getBaseMainConfigSchema, customColorsSchema } from "./_schema-base";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("battery"),
@@ -32,4 +32,5 @@ export const batterySchema = [
     selector: { entity: {} },
   },
   mainSchema,
+  customColorsSchema,
 ] as const;
