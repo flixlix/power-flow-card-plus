@@ -184,6 +184,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_value | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, state text color will match the highest value. If set to `solar`, state text color will match the color of solar. If set to `grid`, state text color will match the color of the grid consumption. If set to `battery`, state text color will match the color of the battery consumption. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | subtract_individual | `boolean` | false | If set to `true`, the home consumption will be calculated by subtracting the sum of the individual devices from the home consumption. |
+| override_state | `boolean` | `false` | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is caluclated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses. |
 
 #### Fossil Fuel Configuration
 
@@ -431,6 +432,8 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
+- Add UI Editor
+- Add Option for Home Assistant Templates in `secondary_info` fields
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
