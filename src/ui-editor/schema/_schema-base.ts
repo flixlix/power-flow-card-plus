@@ -88,8 +88,8 @@ const batteryOrGridMainConfigSchema = [
         options: [
           { value: false, label: "Do not Color" },
           { value: true, label: "Color dynamically" },
-          { value: "production", label: "Color of Production" },
-          { value: "consumption", label: "Color of Consumption" },
+          { value: "production", label: "Production" },
+          { value: "consumption", label: "Consumption" },
         ],
         custom_value: true,
       },
@@ -102,8 +102,8 @@ const batteryOrGridMainConfigSchema = [
       select: {
         options: [
           { value: true, label: "Color dynamically" },
-          { value: false, label: "Color of Consumption" },
-          { value: "production", label: "Color of Production" },
+          { value: false, label: "Consumption" },
+          { value: "production", label: "Production" },
         ],
         custom_value: true,
       },

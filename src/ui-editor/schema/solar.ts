@@ -20,6 +20,11 @@ const mainSchema = {
       label: "Display State When Zero?",
       selector: { boolean: {} },
     },
+    {
+      name: "display_zero_tolerance",
+      label: "Display Zero Tolerance",
+      selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
+    },
   ],
 };
 

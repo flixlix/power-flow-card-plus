@@ -39,10 +39,15 @@ const mainSchema = {
       selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
     },
     {
+      name: "display_zero_state",
+      label: "Display Zero State",
+      selector: { boolean: {} },
+    },
+    {
       name: "unit_white_space",
       label: "Unit White Space",
       selector: { boolean: {} },
-    }
+    },
   ],
 };
 

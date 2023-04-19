@@ -163,11 +163,22 @@ export class PowerFlowCardPlus extends LitElement {
     }
     /* based on choice, change output from watts to % */
     let result: string | number;
+    const displayZeroTolerance = this._config.entities.fossil_fuel_percentage?.display_zero_tolerance ?? 0;
     if (unitOfMeasurement === "W") {
-      const nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
+      let nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
+      if (displayZeroTolerance) {
+        if (nonFossilFuelWatts < displayZeroTolerance) {
+          nonFossilFuelWatts = 0;
+        }
+      }
       result = this.displayValue(nonFossilFuelWatts, "W", unitWhiteSpace);
     } else {
-      const nonFossilFuelPercentage: number = 100 - this.getEntityState(entityFossil);
+      let nonFossilFuelPercentage: number = 100 - this.getEntityState(entityFossil);
+      if (displayZeroTolerance) {
+        if (nonFossilFuelPercentage < displayZeroTolerance) {
+          nonFossilFuelPercentage = 0;
+        }
+      }
       result = nonFossilFuelPercentage
         .toFixed(0)
         .toString()
@@ -394,9 +405,7 @@ export class PowerFlowCardPlus extends LitElement {
     const individual2Name: string =
       this._config.entities.individual2?.name || this.getEntityStateObj(entities.individual2?.entity)?.attributes.friendly_name || "Motorcycle";
     const individual2Icon: undefined | string =
-      this._config.entities.individual2?.icon ||
-      this.getEntityStateObj(entities.fossil_fuel_percentage?.entity)?.attributes.icon ||
-      "mdi:motorbike-electric";
+      this._config.entities.individual2?.icon || this.getEntityStateObj(entities.individual2?.entity)?.attributes.icon || "mdi:motorbike-electric";
     let individual2Color = this._config.entities.individual2?.color;
     if (individual2Color !== undefined) {
       if (typeof individual2Color === "object") individual2Color = colorRgbListToHex(individual2Color);
@@ -458,6 +467,9 @@ export class PowerFlowCardPlus extends LitElement {
     if (hasSolarProduction) {
       if (this.entityInverted("solar")) totalSolarProduction = Math.abs(Math.min(this.getEntityStateWatts(entities.solar?.entity), 0));
       else totalSolarProduction = Math.max(this.getEntityStateWatts(entities.solar?.entity), 0);
+      if (entities.solar?.display_zero_tolerance) {
+        if (entities.solar.display_zero_tolerance >= totalSolarProduction) totalSolarProduction = 0;
+      }
     }
 
     let totalBatteryIn: number | null = 0;
@@ -473,6 +485,10 @@ export class PowerFlowCardPlus extends LitElement {
       } else {
         totalBatteryIn = this.getEntityStateWatts(entities.battery?.entity?.production);
         totalBatteryOut = this.getEntityStateWatts(entities.battery?.entity?.consumption);
+      }
+      if (entities?.battery?.display_zero_tolerance) {
+        if (entities.battery.display_zero_tolerance >= totalBatteryIn) totalBatteryIn = 0;
+        if (entities.battery.display_zero_tolerance >= totalBatteryOut) totalBatteryOut = 0;
       }
     }
 
@@ -826,7 +842,8 @@ export class PowerFlowCardPlus extends LitElement {
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0
+                        ${(entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0) &&
+                        (nonFossilFuelPower || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
                           ? html`
                               <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
                             `
