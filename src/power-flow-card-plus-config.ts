@@ -25,6 +25,12 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_circle: boolean | "production" | "consumption";
       secondary_info?: SecondaryInfoType;
       display_zero_tolerance?: number;
+      power_outage: {
+        entity: string;
+        state_alert?: string;
+        label_alert?: string;
+        icon_alert?: string;
+      };
     };
     solar?: {
       entity: string;
@@ -58,6 +64,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_value?: boolean;
       color_label?: boolean;
       unit_white_space?: boolean;
+      secondary_info?: SecondaryInfoType;
       calculate_flow_rate?: boolean | number;
     };
     individual1?: IndividualDeviceType;
