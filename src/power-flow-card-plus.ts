@@ -842,7 +842,7 @@ export class PowerFlowCardPlus extends LitElement {
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${(entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0) &&
+                        ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
                         (nonFossilFuelPower || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
                           ? html`
                               <span class="low-carbon">${this.displayNonFossilState(entities!.fossil_fuel_percentage!.entity, totalFromGrid)}</span>
