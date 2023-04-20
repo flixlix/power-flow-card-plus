@@ -421,6 +421,7 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
 - Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)
+- Add Generator Functionality [#110](https://github.com/flixlix/power-flow-card-plus/issues/110)
 
 I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
 
