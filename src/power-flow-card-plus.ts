@@ -585,7 +585,9 @@ export class PowerFlowCardPlus extends LitElement {
 
     const gridConsumption = Math.max(totalFromGrid - (batteryFromGrid ?? 0), 0);
 
-    const totalIndividualConsumption = (individual1Usage ?? 0) + (individual2Usage ?? 0);
+    const totalIndividualConsumption = coerceNumber(individual1Usage, 0) + coerceNumber(individual1Usage, 0);
+
+    
 
     const totalHomeConsumption = Math.max(gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0), 0);
 
