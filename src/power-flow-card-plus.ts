@@ -1191,7 +1191,7 @@ export class PowerFlowCardPlus extends LitElement {
                 ${this._config.entities.home?.override_state && this._config.entities.home.entity
                   ? this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
                   : this._config.entities.home?.subtract_individual
-                  ? this.displayValue(totalHomeConsumption - totalIndividualConsumption)
+                  ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
                   : this.displayValue(totalHomeConsumption)}
                 <svg>
                   ${homeSolarCircumference !== undefined
