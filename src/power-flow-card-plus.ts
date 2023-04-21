@@ -248,6 +248,65 @@ class PowerFlowCardPlus extends LitElement {
       }
     }
 
+
+    const hasGridImportedPower =
+    entities.grid?.energy_imported_info?.entity !== undefined &&
+    (this.getEntityState(entities.grid?.energy_imported_info?.entity) > (entities?.grid?.energy_imported_info?.display_zero_tolerance ?? 0) ||
+      entities.grid.energy_imported_info.display_zero === true);
+
+    const hasGridExportedPower =
+    entities.grid?.energy_exported_info?.entity !== undefined &&
+    (this.getEntityState(entities.grid?.energy_exported_info?.entity) > (entities?.grid?.energy_exported_info?.display_zero_tolerance ?? 0) ||
+      entities.grid.energy_exported_info.display_zero === true);
+
+    let gridImportedPowerUsage: number | null = null;
+
+    if (hasGridImportedPower) {
+      const gridImportedPowerEntity = this.hass.states[this._config.entities.grid?.energy_imported_info?.entity!];
+      const gridImportedPowerState = Number(gridImportedPowerEntity.state);
+
+      gridImportedPowerUsage = Math.max(gridImportedPowerState, 0);
+    }
+
+    let gridExportedPowerUsage: number | null = null;
+
+    if (hasGridExportedPower) {
+      const gridExportedPowerEntity = this.hass.states[this._config.entities.grid?.energy_exported_info?.entity!];
+      const gridExportedPowerState = Number(gridExportedPowerEntity.state);
+
+      gridExportedPowerUsage = Math.max(gridExportedPowerState, 0);
+    }
+
+
+    const hasBatteryImportedPower =
+      entities.battery?.energy_imported_info?.entity !== undefined &&
+      (this.getEntityState(entities.battery?.energy_imported_info?.entity) > (entities?.battery?.energy_imported_info?.display_zero_tolerance ?? 0) ||
+        entities.battery.energy_imported_info.display_zero === true);
+
+    const hasBatteryExportedPower =
+    entities.battery?.energy_exported_info?.entity !== undefined &&
+    (this.getEntityState(entities.battery?.energy_exported_info?.entity) > (entities?.battery?.energy_exported_info?.display_zero_tolerance ?? 0) ||
+      entities.battery.energy_exported_info.display_zero === true);
+
+    let batteryImportedPowerUsage: number | null = null;
+
+    if (hasBatteryImportedPower) {
+      const batteryImportedPowerEntity = this.hass.states[this._config.entities.battery?.energy_imported_info?.entity!];
+      const batteryImportedPowerState = Number(batteryImportedPowerEntity.state);
+
+      batteryImportedPowerUsage = Math.max(batteryImportedPowerState, 0);
+    }
+
+    let batteryExportedPowerUsage: number | null = null;
+
+    if (hasBatteryExportedPower) {
+      const batteryExportedPowerEntity = this.hass.states[this._config.entities.battery?.energy_exported_info?.entity!];
+      const batteryExportedPowerState = Number(batteryExportedPowerEntity.state);
+
+      batteryExportedPowerUsage = Math.max(batteryExportedPowerState, 0);
+    }
+
+
     if (this._config.entities.grid?.color?.production !== undefined)
       this.style.setProperty("--energy-grid-return-color", this._config.entities.grid?.color?.production || "#a280db");
     if (hasReturnToGrid) {
@@ -904,7 +963,7 @@ class PowerFlowCardPlus extends LitElement {
                   >
                     ${hasGridSecondary
                       ? html`
-                          <span class="secondary-info grid">
+                          <span class="secondary-info grid" style="${hasBatteryImportedPower && hasBatteryExportedPower ? "padding-bottom: 4px;" : ""}">
                             ${entities.grid?.secondary_info?.icon
                               ? html`<ha-icon class="secondary-info small" .icon=${entities.grid?.secondary_info?.icon}></ha-icon>`
                               : ""}
@@ -916,13 +975,57 @@ class PowerFlowCardPlus extends LitElement {
                           </span>
                         `
                       : ""}
-                    <ha-icon .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
+
+                    <div style="display: flex; align-self: ${hasGridImportedPower || hasGridExportedPower ? "start" : "center"}; flex-direction: row;">
+                      <ha-icon style="text-align: left; ${hasGridImportedPower || hasGridExportedPower ? "padding-top: " + (2 + (2*[hasGridImportedPower, hasGridExportedPower].filter(Boolean).length)) + "px;" : ""}" class="${hasGridImportedPower || hasGridExportedPower ? "medium" : ""}" .icon=${entities.grid?.icon || "mdi:transmission-tower"}></ha-icon>
+
+                      ${hasGridImportedPower || hasGridExportedPower 
+                        ? html`
+                        <div style="display: flex;align-items: start; flex-direction: column; justify-content: center;">
+
+                        ${hasGridImportedPower 
+                          ? html`
+                          <span><ha-icon class="small" style="padding-bottom: 0px;" .icon=${"mdi:arrow-right"}></ha-icon></span>
+                          ` : ""}
+                        ${hasGridExportedPower 
+                          ? html`
+                          <span><ha-icon class="small" style="padding-bottom: 0px;" .icon=${"mdi:arrow-left"}></ha-icon></span>
+                          ` : ""}
+                        </div>
+
+                        <div style="display: flex;align-items: end; flex-direction: column; justify-content: center;">
+
+                        ${hasGridImportedPower 
+                          ? html`
+                          <span>
+                          ${this.displayValue(
+                            gridImportedPowerUsage,
+                            entities.grid?.energy_imported_info?.unit_of_measurement,
+                            entities.grid?.energy_imported_info?.unit_white_space
+                          )}
+                          </span>
+                          ` : ""}
+                        ${hasGridExportedPower 
+                          ? html`
+                          <span>
+                          ${this.displayValue(
+                            gridExportedPowerUsage,
+                            entities.grid?.energy_exported_info?.unit_of_measurement,
+                            entities.grid?.energy_exported_info?.unit_white_space
+                          )}
+                          </span>
+                          ` : ""}
+                        </div>
+                        `
+                        : ""}
+                    </div>
+
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way" && totalToGrid > 0) ||
                       (entities.grid?.display_state === "one_way_no_zero" && (totalFromGrid === null || totalFromGrid === 0) && totalToGrid !== 0)) &&
                     totalToGrid !== null
-                      ? html`<span
+                      ? html`<span style="${hasGridImportedPower && hasGridExportedPower ? "padding-top: 4px" : ""}"
                           class="return"
                           @click=${(e: { stopPropagation: () => void }) => {
                             const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
@@ -946,7 +1049,7 @@ class PowerFlowCardPlus extends LitElement {
                       (entities.grid?.display_state === "one_way" && totalFromGrid > 0) ||
                       (entities.grid?.display_state === "one_way_no_zero" && (totalToGrid === null || totalToGrid === 0))) &&
                     totalFromGrid !== null
-                      ? html` <span class="consumption">
+                      ? html` <span class="consumption" style="${hasGridImportedPower && hasGridExportedPower ? "padding-top: 4px" : "" }">
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(totalFromGrid)}
                         </span>`
                       : ""}
@@ -1086,7 +1189,7 @@ class PowerFlowCardPlus extends LitElement {
                                   this.openDetails(entities.battery?.state_of_charge!);
                                 }
                               }}
-                              id="battery-state-of-charge-text"
+                              id="battery-state-of-charge-text" style="${hasBatteryImportedPower && hasBatteryExportedPower ? "padding-bottom: 4px;" : ""}"
                             >
                               ${formatNumber(batteryChargeState, this.hass.locale, {
                                 maximumFractionDigits: 0,
@@ -1094,29 +1197,77 @@ class PowerFlowCardPlus extends LitElement {
                               })}${this._config.entities?.battery?.state_of_charge_unit_white_space === false ? "" : " "}%
                             </span>`
                           : null}
-                        <ha-icon
-                          .icon=${batteryIcon}
-                          style=${entities.battery?.display_state === "two_way"
-                            ? "padding-top: 0px; padding-bottom: 2px;"
-                            : entities.battery?.display_state === "one_way" && totalBatteryIn === 0 && totalBatteryOut === 0
-                            ? "padding-top: 2px; padding-bottom: 0px;"
-                            : "padding-top: 2px; padding-bottom: 2px;"}
-                          @click=${(e: { stopPropagation: () => void }) => {
-                            e.stopPropagation();
-                            this.openDetails(entities.battery?.state_of_charge!);
-                          }}
-                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                            if (e.key === "Enter") {
+                        <div style="display: flex; align-self: ${hasBatteryImportedPower || hasBatteryExportedPower ? "start" : "center"}; flex-direction: row;">
+                          <ha-icon
+                            .icon=${batteryIcon}
+                            class="${hasBatteryImportedPower || hasBatteryExportedPower ? "medium" : ""}"
+                            style=${entities.battery?.display_state === "two_way"
+                              ? "padding-top: 0px; padding-bottom: 2px;"
+                              : entities.battery?.display_state === "one_way" && totalBatteryIn === 0 && totalBatteryOut === 0
+                              ? "padding-top: 2px; padding-bottom: 0px;"
+                              : "padding-top: 2px; padding-bottom: 2px;"}
+																			
+												
+																				 
+							
+                            @click=${(e: { stopPropagation: () => void }) => {
+													
                               e.stopPropagation();
                               this.openDetails(entities.battery?.state_of_charge!);
-                            }
-                          }}
-                        ></ha-icon>
+                            }}
+                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                              if (e.key === "Enter") {
+                                e.stopPropagation();
+                                this.openDetails(entities.battery?.state_of_charge!);
+                              }
+                            }}
+                          ></ha-icon>
+                          ${hasBatteryImportedPower || hasBatteryExportedPower 
+                            ? html`
+
+                            <div style="display: flex;align-items: start; flex-direction: column; justify-content: center;">
+
+                            ${hasBatteryImportedPower 
+                              ? html`
+                              <span><ha-icon class="small" style="padding-bottom: 0px;" .icon=${"mdi:arrow-left"}></ha-icon></span>
+                              ` : ""}
+                            ${hasBatteryExportedPower 
+                              ? html`
+                              <span><ha-icon class="small" style="padding-bottom: 0px;" .icon=${"mdi:arrow-right"}></ha-icon></span>
+                              ` : ""}
+                            </div>
+
+                            <div style="display: flex;align-items: end; flex-direction: column; justify-content: center;">
+
+                            ${hasBatteryImportedPower 
+                              ? html`
+                              <span>
+                              ${this.displayValue(
+                                batteryImportedPowerUsage,
+                                entities.battery?.energy_imported_info?.unit_of_measurement,
+                                entities.battery?.energy_imported_info?.unit_white_space
+                              )}
+                              </span>
+                              ` : ""}
+                            ${hasBatteryExportedPower 
+                              ? html`
+                              <span>
+                              ${this.displayValue(
+                                batteryExportedPowerUsage,
+                                entities.battery?.energy_exported_info?.unit_of_measurement,
+                                entities.battery?.energy_exported_info?.unit_white_space
+                              )}
+                              </span>
+                              ` : ""}
+                            </div>
+                            `
+                            : ""}
+                        </div>
                         ${entities.battery?.display_state === "two_way" ||
                         entities.battery?.display_state === undefined ||
                         (entities.battery?.display_state === "one_way" && totalBatteryIn > 0) ||
                         (entities.battery?.display_state === "one_way_no_zero" && totalBatteryIn !== 0)
-                          ? html`<span
+                          ? html`<span style="${hasBatteryImportedPower && hasBatteryExportedPower ? "padding-top: 4px;" : ""}"
                               class="battery-in"
                               @click=${(e: { stopPropagation: () => void }) => {
                                 const target =
@@ -1141,7 +1292,7 @@ class PowerFlowCardPlus extends LitElement {
                         entities.battery?.display_state === undefined ||
                         (entities.battery?.display_state === "one_way" && totalBatteryOut > 0) ||
                         (entities.battery?.display_state === "one_way_no_zero" && (totalBatteryIn === 0 || totalBatteryOut !== 0))
-                          ? html`<span
+                          ? html`<span style="${hasBatteryImportedPower && hasBatteryExportedPower ? "padding-top: 4px;" : ""}"
                               class="battery-out"
                               @click=${(e: { stopPropagation: () => void }) => {
                                 const target =
@@ -1571,6 +1722,9 @@ class PowerFlowCardPlus extends LitElement {
     }
     ha-icon {
       padding-bottom: 2px;
+    }
+    ha-icon.medium {
+      --mdc-icon-size: 16px;
     }
     ha-icon.small {
       --mdc-icon-size: 12px;

@@ -14,6 +14,8 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       state_of_charge_unit_white_space?: boolean;
       color_state_of_charge_value?: boolean | "production" | "consumption";
       color_circle: boolean | "production" | "consumption";
+      energy_exported_info: SecondaryInfoType;
+      energy_imported_info: SecondaryInfoType;
     };
     grid?: {
       entity: string | ComboEntity;
@@ -25,6 +27,8 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_circle: boolean | "production" | "consumption";
       secondary_info?: SecondaryInfoType;
       display_zero_tolerance?: number;
+      energy_exported_info: SecondaryInfoType;
+      energy_imported_info: SecondaryInfoType;
     };
     solar?: {
       entity: string;
