@@ -239,7 +239,7 @@ This feature allows you to configure how the card handles a Grid Power Outage sc
 | ----------- | -------- | ------------------------------------------------------------------------------------------------- |
 | entity| `string` required | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor. |
 | state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
-| icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower`. |
+| icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`. |
 | label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
 | calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
