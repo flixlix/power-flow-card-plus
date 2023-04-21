@@ -587,8 +587,6 @@ export class PowerFlowCardPlus extends LitElement {
 
     const totalIndividualConsumption = coerceNumber(individual1Usage, 0) + coerceNumber(individual2Usage, 0);
 
-    
-
     const totalHomeConsumption = Math.max(gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
@@ -840,7 +838,8 @@ export class PowerFlowCardPlus extends LitElement {
                           .icon=${!entities.fossil_fuel_percentage?.icon ? "mdi:leaf" : entities.fossil_fuel_percentage?.icon}
                           class="low-carbon"
                           style="${hasNonFossilFuelSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.fossil_fuel_percentage?.display_zero_state !== false || (nonFossilFuelPower || 0) > 0
+                          ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
+                          (nonFossilFuelPower || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
