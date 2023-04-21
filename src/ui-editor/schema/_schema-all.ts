@@ -134,22 +134,22 @@ export const advancedOptionsSchema = [
           {
             name: "max_flow_rate",
             label: "Max Flow Rate (Sec/Dot)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
+            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
           },
           {
             name: "min_flow_rate",
             label: "Min Flow Rate (Sec/Dot)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
+            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
           },
           {
             name: "max_expected_power",
             label: "Max Expected Power (in Watts)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
+            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
           },
           {
             name: "min_expected_power",
             label: "Min Expected Power (in Watts)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
+            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
           },
           {
             name: "watt_threshold",
