@@ -792,7 +792,7 @@ export class PowerFlowCardPlus extends LitElement {
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
-          ${hasSolarProduction || hasIndividual2 || hasIndividual1
+          ${hasSolarProduction || hasIndividual2 || hasIndividual1 || hasFossilFuelPercentage
             ? html`<div class="row">
                 ${!hasFossilFuelPercentage
                   ? html`<div class="spacer"></div>`
