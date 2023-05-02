@@ -14,6 +14,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       state_of_charge_unit_white_space?: boolean;
       color_state_of_charge_value?: boolean | "production" | "consumption";
       color_circle: boolean | "production" | "consumption";
+      display_zero_tolerance?: number;
     };
     grid?: {
       entity: string | ComboEntity;
@@ -25,16 +26,24 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_circle: boolean | "production" | "consumption";
       secondary_info?: SecondaryInfoType;
       display_zero_tolerance?: number;
+      power_outage: {
+        entity: string;
+        state_alert?: string;
+        label_alert?: string;
+        icon_alert?: string;
+      };
     };
     solar?: {
       entity: string;
       name?: string;
       icon?: string;
-      color?: string;
+      color?: any;
       color_icon?: boolean;
       color_value?: boolean;
       color_label?: boolean;
       secondary_info?: SecondaryInfoType;
+      display_zero_state?: boolean;
+      display_zero_tolerance?: number;
     };
     home?: {
       entity?: string;
@@ -54,11 +63,14 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       state_type?: "percentage" | "power";
       color_icon?: boolean;
       display_zero?: boolean;
+      display_zero_state?: boolean;
       display_zero_tolerance?: number;
-      color_text?: boolean;
       color_value?: boolean;
       color_label?: boolean;
       unit_white_space?: boolean;
+      secondary_info?: SecondaryInfoType;
+      calculate_flow_rate?: boolean | number;
+      seconday_info: SecondaryInfoType;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
@@ -74,5 +86,6 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
   clickable_entities: boolean;
   max_expected_power: number;
   min_expected_power: number;
+  display_zero_lines?: boolean;
   use_new_flow_rate_model?: boolean;
 }

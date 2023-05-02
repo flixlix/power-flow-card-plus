@@ -4,13 +4,14 @@ export type ComboEntity = {
 };
 
 export type SecondaryInfoType = {
-  entity: string;
+  entity?: string;
   unit_of_measurement?: string;
   icon?: string;
   display_zero?: boolean;
   unit_white_space?: boolean;
   display_zero_tolerance?: number;
   color_value?: boolean | "production" | "consumption";
+  template?: string;
 };
 
 export type IndividualDeviceType = {
@@ -22,12 +23,13 @@ export type IndividualDeviceType = {
   inverted_animation?: boolean;
   unit_of_measurement?: string;
   display_zero?: boolean;
+  display_zero_state?: boolean;
   display_zero_tolerance?: number;
   secondary_info?: SecondaryInfoType;
   color_value?: boolean;
   color_label?: boolean;
+  calculate_flow_rate?: boolean;
 };
-
 
 export type EntityType =
   | "battery"
