@@ -13,7 +13,7 @@
 
 ## Additional Features / Enhancements
 
-- UI Editor!!! 🥳 (Beta)
+- UI Editor!!! 🥳
 - Secondary Information for all power circles
 - Add Grid Tolerance for small values, to not display the battery correcting grid values
 - New and improved Flow Rate Model
