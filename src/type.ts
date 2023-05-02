@@ -29,6 +29,7 @@ export type IndividualDeviceType = {
   color_value?: boolean;
   color_label?: boolean;
   calculate_flow_rate?: boolean;
+  use_metadata?: boolean;
 };
 
 export type EntityType =

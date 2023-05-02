@@ -15,6 +15,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_state_of_charge_value?: boolean | "production" | "consumption";
       color_circle: boolean | "production" | "consumption";
       display_zero_tolerance?: number;
+      use_metadata?: boolean;
     };
     grid?: {
       entity: string | ComboEntity;
@@ -26,6 +27,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_circle: boolean | "production" | "consumption";
       secondary_info?: SecondaryInfoType;
       display_zero_tolerance?: number;
+      use_metadata?: boolean;
       power_outage: {
         entity: string;
         state_alert?: string;
@@ -44,6 +46,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       secondary_info?: SecondaryInfoType;
       display_zero_state?: boolean;
       display_zero_tolerance?: number;
+      use_metadata?: boolean;
     };
     home?: {
       entity?: string;
@@ -54,6 +57,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       color_value?: boolean | "solar" | "grid" | "battery";
       secondary_info?: SecondaryInfoType;
       subtract_individual?: boolean;
+      use_metadata?: boolean;
     };
     fossil_fuel_percentage?: {
       entity: string;
@@ -71,6 +75,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig {
       secondary_info?: SecondaryInfoType;
       calculate_flow_rate?: boolean | number;
       seconday_info: SecondaryInfoType;
+      use_metadata?: boolean;
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
