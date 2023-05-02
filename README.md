@@ -37,7 +37,7 @@ Display current power, gas, and water usage in a display that matches the the of
 
 
 
-## Install
+## Installation
 
 ### HACS (recommended)
 
@@ -76,6 +76,11 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 ## Usage
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
+
+<br/>
+
+> ⚠️ Version 0.1 introduced the UI Editor. This Editor is currently incompatible with Card Mod. I created a PR to fix this issue, but it hasn't been merged yet. [PR #277](https://github.com/thomasloven/lovelace-card-mod/pull/277). If you want to use the UI Editor, please remove Card Mod and any Plugins that use Card Mod for this card.
+
 
 ### Options
 
