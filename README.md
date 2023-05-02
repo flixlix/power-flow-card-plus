@@ -378,9 +378,15 @@ title: Power Flow Card Plus
 This should give you something like this:
 ![minimal_config_full](https://user-images.githubusercontent.com/61006057/227789815-41f15dd4-3d24-4eb8-96ca-c7f7f01a4f46.png)
 
-### Random Configuration
+### Random Configurations
 
 ![demo](https://user-images.githubusercontent.com/61006057/232316110-eff64095-e147-4462-abfc-961c88d5ada8.gif)
+<img width="506" alt="Bildschirmfoto 2023-04-20 um 00 23 56" src="https://user-images.githubusercontent.com/61006057/233212881-89af5af0-4b25-4a7c-9da1-008801129130.png">
+
+### UI Editor (available in version 0.1beta)
+
+<img width="764" alt="Bildschirmfoto 2023-04-20 um 10 47 17" src="https://user-images.githubusercontent.com/61006057/233312195-ba23ea99-90eb-4b02-b9b2-643e7704accc.png">
+
 
 ### Flow Formula
 
@@ -437,10 +443,14 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
+- Change Tap Action Behavior to be compatible with Browser Mod
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
 - Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)
+- Add Generator Functionality [#110](https://github.com/flixlix/power-flow-card-plus/issues/110)
+- Display Connected/Disconnected status [#111](https://github.com/flixlix/power-flow-card-plus/issues/111)
+- Grid Feed In Circle [#119](https://github.com/flixlix/power-flow-card-plus/issues/119)
 
 I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
 
