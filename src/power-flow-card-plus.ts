@@ -1190,7 +1190,9 @@ export class PowerFlowCardPlus extends LitElement {
                   : ""}
                 <ha-icon .icon=${entities.home?.icon || "mdi:home"}></ha-icon>
                 ${this._config.entities.home?.override_state && this._config.entities.home.entity
-                  ? this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
+                  ? entities.home?.subtract_individual
+                    ? this.displayValue(Number(this.hass.states[this._config.entities.home!.entity].state) - totalIndividualConsumption)
+                    : this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
                   : this._config.entities.home?.subtract_individual
                   ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
                   : this.displayValue(totalHomeConsumption)}
