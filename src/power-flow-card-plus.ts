@@ -1187,7 +1187,19 @@ export class PowerFlowCardPlus extends LitElement {
                   >
                     ${hasGridSecondary
                       ? html`
-                          <span class="secondary-info grid">
+                          <span
+                            class="secondary-info grid"
+                            @click=${(e: { stopPropagation: () => void }) => {
+                              e.stopPropagation();
+                              this.openDetails(entities.grid?.secondary_info?.entity);
+                            }}
+                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                              if (e.key === "Enter") {
+                                e.stopPropagation();
+                                this.openDetails(entities.grid?.secondary_info?.entity);
+                              }
+                            }}
+                          >
                             ${entities.grid?.secondary_info?.icon
                               ? html`<ha-icon class="secondary-info small" .icon=${entities.grid?.secondary_info?.icon}></ha-icon>`
                               : ""}
