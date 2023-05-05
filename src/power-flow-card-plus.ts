@@ -107,7 +107,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
-    return max - (value / total) * (max - min);
+    return max - (value / total !== 0 ? total : 1) * (max - min);
   };
 
   private getEntityStateObj = (entity: string | undefined): HassEntity | undefined => {
