@@ -143,7 +143,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
     const stateObj = this.hass.states[entity];
     const value = coerceNumber(stateObj.state);
-    if (stateObj.attributes.unit_of_measurement === "kW") return value * 1000;
+    if (stateObj.attributes.unit_of_measurement?.startsWith("kW")) return value * 1000;
     return value;
   };
 
