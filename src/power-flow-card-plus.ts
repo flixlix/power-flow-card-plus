@@ -862,7 +862,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasNonFossilFuelSecondary
                           ? html`
-                              <span class="secondary-info low-carbon">
+                              <span
+                                class="secondary-info low-carbon"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.fossil_fuel_percentage?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.fossil_fuel_percentage?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.fossil_fuel_percentage?.secondary_info?.icon
                                   ? html`<ha-icon
                                       class="secondary-info small"
