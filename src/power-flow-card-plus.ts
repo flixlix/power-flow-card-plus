@@ -1092,7 +1092,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasIndividual1Secondary
                           ? html`
-                              <span class="secondary-info individual1">
+                              <span
+                                class="secondary-info individual1"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.individual1?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.individual1?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.individual1?.secondary_info?.icon
                                   ? html`<ha-icon class="secondary-info small" .icon=${entities.individual1?.secondary_info?.icon}></ha-icon>`
                                   : ""}
@@ -1485,7 +1497,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasIndividual1Secondary
                           ? html`
-                              <span class="secondary-info individual1">
+                              <span
+                                class="secondary-info individual1"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.individual1?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.individual1?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.individual1?.secondary_info?.icon
                                   ? html`<ha-icon class="secondary-info small" .icon=${entities.individual1?.secondary_info?.icon}></ha-icon>`
                                   : ""}
