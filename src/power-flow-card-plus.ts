@@ -1637,7 +1637,13 @@ export class PowerFlowCardPlus extends LitElement {
                   "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-battery-flow">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="solar-battery-flow"
+                  class="flat-line"
+                >
                   <path id="battery-solar" class="battery-solar" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
                   ${solarToBattery
                     ? svg`<circle
@@ -1664,7 +1670,13 @@ export class PowerFlowCardPlus extends LitElement {
                   "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="grid-home-flow"
+                  class="flat-line"
+                >
                   <path
                     class="grid"
                     id="grid"

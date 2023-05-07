@@ -53,10 +53,21 @@ export const styles = css`
     height: 156px;
   }
   .lines svg {
-    width: calc(100% - 160px);
+    width: calc(100% - 150px);
     height: 100%;
     max-width: 340px;
   }
+
+  // Correct curved lines not connecting to circles (https://github.com/flixlix/power-flow-card-plus/issues/125)
+  .lines svg.flat-line {
+    width: calc(100% - 160px);
+  }
+  .lines svg:not(.flat-line) {
+    height: calc(100% + 10px);
+    position: relative;
+    top: -5px;
+  }
+  
   .row {
     display: flex;
     justify-content: space-between;
@@ -109,6 +120,7 @@ export const styles = css`
     position: relative;
     text-decoration: none;
     color: var(--primary-text-color);
+    background-color: var(--card-background-color); /* hide overflowing lines behind background */
   }
   .circle-container .circle {
     cursor: var(--clickable-cursor);
