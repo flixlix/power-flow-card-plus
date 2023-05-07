@@ -14,6 +14,26 @@ export type SecondaryInfoType = {
   template?: string;
 };
 
+export interface baseConfigEntity {
+  entity: string | ComboEntity;
+  name?: string;
+  icon?: string;
+  color?: ComboEntity | string;
+  color_icon?: boolean | string;
+  display_state?: "two_way" | "one_way" | "one_way_no_zero";
+  display_zero_tolerance?: number;
+  unit_of_measurement?: string;
+  use_metadata?: boolean;
+  secondary_info?: SecondaryInfoType;
+}
+
+export type gridPowerOutage = {
+  entity: string;
+  state_alert?: string;
+  label_alert?: string;
+  icon_alert?: string;
+};
+
 export type IndividualDeviceType = {
   entity: string;
   name?: string;
