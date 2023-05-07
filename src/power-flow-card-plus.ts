@@ -107,7 +107,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
     const min = this._config?.min_flow_rate!;
     const max = this._config?.max_flow_rate!;
-    return max - (value / total) * (max - min);
+    return max - (value / total !== 0 ? total : 1) * (max - min);
   };
 
   private getEntityStateObj = (entity: string | undefined): HassEntity | undefined => {
@@ -143,7 +143,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
     const stateObj = this.hass.states[entity];
     const value = coerceNumber(stateObj.state);
-    if (stateObj.attributes.unit_of_measurement === "kW") return value * 1000;
+    if (stateObj.attributes.unit_of_measurement?.startsWith("kW")) return value * 1000;
     return value;
   };
 
@@ -161,6 +161,7 @@ export class PowerFlowCardPlus extends LitElement {
     } else {
       gridConsumption = this.getEntityStateWatts(this._config!.entities!.grid!.entity!.consumption) || 0;
     }
+
     /* based on choice, change output from watts to % */
     let result: string | number;
     const displayZeroTolerance = this._config.entities.fossil_fuel_percentage?.display_zero_tolerance ?? 0;
@@ -323,7 +324,19 @@ export class PowerFlowCardPlus extends LitElement {
       totalToGrid = totalToGrid! > this._config.entities.grid?.display_zero_tolerance ? totalToGrid : 0;
     }
 
-    const gridIconColorType = this._config.entities.grid?.color_icon;
+    const mainGridEntity: undefined | string =
+      typeof entities.grid?.entity === "object" ? entities.grid.entity.consumption || entities.grid.entity.production : entities.grid?.entity;
+
+    const gridIcon: string = !isGridPowerOutage
+      ? entities.grid?.icon || (entities.grid?.use_metadata && this.getEntityStateObj(mainGridEntity)?.attributes.icon) || "mdi:transmission-tower"
+      : entities.grid?.power_outage.icon_alert || "mdi:transmission-tower-off";
+
+    const gridName: string =
+      entities.grid?.name ||
+      (entities.grid?.use_metadata && this.getEntityStateObj(mainGridEntity)?.attributes.friendly_name) ||
+      this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid");
+
+    const gridIconColorType = entities.grid?.color_icon;
     this.style.setProperty(
       "--icon-grid-color",
       gridIconColorType === "consumption"
@@ -541,6 +554,15 @@ export class PowerFlowCardPlus extends LitElement {
       if (typeof batteryProductionColor === "object") batteryProductionColor = colorRgbListToHex(batteryProductionColor);
       this.style.setProperty("--energy-battery-in-color", batteryProductionColor || "#a280db");
     }
+
+    const mainBatteryEntity: undefined | string =
+      typeof entities.battery?.entity === "object" ? entities.battery.entity.consumption : entities.battery?.entity;
+
+    const batteryName: string =
+      entities.battery?.name ||
+      (entities.battery?.use_metadata && this.getEntityStateObj(mainBatteryEntity)?.attributes.friendly_name) ||
+      this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.battery");
+
     const batteryIconColorType = this._config.entities.battery?.color_icon;
     this.style.setProperty(
       "--icon-battery-color",
@@ -737,6 +759,33 @@ export class PowerFlowCardPlus extends LitElement {
     } else if (homeTextColorType === true) {
       textHomeColor = homeSources[homeLargestSource].color;
     }
+
+    const solarIcon =
+      entities.solar?.icon || (entities.solar?.use_metadata && this.getEntityStateObj(entities.solar.entity)?.attributes?.icon) || "mdi:solar-power";
+
+    const solarName: string =
+      entities.solar?.name ||
+      (entities.solar?.use_metadata && this.getEntityStateObj(entities.solar.entity)?.attributes.friendly_name) ||
+      this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar");
+
+    const homeIcon =
+      entities.home?.icon || (entities.home?.use_metadata && this.getEntityStateObj(entities.home.entity)?.attributes?.icon) || "mdi:home";
+
+    const homeName =
+      entities.home?.name ||
+      (entities.home?.use_metadata && this.getEntityStateObj(entities.home.entity)?.attributes.friendly_name) ||
+      this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home");
+
+    const nonFossilIcon =
+      entities.fossil_fuel_percentage?.icon ||
+      (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes?.icon) ||
+      "mdi:leaf";
+
+    const nonFossilName =
+      entities.fossil_fuel_percentage?.name ||
+      (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes.friendly_name) ||
+      this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.low_carbon");
+
     this.style.setProperty("--text-home-color", textHomeColor);
 
     this.style.setProperty(
@@ -797,11 +846,7 @@ export class PowerFlowCardPlus extends LitElement {
                 ${!hasFossilFuelPercentage
                   ? html`<div class="spacer"></div>`
                   : html`<div class="circle-container low-carbon">
-                      <span class="label"
-                        >${!entities.fossil_fuel_percentage?.name
-                          ? this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.low_carbon")
-                          : entities.fossil_fuel_percentage?.name}</span
-                      >
+                      <span class="label">${nonFossilName}</span>
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
@@ -817,7 +862,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasNonFossilFuelSecondary
                           ? html`
-                              <span class="secondary-info low-carbon">
+                              <span
+                                class="secondary-info low-carbon"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.fossil_fuel_percentage?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.fossil_fuel_percentage?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.fossil_fuel_percentage?.secondary_info?.icon
                                   ? html`<ha-icon
                                       class="secondary-info small"
@@ -835,7 +892,7 @@ export class PowerFlowCardPlus extends LitElement {
                           ? html`<span class="secondary-info low-carbon"> ${templatesObj.nonFossilFuelSecondary} </span>`
                           : ""}
                         <ha-icon
-                          .icon=${!entities.fossil_fuel_percentage?.icon ? "mdi:leaf" : entities.fossil_fuel_percentage?.icon}
+                          .icon=${nonFossilIcon}
                           class="low-carbon"
                           style="${hasNonFossilFuelSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
                           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
@@ -875,9 +932,7 @@ export class PowerFlowCardPlus extends LitElement {
                     </div>`}
                 ${hasSolarProduction
                   ? html`<div class="circle-container solar">
-                      <span class="label"
-                        >${entities.solar!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")}</span
-                      >
+                      <span class="label">${solarName}</span>
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
@@ -893,7 +948,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasSolarSecondary
                           ? html`
-                              <span class="secondary-info solar">
+                              <span
+                                class="secondary-info solar"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.solar?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.solar?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.solar?.secondary_info?.icon
                                   ? html`<ha-icon class="secondary-info small" .icon=${entities.solar?.secondary_info?.icon}></ha-icon>`
                                   : ""}
@@ -910,7 +977,7 @@ export class PowerFlowCardPlus extends LitElement {
 
                         <ha-icon
                           id="solar-icon"
-                          .icon=${entities.solar!.icon || "mdi:solar-power"}
+                          .icon=${solarIcon}
                           style="${hasSolarSecondary ? "padding-top: 2px;" : "padding-top: 0px;"}
                           ${entities.solar?.display_zero_state !== false || (totalSolarProduction || 0) > 0
                             ? "padding-bottom: 2px;"
@@ -942,7 +1009,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasIndividual2Secondary
                           ? html`
-                              <span class="secondary-info individual2">
+                              <span
+                                class="secondary-info individual2"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.individual2?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.individual2?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.individual2?.secondary_info?.icon
                                   ? html`<ha-icon class="secondary-info small" .icon=${entities.individual2?.secondary_info?.icon}></ha-icon>`
                                   : ""}
@@ -1013,7 +1092,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasIndividual1Secondary
                           ? html`
-                              <span class="secondary-info individual1">
+                              <span
+                                class="secondary-info individual1"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.individual1?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.individual1?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.individual1?.secondary_info?.icon
                                   ? html`<ha-icon class="secondary-info small" .icon=${entities.individual1?.secondary_info?.icon}></ha-icon>`
                                   : ""}
@@ -1096,7 +1187,19 @@ export class PowerFlowCardPlus extends LitElement {
                   >
                     ${hasGridSecondary
                       ? html`
-                          <span class="secondary-info grid">
+                          <span
+                            class="secondary-info grid"
+                            @click=${(e: { stopPropagation: () => void }) => {
+                              e.stopPropagation();
+                              this.openDetails(entities.grid?.secondary_info?.entity);
+                            }}
+                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                              if (e.key === "Enter") {
+                                e.stopPropagation();
+                                this.openDetails(entities.grid?.secondary_info?.entity);
+                              }
+                            }}
+                          >
                             ${entities.grid?.secondary_info?.icon
                               ? html`<ha-icon class="secondary-info small" .icon=${entities.grid?.secondary_info?.icon}></ha-icon>`
                               : ""}
@@ -1110,11 +1213,7 @@ export class PowerFlowCardPlus extends LitElement {
                       : entities.grid?.secondary_info?.template
                       ? html`<span class="secondary-info grid"> ${templatesObj.gridSecondary} </span>`
                       : ""}
-                    <ha-icon
-                      .icon=${isGridPowerOutage
-                        ? entities.grid?.power_outage.icon_alert || "mdi:transmission-tower-off"
-                        : entities.grid?.icon || "mdi:transmission-tower"}
-                    ></ha-icon>
+                    <ha-icon .icon=${gridIcon}></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way" && totalToGrid > 0) ||
@@ -1154,7 +1253,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ? html`<span class="grid power-outage"> ${entities.grid?.power_outage.label_alert || html`Power<br />Outage`} </span>`
                       : ""}
                   </div>
-                  <span class="label">${entities.grid!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")}</span>
+                  <span class="label">${gridName}</span>
                 </div>`
               : html`<div class="spacer"></div>`}
             <div class="circle-container home">
@@ -1174,7 +1273,19 @@ export class PowerFlowCardPlus extends LitElement {
               >
                 ${hasHomeSecondary
                   ? html`
-                      <span class="secondary-info home">
+                      <span
+                        class="secondary-info home"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          this.openDetails(entities.home?.secondary_info?.entity);
+                        }}
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                          if (e.key === "Enter") {
+                            e.stopPropagation();
+                            this.openDetails(entities.home?.secondary_info?.entity);
+                          }
+                        }}
+                      >
                         ${entities.home?.secondary_info?.icon
                           ? html`<ha-icon class="secondary-info small" .icon=${entities.home?.secondary_info?.icon}></ha-icon>`
                           : ""}
@@ -1188,9 +1299,11 @@ export class PowerFlowCardPlus extends LitElement {
                   : entities.home?.secondary_info?.template
                   ? html`<span class="secondary-info home"> ${templatesObj.homeSecondary} </span>`
                   : ""}
-                <ha-icon .icon=${entities.home?.icon || "mdi:home"}></ha-icon>
+                <ha-icon .icon=${homeIcon}></ha-icon>
                 ${this._config.entities.home?.override_state && this._config.entities.home.entity
-                  ? this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
+                  ? entities.home?.subtract_individual
+                    ? this.displayValue(Number(this.hass.states[this._config.entities.home!.entity].state) - totalIndividualConsumption)
+                    : this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
                   : this._config.entities.home?.subtract_individual
                   ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
                   : this.displayValue(totalHomeConsumption)}
@@ -1244,11 +1357,7 @@ export class PowerFlowCardPlus extends LitElement {
                   />
                 </svg>
               </div>
-              ${this.showLine(individual1Usage || 0) && hasIndividual2
-                ? ""
-                : html` <span class="label"
-                    >${entities.home?.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")}</span
-                  >`}
+              ${this.showLine(individual1Usage || 0) && hasIndividual2 ? "" : html` <span class="label">${homeName}</span>`}
             </div>
           </div>
           ${hasBattery || (hasIndividual1 && hasIndividual2)
@@ -1368,9 +1477,7 @@ export class PowerFlowCardPlus extends LitElement {
                             >`
                           : ""}
                       </div>
-                      <span class="label"
-                        >${entities.battery!.name || this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.battery")}</span
-                      >
+                      <span class="label">${batteryName}</span>
                     </div>`
                   : html`<div class="spacer"></div>`}
                 ${hasIndividual2 && hasIndividual1
@@ -1414,7 +1521,19 @@ export class PowerFlowCardPlus extends LitElement {
                       >
                         ${hasIndividual1Secondary
                           ? html`
-                              <span class="secondary-info individual1">
+                              <span
+                                class="secondary-info individual1"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  e.stopPropagation();
+                                  this.openDetails(entities.individual1?.secondary_info?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    e.stopPropagation();
+                                    this.openDetails(entities.individual1?.secondary_info?.entity);
+                                  }
+                                }}
+                              >
                                 ${entities.individual1?.secondary_info?.icon
                                   ? html`<ha-icon class="secondary-info small" .icon=${entities.individual1?.secondary_info?.icon}></ha-icon>`
                                   : ""}
@@ -1518,7 +1637,13 @@ export class PowerFlowCardPlus extends LitElement {
                   "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-battery-flow">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="solar-battery-flow"
+                  class="flat-line"
+                >
                   <path id="battery-solar" class="battery-solar" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
                   ${solarToBattery
                     ? svg`<circle
@@ -1545,7 +1670,13 @@ export class PowerFlowCardPlus extends LitElement {
                   "individual1-individual2": !hasBattery && hasIndividual2 && hasIndividual1,
                 })}"
               >
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow">
+                <svg
+                  viewBox="0 0 100 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice"
+                  id="grid-home-flow"
+                  class="flat-line"
+                >
                   <path
                     class="grid"
                     id="grid"
