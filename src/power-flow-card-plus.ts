@@ -172,7 +172,7 @@ export class PowerFlowCardPlus extends LitElement {
           nonFossilFuelWatts = 0;
         }
       }
-      result = this.displayValue(nonFossilFuelWatts, "W", unitWhiteSpace);
+      result = this.displayValue(nonFossilFuelWatts, undefined, unitWhiteSpace);
     } else {
       let nonFossilFuelPercentage: number = 100 - this.getEntityState(entityFossil);
       if (displayZeroTolerance) {
