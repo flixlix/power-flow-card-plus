@@ -23,6 +23,7 @@
 - Configure wether to hide Individual Entity when state is 0 or unavailable
 - Clickable entities (including home)
 - Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
+- Have curved lines connect to the Circles
 - Keep color of battery to grid line, even when not returning
 - Display Low Carbon Energy from the grid
 - Customize Low Carbon Energy label, icon, circle color, icon color and state type
