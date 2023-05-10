@@ -28,11 +28,19 @@ export const styles = css`
     --secondary-text-grid-color: var(--primary-text-color);
     --secondary-text-home-color: var(--primary-text-color);
     --secondary-text-non-fossil-color: var(--primary-text-color);
+    --lines-svg-not-flat-line-height: 106%;
+    --lines-svg-not-flat-line-top: -3%;
   }
   :root {
   }
   .card-content {
     position: relative;
+    margin: 0 auto;
+  }
+
+  .card-content,
+  .row {
+    max-width: 470px;
   }
   .lines {
     position: absolute;
@@ -53,21 +61,18 @@ export const styles = css`
     height: 156px;
   }
   .lines svg {
-    width: calc(100% - 150px);
+    width: calc(100% - 160px);
     height: 100%;
     max-width: 340px;
   }
 
-  // Correct curved lines not connecting to circles (https://github.com/flixlix/power-flow-card-plus/issues/125)
-  .lines svg.flat-line {
-    width: calc(100% - 160px);
-  }
   .lines svg:not(.flat-line) {
-    height: calc(100% + 10px);
+    width: calc(103% - 165px);
+    height: var(--lines-svg-not-flat-line-height);
+    top: var(--lines-svg-not-flat-line-top);
     position: relative;
-    top: -5px;
   }
-  
+
   .row {
     display: flex;
     justify-content: space-between;
@@ -120,7 +125,7 @@ export const styles = css`
     position: relative;
     text-decoration: none;
     color: var(--primary-text-color);
-    background-color: var(--card-background-color); /* hide overflowing lines behind background */
+    // background-color: var(--card-background-color); /* hide overflowing lines behind background */
   }
   .circle-container .circle {
     cursor: var(--clickable-cursor);
