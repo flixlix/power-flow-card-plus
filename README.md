@@ -166,7 +166,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 
 | Name        | Type    | Default  | Description                                                                                       |
 | ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` or `object` | `undefined` required | Entity ID providing a state with the value of an individual consumption. |
+| entity | `string` | `undefined` required | Entity ID providing a state with the value of an individual consumption. |
 | name  | `string` | `Car` or `Motorcycle` | Label for the individual device option. If you don't populate this option, the label will continue to update based on the language selected. |
 | icon | `string` | `mdi:car-electric` or `mdi:motorbike-electric` | Icon path for the icon inside the Individual Device Circle. |
 | color | `string` | `#d0cc5b` or `#964cb5` | HEX value of the color for circles labels and lines of the individual device. |
