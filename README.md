@@ -37,7 +37,7 @@ The Goal of this card is to provide an easy to understand and visualize way of d
 
 ## Scope
 
-This card does not aim to display Energy Values (Meaning accumulated power over 1 day, for example).
+This card **does not** aim to display Energy Values (Meaning accumulated power over 1 day, for example).
 If this is your goal, check out the [Energy Flow Card Plus](https://github.com/flixlix/energy-flow-card-plus).
 
 ## Installation
