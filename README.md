@@ -31,12 +31,14 @@
 - Customize Grid Offline label
 - Template functionality: [Home Assistant Templates](https://www.home-assistant.io/docs/configuration/templating/)
 
-## Goal/Scope
+## Goal
 
-Display current power, gas, and water usage in a display that matches the the official Energy Distribution card included with [Home Assistant](https://home-assistant.io/) as much as possible.
+The Goal of this card is to provide an easy to understand and visualize way of displaying the current Power Distribution coming from and to different sources, such as solar, grid, home batteries etc. Furthermore, this card aims to expose a lot of customizability and control of its behavior to the configuration, allowing users to tailor it to their specific requirements.
 
+## Scope
 
-
+This card does not aim to display Energy Values (Meaning accumulated power over 1 day, for example).
+If this is your goal, check out the [Energy Flow Card Plus](https://github.com/flixlix/energy-flow-card-plus).
 
 ## Installation
 
@@ -183,7 +185,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 
 | Name        | Type    | Default  | Description                                                                                       |
 | ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` or `object` | `undefined` required | Entity ID providing a state with the value of your home's consumption. Note that this entity will not be displayed and will only be used for the more info dialog when clicking the home section. |
+| entity | `string` | `undefined` required | Entity ID providing a state with the value of your home's consumption. Note that this entity will not be displayed and will only be used for the more info dialog when clicking the home section. |
 | name  | `string` | `Home` | Label for the home option. If you don't populate this option, the label will continue to update based on the language selected. |
 | icon | `string` | `mdi:home` | Icon path for the icon inside the Home Circle. |
 | color_icon | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, icon color will match the highest value. If set to `solar`, icon color will match the color of solar. If set to `grid`, icon color will match the color of the grid consumption. If set to `battery`, icon color will match the color of the battery consumption. |
