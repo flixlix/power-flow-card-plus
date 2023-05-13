@@ -451,6 +451,7 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 - Add Generator Functionality [#110](https://github.com/flixlix/power-flow-card-plus/issues/110)
 - Display Connected/Disconnected status [#111](https://github.com/flixlix/power-flow-card-plus/issues/111)
 - Grid Feed In Circle [#119](https://github.com/flixlix/power-flow-card-plus/issues/119)
+- Improve performance [#144](https://github.com/flixlix/power-flow-card-plus/issues/144)
 
 I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
 
