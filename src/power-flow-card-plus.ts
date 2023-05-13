@@ -143,7 +143,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
     const stateObj = this.hass.states[entity];
     const value = coerceNumber(stateObj.state);
-    if (stateObj.attributes.unit_of_measurement?.startsWith("kW")) return value * 1000;
+    if (stateObj.attributes.unit_of_measurement?.toUpperCase().startsWith("KW")) return value * 1000;
     return value;
   };
 
@@ -838,6 +838,15 @@ export class PowerFlowCardPlus extends LitElement {
       nonFossilFuelSecondary: this._templateResults.nonFossilFuelSecondary?.result,
     };
 
+    const homeUsageToDisplay =
+      this._config.entities.home?.override_state && this._config.entities.home.entity
+        ? entities.home?.subtract_individual
+          ? this.displayValue(this.getEntityStateWatts(entities.home.entity) - totalIndividualConsumption)
+          : this.displayValue(this.getEntityStateWatts(entities.home!.entity))
+        : this._config.entities.home?.subtract_individual
+        ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
+        : this.displayValue(totalHomeConsumption);
+
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
@@ -1300,13 +1309,7 @@ export class PowerFlowCardPlus extends LitElement {
                   ? html`<span class="secondary-info home"> ${templatesObj.homeSecondary} </span>`
                   : ""}
                 <ha-icon .icon=${homeIcon}></ha-icon>
-                ${this._config.entities.home?.override_state && this._config.entities.home.entity
-                  ? entities.home?.subtract_individual
-                    ? this.displayValue(Number(this.hass.states[this._config.entities.home!.entity].state) - totalIndividualConsumption)
-                    : this.displayValue(this.hass.states[this._config.entities.home!.entity].state)
-                  : this._config.entities.home?.subtract_individual
-                  ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
-                  : this.displayValue(totalHomeConsumption)}
+                ${homeUsageToDisplay}
                 <svg>
                   ${homeSolarCircumference !== undefined
                     ? svg`<circle
