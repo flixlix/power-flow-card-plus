@@ -15,6 +15,7 @@ import { registerCustomCard } from "./utils/register-custom-card";
 import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
 import { styles } from "./style";
 import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
+import getElementWidth from "./utils/get-element-width";
 
 const circleCircumference = 238.76104;
 
@@ -377,6 +378,10 @@ export class PowerFlowCardPlus extends LitElement {
           : "var(--energy-grid-return-color)"
         : "var(--energy-grid-consumption-color)"
     );
+
+    const isCardWideEnough = getElementWidth(document.getElementById("card-content")) > 420;
+    this.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "106%" : "102%");
+    this.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-3%" : "-1%");
 
     let individual1Usage: number | null = null;
     let individual1SecondaryUsage: number | string | null = null;
@@ -849,7 +854,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     return html`
       <ha-card .header=${this._config.title}>
-        <div class="card-content">
+        <div class="card-content" id="card-content">
           ${hasSolarProduction || hasIndividual2 || hasIndividual1 || hasFossilFuelPercentage
             ? html`<div class="row">
                 ${!hasFossilFuelPercentage
