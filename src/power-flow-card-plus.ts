@@ -190,13 +190,18 @@ export class PowerFlowCardPlus extends LitElement {
     return result;
   };
 
-  private displayValue = (value: number | string | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
+  private displayValue = (
+    value: number | string | null,
+    unit?: string | undefined,
+    unitWhiteSpace?: boolean | undefined,
+    decimals?: number | undefined
+  ) => {
     if (value === null) return "0";
     if (Number.isNaN(+value)) return value;
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
     const v = formatNumber(
-      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, this._config!.w_decimals),
+      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, decimals ?? this._config!.w_decimals),
       this.hass.locale
     );
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
@@ -791,6 +796,20 @@ export class PowerFlowCardPlus extends LitElement {
       (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes.friendly_name) ||
       this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.low_carbon");
 
+    const individual1DisplayState = this.displayValue(
+      individual1Usage,
+      this._config.entities.individual1?.unit_of_measurement,
+      undefined,
+      entities.individual1?.decimals
+    );
+
+    const individual2DisplayState = this.displayValue(
+      individual2Usage,
+      this._config.entities.individual2?.unit_of_measurement,
+      undefined,
+      entities.individual2?.decimals
+    );
+
     this.style.setProperty("--text-home-color", textHomeColor);
 
     this.style.setProperty(
@@ -1058,9 +1077,7 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual2?.display_zero_state !== false || (individual2Usage || 0) > 0
-                          ? html` <span class="individual2"
-                              >${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
-                            </span>`
+                          ? html` <span class="individual2">${individual2DisplayState} </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual2Usage || 0)
@@ -1141,9 +1158,7 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
-                          ? html` <span class="individual1"
-                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
-                            </span>`
+                          ? html` <span class="individual1">${individual1DisplayState} </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual1Usage || 0)
@@ -1564,9 +1579,7 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
-                          ? html` <span class="individual1"
-                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
-                            </span>`
+                          ? html` <span class="individual1">${individual1DisplayState} </span>`
                           : ""}
                       </div>
                       <span class="label">${individual1Name}</span>

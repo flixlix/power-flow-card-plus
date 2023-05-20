@@ -41,6 +41,11 @@ const mainSchema = {
       label: "Display Zero State",
       selector: { boolean: {} },
     },
+    {
+      name: "decimals",
+      label: "Decimals",
+      selector: { number: { mode: "box", min: 0, max: 4, step: 1 } },
+    },
   ],
 };
 
