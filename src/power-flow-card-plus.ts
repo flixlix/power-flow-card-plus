@@ -399,8 +399,7 @@ export class PowerFlowCardPlus extends LitElement {
       this._config.entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)"
     );
     if (hasIndividual1) {
-      const individual1Entity = this.hass.states[this._config.entities.individual1?.entity!];
-      const individual1State = Number(individual1Entity.state);
+      const individual1State = this.getEntityStateWatts(this._config.entities.individual1?.entity!);
       if (this.entityInverted("individual1")) individual1Usage = Math.abs(Math.min(individual1State, 0));
       else individual1Usage = Math.max(individual1State, 0);
     }
@@ -434,8 +433,7 @@ export class PowerFlowCardPlus extends LitElement {
       this._config.entities.individual2?.color_icon ? "var(--individualtwo-color)" : "var(--primary-text-color)"
     );
     if (hasIndividual2) {
-      const individual2Entity = this.hass.states[this._config.entities.individual2?.entity!];
-      const individual2State = Number(individual2Entity.state);
+      const individual2State = this.getEntityStateWatts(this._config.entities.individual2?.entity);
       if (this.entityInverted("individual2")) individual2Usage = Math.abs(Math.min(individual2State, 0));
       else individual2Usage = Math.max(individual2State, 0);
     }
