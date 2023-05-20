@@ -176,7 +176,7 @@ export const advancedOptionsSchema = [
       {
         name: "inverted_entities",
         label: "Inverted Entities",
-        selector: { code_editor: {} },
+        selector: { template: {} },
       },
     ],
   },
