@@ -146,6 +146,7 @@ export const styles = css`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    min-height: 20px;
   }
   line,
   path {
