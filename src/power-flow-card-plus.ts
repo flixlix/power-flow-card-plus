@@ -1,14 +1,13 @@
 /* eslint-disable wc/guard-super-call */
 /* eslint-disable import/extensions */
 /* eslint-disable no-nested-ternary */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
-import { coerceNumber, coerceStringArray, round, isNumberValue } from "./utils/utils";
+import { coerceNumber, round, isNumberValue } from "./utils/utils";
 import { EntityType } from "./type";
 import { logError } from "./logging";
 import { registerCustomCard } from "./utils/register-custom-card";
@@ -48,7 +47,6 @@ export class PowerFlowCardPlus extends LitElement {
     }
     this._config = {
       ...config,
-      inverted_entities: coerceStringArray(config.inverted_entities, ","),
       kw_decimals: coerceNumber(config.kw_decimals, defaultValues.kilowattDecimals),
       min_flow_rate: coerceNumber(config.min_flow_rate, defaultValues.minFlowRate),
       max_flow_rate: coerceNumber(config.max_flow_rate, defaultValues.maxFlowRate),
@@ -89,7 +87,7 @@ export class PowerFlowCardPlus extends LitElement {
 
   private entityAvailable = (entityId: string): boolean => isNumberValue(this.hass.states[entityId]?.state);
 
-  private entityInverted = (entityType: EntityType) => this._config!.inverted_entities.includes(entityType);
+  private entityInverted = (entityType: EntityType) => !!this._config.entities[entityType]?.invert_state;
 
   private previousDur: { [name: string]: number } = {};
 
@@ -157,10 +155,10 @@ export class PowerFlowCardPlus extends LitElement {
     const unitOfMeasurement: "W" | "%" = this._config!.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
     const nonFossilFuelDecimal: number = 1 - this.getEntityState(entityFossil) / 100;
     let gridConsumption: number;
-    if (typeof this._config!.entities.grid!.entity === "string") {
+    if (typeof this._config.entities.grid?.entity === "string") {
       gridConsumption = totalFromGrid;
     } else {
-      gridConsumption = this.getEntityStateWatts(this._config!.entities!.grid!.entity!.consumption) || 0;
+      gridConsumption = this.getEntityStateWatts(this._config.entities.grid?.entity.consumption) || 0;
     }
 
     /* based on choice, change output from watts to % */

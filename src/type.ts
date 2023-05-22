@@ -25,6 +25,7 @@ export interface baseConfigEntity {
   unit_of_measurement?: string;
   use_metadata?: boolean;
   secondary_info?: SecondaryInfoType;
+  invert_state?: boolean;
 }
 
 export type gridPowerOutage = {
