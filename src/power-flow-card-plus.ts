@@ -1,14 +1,13 @@
 /* eslint-disable wc/guard-super-call */
 /* eslint-disable import/extensions */
 /* eslint-disable no-nested-ternary */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HassEntity, UnsubscribeFunc } from "home-assistant-js-websocket";
 import { formatNumber, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
-import { coerceNumber, coerceStringArray, round, isNumberValue } from "./utils/utils";
+import { coerceNumber, round, isNumberValue } from "./utils/utils";
 import { EntityType } from "./type";
 import { logError } from "./logging";
 import { registerCustomCard } from "./utils/register-custom-card";
@@ -48,7 +47,6 @@ export class PowerFlowCardPlus extends LitElement {
     }
     this._config = {
       ...config,
-      inverted_entities: coerceStringArray(config.inverted_entities, ","),
       kw_decimals: coerceNumber(config.kw_decimals, defaultValues.kilowattDecimals),
       min_flow_rate: coerceNumber(config.min_flow_rate, defaultValues.minFlowRate),
       max_flow_rate: coerceNumber(config.max_flow_rate, defaultValues.maxFlowRate),
@@ -89,7 +87,7 @@ export class PowerFlowCardPlus extends LitElement {
 
   private entityAvailable = (entityId: string): boolean => isNumberValue(this.hass.states[entityId]?.state);
 
-  private entityInverted = (entityType: EntityType) => this._config!.inverted_entities.includes(entityType);
+  private entityInverted = (entityType: EntityType) => !!this._config.entities[entityType]?.invert_state;
 
   private previousDur: { [name: string]: number } = {};
 
@@ -157,10 +155,10 @@ export class PowerFlowCardPlus extends LitElement {
     const unitOfMeasurement: "W" | "%" = this._config!.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
     const nonFossilFuelDecimal: number = 1 - this.getEntityState(entityFossil) / 100;
     let gridConsumption: number;
-    if (typeof this._config!.entities.grid!.entity === "string") {
+    if (typeof this._config.entities.grid?.entity === "string") {
       gridConsumption = totalFromGrid;
     } else {
-      gridConsumption = this.getEntityStateWatts(this._config!.entities!.grid!.entity!.consumption) || 0;
+      gridConsumption = this.getEntityStateWatts(this._config.entities.grid?.entity.consumption) || 0;
     }
 
     /* based on choice, change output from watts to % */
@@ -190,13 +188,18 @@ export class PowerFlowCardPlus extends LitElement {
     return result;
   };
 
-  private displayValue = (value: number | string | null, unit?: string | undefined, unitWhiteSpace?: boolean | undefined) => {
+  private displayValue = (
+    value: number | string | null,
+    unit?: string | undefined,
+    unitWhiteSpace?: boolean | undefined,
+    decimals?: number | undefined
+  ) => {
     if (value === null) return "0";
     if (Number.isNaN(+value)) return value;
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
     const v = formatNumber(
-      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, this._config!.w_decimals),
+      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, decimals ?? this._config!.w_decimals),
       this.hass.locale
     );
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
@@ -399,8 +402,7 @@ export class PowerFlowCardPlus extends LitElement {
       this._config.entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)"
     );
     if (hasIndividual1) {
-      const individual1Entity = this.hass.states[this._config.entities.individual1?.entity!];
-      const individual1State = Number(individual1Entity.state);
+      const individual1State = this.getEntityStateWatts(this._config.entities.individual1?.entity!);
       if (this.entityInverted("individual1")) individual1Usage = Math.abs(Math.min(individual1State, 0));
       else individual1Usage = Math.max(individual1State, 0);
     }
@@ -434,8 +436,7 @@ export class PowerFlowCardPlus extends LitElement {
       this._config.entities.individual2?.color_icon ? "var(--individualtwo-color)" : "var(--primary-text-color)"
     );
     if (hasIndividual2) {
-      const individual2Entity = this.hass.states[this._config.entities.individual2?.entity!];
-      const individual2State = Number(individual2Entity.state);
+      const individual2State = this.getEntityStateWatts(this._config.entities.individual2?.entity);
       if (this.entityInverted("individual2")) individual2Usage = Math.abs(Math.min(individual2State, 0));
       else individual2Usage = Math.max(individual2State, 0);
     }
@@ -791,6 +792,20 @@ export class PowerFlowCardPlus extends LitElement {
       (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes.friendly_name) ||
       this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.low_carbon");
 
+    const individual1DisplayState = this.displayValue(
+      individual1Usage,
+      this._config.entities.individual1?.unit_of_measurement,
+      undefined,
+      entities.individual1?.decimals
+    );
+
+    const individual2DisplayState = this.displayValue(
+      individual2Usage,
+      this._config.entities.individual2?.unit_of_measurement,
+      undefined,
+      entities.individual2?.decimals
+    );
+
     this.style.setProperty("--text-home-color", textHomeColor);
 
     this.style.setProperty(
@@ -1058,9 +1073,7 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual2?.display_zero_state !== false || (individual2Usage || 0) > 0
-                          ? html` <span class="individual2"
-                              >${this.displayValue(individual2Usage, this._config.entities.individual2?.unit_of_measurement)}
-                            </span>`
+                          ? html` <span class="individual2">${individual2DisplayState} </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual2Usage || 0)
@@ -1141,9 +1154,7 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
-                          ? html` <span class="individual1"
-                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
-                            </span>`
+                          ? html` <span class="individual1">${individual1DisplayState} </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual1Usage || 0)
@@ -1564,9 +1575,7 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1Usage || 0) > 0
-                          ? html` <span class="individual1"
-                              >${this.displayValue(individual1Usage, this._config.entities.individual1?.unit_of_measurement)}
-                            </span>`
+                          ? html` <span class="individual1">${individual1DisplayState} </span>`
                           : ""}
                       </div>
                       <span class="label">${individual1Name}</span>

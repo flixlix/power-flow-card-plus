@@ -25,6 +25,7 @@ export interface baseConfigEntity {
   unit_of_measurement?: string;
   use_metadata?: boolean;
   secondary_info?: SecondaryInfoType;
+  invert_state?: boolean;
 }
 
 export type gridPowerOutage = {
@@ -50,6 +51,7 @@ export type IndividualDeviceType = {
   color_label?: boolean;
   calculate_flow_rate?: boolean;
   use_metadata?: boolean;
+  decimals?: number;
 };
 
 export type EntityType =

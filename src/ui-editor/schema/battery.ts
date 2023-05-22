@@ -20,6 +20,11 @@ const mainSchema = {
         },
       },
     },
+    {
+      name: "invert_state",
+      label: "Invert State",
+      selector: { boolean: {} },
+    },
   ],
 };
 
