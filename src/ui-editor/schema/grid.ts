@@ -7,6 +7,18 @@ import {
   customColorsSchema,
 } from "./_schema-base";
 
+const mainSchema = {
+  ...getBaseMainConfigSchema("grid"),
+  schema: [
+    ...getBaseMainConfigSchema("grid").schema,
+    {
+      name: "invert_state",
+      label: "Invert State",
+      selector: { boolean: {} },
+    },
+  ],
+};
+
 const powerOutageGridSchema = [
   {
     name: "entity",
@@ -17,7 +29,7 @@ const powerOutageGridSchema = [
     column_min_width: "200px",
     schema: [
       { name: "label_alert", label: "Outage Label", selector: { text: {} } },
-      { name: "icon_alert", label: "Outage Icon",  selector: { icon: {} } },
+      { name: "icon_alert", label: "Outage Icon", selector: { icon: {} } },
       { name: "state_alert", label: "Outage State", selector: { text: {} } },
     ],
   },
@@ -26,7 +38,7 @@ const powerOutageGridSchema = [
 export const gridSchema = [
   getEntityCombinedSelectionSchema(),
   getEntitySeparatedSelectionSchema(),
-  getBaseMainConfigSchema("grid"),
+  mainSchema,
   customColorsSchema,
   {
     title: "Secondary Info",
