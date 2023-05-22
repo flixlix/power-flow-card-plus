@@ -178,6 +178,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
 | display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 | color_value | `boolean` | `false` | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.  |
+| decimals | `number` | `0` | Number of decimals to show in the corresponding state. |
 
 #### Home Configuration
 
