@@ -92,7 +92,6 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | entities            | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
 | title               | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
 | dashboard_link      | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| inverted_entities   | `string`  |              | Comma seperated list of entities that should be inverted (negative for consumption and positive for production). Example: `inverted_entities: battery, grid`           |
 | kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
 | w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate       | `number`  |     .75      | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds. |
@@ -131,7 +130,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_circle | `boolean` or "production" or "consumption" | `false` | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | display_zero_tolerance | `number` | `0` | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid. |
-| power_outage | `object` | `undefined` | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.
+| power_outage | `object` | `undefined` | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info. |
+| inverted_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption. |
 
 #### Solar Configuration
 
@@ -160,6 +160,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge. |
 | color_state_of_charge_value | `boolean` or "production" or "consumption" | If set to `true`, state of charge text color will match the highest value. If set to `production`, state of charge text color will match the production. If set to `consumption`, state of charge text color will match the consumption. |
 | color_circle | `boolean` or "production" or "consumption" | If set to `true`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption. |
+| inverted_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption. |
 
 #### Individual Configuration
 
