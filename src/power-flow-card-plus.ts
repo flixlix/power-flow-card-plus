@@ -1326,7 +1326,7 @@ export class PowerFlowCardPlus extends LitElement {
                   : ""}
                 <ha-icon .icon=${homeIcon}></ha-icon>
                 ${homeUsageToDisplay}
-                <svg>
+                <svg class="home-circle-sections">
                   ${homeSolarCircumference !== undefined
                     ? svg`<circle
                             class="solar"
