@@ -814,11 +814,11 @@ export class PowerFlowCardPlus extends LitElement {
     );
     this.style.setProperty(
       "--text-non-fossil-color",
-      this._config.entities.fossil_fuel_percentage?.color_value ? "var(--energy-non-fossil-color)" : "var(--primary-text-color)"
+      this._config.entities.fossil_fuel_percentage?.color_value ? "var(--non-fossil-color)" : "var(--primary-text-color)"
     );
     this.style.setProperty(
       "--secondary-text-non-fossil-color",
-      this._config.entities.fossil_fuel_percentage?.secondary_info?.color_value ? "var(--energy-non-fossil-color)" : "var(--primary-text-color)"
+      this._config.entities.fossil_fuel_percentage?.secondary_info?.color_value ? "var(--non-fossil-color)" : "var(--primary-text-color)"
     );
 
     this.style.setProperty(
