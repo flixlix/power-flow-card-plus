@@ -188,14 +188,21 @@ export class PowerFlowCardPlus extends LitElement {
     return result;
   };
 
+  /**
+   * Display value with unit
+   * @param value - value to display (if text, will be returned as is)
+   * @param unit - unit to display (default is dynamic)
+   * @param unitWhiteSpace - wether add space between value and unit (default true)
+   * @param decimals - number of decimals to display (default is user defined)
+   */
   private displayValue = (
     value: number | string | null,
     unit?: string | undefined,
     unitWhiteSpace?: boolean | undefined,
     decimals?: number | undefined
-  ) => {
+  ): string => {
     if (value === null) return "0";
-    if (Number.isNaN(+value)) return value;
+    if (Number.isNaN(+value)) return value.toString();
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
     const v = formatNumber(
@@ -1421,10 +1428,12 @@ export class PowerFlowCardPlus extends LitElement {
                               }}
                               id="battery-state-of-charge-text"
                             >
-                              ${formatNumber(batteryChargeState, this.hass.locale, {
-                                maximumFractionDigits: 0,
-                                minimumFractionDigits: 0,
-                              })}${this._config.entities?.battery?.state_of_charge_unit_white_space === false ? "" : " "}%
+                              ${this.displayValue(
+                                batteryChargeState,
+                                this._config.entities?.battery?.state_of_charge_unit || "%",
+                                this._config.entities?.battery?.state_of_charge_unit_white_space,
+                                this._config.entities?.battery?.state_of_charge_decimals || 0
+                              )}
                             </span>`
                           : null}
                         <ha-icon
