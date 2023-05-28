@@ -46,6 +46,11 @@ const mainSchema = {
       label: "Decimals",
       selector: { number: { mode: "box", min: 0, max: 4, step: 1 } },
     },
+    {
+      name: "calculate_flow_rate",
+      label: "Calculate Flow Rate",
+      selector: { boolean: {} },
+    },
   ],
 };
 

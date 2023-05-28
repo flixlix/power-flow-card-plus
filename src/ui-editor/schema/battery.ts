@@ -1,9 +1,17 @@
 // eslint-disable-next-line import/extensions
-import { getEntitySeparatedSelectionSchema, getBaseMainConfigSchema, customColorsSchema } from "./_schema-base";
+import { getEntitySeparatedSelectionSchema, getBaseMainConfigSchema, customColorsSchema, getEntityCombinedSelectionSchema } from "./_schema-base";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("battery"),
-  schema: [...getBaseMainConfigSchema("battery").schema],
+
+  schema: [
+    ...getBaseMainConfigSchema("battery").schema,
+    {
+      name: "invert_state",
+      label: "Invert State",
+      selector: { boolean: {} },
+    },
+  ],
 };
 
 const stateOfChargeSchema = [
@@ -52,6 +60,7 @@ const stateOfChargeSchema = [
 ];
 
 export const batterySchema = [
+  getEntityCombinedSelectionSchema("battery"),
   getEntitySeparatedSelectionSchema("battery"),
   {
     title: "State of Charge",
