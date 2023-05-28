@@ -445,6 +445,7 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
+- Add localize functions to use card in different languages
 - Change Tap Action Behavior to be compatible with Browser Mod
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
