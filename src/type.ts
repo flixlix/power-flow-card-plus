@@ -23,6 +23,7 @@ export interface baseConfigEntity {
   display_state?: "two_way" | "one_way" | "one_way_no_zero";
   display_zero_tolerance?: number;
   unit_of_measurement?: string;
+  unit_white_space?: boolean;
   use_metadata?: boolean;
   secondary_info?: SecondaryInfoType;
   invert_state?: boolean;
@@ -35,18 +36,13 @@ export type gridPowerOutage = {
   icon_alert?: string;
 };
 
-export type IndividualDeviceType = {
+export type IndividualDeviceType = baseConfigEntity & {
   entity: string;
-  name?: string;
-  icon?: string;
   color?: string;
   color_icon?: boolean;
   inverted_animation?: boolean;
-  unit_of_measurement?: string;
   display_zero?: boolean;
   display_zero_state?: boolean;
-  display_zero_tolerance?: number;
-  secondary_info?: SecondaryInfoType;
   color_value?: boolean;
   color_label?: boolean;
   calculate_flow_rate?: boolean;
@@ -54,15 +50,4 @@ export type IndividualDeviceType = {
   decimals?: number;
 };
 
-export type EntityType =
-  | "battery"
-  | "grid"
-  | "solar"
-  | "individual1"
-  | "individual1Secondary"
-  | "individual2"
-  | "individual2Secondary"
-  | "solarSecondary"
-  | "homeSecondary"
-  | "gridSecondary"
-  | "nonFossilSecondary";
+export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2";
