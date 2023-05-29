@@ -223,7 +223,7 @@ export class PowerFlowCardPlus extends LitElement {
   private hasField(field?: any, acceptStringState?: boolean): boolean {
     return (
       (field !== undefined && field?.display_zero === true) ||
-      (this.getEntityStateWatts(field?.entity) > (field?.display_zero_tolerance ?? 0) && this.entityAvailable(field?.entity)) ||
+      (Math.abs(this.getEntityStateWatts(field?.entity)) > (field?.display_zero_tolerance ?? 0) && this.entityAvailable(field?.entity)) ||
       acceptStringState
         ? typeof this.hass.states[field?.entity]?.state === "string"
         : false
@@ -374,7 +374,8 @@ export class PowerFlowCardPlus extends LitElement {
       unit: entities[field]?.unit_of_measurement,
       unit_white_space: entities[field]?.unit_white_space,
       decimals: entities[field]?.decimals,
-      invertAnimation: entities[field]?.inverted_animation,
+      invertAnimation: entities[field]?.inverted_animation || false,
+      showDirection: entities[field]?.show_direction || false,
       secondary: {
         entity: entities[field]?.secondary_info?.entity,
         has: this.hasField(entities[field]?.secondary_info, true),
@@ -1084,7 +1085,11 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual2">${individual2DisplayState} </span>`
+                          ? html` <span class="individual2">
+                              ${individual2.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual2.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                : ""}${individual2DisplayState}
+                            </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual2.state || 0)
@@ -1136,7 +1141,11 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1">${individual1DisplayState} </span>`
+                          ? html` <span class="individual1"
+                              >${individual1.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                : ""}${individual1DisplayState}
+                            </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual1.state || 0)
@@ -1468,7 +1477,11 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1">${individual1DisplayState} </span>`
+                          ? html` <span class="individual1"
+                              >${individual1.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                : ""}${individual1DisplayState}
+                            </span>`
                           : ""}
                       </div>
                       <span class="label">${individual1.name}</span>

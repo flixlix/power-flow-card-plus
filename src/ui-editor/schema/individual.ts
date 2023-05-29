@@ -51,6 +51,11 @@ const mainSchema = {
       label: "Calculate Flow Rate",
       selector: { boolean: {} },
     },
+    {
+      name: "show_direction",
+      label: "Show Direction",
+      selector: { boolean: {} },
+    },
   ],
 };
 
