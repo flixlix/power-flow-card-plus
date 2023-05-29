@@ -247,16 +247,16 @@ export class PowerFlowCardPlus extends LitElement {
     return fallback;
   }
 
+  private convertColorListToHex(colorList: number[]): string {
+    return "#".concat(colorList.map((x) => x.toString(16).padStart(2, "0")).join(""));
+  }
+
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
     }
 
     const { entities } = this._config;
-
-    function colorRgbListToHex(rgbList: number[]): string {
-      return "#".concat(rgbList.map((x) => x.toString(16).padStart(2, "0")).join(""));
-    }
 
     this.style.setProperty(
       "--clickable-cursor",
@@ -352,6 +352,9 @@ export class PowerFlowCardPlus extends LitElement {
       state: null as number | null,
       icon: this.computeFieldIcon(entities?.home, "mdi:home"),
       name: this.computeFieldName(entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
+      color: {
+        icon_type: entities.home?.color_icon,
+      },
       secondary: {
         entity: entities.home?.secondary_info?.entity,
         has: this.hasField(entities.home?.secondary_info),
@@ -359,39 +362,34 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    const individual1 = {
-      entity: entities.individual1?.entity,
-      has: this.hasField(entities.individual1),
+    const getIndividualObject = (field: "individual1" | "individual2") => ({
+      entity: entities[field]?.entity,
+      has: this.hasField(entities[field]),
+      displayZero: entities[field]?.display_zero,
+      displayZeroTolerance: entities[field]?.display_zero_tolerance,
       state: null as number | null,
-      icon: this.computeFieldIcon(entities.individual1, "mdi:car-electric"),
-      name: this.computeFieldName(entities.individual1, "Car"),
-      color: entities.individual1?.color,
+      icon: this.computeFieldIcon(entities[field], field === "individual1" ? "mdi:car-electric" : "mdi:motorbike-electric"),
+      name: this.computeFieldName(entities[field], field === "individual1" ? "Car" : "Motorcycle"),
+      color: entities[field]?.color,
+      unit: entities[field]?.unit_of_measurement,
+      unit_white_space: entities[field]?.unit_white_space,
+      decimals: entities[field]?.decimals,
       secondary: {
-        entity: entities.individual1?.secondary_info?.entity,
-        has: this.hasField(entities.individual1?.secondary_info, true),
+        entity: entities[field]?.secondary_info?.entity,
+        has: this.hasField(entities[field]?.secondary_info, true),
         state: null as number | string | null,
-        icon: entities.individual1?.secondary_info?.icon,
-        unit: entities.individual1?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.individual1?.secondary_info?.unit_white_space,
+        icon: entities[field]?.secondary_info?.icon,
+        unit: entities[field]?.secondary_info?.unit_of_measurement,
+        unit_white_space: entities[field]?.secondary_info?.unit_white_space,
+        displayZero: entities[field]?.secondary_info?.display_zero,
+        displayZeroTolerance: entities[field]?.secondary_info?.display_zero_tolerance,
       },
-    };
+    });
 
-    const individual2 = {
-      entity: entities.individual2?.entity,
-      has: this.hasField(entities.individual2),
-      state: null as number | null,
-      icon: this.computeFieldIcon(entities.individual2, "mdi:motorbike-electric"),
-      name: this.computeFieldName(entities.individual2, "Motorbike"),
-      color: entities.individual2?.color,
-      secondary: {
-        entity: entities.individual2?.secondary_info?.entity,
-        has: this.hasField(entities.individual2?.secondary_info, true),
-        state: null as number | string | null,
-        icon: entities.individual2?.secondary_info?.icon,
-        unit: entities.individual2?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.individual2?.secondary_info?.unit_white_space,
-      },
-    };
+    const individual1 = getIndividualObject("individual1");
+
+    const individual2 = getIndividualObject("individual2");
+
     type Individual = typeof individual2 & typeof individual1;
 
     const nonFossil = {
@@ -413,6 +411,7 @@ export class PowerFlowCardPlus extends LitElement {
       state: {
         power: null as number | null,
       },
+      color: entities.fossil_fuel_percentage?.color,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
         has: this.hasField(entities.fossil_fuel_percentage?.secondary_info, true),
@@ -435,7 +434,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     if (entities.solar?.color !== undefined) {
       let solarColor = entities.solar?.color;
-      if (typeof solarColor === "object") solarColor = colorRgbListToHex(solarColor);
+      if (typeof solarColor === "object") solarColor = this.convertColorListToHex(solarColor);
       this.style.setProperty("--energy-solar-color", solarColor || "#ff9800");
     }
     this.style.setProperty("--icon-solar-color", entities.solar?.color_icon ? "var(--energy-solar-color)" : "var(--primary-text-color)");
@@ -483,7 +482,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (grid.color.fromGrid !== undefined) {
       // If the user has set a color for the grid consumption, convert it to hex
       if (typeof grid.color.fromGrid === "object") {
-        grid.color.fromGrid = colorRgbListToHex(grid.color.fromGrid);
+        grid.color.fromGrid = this.convertColorListToHex(grid.color.fromGrid);
       }
     }
 
@@ -504,25 +503,20 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (grid.secondary.has) {
-      const gridSecondaryEntity = this.hass.states[entities.grid?.secondary_info?.entity ?? 0];
-      const gridSecondaryState = Number(gridSecondaryEntity.state);
-      if (this.entityInverted("gridSecondary")) {
-        grid.secondary.state = Math.abs(Math.min(gridSecondaryState, 0));
-      } else {
-        grid.secondary.state = Math.max(gridSecondaryState, 0);
-      }
+      const gridSecondaryState = Number(this.hass.states[entities.grid?.secondary_info?.entity ?? 0].state);
+      grid.secondary.state = Math.max(gridSecondaryState, 0);
     }
 
     if (grid.color.toGrid !== undefined) {
       if (typeof grid.color.toGrid === "object") {
-        grid.color.toGrid = colorRgbListToHex(grid.color.toGrid);
+        grid.color.toGrid = this.convertColorListToHex(grid.color.toGrid);
       }
       this.style.setProperty("--energy-grid-return-color", grid.color.toGrid || "#a280db");
     }
 
     if (grid.color.fromGrid !== undefined) {
       if (typeof grid.color.fromGrid === "object") {
-        grid.color.fromGrid = colorRgbListToHex(grid.color.fromGrid);
+        grid.color.fromGrid = this.convertColorListToHex(grid.color.fromGrid);
       }
       this.style.setProperty("--energy-grid-consumption-color", grid.color.fromGrid || "#a280db");
     }
@@ -586,7 +580,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     let individual1Color = entities.individual1?.color;
     if (individual1Color !== undefined) {
-      if (typeof individual1Color === "object") individual1Color = colorRgbListToHex(individual1Color);
+      if (typeof individual1Color === "object") individual1Color = this.convertColorListToHex(individual1Color);
       this.style.setProperty("--individualone-color", individual1Color); /* dynamically update color of entity depending on user's input */
     }
     this.style.setProperty(
@@ -602,18 +596,14 @@ export class PowerFlowCardPlus extends LitElement {
       const individual1SecondaryEntity = this.hass.states[entities.individual1?.secondary_info?.entity!];
       const individual1SecondaryState = individual1SecondaryEntity.state;
       if (typeof individual1SecondaryState === "number") {
-        if (this.entityInverted("individual1Secondary")) {
-          individual1.secondary.state = Math.abs(Math.min(individual1SecondaryState, 0));
-        } else {
-          individual1.secondary.state = Math.max(individual1SecondaryState, 0);
-        }
+        individual1.secondary.state = Math.max(individual1SecondaryState, 0);
       } else if (typeof individual1SecondaryState === "string") {
         individual1.secondary.state = individual1SecondaryState;
       }
     }
 
     if (individual2.color !== undefined) {
-      if (typeof individual2.color === "object") individual2.color = colorRgbListToHex(individual2.color);
+      if (typeof individual2.color === "object") individual2.color = this.convertColorListToHex(individual2.color);
       this.style.setProperty("--individualtwo-color", individual2.color); /* dynamically update color of entity depending on user's input */
     }
     this.style.setProperty(
@@ -629,24 +619,15 @@ export class PowerFlowCardPlus extends LitElement {
       const individual2SecondaryEntity = this.hass.states[entities.individual2?.secondary_info?.entity!];
       const individual2SecondaryState = individual2SecondaryEntity.state;
       if (typeof individual2SecondaryState === "number") {
-        if (this.entityInverted("individual2Secondary")) {
-          individual2.secondary.state = Math.abs(Math.min(individual2SecondaryState, 0));
-        } else {
-          individual2.secondary.state = Math.max(individual2SecondaryState, 0);
-        }
+        individual2.secondary.state = Math.max(individual2SecondaryState, 0);
       } else if (typeof individual2SecondaryState === "string") {
         individual2.secondary.state = individual2SecondaryState;
       }
     }
 
     if (home.secondary.has) {
-      const homeSecondaryEntity = this.hass.states[entities.home?.secondary_info?.entity!];
-      const homeSecondaryState = Number(homeSecondaryEntity.state);
-      if (this.entityInverted("homeSecondary")) {
-        home.secondary.state = Math.abs(Math.min(homeSecondaryState, 0));
-      } else {
-        home.secondary.state = Math.max(homeSecondaryState, 0);
-      }
+      const homeSecondaryState = Number(this.hass.states[entities.home?.secondary_info?.entity!].state);
+      home.secondary.state = Math.max(homeSecondaryState, 0);
     }
 
     if (battery.has) {
@@ -672,11 +653,11 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (battery.color.fromBattery !== undefined) {
-      if (typeof battery.color.fromBattery === "object") battery.color.fromBattery = colorRgbListToHex(battery.color.fromBattery);
+      if (typeof battery.color.fromBattery === "object") battery.color.fromBattery = this.convertColorListToHex(battery.color.fromBattery);
       this.style.setProperty("--energy-battery-out-color", battery.color.fromBattery || "#4db6ac");
     }
     if (battery.color.toBattery !== undefined) {
-      if (typeof battery.color.toBattery === "object") battery.color.toBattery = colorRgbListToHex(battery.color.toBattery);
+      if (typeof battery.color.toBattery === "object") battery.color.toBattery = this.convertColorListToHex(battery.color.toBattery);
       this.style.setProperty("--energy-battery-in-color", battery.color.toBattery || "#a280db");
     }
 
@@ -739,11 +720,7 @@ export class PowerFlowCardPlus extends LitElement {
       const nonFossilFuelSecondaryEntity = this.hass.states[entities.fossil_fuel_percentage?.secondary_info?.entity!];
       const nonFossilFuelSecondaryState = nonFossilFuelSecondaryEntity.state;
       if (typeof nonFossilFuelSecondaryState === "number") {
-        if (this.entityInverted("nonFossilSecondary")) {
-          nonFossil.secondary.state = Math.abs(Math.min(nonFossilFuelSecondaryState, 0));
-        } else {
-          nonFossil.secondary.state = Math.max(nonFossilFuelSecondaryState, 0);
-        }
+        nonFossil.secondary.state = Math.max(nonFossilFuelSecondaryState, 0);
       } else if (typeof nonFossilFuelSecondaryState === "string") {
         nonFossil.secondary.state = nonFossilFuelSecondaryState;
       }
@@ -798,17 +775,15 @@ export class PowerFlowCardPlus extends LitElement {
       this.previousDur[flowName] = newDur[flowName];
     });
 
-    let nonFossilColor = entities.fossil_fuel_percentage?.color;
-    if (nonFossilColor !== undefined) {
-      if (typeof nonFossilColor === "object") nonFossilColor = colorRgbListToHex(nonFossilColor);
-      this.style.setProperty("--non-fossil-color", nonFossilColor || "var(--energy-non-fossil-color)");
+    if (nonFossil.color !== undefined) {
+      if (typeof nonFossil.color === "object") nonFossil.color = this.convertColorListToHex(nonFossil.color);
+      this.style.setProperty("--non-fossil-color", nonFossil.color || "var(--energy-non-fossil-color)");
     }
     this.style.setProperty(
       "--icon-non-fossil-color",
       entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)" || "var(--non-fossil-color)"
     );
 
-    const homeIconColorType = entities.home?.color_icon;
     const homeSources = {
       battery: {
         value: homeBatteryCircumference,
@@ -832,13 +807,13 @@ export class PowerFlowCardPlus extends LitElement {
     const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
 
     let iconHomeColor: string = "var(--primary-text-color)";
-    if (homeIconColorType === "solar") {
+    if (home.color.icon_type === "solar") {
       iconHomeColor = "var(--energy-solar-color)";
-    } else if (homeIconColorType === "battery") {
+    } else if (home.color.icon_type === "battery") {
       iconHomeColor = "var(--energy-battery-out-color)";
-    } else if (homeIconColorType === "grid") {
+    } else if (home.color.icon_type === "grid") {
       iconHomeColor = "var(--energy-grid-consumption-color)";
-    } else if (homeIconColorType === true) {
+    } else if (home.color.icon_type === true) {
       iconHomeColor = homeSources[homeLargestSource].color;
     }
     this.style.setProperty("--icon-home-color", iconHomeColor);
@@ -855,24 +830,14 @@ export class PowerFlowCardPlus extends LitElement {
       textHomeColor = homeSources[homeLargestSource].color;
     }
 
-    const homeName =
-      entities.home?.name ||
-      (entities.home?.use_metadata && this.getEntityStateObj(entities.home.entity)?.attributes.friendly_name) ||
-      this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home");
+    const getIndividualDisplayState = (field: Individual) => {
+      if (field.state === undefined) return "";
+      return this.displayValue(field.state, field.unit, field.unit_white_space, field.decimals);
+    };
 
-    const individual1DisplayState = this.displayValue(
-      individual1.state,
-      entities.individual1?.unit_of_measurement,
-      undefined,
-      entities.individual1?.decimals
-    );
+    const individual1DisplayState = getIndividualDisplayState(individual1);
 
-    const individual2DisplayState = this.displayValue(
-      individual2.state,
-      entities.individual2?.unit_of_measurement,
-      undefined,
-      entities.individual2?.decimals
-    );
+    const individual2DisplayState = getIndividualDisplayState(individual2);
 
     this.style.setProperty("--text-home-color", textHomeColor);
 
@@ -982,14 +947,20 @@ export class PowerFlowCardPlus extends LitElement {
 
     const individualSecondarySpan = (individual: Individual, key: string) => {
       const templateResult: string = templatesObj[`${key}Secondary`];
-      return html` ${individual.secondary.has || templateResult
+      const value = individual.secondary.has
+        ? this.displayValue(individual.secondary.state, individual.secondary.unit, individual.secondary.unit_white_space)
+        : undefined;
+      const passesDisplayZeroCheck =
+        individual.secondary.displayZero !== false ||
+        (isNumberValue(individual.secondary.state)
+          ? (Number(individual.secondary.state) ?? 0) > (individual.secondary.displayZeroTolerance ?? 0)
+          : true);
+      return html` ${(individual.secondary.has && passesDisplayZeroCheck) || templateResult
         ? html`${baseSecondarySpan({
             className: key,
             entityId: individual.secondary.entity,
             icon: individual.secondary.icon,
-            value: individual.secondary.has
-              ? this.displayValue(individual.secondary.state, individual.secondary.unit, individual.secondary.unit_white_space)
-              : undefined,
+            value,
             template: templatesObj[`${key}Secondary`],
           })}`
         : ""}`;
@@ -1107,11 +1078,11 @@ export class PowerFlowCardPlus extends LitElement {
                           id="individual2-icon"
                           .icon=${individual2.icon}
                           style="${individual2.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > 0
+                          ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > 0
+                        ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
                           ? html` <span class="individual2">${individual2DisplayState} </span>`
                           : ""}
                       </div>
@@ -1159,11 +1130,11 @@ export class PowerFlowCardPlus extends LitElement {
                           id="individual1-icon"
                           .icon=${individual1.icon}
                           style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > 0
+                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > 0
+                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
                           ? html` <span class="individual1">${individual1DisplayState} </span>`
                           : ""}
                       </div>
@@ -1330,7 +1301,7 @@ export class PowerFlowCardPlus extends LitElement {
                   />
                 </svg>
               </div>
-              ${this.showLine(individual1.state || 0) && individual2.has ? "" : html` <span class="label">${homeName}</span>`}
+              ${this.showLine(individual1.state || 0) && individual2.has && individual1.has ? "" : html` <span class="label">${home.name}</span>`}
             </div>
           </div>
           ${battery.has || (individual1.has && individual2.has)
@@ -1491,11 +1462,11 @@ export class PowerFlowCardPlus extends LitElement {
                           id="individual1-icon"
                           .icon=${individual1.icon}
                           style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > 0
+                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > 0
+                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
                           ? html` <span class="individual1">${individual1DisplayState} </span>`
                           : ""}
                       </div>
