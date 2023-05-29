@@ -432,6 +432,16 @@ export class PowerFlowCardPlus extends LitElement {
       solar.secondary.state = Math.max(solarSecondaryState, 0); // negative values are not allowed
     }
 
+    if (grid.hasReturnToGrid) {
+      if (typeof entities.grid!.entity === "string") {
+        grid.state.toGrid = this.entityInverted("grid")
+          ? Math.max(this.getEntityStateWatts(entities.grid!.entity), 0)
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.grid!.entity), 0));
+      } else {
+        grid.state.toGrid = this.getEntityStateWatts(entities.grid?.entity.production);
+      }
+    }
+
     if (entities.solar?.color !== undefined) {
       let solarColor = entities.solar?.color;
       if (typeof solarColor === "object") solarColor = this.convertColorListToHex(solarColor);
@@ -519,16 +529,6 @@ export class PowerFlowCardPlus extends LitElement {
         grid.color.fromGrid = this.convertColorListToHex(grid.color.fromGrid);
       }
       this.style.setProperty("--energy-grid-consumption-color", grid.color.fromGrid || "#a280db");
-    }
-
-    if (grid.hasReturnToGrid) {
-      if (typeof entities.grid!.entity === "string") {
-        grid.state.toGrid = this.entityInverted("grid")
-          ? Math.max(this.getEntityStateWatts(entities.grid!.entity), 0)
-          : Math.abs(Math.min(this.getEntityStateWatts(entities.grid!.entity), 0));
-      } else {
-        grid.state.toGrid = this.getEntityStateWatts(entities.grid?.entity.production);
-      }
     }
 
     if (entities.grid?.display_zero_tolerance !== undefined) {
@@ -966,6 +966,7 @@ export class PowerFlowCardPlus extends LitElement {
         : ""}`;
     };
 
+    console.log(grid.hasReturnToGrid, solar.has, solar.state.toGrid);
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content" id="card-content">
