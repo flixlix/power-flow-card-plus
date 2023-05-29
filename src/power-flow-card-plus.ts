@@ -460,6 +460,25 @@ export class PowerFlowCardPlus extends LitElement {
       solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
 
+    if (battery.has) {
+      if (typeof entities.battery?.entity === "string") {
+        battery.state.toBattery = this.entityInverted("battery")
+          ? Math.max(this.getEntityStateWatts(entities.battery!.entity), 0)
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0));
+        battery.state.fromBattery = this.entityInverted("battery")
+          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0))
+          : Math.max(this.getEntityStateWatts(entities.battery!.entity), 0);
+      } else {
+        battery.state.toBattery = this.getEntityStateWatts(entities.battery?.entity?.production);
+        battery.state.fromBattery = this.getEntityStateWatts(entities.battery?.entity?.consumption);
+      }
+      if (entities?.battery?.display_zero_tolerance) {
+        if (entities.battery.display_zero_tolerance >= battery.state.toBattery) battery.state.toBattery = 0;
+        if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
+      }
+      battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
+    }
+
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
       // What we returned to the grid and what went in to the battery is more
       // than produced, so we have used grid energy to fill the battery or
@@ -481,7 +500,7 @@ export class PowerFlowCardPlus extends LitElement {
           (grid.state.toGrid || 0) - (solar.state.total || 0) - (battery.state.toBattery || 0) - (grid.state.toBattery || 0)
         );
       }
-      solar.state.toBattery = battery.state.toBattery! - (grid.state.toBattery || 0);
+      solar.state.toBattery = battery.state.toBattery - (grid.state.toBattery || 0);
     } else if (!solar.has && battery.has) {
       battery.state.toGrid = grid.state.toGrid || 0;
     }
@@ -628,25 +647,6 @@ export class PowerFlowCardPlus extends LitElement {
     if (home.secondary.has) {
       const homeSecondaryState = Number(this.hass.states[entities.home?.secondary_info?.entity!].state);
       home.secondary.state = Math.max(homeSecondaryState, 0);
-    }
-
-    if (battery.has) {
-      if (typeof entities.battery?.entity === "string") {
-        battery.state.toBattery = this.entityInverted("battery")
-          ? Math.max(this.getEntityStateWatts(entities.battery!.entity), 0)
-          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0));
-        battery.state.fromBattery = this.entityInverted("battery")
-          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0))
-          : Math.max(this.getEntityStateWatts(entities.battery!.entity), 0);
-      } else {
-        battery.state.toBattery = this.getEntityStateWatts(entities.battery?.entity?.production);
-        battery.state.fromBattery = this.getEntityStateWatts(entities.battery?.entity?.consumption);
-      }
-      if (entities?.battery?.display_zero_tolerance) {
-        if (entities.battery.display_zero_tolerance >= battery.state.toBattery) battery.state.toBattery = 0;
-        if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
-      }
-      battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
     if (battery.color.fromBattery !== undefined) {
