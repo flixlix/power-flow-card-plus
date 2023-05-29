@@ -646,9 +646,6 @@ export class PowerFlowCardPlus extends LitElement {
         if (entities.battery.display_zero_tolerance >= battery.state.toBattery) battery.state.toBattery = 0;
         if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
       }
-    }
-
-    if (battery.has) {
       battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
@@ -1248,7 +1245,7 @@ export class PowerFlowCardPlus extends LitElement {
                   }
                 }}
               >
-                ${generalSecondarySpan(grid, "grid")}
+                ${generalSecondarySpan(home, "home")}
                 <ha-icon .icon=${home.icon}></ha-icon>
                 ${homeUsageToDisplay}
                 <svg class="home-circle-sections">
