@@ -966,7 +966,6 @@ export class PowerFlowCardPlus extends LitElement {
         : ""}`;
     };
 
-    console.log(grid.hasReturnToGrid, solar.has, solar.state.toGrid);
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content" id="card-content">
