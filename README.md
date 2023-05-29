@@ -152,6 +152,9 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
 | entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entities](#split-entities). Examples of both can be found below. |
 | state_of_charge | `string` | `undefined` required | Entity ID providing a state with the state of charge of the battery in percent (state of  `100` for a full battery). |
+| state_of_charge_unit | `string` | `%` | Unit of the state of charge. |
+| state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, the unit of the state of charge will not have a white space in front of it. |
+| state_of_charge_decimals | `number` | `0` | Number of decimals to show for the state of charge. |
 | name  | `string` | `Battery` | Label for the battery option. If you don't populate this option, the label will continue to update based on the language selected. |
 | icon | `string` | `mdi:battery` or dynamic based on state of the battery | Icon path for the icon inside the Battery Circle. |
 | color | `object` |  | Check [Color Objects](#color-object) for more information. |
