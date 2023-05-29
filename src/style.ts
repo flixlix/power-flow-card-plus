@@ -146,6 +146,7 @@ export const styles = css`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    min-height: 20px;
   }
   line,
   path {
@@ -382,5 +383,9 @@ export const styles = css`
 
   .card-actions a {
     text-decoration: none;
+  }
+
+  .home-circle-sections {
+    pointer-events: none;
   }
 `;
