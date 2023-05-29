@@ -963,8 +963,6 @@ export class PowerFlowCardPlus extends LitElement {
         : ""}`;
     };
 
-    console.log(homeNonFossilCircumference);
-
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content" id="card-content">
