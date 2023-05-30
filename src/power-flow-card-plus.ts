@@ -359,6 +359,7 @@ export class PowerFlowCardPlus extends LitElement {
         entity: entities.home?.secondary_info?.entity,
         has: this.hasField(entities.home?.secondary_info),
         state: null as number | string | null,
+        unit: entities.home?.secondary_info?.unit_of_measurement,
       },
     };
 
