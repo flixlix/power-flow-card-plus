@@ -797,6 +797,7 @@ export class PowerFlowCardPlus extends LitElement {
       entities.fossil_fuel_percentage?.secondary_info?.color_value ? "var(--non-fossil-color)" : "var(--primary-text-color)"
     );
 
+    console.log(entities.fossil_fuel_percentage?.secondary_info?.color_value);
     this.style.setProperty(
       "--text-individualone-color",
       entities.individual1?.color_value ? "var(--individualone-color)" : "var(--primary-text-color)"
