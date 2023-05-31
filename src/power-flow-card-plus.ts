@@ -703,7 +703,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     const totalIndividualConsumption = coerceNumber(individual1.state, 0) + coerceNumber(individual2.state, 0);
 
-    const totalHomeConsumption = Math.max((grid.state.fromGrid ?? 0) + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0), 0);
+    const totalHomeConsumption = Math.max((grid.state.fromGrid ?? 0) + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0) - (battery.state.toBattery ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
     if (battery.state.fromBattery) homeBatteryCircumference = circleCircumference * (battery.state.fromBattery / totalHomeConsumption);
