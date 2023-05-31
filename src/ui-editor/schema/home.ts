@@ -47,6 +47,11 @@ const mainSchema = {
       label: "Override State (With Home Entity)",
       selector: { boolean: {} },
     },
+    {
+      name: "use_metadata",
+      label: "Use Metadata",
+      selector: { boolean: {} },
+    },
   ],
 };
 
