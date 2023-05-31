@@ -420,6 +420,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.fossil_fuel_percentage?.secondary_info?.icon,
         unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
+        color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
       },
     };
 
