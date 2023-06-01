@@ -6,6 +6,7 @@ import {
   getBaseMainConfigSchema,
   customColorsSchema,
 } from "./_schema-base";
+import localize from "../../localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("grid"),
@@ -14,6 +15,11 @@ const mainSchema = {
     {
       name: "invert_state",
       label: "Invert State",
+      selector: { boolean: {} },
+    },
+    {
+      name: "use_metadata",
+      label: "Use Metadata",
       selector: { boolean: {} },
     },
   ],
@@ -41,13 +47,13 @@ export const gridSchema = [
   mainSchema,
   customColorsSchema,
   {
-    title: "Secondary Info",
+    title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
     schema: secondaryInfoSchema,
   },
   {
-    title: "Power Outage",
+    title: localize("editor.power_outage"),
     name: "power_outage",
     type: "expandable",
     schema: powerOutageGridSchema,

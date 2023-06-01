@@ -12,6 +12,7 @@ export type SecondaryInfoType = {
   display_zero_tolerance?: number;
   color_value?: boolean | "production" | "consumption";
   template?: string;
+  decimals?: number;
 };
 
 export interface baseConfigEntity {
@@ -48,6 +49,7 @@ export type IndividualDeviceType = baseConfigEntity & {
   calculate_flow_rate?: boolean;
   use_metadata?: boolean;
   decimals?: number;
+  show_direction?: boolean;
 };
 
 export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2";

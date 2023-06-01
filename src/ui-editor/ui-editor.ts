@@ -7,6 +7,7 @@ import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helper
 import { assert } from "superstruct";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema-all";
+import localize from "../localize/localize";
 
 export const loadHaForm = async () => {
   if (customElements.get("ha-form")) return;
@@ -56,7 +57,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${entitiesSchema}
+          .schema=${entitiesSchema(localize)}
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
           class="entities-section"
@@ -65,7 +66,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${advancedOptionsSchema}
+          .schema=${advancedOptionsSchema(localize)}
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
         ></ha-form>
@@ -80,8 +81,8 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     fireEvent(this, "config-changed", { config });
   }
 
-  private _computeLabelCallback = (schema) =>
-    schema?.label || this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}` || schema?.name || "");
+  private _computeLabelCallback = (schema: any) =>
+    this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`) || localize(`editor.${schema?.name}`);
 
   static get styles() {
     return css`

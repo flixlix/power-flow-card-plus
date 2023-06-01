@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { secondaryInfoSchema, getBaseMainConfigSchema } from "./_schema-base";
+import localize from "../../localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema(),
@@ -48,6 +49,11 @@ const mainSchema = {
       label: "Unit White Space",
       selector: { boolean: {} },
     },
+    {
+      name: "use_metadata",
+      label: "Use Metadata",
+      selector: { boolean: {} },
+    },
   ],
 };
 
@@ -63,7 +69,7 @@ export const nonFossilSchema = [
     selector: { color_rgb: {} },
   },
   {
-    title: "Secondary Info",
+    title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
     schema: secondaryInfoSchema,
