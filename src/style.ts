@@ -30,6 +30,8 @@ export const styles = css`
     --secondary-text-non-fossil-color: var(--primary-text-color);
     --lines-svg-not-flat-line-height: 106%;
     --lines-svg-not-flat-line-top: -3%;
+    --lines-svg-flat-width: calc(100% - 160px);
+    --lines-svg-not-flat-width: calc(103% - 165px);
   }
   :root {
   }
@@ -61,13 +63,13 @@ export const styles = css`
     height: 156px;
   }
   .lines svg {
-    width: calc(100% - 160px);
+    width: var(--lines-svg-flat-width);
     height: 100%;
     max-width: 340px;
   }
 
   .lines svg:not(.flat-line) {
-    width: calc(103% - 165px);
+    width: var(--lines-svg-not-flat-width);
     height: var(--lines-svg-not-flat-line-height);
     top: var(--lines-svg-not-flat-line-top);
     position: relative;
