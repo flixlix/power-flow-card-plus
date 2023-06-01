@@ -407,11 +407,7 @@ export class PowerFlowCardPlus extends LitElement {
         (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes?.icon) ||
         "mdi:leaf",
       hasPower: false,
-      hasPercentage:
-        (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) ||
-        ((grid.state.fromGrid ?? 0) * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
-          entities.fossil_fuel_percentage?.entity !== undefined &&
-          this.entityAvailable(entities.fossil_fuel_percentage?.entity)),
+      hasPercentage: false,
       state: {
         power: null as number | null,
       },
@@ -625,6 +621,14 @@ export class PowerFlowCardPlus extends LitElement {
       } else if (typeof individual1SecondaryState === "string") {
         individual1.secondary.state = individual1SecondaryState;
       }
+    }
+
+    if (nonFossil.entity !== undefined) {
+      nonFossil.hasPercentage =
+        (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) ||
+        ((grid.state.fromGrid ?? 0) * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
+          entities.fossil_fuel_percentage?.entity !== undefined &&
+          this.entityAvailable(entities.fossil_fuel_percentage?.entity));
     }
 
     if (individual2.color !== undefined) {
@@ -968,6 +972,7 @@ export class PowerFlowCardPlus extends LitElement {
           })}`
         : ""}`;
     };
+    console.log(solar.state);
 
     return html`
       <ha-card .header=${this._config.title}>
