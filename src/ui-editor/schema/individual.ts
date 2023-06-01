@@ -51,6 +51,11 @@ const mainSchema = {
       label: "Calculate Flow Rate",
       selector: { boolean: {} },
     },
+    {
+      name: "use_metadata",
+      label: "Use Metadata",
+      selector: { boolean: {} },
+    },
   ],
 };
 

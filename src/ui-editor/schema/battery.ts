@@ -11,6 +11,11 @@ const mainSchema = {
       label: "Invert State",
       selector: { boolean: {} },
     },
+    {
+      name: "use_metadata",
+      label: "Use Metadata",
+      selector: { boolean: {} },
+    },
   ],
 };
 
