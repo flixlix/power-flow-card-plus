@@ -49,6 +49,7 @@ export type IndividualDeviceType = baseConfigEntity & {
   calculate_flow_rate?: boolean;
   use_metadata?: boolean;
   decimals?: number;
+  show_direction?: boolean;
 };
 
 export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2";

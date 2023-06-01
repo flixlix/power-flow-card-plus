@@ -52,6 +52,11 @@ const mainSchema = {
       selector: { boolean: {} },
     },
     {
+      name: "show_direction",
+      label: "Show Direction",
+      selector: { boolean: {} },
+    },
+    {
       name: "use_metadata",
       label: "Use Metadata",
       selector: { boolean: {} },

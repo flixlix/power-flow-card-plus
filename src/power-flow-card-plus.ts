@@ -224,7 +224,7 @@ export class PowerFlowCardPlus extends LitElement {
   private hasField(field?: any, acceptStringState?: boolean): boolean {
     return (
       (field !== undefined && field?.display_zero === true) ||
-      (this.getEntityStateWatts(field?.entity) > (field?.display_zero_tolerance ?? 0) && this.entityAvailable(field?.entity)) ||
+      (Math.abs(this.getEntityStateWatts(field?.entity)) > (field?.display_zero_tolerance ?? 0) && this.entityAvailable(field?.entity)) ||
       acceptStringState
         ? typeof this.hass.states[field?.entity]?.state === "string"
         : false
@@ -383,6 +383,8 @@ export class PowerFlowCardPlus extends LitElement {
       unit: entities[field]?.unit_of_measurement,
       unit_white_space: entities[field]?.unit_white_space,
       decimals: entities[field]?.decimals,
+      invertAnimation: entities[field]?.inverted_animation || false,
+      showDirection: entities[field]?.show_direction || false,
       secondary: {
         entity: entities[field]?.secondary_info?.entity,
         has: this.hasField(entities[field]?.secondary_info, true),
@@ -615,9 +617,9 @@ export class PowerFlowCardPlus extends LitElement {
       entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)"
     );
     if (individual1.has) {
-      const individual1State = this.getEntityStateWatts(entities.individual1?.entity!);
-      if (this.entityInverted("individual1")) individual1.state = Math.abs(Math.min(individual1State, 0));
-      else individual1.state = Math.max(individual1State, 0);
+      const individual1State = this.getEntityStateWatts(entities.individual1?.entity);
+      if (individual1State < 0) individual1.invertAnimation = !individual1.invertAnimation;
+      individual1.state = Math.abs(individual1State);
     }
     if (individual1.secondary.has) {
       const individual1SecondaryEntity = this.hass.states[entities.individual1?.secondary_info?.entity!];
@@ -647,8 +649,8 @@ export class PowerFlowCardPlus extends LitElement {
     );
     if (individual2.has) {
       const individual2State = this.getEntityStateWatts(entities.individual2?.entity);
-      if (this.entityInverted("individual2")) individual2.state = Math.abs(Math.min(individual2State, 0));
-      else individual2.state = Math.max(individual2State, 0);
+      if (individual2State < 0) individual2.invertAnimation = !individual2.invertAnimation;
+      individual2.state = Math.abs(individual2State);
     }
     if (individual2.secondary.has) {
       const individual2SecondaryEntity = this.hass.states[entities.individual2?.secondary_info?.entity!];
@@ -1098,7 +1100,11 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual2">${individual2DisplayState} </span>`
+                          ? html` <span class="individual2">
+                              ${individual2.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual2.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                : ""}${individual2DisplayState}
+                            </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual2.state || 0)
@@ -1115,7 +1121,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"    
                                 repeatCount="indefinite"
                                 calcMode="linear"
-                                keyPoints=${entities.individual2?.inverted_animation ? "0;1" : "1;0"}
+                                keyPoints=${individual2.invertAnimation ? "0;1" : "1;0"}
                                 keyTimes="0;1"
                               >
                                 <mpath xlink:href="#individual2" />
@@ -1150,7 +1156,11 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1">${individual1DisplayState} </span>`
+                          ? html` <span class="individual1"
+                              >${individual1.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                : ""}${individual1DisplayState}
+                            </span>`
                           : ""}
                       </div>
                       ${this.showLine(individual1.state || 0)
@@ -1167,7 +1177,7 @@ export class PowerFlowCardPlus extends LitElement {
                                   dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
+                                  keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
 
                                 >
@@ -1451,7 +1461,7 @@ export class PowerFlowCardPlus extends LitElement {
                                   dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints=${entities.individual1?.inverted_animation ? "0;1" : "1;0"}
+                                  keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
                                 >
                                   <mpath xlink:href="#individual1" />
@@ -1482,7 +1492,11 @@ export class PowerFlowCardPlus extends LitElement {
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
                         ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1">${individual1DisplayState} </span>`
+                          ? html` <span class="individual1"
+                              >${individual1.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                : ""}${individual1DisplayState}
+                            </span>`
                           : ""}
                       </div>
                       <span class="label">${individual1.name}</span>
