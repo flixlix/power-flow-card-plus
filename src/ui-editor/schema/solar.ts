@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { secondaryInfoSchema, getBaseMainConfigSchema } from "./_schema-base";
+import localize from "../../localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema(),
@@ -45,7 +46,7 @@ export const solarSchema = [
     selector: { color_rgb: {} },
   },
   {
-    title: "Secondary Info",
+    title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
     schema: secondaryInfoSchema,

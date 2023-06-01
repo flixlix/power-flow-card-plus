@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { getBaseMainConfigSchema, secondaryInfoSchema } from "./_schema-base";
+import localize from "../../localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema(),
@@ -16,19 +17,8 @@ const mainSchema = {
       selector: { boolean: {} },
     },
     {
-      name: "unit_of_measurement",
-      label: "Unit of Measurement",
-      selector: { text: {} },
-    },
-    {
       name: "display_zero",
       label: "Display Zero",
-      selector: { boolean: {} },
-    },
-
-    {
-      name: "inverted_animation",
-      label: "Invert Animation",
       selector: { boolean: {} },
     },
     {
@@ -42,13 +32,23 @@ const mainSchema = {
       selector: { boolean: {} },
     },
     {
+      name: "unit_of_measurement",
+      label: "Unit of Measurement",
+      selector: { text: {} },
+    },
+    {
+      name: "calculate_flow_rate",
+      label: "Calculate Flow Rate",
+      selector: { boolean: {} },
+    },
+    {
       name: "decimals",
       label: "Decimals",
       selector: { number: { mode: "box", min: 0, max: 4, step: 1 } },
     },
     {
-      name: "calculate_flow_rate",
-      label: "Calculate Flow Rate",
+      name: "inverted_animation",
+      label: "Invert Animation",
       selector: { boolean: {} },
     },
     {
@@ -76,7 +76,7 @@ export const individualSchema = [
     selector: { color_rgb: {} },
   },
   {
-    title: "Secondary Info",
+    title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
     schema: secondaryInfoSchema,
