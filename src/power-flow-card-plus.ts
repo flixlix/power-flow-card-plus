@@ -462,10 +462,6 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
-    if (solar.has) {
-      solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
-    }
-
     if (battery.has) {
       if (typeof entities.battery?.entity === "string") {
         battery.state.toBattery = this.entityInverted("battery")
@@ -483,6 +479,10 @@ export class PowerFlowCardPlus extends LitElement {
         if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
       }
       battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
+    }
+
+    if (solar.has) {
+      solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
 
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
