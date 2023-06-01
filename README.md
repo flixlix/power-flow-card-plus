@@ -11,7 +11,15 @@
 ## Additional Features / Enhancements
 
 - UI Editor!!! 🥳
-- Secondary Information for all power circles
+- Multiple Language support (🇺🇸, 🇩🇪, 🇵🇹, 🇪🇸, 🇧🇷, 🇳🇱, 🇮🇹, 🇫🇷, 🇷🇺, 🇫🇮, 🇵🇱)
+- Bidirectional Individual Entities ↕️
+- Secondary Information for all circles ℹ️
+- Display Grid Power Outage ⚡️
+- Template functionality 📙
+
+<details>
+<summary>... and More:</summary>
+  
 - Add Grid Tolerance for small values, to not display the battery correcting grid values
 - New and improved Flow Rate Model
 - Choose wether or not to color icons, text, etc.
@@ -19,14 +27,14 @@
 - Customize Individual entities's label, icon and color
 - Configure wether to hide Individual Entity when state is 0 or unavailable
 - Clickable entities (including home)
-- Fixed crooked lines [PR #4](https://github.com/flixlix/power-flow-card-plus/pull/4)
+- Fixed crooked lines
 - Have curved lines connect to the Circles
 - Keep color of battery to grid line, even when not returning
 - Display Low Carbon Energy from the grid
 - Customize Low Carbon Energy label, icon, circle color, icon color and state type
 - Customize Battery, Solar and Home's color, icon, color of icon and label
-- Customize Grid Offline label
-- Template functionality: [Home Assistant Templates](https://www.home-assistant.io/docs/configuration/templating/)
+  
+</details>
 
 ## Goal
 
