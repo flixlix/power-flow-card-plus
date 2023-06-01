@@ -268,9 +268,10 @@ export class PowerFlowCardPlus extends LitElement {
       has: entities?.grid?.entity !== undefined,
       hasReturnToGrid: typeof entities.grid?.entity === "string" || entities.grid?.entity?.production,
       state: {
-        fromGrid: null as null | number,
+        fromGrid: 0,
         toGrid: null as null | number,
         toBattery: null as null | number,
+        toHome: null as null | number,
       },
       powerOutage: {
         has: this.hasField(entities.grid?.power_outage, true),
@@ -406,12 +407,8 @@ export class PowerFlowCardPlus extends LitElement {
         entities.fossil_fuel_percentage?.icon ||
         (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes?.icon) ||
         "mdi:leaf",
-      hasPower: false,
-      hasPercentage:
-        (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) ||
-        ((grid.state.fromGrid ?? 0) * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
-          entities.fossil_fuel_percentage?.entity !== undefined &&
-          this.entityAvailable(entities.fossil_fuel_percentage?.entity)),
+      has: false,
+      hasPercentage: false,
       state: {
         power: null as number | null,
       },
@@ -428,14 +425,20 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    this.style.setProperty(
-      "--secondary-text-solar-color",
-      entities.solar?.secondary_info?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
-    );
+    if (grid.has) {
+      if (typeof entities.grid!.entity === "string") {
+        if (this.entityInverted("grid")) {
+          grid.state.fromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
+        } else {
+          grid.state.fromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
+        }
+      } else {
+        grid.state.fromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
+      }
+    }
 
-    if (solar.secondary.has) {
-      const solarSecondaryState = Number(this.hass.states[entities.solar?.secondary_info?.entity!].state);
-      solar.secondary.state = Math.max(solarSecondaryState, 0); // negative values are not allowed
+    if (entities.grid?.display_zero_tolerance !== undefined) {
+      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
     }
 
     if (grid.hasReturnToGrid) {
@@ -446,6 +449,16 @@ export class PowerFlowCardPlus extends LitElement {
       } else {
         grid.state.toGrid = this.getEntityStateWatts(entities.grid?.entity.production);
       }
+    }
+
+    this.style.setProperty(
+      "--secondary-text-solar-color",
+      entities.solar?.secondary_info?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
+    );
+
+    if (solar.secondary.has) {
+      const solarSecondaryState = Number(this.hass.states[entities.solar?.secondary_info?.entity!].state);
+      solar.secondary.state = Math.max(solarSecondaryState, 0); // negative values are not allowed
     }
 
     if (entities.solar?.color !== undefined) {
@@ -460,10 +473,6 @@ export class PowerFlowCardPlus extends LitElement {
       if (entities.solar?.display_zero_tolerance) {
         if (entities.solar.display_zero_tolerance >= solar.state.total) solar.state.total = 0;
       }
-    }
-
-    if (solar.has) {
-      solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
 
     if (battery.has) {
@@ -485,10 +494,15 @@ export class PowerFlowCardPlus extends LitElement {
       battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
+    if (solar.has) {
+      solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
+    }
+
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
       // What we returned to the grid and what went in to the battery is more
       // than produced, so we have used grid energy to fill the battery or
       // returned battery energy to the grid
+      console.log(battery.has, solar.state.toHome);
       if (battery.has) {
         grid.state.toBattery = Math.abs(solar.state.toHome);
         if (grid.state.toBattery > (grid.state.fromGrid ?? 0)) {
@@ -498,6 +512,8 @@ export class PowerFlowCardPlus extends LitElement {
       }
       solar.state.toHome = 0;
     }
+
+    grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
 
     if (solar.has && battery.has) {
       if (!battery.state.toGrid) {
@@ -519,22 +535,6 @@ export class PowerFlowCardPlus extends LitElement {
       if (typeof grid.color.fromGrid === "object") {
         grid.color.fromGrid = this.convertColorListToHex(grid.color.fromGrid);
       }
-    }
-
-    if (grid.has) {
-      if (typeof entities.grid!.entity === "string") {
-        if (this.entityInverted("grid")) {
-          grid.state.fromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
-        } else {
-          grid.state.fromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
-        }
-      } else {
-        grid.state.fromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
-      }
-    }
-
-    if (entities.grid?.display_zero_tolerance !== undefined) {
-      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
     }
 
     if (grid.secondary.has) {
@@ -705,11 +705,9 @@ export class PowerFlowCardPlus extends LitElement {
         : "var(--energy-battery-in-color)"
     );
 
-    grid.state.fromGrid = Math.max((grid.state.fromGrid ?? 0) - (grid.state.toBattery ?? 0), 0);
-
     const totalIndividualConsumption = coerceNumber(individual1.state, 0) + coerceNumber(individual2.state, 0);
 
-    const totalHomeConsumption = Math.max((grid.state.fromGrid ?? 0) + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0), 0);
+    const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
     if (battery.state.fromBattery) homeBatteryCircumference = circleCircumference * (battery.state.fromBattery / totalHomeConsumption);
@@ -731,8 +729,22 @@ export class PowerFlowCardPlus extends LitElement {
 
     let homeNonFossilCircumference: number = 0;
 
+    nonFossil.has =
+      grid.state.toHome * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
+      entities.fossil_fuel_percentage?.entity !== undefined &&
+      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
+
+    if (nonFossil.has) {
+      const nonFossilFuelDecimal = 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
+      nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
+      homeNonFossilCircumference = circleCircumference * (nonFossil.state.power / totalHomeConsumption);
+    }
+
+    nonFossil.hasPercentage =
+      (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) || nonFossil.has;
+
     const totalLines =
-      grid.state.fromGrid +
+      grid.state.toHome +
       (solar.state.toHome ?? 0) +
       (solar.state.toGrid ?? 0) +
       (solar.state.toBattery ?? 0) +
@@ -754,7 +766,7 @@ export class PowerFlowCardPlus extends LitElement {
     const newDur = {
       batteryGrid: this.circleRate(grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
       batteryToHome: this.circleRate(battery.state.fromBattery ?? 0, totalLines),
-      gridToHome: this.circleRate(grid.state.fromGrid, totalLines),
+      gridToHome: this.circleRate(grid.state.toHome, totalLines),
       solarToBattery: this.circleRate(solar.state.toBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solar.state.toGrid ?? 0, totalLines),
       solarToHome: this.circleRate(solar.state.toHome ?? 0, totalLines),
@@ -841,17 +853,6 @@ export class PowerFlowCardPlus extends LitElement {
         : entities.home?.subtract_individual
         ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
         : this.displayValue(totalHomeConsumption);
-
-    nonFossil.hasPower =
-      grid.state.fromGrid * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
-      entities.fossil_fuel_percentage?.entity !== undefined &&
-      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
-
-    if (nonFossil.hasPower) {
-      const nonFossilFuelDecimal = 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
-      nonFossil.state.power = grid.state.fromGrid * nonFossilFuelDecimal;
-      homeNonFossilCircumference = circleCircumference * (nonFossil.state.power / totalHomeConsumption);
-    }
 
     const homeGridCircumference =
       circleCircumference *
@@ -1012,7 +1013,7 @@ export class PowerFlowCardPlus extends LitElement {
                         ? html`
                             <svg width="80" height="30">
                               <path d="M40 -10 v40" class="low-carbon" id="low-carbon" />
-                              ${nonFossil.hasPower
+                              ${nonFossil.has
                                 ? svg`<circle
                               r="2.4"
                               class="low-carbon"
