@@ -12,6 +12,7 @@ export type SecondaryInfoType = {
   display_zero_tolerance?: number;
   color_value?: boolean | "production" | "consumption";
   template?: string;
+  decimals?: number;
 };
 
 export interface baseConfigEntity {

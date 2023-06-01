@@ -268,9 +268,10 @@ export class PowerFlowCardPlus extends LitElement {
       has: entities?.grid?.entity !== undefined,
       hasReturnToGrid: typeof entities.grid?.entity === "string" || entities.grid?.entity?.production,
       state: {
-        fromGrid: null as null | number,
+        fromGrid: 0,
         toGrid: null as null | number,
         toBattery: null as null | number,
+        toHome: null as null | number,
       },
       powerOutage: {
         has: this.hasField(entities.grid?.power_outage, true),
@@ -359,6 +360,10 @@ export class PowerFlowCardPlus extends LitElement {
         entity: entities.home?.secondary_info?.entity,
         has: this.hasField(entities.home?.secondary_info),
         state: null as number | string | null,
+        unit: entities.home?.secondary_info?.unit_of_measurement,
+        unit_white_space: entities.home?.secondary_info?.unit_white_space,
+        icon: entities.home?.secondary_info?.icon,
+        decimals: entities.home?.secondary_info?.decimals,
       },
     };
 
@@ -404,16 +409,13 @@ export class PowerFlowCardPlus extends LitElement {
         entities.fossil_fuel_percentage?.icon ||
         (entities.fossil_fuel_percentage?.use_metadata && this.getEntityStateObj(entities.fossil_fuel_percentage.entity)?.attributes?.icon) ||
         "mdi:leaf",
-      hasPower: false,
-      hasPercentage:
-        (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) ||
-        ((grid.state.fromGrid ?? 0) * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
-          entities.fossil_fuel_percentage?.entity !== undefined &&
-          this.entityAvailable(entities.fossil_fuel_percentage?.entity)),
+      has: false,
+      hasPercentage: false,
       state: {
         power: null as number | null,
       },
       color: entities.fossil_fuel_percentage?.color,
+      color_value: entities.fossil_fuel_percentage?.color_value,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
         has: this.hasField(entities.fossil_fuel_percentage?.secondary_info, true),
@@ -421,17 +423,24 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.fossil_fuel_percentage?.secondary_info?.icon,
         unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
+        color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
       },
     };
 
-    this.style.setProperty(
-      "--secondary-text-solar-color",
-      entities.solar?.secondary_info?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
-    );
+    if (grid.has) {
+      if (typeof entities.grid!.entity === "string") {
+        if (this.entityInverted("grid")) {
+          grid.state.fromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
+        } else {
+          grid.state.fromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
+        }
+      } else {
+        grid.state.fromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
+      }
+    }
 
-    if (solar.secondary.has) {
-      const solarSecondaryState = Number(this.hass.states[entities.solar?.secondary_info?.entity!].state);
-      solar.secondary.state = Math.max(solarSecondaryState, 0); // negative values are not allowed
+    if (entities.grid?.display_zero_tolerance !== undefined) {
+      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
     }
 
     if (grid.hasReturnToGrid) {
@@ -442,6 +451,16 @@ export class PowerFlowCardPlus extends LitElement {
       } else {
         grid.state.toGrid = this.getEntityStateWatts(entities.grid?.entity.production);
       }
+    }
+
+    this.style.setProperty(
+      "--secondary-text-solar-color",
+      entities.solar?.secondary_info?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
+    );
+
+    if (solar.secondary.has) {
+      const solarSecondaryState = Number(this.hass.states[entities.solar?.secondary_info?.entity!].state);
+      solar.secondary.state = Math.max(solarSecondaryState, 0); // negative values are not allowed
     }
 
     if (entities.solar?.color !== undefined) {
@@ -458,6 +477,25 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
+    if (battery.has) {
+      if (typeof entities.battery?.entity === "string") {
+        battery.state.toBattery = this.entityInverted("battery")
+          ? Math.max(this.getEntityStateWatts(entities.battery!.entity), 0)
+          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0));
+        battery.state.fromBattery = this.entityInverted("battery")
+          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0))
+          : Math.max(this.getEntityStateWatts(entities.battery!.entity), 0);
+      } else {
+        battery.state.toBattery = this.getEntityStateWatts(entities.battery?.entity?.production);
+        battery.state.fromBattery = this.getEntityStateWatts(entities.battery?.entity?.consumption);
+      }
+      if (entities?.battery?.display_zero_tolerance) {
+        if (entities.battery.display_zero_tolerance >= battery.state.toBattery) battery.state.toBattery = 0;
+        if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
+      }
+      battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
+    }
+
     if (solar.has) {
       solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
@@ -466,6 +504,7 @@ export class PowerFlowCardPlus extends LitElement {
       // What we returned to the grid and what went in to the battery is more
       // than produced, so we have used grid energy to fill the battery or
       // returned battery energy to the grid
+      console.log(battery.has, solar.state.toHome);
       if (battery.has) {
         grid.state.toBattery = Math.abs(solar.state.toHome);
         if (grid.state.toBattery > (grid.state.fromGrid ?? 0)) {
@@ -476,6 +515,8 @@ export class PowerFlowCardPlus extends LitElement {
       solar.state.toHome = 0;
     }
 
+    grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
+
     if (solar.has && battery.has) {
       if (!battery.state.toGrid) {
         battery.state.toGrid = Math.max(
@@ -483,7 +524,7 @@ export class PowerFlowCardPlus extends LitElement {
           (grid.state.toGrid || 0) - (solar.state.total || 0) - (battery.state.toBattery || 0) - (grid.state.toBattery || 0)
         );
       }
-      solar.state.toBattery = battery.state.toBattery! - (grid.state.toBattery || 0);
+      solar.state.toBattery = battery.state.toBattery - (grid.state.toBattery || 0);
     } else if (!solar.has && battery.has) {
       battery.state.toGrid = grid.state.toGrid || 0;
     }
@@ -496,22 +537,6 @@ export class PowerFlowCardPlus extends LitElement {
       if (typeof grid.color.fromGrid === "object") {
         grid.color.fromGrid = this.convertColorListToHex(grid.color.fromGrid);
       }
-    }
-
-    if (grid.has) {
-      if (typeof entities.grid!.entity === "string") {
-        if (this.entityInverted("grid")) {
-          grid.state.fromGrid = Math.abs(Math.min(this.getEntityStateWatts(entities.grid?.entity), 0));
-        } else {
-          grid.state.fromGrid = Math.max(this.getEntityStateWatts(entities.grid?.entity), 0);
-        }
-      } else {
-        grid.state.fromGrid = this.getEntityStateWatts(entities.grid!.entity!.consumption);
-      }
-    }
-
-    if (entities.grid?.display_zero_tolerance !== undefined) {
-      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
     }
 
     if (grid.secondary.has) {
@@ -604,6 +629,14 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
+    if (nonFossil.entity !== undefined) {
+      nonFossil.hasPercentage =
+        (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) ||
+        ((grid.state.fromGrid ?? 0) * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
+          entities.fossil_fuel_percentage?.entity !== undefined &&
+          this.entityAvailable(entities.fossil_fuel_percentage?.entity));
+    }
+
     if (individual2.color !== undefined) {
       if (typeof individual2.color === "object") individual2.color = this.convertColorListToHex(individual2.color);
       this.style.setProperty("--individualtwo-color", individual2.color); /* dynamically update color of entity depending on user's input */
@@ -630,28 +663,6 @@ export class PowerFlowCardPlus extends LitElement {
     if (home.secondary.has) {
       const homeSecondaryState = Number(this.hass.states[entities.home?.secondary_info?.entity!].state);
       home.secondary.state = Math.max(homeSecondaryState, 0);
-    }
-
-    if (battery.has) {
-      if (typeof entities.battery?.entity === "string") {
-        battery.state.toBattery = this.entityInverted("battery")
-          ? Math.max(this.getEntityStateWatts(entities.battery!.entity), 0)
-          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0));
-        battery.state.fromBattery = this.entityInverted("battery")
-          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery!.entity), 0))
-          : Math.max(this.getEntityStateWatts(entities.battery!.entity), 0);
-      } else {
-        battery.state.toBattery = this.getEntityStateWatts(entities.battery?.entity?.production);
-        battery.state.fromBattery = this.getEntityStateWatts(entities.battery?.entity?.consumption);
-      }
-      if (entities?.battery?.display_zero_tolerance) {
-        if (entities.battery.display_zero_tolerance >= battery.state.toBattery) battery.state.toBattery = 0;
-        if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
-      }
-    }
-
-    if (battery.has) {
-      battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
     if (battery.color.fromBattery !== undefined) {
@@ -704,11 +715,9 @@ export class PowerFlowCardPlus extends LitElement {
         : "var(--energy-battery-in-color)"
     );
 
-    grid.state.fromGrid = Math.max((grid.state.fromGrid ?? 0) - (grid.state.toBattery ?? 0), 0);
-
     const totalIndividualConsumption = coerceNumber(individual1.state, 0) + coerceNumber(individual2.state, 0);
 
-    const totalHomeConsumption = Math.max((grid.state.fromGrid ?? 0) + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0), 0);
+    const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
     if (battery.state.fromBattery) homeBatteryCircumference = circleCircumference * (battery.state.fromBattery / totalHomeConsumption);
@@ -730,12 +739,22 @@ export class PowerFlowCardPlus extends LitElement {
 
     let homeNonFossilCircumference: number = 0;
 
-    const homeGridCircumference =
-      circleCircumference *
-      ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.fromBattery ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
+    nonFossil.has =
+      grid.state.toHome * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
+      entities.fossil_fuel_percentage?.entity !== undefined &&
+      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
+
+    if (nonFossil.has) {
+      const nonFossilFuelDecimal = 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
+      nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
+      homeNonFossilCircumference = circleCircumference * (nonFossil.state.power / totalHomeConsumption);
+    }
+
+    nonFossil.hasPercentage =
+      (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) || nonFossil.has;
 
     const totalLines =
-      grid.state.fromGrid +
+      grid.state.toHome +
       (solar.state.toHome ?? 0) +
       (solar.state.toGrid ?? 0) +
       (solar.state.toBattery ?? 0) +
@@ -757,7 +776,7 @@ export class PowerFlowCardPlus extends LitElement {
     const newDur = {
       batteryGrid: this.circleRate(grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
       batteryToHome: this.circleRate(battery.state.fromBattery ?? 0, totalLines),
-      gridToHome: this.circleRate(grid.state.fromGrid, totalLines),
+      gridToHome: this.circleRate(grid.state.toHome, totalLines),
       solarToBattery: this.circleRate(solar.state.toBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solar.state.toGrid ?? 0, totalLines),
       solarToHome: this.circleRate(solar.state.toHome ?? 0, totalLines),
@@ -786,52 +805,6 @@ export class PowerFlowCardPlus extends LitElement {
       entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)" || "var(--non-fossil-color)"
     );
 
-    const homeSources = {
-      battery: {
-        value: homeBatteryCircumference,
-        color: "var(--energy-battery-out-color)",
-      },
-      solar: {
-        value: homeSolarCircumference,
-        color: "var(--energy-solar-color)",
-      },
-      grid: {
-        value: homeGridCircumference,
-        color: "var(--energy-grid-consumption-color)",
-      },
-      gridNonFossil: {
-        value: homeNonFossilCircumference,
-        color: "var(--energy-non-fossil-color)",
-      },
-    };
-
-    /* return source object with largest value property */
-    const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
-
-    let iconHomeColor: string = "var(--primary-text-color)";
-    if (home.color.icon_type === "solar") {
-      iconHomeColor = "var(--energy-solar-color)";
-    } else if (home.color.icon_type === "battery") {
-      iconHomeColor = "var(--energy-battery-out-color)";
-    } else if (home.color.icon_type === "grid") {
-      iconHomeColor = "var(--energy-grid-consumption-color)";
-    } else if (home.color.icon_type === true) {
-      iconHomeColor = homeSources[homeLargestSource].color;
-    }
-    this.style.setProperty("--icon-home-color", iconHomeColor);
-
-    const homeTextColorType = entities.home?.color_value;
-    let textHomeColor: string = "var(--primary-text-color)";
-    if (homeTextColorType === "solar") {
-      textHomeColor = "var(--energy-solar-color)";
-    } else if (homeTextColorType === "battery") {
-      textHomeColor = "var(--energy-battery-out-color)";
-    } else if (homeTextColorType === "grid") {
-      textHomeColor = "var(--energy-grid-consumption-color)";
-    } else if (homeTextColorType === true) {
-      textHomeColor = homeSources[homeLargestSource].color;
-    }
-
     const getIndividualDisplayState = (field: Individual) => {
       if (field.state === undefined) return "";
       return this.displayValue(field.state, field.unit, field.unit_white_space, field.decimals);
@@ -840,8 +813,6 @@ export class PowerFlowCardPlus extends LitElement {
     const individual1DisplayState = getIndividualDisplayState(individual1);
 
     const individual2DisplayState = getIndividualDisplayState(individual2);
-
-    this.style.setProperty("--text-home-color", textHomeColor);
 
     this.style.setProperty(
       "--text-non-fossil-color",
@@ -893,16 +864,57 @@ export class PowerFlowCardPlus extends LitElement {
         ? this.displayValue(totalHomeConsumption - totalIndividualConsumption || 0)
         : this.displayValue(totalHomeConsumption);
 
-    nonFossil.hasPower =
-      grid.state.fromGrid * 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100 > 0 &&
-      entities.fossil_fuel_percentage?.entity !== undefined &&
-      this.entityAvailable(entities.fossil_fuel_percentage?.entity);
+    const homeGridCircumference =
+      circleCircumference *
+      ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.fromBattery ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
 
-    if (nonFossil.hasPower) {
-      const nonFossilFuelDecimal = 1 - this.getEntityState(entities.fossil_fuel_percentage?.entity) / 100;
-      nonFossil.state.power = grid.state.fromGrid * nonFossilFuelDecimal;
-      homeNonFossilCircumference = circleCircumference * (nonFossil.state.power / totalHomeConsumption);
+    const homeSources = {
+      battery: {
+        value: homeBatteryCircumference,
+        color: "var(--energy-battery-out-color)",
+      },
+      solar: {
+        value: homeSolarCircumference,
+        color: "var(--energy-solar-color)",
+      },
+      grid: {
+        value: homeGridCircumference,
+        color: "var(--energy-grid-consumption-color)",
+      },
+      gridNonFossil: {
+        value: homeNonFossilCircumference,
+        color: "var(--energy-non-fossil-color)",
+      },
+    };
+
+    /* return source object with largest value property */
+    const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
+
+    let iconHomeColor: string = "var(--primary-text-color)";
+    if (home.color.icon_type === "solar") {
+      iconHomeColor = "var(--energy-solar-color)";
+    } else if (home.color.icon_type === "battery") {
+      iconHomeColor = "var(--energy-battery-out-color)";
+    } else if (home.color.icon_type === "grid") {
+      iconHomeColor = "var(--energy-grid-consumption-color)";
+    } else if (home.color.icon_type === true) {
+      iconHomeColor = homeSources[homeLargestSource].color;
     }
+    this.style.setProperty("--icon-home-color", iconHomeColor);
+
+    const homeTextColorType = entities.home?.color_value;
+    let textHomeColor: string = "var(--primary-text-color)";
+    if (homeTextColorType === "solar") {
+      textHomeColor = "var(--energy-solar-color)";
+    } else if (homeTextColorType === "battery") {
+      textHomeColor = "var(--energy-battery-out-color)";
+    } else if (homeTextColorType === "grid") {
+      textHomeColor = "var(--energy-grid-consumption-color)";
+    } else if (homeTextColorType === true) {
+      textHomeColor = homeSources[homeLargestSource].color;
+    }
+
+    this.style.setProperty("--text-home-color", textHomeColor);
 
     const baseSecondarySpan = ({
       className,
@@ -967,6 +979,7 @@ export class PowerFlowCardPlus extends LitElement {
           })}`
         : ""}`;
     };
+    console.log(solar.state);
 
     return html`
       <ha-card .header=${this._config.title}>
@@ -1011,7 +1024,7 @@ export class PowerFlowCardPlus extends LitElement {
                         ? html`
                             <svg width="80" height="30">
                               <path d="M40 -10 v40" class="low-carbon" id="low-carbon" />
-                              ${nonFossil.hasPower
+                              ${nonFossil.has
                                 ? svg`<circle
                               r="2.4"
                               class="low-carbon"
@@ -1258,7 +1271,7 @@ export class PowerFlowCardPlus extends LitElement {
                   }
                 }}
               >
-                ${generalSecondarySpan(grid, "grid")}
+                ${generalSecondarySpan(home, "home")}
                 <ha-icon .icon=${home.icon}></ha-icon>
                 ${homeUsageToDisplay}
                 <svg class="home-circle-sections">
