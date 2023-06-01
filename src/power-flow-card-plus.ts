@@ -34,6 +34,7 @@ export class PowerFlowCardPlus extends LitElement {
   @state() private _templateResults: Partial<Record<string, RenderTemplateResult>> = {};
   @state() private _unsubRenderTemplate?: Promise<UnsubscribeFunc>;
   @state() private _unsubRenderTemplates?: Map<string, Promise<UnsubscribeFunc>> = new Map();
+  @state() private _width = 0;
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -604,10 +605,6 @@ export class PowerFlowCardPlus extends LitElement {
         : "var(--energy-grid-consumption-color)"
     );
 
-    const isCardWideEnough = getElementWidth(document.getElementById("card-content")) > 420;
-    this.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "106%" : "102%");
-    this.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-3%" : "-1%");
-
     if (individual1.color !== undefined) {
       if (typeof individual1.color === "object") individual1.color = this.convertColorListToHex(individual1.color);
       this.style.setProperty("--individualone-color", individual1.color); /* dynamically update color of entity depending on user's input */
@@ -889,6 +886,22 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
+    const isCardWideEnough = this._width > 420;
+    if (solar.has) {
+      if (battery.has) {
+        // has solar, battery and grid
+        this.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "106%" : "102%");
+        this.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-3%" : "-1%");
+        this.style.setProperty("--lines-svg-flat-width", isCardWideEnough ? "calc(100% - 160px)" : "calc(100% - 160px)");
+      } else {
+        // has solar but no battery
+        this.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "104%" : "102%");
+        this.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-2%" : "-1%");
+        this.style.setProperty("--lines-svg-flat-width", isCardWideEnough ? "calc(100% - 154px)" : "calc(100% - 157px)");
+        this.style.setProperty("--lines-svg-not-flat-width", isCardWideEnough ? "calc(103% - 172px)" : "calc(103% - 169px)");
+      }
+    }
+
     /* return source object with largest value property */
     const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
 
@@ -981,11 +994,10 @@ export class PowerFlowCardPlus extends LitElement {
           })}`
         : ""}`;
     };
-    console.log(solar.state);
 
     return html`
       <ha-card .header=${this._config.title}>
-        <div class="card-content" id="card-content">
+        <div class="card-content" id="power-flow-card-plus">
           ${solar.has || individual2.has || individual1.has || nonFossil.hasPercentage
             ? html`<div class="row">
                 ${!nonFossil.hasPercentage
@@ -1739,6 +1751,10 @@ export class PowerFlowCardPlus extends LitElement {
     if (!this._config || !this.hass) {
       return;
     }
+
+    const elem = this?.shadowRoot?.querySelector("#power-flow-card-plus");
+    const widthStr = elem ? getComputedStyle(elem).getPropertyValue("width") : "0px";
+    this._width = parseInt(widthStr.replace("px", ""), 10);
 
     this._tryConnectAll();
   }
