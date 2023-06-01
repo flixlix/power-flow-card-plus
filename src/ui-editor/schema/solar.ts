@@ -25,6 +25,11 @@ const mainSchema = {
       label: "Display Zero Tolerance",
       selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
     },
+    {
+      name: "use_metadata",
+      label: "Use Metadata",
+      selector: { boolean: {} },
+    },
   ],
 };
 
