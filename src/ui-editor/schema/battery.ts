@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/extensions
 import { getEntitySeparatedSelectionSchema, getBaseMainConfigSchema, customColorsSchema, getEntityCombinedSelectionSchema } from "./_schema-base";
+import localize from "../../localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("battery"),
@@ -65,10 +66,10 @@ const stateOfChargeSchema = [
 ];
 
 export const batterySchema = [
-  getEntityCombinedSelectionSchema("battery"),
-  getEntitySeparatedSelectionSchema("battery"),
+  getEntityCombinedSelectionSchema(),
+  getEntitySeparatedSelectionSchema(),
   {
-    title: "State of Charge",
+    title: localize("editor.state_of_charge"),
     name: "",
     type: "expandable",
     schema: stateOfChargeSchema,

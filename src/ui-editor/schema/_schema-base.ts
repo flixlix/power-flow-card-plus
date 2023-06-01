@@ -1,7 +1,9 @@
-export function getEntityCombinedSelectionSchema(field?: string) {
+import localize from "../../localize/localize";
+
+export function getEntityCombinedSelectionSchema() {
   return {
     type: "expandable",
-    title: `Combined ${field || "Grid"} Entity (positive & negative values)`,
+    title: localize("editor.combined"),
     schema: [
       {
         name: "entity",
@@ -11,10 +13,10 @@ export function getEntityCombinedSelectionSchema(field?: string) {
   } as const;
 }
 
-export function getEntitySeparatedSelectionSchema(field?: string) {
+export function getEntitySeparatedSelectionSchema() {
   return {
     type: "expandable",
-    title: `Separated ${field || "Grid"} Entities (One for production, one for consumption)`,
+    title: localize("editor.separated"),
     name: "entity",
     schema: [
       {
@@ -33,7 +35,7 @@ export function getEntitySeparatedSelectionSchema(field?: string) {
 
 export const customColorsSchema = {
   name: "color",
-  title: "Custom Colors",
+  title: localize("editor.custom_colors"),
   type: "expandable",
   schema: [
     {

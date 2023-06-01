@@ -1,5 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/extensions */
 import { any, assign, boolean, integer, number, object, optional, string } from "superstruct";
+import memoizeOne from "memoize-one";
 import { gridSchema } from "./grid";
 import { batterySchema } from "./battery";
 import { solarSchema } from "./solar";
@@ -50,61 +52,61 @@ export const generalConfigSchema = [
   },
 ] as const;
 
-export const entitiesSchema = [
+export const entitiesSchema = memoizeOne((localize) => [
   {
     name: "entities",
     type: "grid",
     column_min_width: "400px",
     schema: [
       {
-        title: "Grid",
+        title: localize("editor.grid"),
         name: "grid",
         type: "expandable",
         schema: gridSchema,
       },
       {
-        title: "Solar",
+        title: localize("editor.solar"),
         name: "solar",
         type: "expandable",
         schema: solarSchema,
       },
       {
-        title: "Battery",
+        title: localize("editor.battery"),
         name: "battery",
         type: "expandable",
         schema: batterySchema,
       },
       {
-        title: "Non-Fossil",
+        title: localize("editor.fossil_fuel_percentage"),
         name: "fossil_fuel_percentage",
         type: "expandable",
         schema: nonFossilSchema,
       },
       {
-        title: "Home",
+        title: localize("editor.home"),
         name: "home",
         type: "expandable",
         schema: homeSchema,
       },
       {
-        title: "Individual 1",
+        title: `${localize("editor.individual")} 1`,
         name: "individual1",
         type: "expandable",
         schema: individualSchema,
       },
       {
-        title: "Individual 2",
+        title: `${localize("editor.individual")} 2`,
         name: "individual2",
         type: "expandable",
         schema: individualSchema,
       },
     ],
   },
-];
+]);
 
-export const advancedOptionsSchema = [
+export const advancedOptionsSchema = memoizeOne((localize) => [
   {
-    title: "Advanced Options",
+    title: localize("editor.advanced"),
     type: "expandable",
     schema: [
       {
@@ -175,4 +177,4 @@ export const advancedOptionsSchema = [
       },
     ],
   },
-];
+]);
