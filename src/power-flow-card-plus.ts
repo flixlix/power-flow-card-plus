@@ -269,9 +269,9 @@ export class PowerFlowCardPlus extends LitElement {
       hasReturnToGrid: typeof entities.grid?.entity === "string" || entities.grid?.entity?.production,
       state: {
         fromGrid: 0,
-        toGrid: null as null | number,
-        toBattery: null as null | number,
-        toHome: null as null | number,
+        toGrid: initialNumericState,
+        toBattery: initialNumericState,
+        toHome: initialNumericState,
       },
       powerOutage: {
         has: this.hasField(entities.grid?.power_outage, true),
