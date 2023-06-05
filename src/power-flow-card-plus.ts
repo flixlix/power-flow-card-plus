@@ -295,6 +295,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
+        template: entities.grid?.secondary_info?.template,
         has: this.hasField(entities.grid?.secondary_info),
         state: initialSecondaryState,
         icon: entities.grid?.secondary_info?.icon,
@@ -319,6 +320,7 @@ export class PowerFlowCardPlus extends LitElement {
       name: this.computeFieldName(entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
+        template: entities.solar?.secondary_info?.template,
         has: this.hasField(entities.solar?.secondary_info),
         state: initialSecondaryState,
         icon: entities.solar?.secondary_info?.icon,
@@ -363,6 +365,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       secondary: {
         entity: entities.home?.secondary_info?.entity,
+        template: entities.home?.secondary_info?.template,
         has: this.hasField(entities.home?.secondary_info),
         state: null as number | string | null,
         unit: entities.home?.secondary_info?.unit_of_measurement,
@@ -388,6 +391,7 @@ export class PowerFlowCardPlus extends LitElement {
       showDirection: entities[field]?.show_direction || false,
       secondary: {
         entity: entities[field]?.secondary_info?.entity,
+        template: entities[field]?.secondary_info?.template,
         has: this.hasField(entities[field]?.secondary_info, true),
         state: initialSecondaryState,
         icon: entities[field]?.secondary_info?.icon,
@@ -423,6 +427,7 @@ export class PowerFlowCardPlus extends LitElement {
       color_value: entities.fossil_fuel_percentage?.color_value,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
+        template: entities.fossil_fuel_percentage?.secondary_info?.template,
         has: this.hasField(entities.fossil_fuel_percentage?.secondary_info, true),
         state: initialSecondaryState,
         icon: entities.fossil_fuel_percentage?.secondary_info?.icon,
@@ -963,16 +968,17 @@ export class PowerFlowCardPlus extends LitElement {
       return "";
     };
 
-    const generalSecondarySpan = (field, key: string) =>
-      html` ${field.secondary.has
+    const generalSecondarySpan = (field, key: string) => {
+      return html` ${field.secondary.has || field.secondary.template
         ? html` ${baseSecondarySpan({
             className: key,
             entityId: field.secondary.entity,
             icon: field.secondary.icon,
             value: this.displayValue(field.secondary.state, field.secondary.unit, field.secondary.unit_white_space),
-            template: templatesObj.gridSecondary,
+            template: templatesObj[`${key}Secondary`],
           })}`
         : ""}`;
+    };
 
     const individualSecondarySpan = (individual: Individual, key: string) => {
       const templateResult: string = templatesObj[`${key}Secondary`];
@@ -1015,7 +1021,7 @@ export class PowerFlowCardPlus extends LitElement {
                           }
                         }}
                       >
-                        ${generalSecondarySpan(nonFossil, "nonFossilFuelSecondary")}
+                        ${generalSecondarySpan(nonFossil, "nonFossilFuel")}
                         <ha-icon
                           .icon=${nonFossil.icon}
                           class="low-carbon"
