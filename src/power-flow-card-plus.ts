@@ -282,9 +282,13 @@ export class PowerFlowCardPlus extends LitElement {
         has: this.hasField(entities.grid?.power_outage, true),
         isOutage:
           (entities.grid && this.hass.states[entities.grid.power_outage?.entity]?.state) === (entities.grid?.power_outage?.state_alert ?? "on"),
+        icon: entities.grid?.power_outage?.icon_alert || "mdi:transmission-tower-off",
+        name: entities.grid?.power_outage?.label_alert ?? html`Power<br />Outage`,
       },
       icon: this.computeFieldIcon(entities.grid, "mdi:transmission-tower"),
-      name: this.computeFieldName(entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
+      name: this.computeFieldName(entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")) as
+        | string
+        | TemplateResult<1>,
       mainEntity:
         typeof entities.grid?.entity === "object" ? entities.grid.entity.consumption || entities.grid.entity.production : entities.grid?.entity,
       color: {
@@ -431,6 +435,13 @@ export class PowerFlowCardPlus extends LitElement {
         color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
       },
     };
+
+    if (grid.powerOutage.isOutage) {
+      grid.state.fromGrid = 0;
+      grid.state.toGrid = 0;
+      grid.icon = grid.powerOutage.icon;
+      console.log(grid.icon);
+    }
 
     if (grid.has) {
       if (typeof entities.grid!.entity === "string") {
@@ -1265,9 +1276,7 @@ export class PowerFlowCardPlus extends LitElement {
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(grid.state.fromGrid)}
                         </span>`
                       : ""}
-                    ${grid.powerOutage.isOutage
-                      ? html`<span class="grid power-outage"> ${entities.grid?.power_outage.label_alert || html`Power<br />Outage`} </span>`
-                      : ""}
+                    ${grid.powerOutage.isOutage ? html`<span class="grid power-outage"> ${grid.powerOutage.name} </span>` : ""}
                   </div>
                   <span class="label">${grid.name}</span>
                 </div>`
