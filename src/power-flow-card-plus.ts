@@ -445,7 +445,6 @@ export class PowerFlowCardPlus extends LitElement {
       grid.state.fromGrid = 0;
       grid.state.toGrid = 0;
       grid.icon = grid.powerOutage.icon;
-      console.log(grid.icon);
     }
 
     if (grid.has) {
