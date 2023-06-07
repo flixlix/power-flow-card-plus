@@ -731,7 +731,9 @@ export class PowerFlowCardPlus extends LitElement {
         : "var(--energy-battery-in-color)"
     );
 
-    const totalIndividualConsumption = coerceNumber(individual1.state, 0) + coerceNumber(individual2.state, 0);
+    const totalIndividualConsumption =
+      coerceNumber(individual1.state, 0) * (individual1.invertAnimation ? -1 : 1) +
+      coerceNumber(individual2.state, 0) * (individual2.invertAnimation ? -1 : 1);
 
     const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
 
