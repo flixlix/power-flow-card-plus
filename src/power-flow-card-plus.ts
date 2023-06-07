@@ -459,10 +459,6 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
-    if (entities.grid?.display_zero_tolerance !== undefined) {
-      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
-    }
-
     if (grid.hasReturnToGrid) {
       if (typeof entities.grid!.entity === "string") {
         grid.state.toGrid = this.entityInverted("grid")
@@ -577,8 +573,11 @@ export class PowerFlowCardPlus extends LitElement {
       this.style.setProperty("--energy-grid-consumption-color", grid.color.fromGrid || "#a280db");
     }
 
+    // Reset State Values to 0 if they are below the display_zero_tolerance
     if (entities.grid?.display_zero_tolerance !== undefined) {
-      grid.state.toGrid = grid.state.toGrid! > entities.grid?.display_zero_tolerance ? grid.state.toGrid : 0;
+      solar.state.toGrid = (solar.state.toGrid ?? 0) > entities.grid?.display_zero_tolerance ? solar.state.toGrid : 0;
+      grid.state.toGrid = (grid.state.toGrid ?? 0) > entities.grid?.display_zero_tolerance ? grid.state.toGrid : 0;
+      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
     }
 
     this.style.setProperty(
