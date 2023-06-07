@@ -349,6 +349,7 @@ export class PowerFlowCardPlus extends LitElement {
         toBattery: 0,
         fromBattery: 0,
         toGrid: 0,
+        toHome: 0,
       },
       color: {
         fromBattery: entities.battery?.color?.consumption,
@@ -459,10 +460,6 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
-    if (entities.grid?.display_zero_tolerance !== undefined) {
-      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
-    }
-
     if (grid.hasReturnToGrid) {
       if (typeof entities.grid!.entity === "string") {
         grid.state.toGrid = this.entityInverted("grid")
@@ -513,7 +510,6 @@ export class PowerFlowCardPlus extends LitElement {
         if (entities.battery.display_zero_tolerance >= battery.state.toBattery) battery.state.toBattery = 0;
         if (entities.battery.display_zero_tolerance >= battery.state.fromBattery) battery.state.fromBattery = 0;
       }
-      battery.state.fromBattery = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
     if (solar.has) {
@@ -534,19 +530,22 @@ export class PowerFlowCardPlus extends LitElement {
       solar.state.toHome = 0;
     }
 
-    grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
-
-    if (solar.has && battery.has) {
-      if (!battery.state.toGrid) {
-        battery.state.toGrid = Math.max(
-          0,
-          (grid.state.toGrid || 0) - (solar.state.total || 0) - (battery.state.toBattery || 0) - (grid.state.toBattery || 0)
-        );
+    if (battery.has) {
+      if (solar.has) {
+        if (!battery.state.toGrid) {
+          battery.state.toGrid = Math.max(
+            0,
+            (grid.state.toGrid || 0) - (solar.state.total || 0) - (battery.state.toBattery || 0) - (grid.state.toBattery || 0)
+          );
+        }
+        solar.state.toBattery = battery.state.toBattery - (grid.state.toBattery || 0);
+      } else {
+        battery.state.toGrid = grid.state.toGrid || 0;
       }
-      solar.state.toBattery = battery.state.toBattery - (grid.state.toBattery || 0);
-    } else if (!solar.has && battery.has) {
-      battery.state.toGrid = grid.state.toGrid || 0;
+      battery.state.toHome = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
+
+    grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
 
     if (solar.has && grid.state.toGrid) solar.state.toGrid = grid.state.toGrid - (battery.state.toGrid ?? 0);
     this.style.setProperty("--text-solar-color", entities.solar?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)");
@@ -577,8 +576,11 @@ export class PowerFlowCardPlus extends LitElement {
       this.style.setProperty("--energy-grid-consumption-color", grid.color.fromGrid || "#a280db");
     }
 
+    // Reset State Values to 0 if they are below the display_zero_tolerance
     if (entities.grid?.display_zero_tolerance !== undefined) {
-      grid.state.toGrid = grid.state.toGrid! > entities.grid?.display_zero_tolerance ? grid.state.toGrid : 0;
+      solar.state.toGrid = (solar.state.toGrid ?? 0) > entities.grid?.display_zero_tolerance ? solar.state.toGrid : 0;
+      grid.state.toGrid = (grid.state.toGrid ?? 0) > entities.grid?.display_zero_tolerance ? grid.state.toGrid : 0;
+      grid.state.fromGrid = grid.state.fromGrid! > entities.grid?.display_zero_tolerance ? grid.state.fromGrid : 0;
     }
 
     this.style.setProperty(
@@ -729,12 +731,14 @@ export class PowerFlowCardPlus extends LitElement {
         : "var(--energy-battery-in-color)"
     );
 
-    const totalIndividualConsumption = coerceNumber(individual1.state, 0) + coerceNumber(individual2.state, 0);
+    const totalIndividualConsumption =
+      coerceNumber(individual1.state, 0) * (individual1.invertAnimation ? -1 : 1) +
+      coerceNumber(individual2.state, 0) * (individual2.invertAnimation ? -1 : 1);
 
-    const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.fromBattery ?? 0), 0);
+    const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
 
     let homeBatteryCircumference: number = 0;
-    if (battery.state.fromBattery) homeBatteryCircumference = circleCircumference * (battery.state.fromBattery / totalHomeConsumption);
+    if (battery.state.toHome) homeBatteryCircumference = circleCircumference * (battery.state.toHome / totalHomeConsumption);
 
     let homeSolarCircumference: number = 0;
     if (solar.has) {
@@ -772,7 +776,7 @@ export class PowerFlowCardPlus extends LitElement {
       (solar.state.toHome ?? 0) +
       (solar.state.toGrid ?? 0) +
       (solar.state.toBattery ?? 0) +
-      (battery.state.fromBattery ?? 0) +
+      (battery.state.toHome ?? 0) +
       (grid.state.toBattery ?? 0) +
       (battery.state.toGrid ?? 0);
 
@@ -789,7 +793,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     const newDur = {
       batteryGrid: this.circleRate(grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
-      batteryToHome: this.circleRate(battery.state.fromBattery ?? 0, totalLines),
+      batteryToHome: this.circleRate(battery.state.toHome ?? 0, totalLines),
       gridToHome: this.circleRate(grid.state.toHome, totalLines),
       solarToBattery: this.circleRate(solar.state.toBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solar.state.toGrid ?? 0, totalLines),
@@ -880,7 +884,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     const homeGridCircumference =
       circleCircumference *
-      ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.fromBattery ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
+      ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.toHome ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
 
     const homeSources = {
       battery: {
@@ -1660,7 +1664,7 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : null}
-          ${battery.has && this.showLine(battery.state.fromBattery)
+          ${battery.has && this.showLine(battery.state.toHome)
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
@@ -1674,7 +1678,7 @@ export class PowerFlowCardPlus extends LitElement {
                     d="M55,100 v-${grid.has ? 15 : 17} c0,-30 10,-30 30,-30 h20"
                     vector-effect="non-scaling-stroke"
                   ></path>
-                  ${battery.state.fromBattery
+                  ${battery.state.toHome
                     ? svg`<circle
                         r="1"
                         class="battery-home"
