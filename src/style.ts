@@ -336,7 +336,7 @@ export const styles = css`
     color: var(--text-non-fossil-color);
   }
 
-  span.nonFossilFuelSecondary.secondary-info {
+  span.nonFossilFuel.secondary-info {
     color: var(--secondary-text-non-fossil-color);
   }
 
