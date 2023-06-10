@@ -27,6 +27,11 @@ const mainSchema = {
       selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
     },
     {
+      name: "invert_state",
+      label: "Invert State",
+      selector: { boolean: {} },
+    },
+    {
       name: "use_metadata",
       label: "Use Metadata",
       selector: { boolean: {} },

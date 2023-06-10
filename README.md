@@ -153,6 +153,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_value | `boolean` | `false` | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.  |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
+| invert_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0. |
 
 #### Battery Configuration
 
