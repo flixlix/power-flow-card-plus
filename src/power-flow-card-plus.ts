@@ -300,7 +300,7 @@ export class PowerFlowCardPlus extends LitElement {
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
         template: entities.grid?.secondary_info?.template,
-        has: this.hasField(entities.grid?.secondary_info),
+        has: this.hasField(entities.grid?.secondary_info, true),
         state: initialSecondaryState,
         icon: entities.grid?.secondary_info?.icon,
         unit: entities.grid?.secondary_info?.unit_of_measurement,
@@ -325,7 +325,7 @@ export class PowerFlowCardPlus extends LitElement {
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
         template: entities.solar?.secondary_info?.template,
-        has: this.hasField(entities.solar?.secondary_info),
+        has: this.hasField(entities.solar?.secondary_info, true),
         state: initialSecondaryState,
         icon: entities.solar?.secondary_info?.icon,
         unit: entities.solar?.secondary_info?.unit_of_measurement,
@@ -371,7 +371,7 @@ export class PowerFlowCardPlus extends LitElement {
       secondary: {
         entity: entities.home?.secondary_info?.entity,
         template: entities.home?.secondary_info?.template,
-        has: this.hasField(entities.home?.secondary_info),
+        has: this.hasField(entities.home?.secondary_info, true),
         state: null as number | string | null,
         unit: entities.home?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.home?.secondary_info?.unit_white_space,
@@ -476,8 +476,13 @@ export class PowerFlowCardPlus extends LitElement {
     );
 
     if (solar.secondary.has) {
-      const solarSecondaryState = Number(this.hass.states[entities.solar?.secondary_info?.entity!].state);
-      solar.secondary.state = Math.max(solarSecondaryState, 0); // negative values are not allowed
+      const solarSecondaryEntity = this.hass.states[entities.solar?.secondary_info?.entity!];
+      const solarSecondaryState = solarSecondaryEntity.state;
+      if (Number.isNaN(+solarSecondaryState)) {
+        solar.secondary.state = solarSecondaryState;
+      } else {
+        solar.secondary.state = Math.max(Number(solarSecondaryState), 0);
+      }
     }
 
     if (entities.solar?.color !== undefined) {
@@ -558,8 +563,13 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (grid.secondary.has) {
-      const gridSecondaryState = Number(this.hass.states[entities.grid?.secondary_info?.entity ?? 0].state);
-      grid.secondary.state = Math.max(gridSecondaryState, 0);
+      const gridSecondaryEntity = this.hass.states[entities.grid?.secondary_info?.entity!];
+      const gridSecondaryState = gridSecondaryEntity.state;
+      if (Number.isNaN(+gridSecondaryState)) {
+        grid.secondary.state = gridSecondaryState;
+      } else {
+        grid.secondary.state = Math.max(Number(gridSecondaryState), 0);
+      }
     }
 
     if (grid.color.toGrid !== undefined) {
@@ -677,8 +687,13 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (home.secondary.has) {
-      const homeSecondaryState = Number(this.hass.states[entities.home?.secondary_info?.entity!].state);
-      home.secondary.state = Math.max(homeSecondaryState, 0);
+      const homeSecondaryEntity = this.hass.states[entities.home?.secondary_info?.entity!];
+      const homeSecondaryState = homeSecondaryEntity.state;
+      if (Number.isNaN(+homeSecondaryState)) {
+        home.secondary.state = homeSecondaryState;
+      } else {
+        home.secondary.state = Math.max(Number(homeSecondaryState), 0);
+      }
     }
 
     if (battery.color.fromBattery !== undefined) {
