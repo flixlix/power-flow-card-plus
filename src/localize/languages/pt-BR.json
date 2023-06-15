@@ -60,6 +60,13 @@
         "display_zero_lines": "Exibir Linhas Zero",
         "clickable_entities": "Entidades Clicáveis",
         "use_new_flow_rate_model": "Utilizar Novo Modelo de Velocidade",
-        "use_metadata": "Utilizar Metadados"
+        "use_metadata": "Utilizar Metadados",
+        "mode": "Modo",
+        "show": "Mostrar",
+        "hide": "Esconder",
+        "custom": "Personalizado",
+        "grey_out": "Cinza",
+        "transparency": "Transparência",
+        "grey_color": "Cor do Cinza"
     }
 }

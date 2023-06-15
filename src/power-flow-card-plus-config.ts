@@ -12,9 +12,15 @@ interface mainConfigOptions {
   clickable_entities: boolean;
   max_expected_power: number;
   min_expected_power: number;
-  display_zero_lines?: boolean;
   use_new_flow_rate_model?: boolean;
   full_size?: boolean;
+  style_ha_card?: any;
+  style_card_content?: any;
+  display_zero_lines?: {
+    mode?: string;
+    transparency?: number;
+    grey_color?: string | number[];
+  };
 }
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
   entities: {
