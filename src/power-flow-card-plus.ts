@@ -1031,8 +1031,16 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     return html`
-      <ha-card .header=${this._config.title}>
-        <div class="card-content" id="power-flow-card-plus">
+      <ha-card
+        .header=${this._config.title}
+        class=${this._config.full_size ? "full-size" : ""}
+        style=${this._config.style_ha_card ? this._config.style_ha_card : ""}
+      >
+        <div
+          class="card-content ${this._config.full_size ? "full-size" : ""}"
+          id="power-flow-card-plus"
+          style=${this._config.style_card_content ? this._config.style_card_content : ""}
+        >
           ${solar.has || individual2.has || individual1.has || nonFossil.hasPercentage
             ? html`<div class="row">
                 ${!nonFossil.hasPercentage
