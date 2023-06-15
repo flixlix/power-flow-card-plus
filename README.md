@@ -108,7 +108,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog. |
 | min_expected_power | `number`  |    0.01 | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
 | max_expected_power | `number`  | 2000 | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
-| display_zero_lines | `boolean` | true | If false, lines where no power is flowing will be hidden. |
+| display_zero_lines | `object` | `{mode: "show"}` | Check [Display Zero Lines](#display-zero) |
 | use_new_flow_rate_model | `boolean` | false | If set to true, the card will use the [New Flow Formula](#new-flow-formula).
 
 #### Entities object
@@ -261,6 +261,16 @@ This feature allows you to configure how the card handles a Grid Power Outage sc
 | icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`. |
 | label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
 | calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
+
+#### Display Zero Lines
+
+This object allows you to control the behavior of the flow lines that are inactive.
+
+| Name | Type | Description |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
+| mode | string | Valid Options are: `show`, `hide`, `transparency`, `grey_out`, `custom` |
+| transparency | number | A number between 0 and 100. 100 means the line doesn't show at all. 0 means the line shows in full opacity. Default is 50. Will be used when the mode is either `transparency` or `custom`. |
+| grey_color | `string` or `list of numbers` | Either a HEX Code or a List of three numbers between 0 and 255 in RGB order. Will be used when the mode is either `grey_out` or `custom`. |
 
 ### Minimal Configuration
 

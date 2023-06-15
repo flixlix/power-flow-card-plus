@@ -60,6 +60,13 @@
         "display_zero_lines": "Wyświetl linie zera",
         "clickable_entities": "Klikalne jednostki",
         "use_new_flow_rate_model": "Nowy model wskaźnika przepływu",
-        "use_metadata": "Użyj metadanych"
+        "use_metadata": "Użyj metadanych",
+        "mode": "Tryb",
+        "show": "Pokaż",
+        "hide": "Ukryj",
+        "custom": "Niestandardowy",
+        "grey_out": "Szary",
+        "transparency": "Przezroczystość",
+        "grey_color": "Kolor szary"
     }
 }

@@ -60,6 +60,13 @@
         "display_zero_lines": "Nulllinien anzeigen",
         "clickable_entities": "Klickbare Entitäten",
         "use_new_flow_rate_model": "Neues Fluss-Modell verwenden",
-        "use_metadata": "Metadaten verwenden"
+        "use_metadata": "Metadaten verwenden",
+        "mode": "Modus",
+        "show": "Anzeigen",
+        "hide": "Verstecken",
+        "custom": "Benutzerdefiniert",
+        "grey_out": "Ausgrauen",
+        "transparency": "Transparenz",
+        "grey_color": "Graue Farbe"
     }
 }

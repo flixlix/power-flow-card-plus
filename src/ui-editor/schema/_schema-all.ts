@@ -8,6 +8,8 @@ import { solarSchema } from "./solar";
 import { individualSchema } from "./individual";
 import { nonFossilSchema } from "./fossil_fuel_percentage";
 import { homeSchema } from "./home";
+import { displayZeroLinesSchema } from "./display_zero_lines";
+import { html } from "lit-html";
 
 const baseLovelaceCardConfig = object({
   type: string(),
@@ -30,7 +32,9 @@ export const cardConfigStruct = assign(
     max_expected_power: optional(number()),
     watt_threshold: optional(number()),
     clickable_entities: optional(boolean()),
-    display_zero_lines: optional(boolean()),
+    transparency_zero_lines: optional(number()),
+    greyout_zero_lines: optional(boolean()),
+    display_zero_lines: optional(any()),
     use_new_flow_rate_model: optional(boolean()),
     entities: object({
       battery: optional(any()),
@@ -104,7 +108,7 @@ export const entitiesSchema = memoizeOne((localize) => [
   },
 ]);
 
-export const advancedOptionsSchema = memoizeOne((localize) => [
+export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode) => [
   {
     title: localize("editor.advanced"),
     type: "expandable",
@@ -158,11 +162,7 @@ export const advancedOptionsSchema = memoizeOne((localize) => [
             label: "Watt to Kilowatt Threshold",
             selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
           },
-          {
-            name: "display_zero_lines",
-            label: "Display Zero Lines",
-            selector: { boolean: {} },
-          },
+
           {
             name: "clickable_entities",
             label: "Clickable Entities",
@@ -174,6 +174,11 @@ export const advancedOptionsSchema = memoizeOne((localize) => [
             selector: { boolean: {} },
           },
         ],
+      },
+      {
+        type: "expandable",
+        title: localize("editor.display_zero_lines"),
+        schema: [...displayZeroLinesSchema(localize, displayZeroLinesMode)],
       },
     ],
   },
