@@ -61,7 +61,12 @@
         "clickable_entities": "Entidades Clicables",
         "use_new_flow_rate_model": "Utilizar Nuevo Modelo de Tasa de Flujo",
         "use_metadata": "Utilizar Metadatos",
-        "transparency_zero_lines": "Transparencia líneas cero",
-        "greyout_zero_lines": "Gris Líneas Cero"
+        "mode": "Modo",
+        "show": "Mostrar",
+        "hide": "Ocultar",
+        "custom": "Personalizado",
+        "grey_out": "Gris",
+        "transparency": "Transparencia",
+        "grey_color": "Color Gris"
     }
 }

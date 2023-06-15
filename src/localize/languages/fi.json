@@ -61,7 +61,12 @@
         "clickable_entities": "Napautettavat kohteet",
         "use_new_flow_rate_model": "Uusi virtausnopeusmalli",
         "use_metadata": "Käytä metatietoja",
-        "transparency_zero_lines": "Läpinäkyvyys nollalinjat",
-        "greyout_zero_lines": "Harmaa nollaviivat"
+        "mode": "Tila",
+        "show": "Näytä",
+        "hide": "Piilota",
+        "custom": "Mukautettu",
+        "grey_out": "Harmaa",
+        "transparency": "Läpinäkyvyys",
+        "grey_color": "Harmaa väri"
     }
 }

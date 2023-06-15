@@ -10,6 +10,11 @@ export const defaultValues = {
   maxExpectedPower: 2000,
   wattThreshold: 1000,
   transparencyZeroLines: 0,
+  displayZeroLines: {
+    mode: "show",
+    transparency: 50,
+    grey_color: [189, 189, 189],
+  },
 };
 
 export function getDefaultConfig(hass: HomeAssistant): object {

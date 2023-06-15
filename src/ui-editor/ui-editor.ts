@@ -8,6 +8,8 @@ import { assert } from "superstruct";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema-all";
 import localize from "../localize/localize";
+import { defaultValues } from "../utils/get-default-config";
+import { coerceNumber } from "../utils/utils";
 
 export const loadHaForm = async () => {
   if (customElements.get("ha-form")) return;
@@ -42,6 +44,11 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     }
     const data = {
       ...this._config,
+      display_zero_lines: {
+        mode: this._config.display_zero_lines?.mode ?? defaultValues.displayZeroLines.mode,
+        transparency: this._config.display_zero_lines?.transparency ?? defaultValues.displayZeroLines.transparency,
+        grey_color: this._config.display_zero_lines?.grey_color ?? defaultValues.displayZeroLines.grey_color,
+      },
     };
 
     return html`
@@ -66,7 +73,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${advancedOptionsSchema(localize)}
+          .schema=${advancedOptionsSchema(localize, data.display_zero_lines?.mode)}
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
         ></ha-form>

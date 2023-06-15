@@ -33,6 +33,7 @@ export const styles = css`
     --lines-svg-flat-width: calc(100% - 160px);
     --lines-svg-not-flat-width: calc(103% - 165px);
     --transparency: var(--transparency-unused-lines);
+    --greyed-out--line-color: #bdbdbd;
   }
   :root {
   }
@@ -161,7 +162,7 @@ export const styles = css`
     opacity: calc(calc(100 - var(--transparency)) / 100);
   }
   path.grey {
-    stroke: #bdbdbd !important;
+    stroke: var(--greyed-out--line-color) !important;
   }
   .circle svg {
     position: absolute;

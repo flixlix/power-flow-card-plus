@@ -61,7 +61,12 @@
         "clickable_entities": "Klikbare Entiteiten",
         "use_new_flow_rate_model": "Nieuw Stroomsnelheid Model Gebruiken",
         "use_metadata": "Metadata Gebruiken",
-        "transparency_zero_lines": "Transparante nullijnen",
-        "greyout_zero_lines": "Nullijnen grijs maken"
+        "mode": "Modus",
+        "show": "Weergeven",
+        "hide": "Verbergen",
+        "custom": "Aangepast",
+        "grey_out": "Grijstint",
+        "transparency": "Transparantie",
+        "grey_color": "Grijstint"
     }
 }
