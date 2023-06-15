@@ -14,6 +14,7 @@ interface mainConfigOptions {
   min_expected_power: number;
   display_zero_lines?: boolean;
   use_new_flow_rate_model?: boolean;
+  full_size?: boolean;
 }
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
   entities: {
