@@ -13,6 +13,9 @@ interface mainConfigOptions {
   max_expected_power: number;
   min_expected_power: number;
   use_new_flow_rate_model?: boolean;
+  full_size?: boolean;
+  style_ha_card?: any;
+  style_card_content?: any;
   display_zero_lines?: {
     mode?: string;
     transparency?: number;

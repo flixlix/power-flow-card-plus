@@ -36,6 +36,9 @@ export const cardConfigStruct = assign(
     greyout_zero_lines: optional(boolean()),
     display_zero_lines: optional(any()),
     use_new_flow_rate_model: optional(boolean()),
+    full_size: optional(boolean()),
+    style_ha_card: optional(any()),
+    style_card_content: optional(any()),
     entities: object({
       battery: optional(any()),
       grid: optional(any()),
