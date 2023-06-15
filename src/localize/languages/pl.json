@@ -60,6 +60,8 @@
         "display_zero_lines": "Wyświetl linie zera",
         "clickable_entities": "Klikalne jednostki",
         "use_new_flow_rate_model": "Nowy model wskaźnika przepływu",
-        "use_metadata": "Użyj metadanych"
+        "use_metadata": "Użyj metadanych",
+        "transparency_zero_lines": "Linie zerowe przezroczystości",
+        "greyout_zero_lines": "Wyszarzone linie zerowe"
     }
 }

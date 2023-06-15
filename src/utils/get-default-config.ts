@@ -9,6 +9,7 @@ export const defaultValues = {
   minExpectedPower: 0.01,
   maxExpectedPower: 2000,
   wattThreshold: 1000,
+  transparencyZeroLines: 0,
 };
 
 export function getDefaultConfig(hass: HomeAssistant): object {
@@ -57,5 +58,6 @@ export function getDefaultConfig(hass: HomeAssistant): object {
     max_expected_power: defaultValues.maxExpectedPower,
     min_expected_power: defaultValues.minExpectedPower,
     watt_threshold: defaultValues.wattThreshold,
+    transparency_zero_lines: defaultValues.transparencyZeroLines,
   };
 }

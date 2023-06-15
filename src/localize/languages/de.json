@@ -60,6 +60,8 @@
         "display_zero_lines": "Nulllinien anzeigen",
         "clickable_entities": "Klickbare Entitäten",
         "use_new_flow_rate_model": "Neues Fluss-Modell verwenden",
-        "use_metadata": "Metadaten verwenden"
+        "use_metadata": "Metadaten verwenden",
+        "transparency_zero_lines": "Transparenz für ungenutzte Linien",
+        "greyout_zero_lines": "Ungenutzte Linien ausgrauen"
     }
 }

@@ -237,6 +237,16 @@ export class PowerFlowCardPlus extends LitElement {
     return power > 0;
   }
 
+  private styleLine(power: number): string {
+    if(power > 0) return("");
+    let styleclass = "";
+    if(this._config?.transparency_zero_lines > 0)
+      styleclass += "transparency ";
+    if(this._config?.greyout_zero_lines !== false) 
+      styleclass += "grey";
+    return(styleclass);
+  }
+
   private computeFieldIcon(field: any, fallback: string): string {
     if (field?.icon) return field.icon;
     if (field?.use_metadata) return this.getEntityStateObj(field.entity)?.attributes?.icon || "";
@@ -879,6 +889,11 @@ export class PowerFlowCardPlus extends LitElement {
       entities.home?.secondary_info?.color_value ? "var(--text-home-color)" : "var(--primary-text-color)"
     );
 
+    this.style.setProperty(
+      "--transparency-unused-lines",
+      this._config.transparency_zero_lines ? this._config.transparency_zero_lines.toString() : "0"
+    )
+
     const templatesObj = {
       gridSecondary: this._templateResults.gridSecondary?.result,
       solarSecondary: this._templateResults.solarSecondary?.result,
@@ -1072,7 +1087,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ${this.showLine(nonFossil.state.power || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 -10 v40" class="low-carbon" id="low-carbon" />
+                              <path d="M40 -10 v40" class="low-carbon ${this.styleLine(nonFossil.state.power || 0)}" id="low-carbon" />
                               ${nonFossil.has
                                 ? svg`<circle
                               r="2.4"
@@ -1157,7 +1172,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ${this.showLine(individual2.state || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 -10 v50" id="individual2" />
+                              <path d="M40 -10 v50" id="individual2" class="${this.styleLine(individual2.state || 0)}"/>
                               ${individual2.state
                                 ? svg`<circle
                               r="2.4"
@@ -1213,7 +1228,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ${this.showLine(individual1.state || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 -10 v40" id="individual1" />
+                              <path d="M40 -10 v40" id="individual1" class="${this.styleLine(individual1.state || 0)}"/>
                               ${individual1.state
                                 ? svg`<circle
                                 r="2.4"
@@ -1495,7 +1510,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ${this.showLine(individual1.state || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 40 v-40" id="individual1" />
+                              <path d="M40 40 v-40" id="individual1" class="${this.styleLine(individual1.state || 0)}"/>
                               ${individual1.state
                                 ? svg`<circle
                                 r="2.4"
@@ -1559,7 +1574,7 @@ export class PowerFlowCardPlus extends LitElement {
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-home-flow">
                   <path
                     id="solar"
-                    class="solar"
+                    class="solar ${this.styleLine(solar.state.toHome || 0)}"
                     d="M${battery.has ? 55 : 53},0 v${grid.has ? 15 : 17} c0,${battery.has ? "30 10,30 30,30" : "35 10,35 30,35"} h25"
                     vector-effect="non-scaling-stroke"
                   ></path>
@@ -1591,7 +1606,7 @@ export class PowerFlowCardPlus extends LitElement {
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-grid-flow">
                   <path
                     id="return"
-                    class="return"
+                    class="return ${this.styleLine(solar.state.toGrid || 0)}"
                     d="M${battery.has ? 45 : 47},0 v15 c0,${battery.has ? "30 -10,30 -30,30" : "35 -10,35 -30,35"} h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
@@ -1627,7 +1642,7 @@ export class PowerFlowCardPlus extends LitElement {
                   id="solar-battery-flow"
                   class="flat-line"
                 >
-                  <path id="battery-solar" class="battery-solar" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
+                  <path id="battery-solar" class="battery-solar ${this.styleLine(solar.state.toBattery || 0)}"" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
                   ${solar.state.toBattery
                     ? svg`<circle
                             r="1"
@@ -1660,7 +1675,7 @@ export class PowerFlowCardPlus extends LitElement {
                   id="grid-home-flow"
                   class="flat-line"
                 >
-                  <path class="grid" id="grid" d="M0,${battery.has ? 50 : solar.has ? 56 : 53} H100" vector-effect="non-scaling-stroke"></path>
+                  <path class="grid ${this.styleLine(grid.state.fromGrid || 0)}" id="grid" d="M0,${battery.has ? 50 : solar.has ? 56 : 53} H100" vector-effect="non-scaling-stroke"></path>
                   ${grid.state.fromGrid
                     ? svg`<circle
                     r="1"
@@ -1689,7 +1704,7 @@ export class PowerFlowCardPlus extends LitElement {
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-home-flow">
                   <path
                     id="battery-home"
-                    class="battery-home"
+                    class="battery-home ${this.styleLine(battery.state.toHome || 0)}"
                     d="M55,100 v-${grid.has ? 15 : 17} c0,-30 10,-30 30,-30 h20"
                     vector-effect="non-scaling-stroke"
                   ></path>
@@ -1724,6 +1739,8 @@ export class PowerFlowCardPlus extends LitElement {
                     class=${classMap({
                       "battery-from-grid": Boolean(grid.state.toBattery),
                       "battery-to-grid": Boolean(battery.state.toGrid),
+                      "transparency": Boolean(((grid.state.toBattery || 0) + (battery.state.toGrid || 0) === 0) && (this._config?.transparency_zero_lines > 0)),
+                      "grey": Boolean(((grid.state.toBattery || 0) + (battery.state.toGrid || 0) === 0) && this._config?.greyout_zero_lines),
                     })}
                     d="M45,100 v-15 c0,-30 -10,-30 -30,-30 h-20"
                     vector-effect="non-scaling-stroke"

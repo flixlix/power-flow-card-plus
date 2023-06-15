@@ -60,6 +60,8 @@
         "display_zero_lines": "Näytä nolla-viivat",
         "clickable_entities": "Napautettavat kohteet",
         "use_new_flow_rate_model": "Uusi virtausnopeusmalli",
-        "use_metadata": "Käytä metatietoja"
+        "use_metadata": "Käytä metatietoja",
+        "transparency_zero_lines": "Läpinäkyvyys nollalinjat",
+        "greyout_zero_lines": "Harmaa nollaviivat"
     }
 }

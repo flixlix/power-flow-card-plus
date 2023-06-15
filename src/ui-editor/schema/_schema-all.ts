@@ -30,6 +30,8 @@ export const cardConfigStruct = assign(
     max_expected_power: optional(number()),
     watt_threshold: optional(number()),
     clickable_entities: optional(boolean()),
+    transparency_zero_lines: optional(number()),
+    greyout_zero_lines: optional(boolean()),
     display_zero_lines: optional(boolean()),
     use_new_flow_rate_model: optional(boolean()),
     entities: object({
@@ -161,6 +163,16 @@ export const advancedOptionsSchema = memoizeOne((localize) => [
           {
             name: "display_zero_lines",
             label: "Display Zero Lines",
+            selector: { boolean: {} },
+          },
+          {
+            name: "transparency_zero_lines",
+            label: "Transparency for Zero Lines",
+            selector: { number: { mode: "box", min: 0, max: 100, step: 1 } },
+          },
+          {
+            name: "greyout_zero_lines",
+            label: "Grey out Zero Lines",
             selector: { boolean: {} },
           },
           {

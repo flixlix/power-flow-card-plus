@@ -60,6 +60,8 @@
         "display_zero_lines": "Display Zero Lines",
         "clickable_entities": "Clickable Entities",
         "use_new_flow_rate_model": "New Flow Rate Model",
-        "use_metadata": "Use Metadata"
+        "use_metadata": "Use Metadata",
+        "transparency_zero_lines": "Transparency Zero Lines",
+        "greyout_zero_lines": "Grey out Zero Lines"
     }
 }

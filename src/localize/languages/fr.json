@@ -60,6 +60,8 @@
         "display_zero_lines": "Afficher les lignes zéro",
         "clickable_entities": "Entités cliquables",
         "use_new_flow_rate_model": "Nouveau modèle de débit",
-        "use_metadata": "Utiliser les métadonnées"
+        "use_metadata": "Utiliser les métadonnées",
+        "transparency_zero_lines": "Transparence lignes zéro",
+        "greyout_zero_lines": "Griser les lignes zéro"
     }
 }
