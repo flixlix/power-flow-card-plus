@@ -109,7 +109,8 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | min_expected_power | `number`  |    0.01 | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
 | max_expected_power | `number`  | 2000 | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
 | display_zero_lines | `boolean` | true | If false, lines where no power is flowing will be hidden. |
-| use_new_flow_rate_model | `boolean` | false | If set to true, the card will use the [New Flow Formula](#new-flow-formula).
+| use_new_flow_rate_model | `boolean` | false | If set to true, the card will use the [New Flow Formula](#new-flow-formula). |
+| full_size | `boolean` | false | Warning: This option is experimental. To use this option, you must set your view to panel mode. If set to true, the card will take up the full height of the screen. And the Card should go to the center of the screen. |
 
 #### Entities object
 
