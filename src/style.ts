@@ -37,6 +37,15 @@ export const styles = css`
   }
   :root {
   }
+
+  ha-card.full-size {
+    height: 100%;
+  }
+
+  .card-content.full-size {
+    transform: scale(2) translateY(30%);
+  }
+
   .card-content {
     position: relative;
     margin: 0 auto;
