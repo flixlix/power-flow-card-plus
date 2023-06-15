@@ -60,6 +60,13 @@
         "display_zero_lines": "Afficher les lignes zéro",
         "clickable_entities": "Entités cliquables",
         "use_new_flow_rate_model": "Nouveau modèle de débit",
-        "use_metadata": "Utiliser les métadonnées"
+        "use_metadata": "Utiliser les métadonnées",
+        "mode": "Mode",
+        "show": "Afficher",
+        "hide": "Masquer",
+        "custom": "Personnalisé",
+        "grey_out": "Griser",
+        "transparency": "Transparence",
+        "grey_color": "Couleur grise"
     }
 }
