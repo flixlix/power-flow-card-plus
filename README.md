@@ -367,7 +367,6 @@ entities:
     name: Non Fossil
     state_type: power
   grid:
-    icon: mdi:ab-testing
     name: Provider
     entity:
       production: sensor.grid_production
