@@ -35,8 +35,6 @@ export const styles = css`
     --transparency: var(--transparency-unused-lines);
     --greyed-out--line-color: #bdbdbd;
   }
-  :root {
-  }
 
   ha-card.full-size {
     height: 100%;
