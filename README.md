@@ -19,7 +19,8 @@
 
 <details>
 <summary>... and More:</summary>
-  
+
+- Option for card full size
 - Add Grid Tolerance for small values, to not display the battery correcting grid values
 - New and improved Flow Rate Model
 - Choose wether or not to color icons, text, etc.
@@ -471,12 +472,10 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
-- Add localize functions to use card in different languages
 - Change Tap Action Behavior to be compatible with Browser Mod
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
-- Make card full size [#41](https://github.com/flixlix/power-flow-card-plus/discussions/41)
 - Add Generator Functionality [#110](https://github.com/flixlix/power-flow-card-plus/issues/110)
 - Display Connected/Disconnected status [#111](https://github.com/flixlix/power-flow-card-plus/issues/111)
 - Grid Feed In Circle [#119](https://github.com/flixlix/power-flow-card-plus/issues/119)
