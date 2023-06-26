@@ -73,6 +73,7 @@ export const secondaryInfoSchema = [
     schema: [
       { name: "icon", selector: { icon: {} } },
       { name: "unit_of_measurement", label: "Unit of Measurement", selector: { text: {} } },
+      { name: "decimals", label: "Decimals", selector: { number: { mode: "box", min: 0, max: 10, step: 1 } } },
       { name: "color_value", label: "Color Value", selector: { boolean: {} } },
       { name: "unit_white_space", label: "Unit White Space", selector: { boolean: {} } },
       { name: "display_zero", label: "Display Zero", selector: { boolean: {} } },
