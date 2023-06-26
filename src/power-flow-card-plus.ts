@@ -329,6 +329,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
+        decimals: entities.grid?.secondary_info?.decimals,
         template: entities.grid?.secondary_info?.template,
         has: this.hasField(entities.grid?.secondary_info, true),
         state: initialSecondaryState,
@@ -354,6 +355,7 @@ export class PowerFlowCardPlus extends LitElement {
       name: this.computeFieldName(entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
+        decimals: entities.solar?.secondary_info?.decimals,
         template: entities.solar?.secondary_info?.template,
         has: this.hasField(entities.solar?.secondary_info, true),
         state: initialSecondaryState,
@@ -1044,7 +1046,7 @@ export class PowerFlowCardPlus extends LitElement {
             className: key,
             entityId: field.secondary.entity,
             icon: field.secondary.icon,
-            value: this.displayValue(field.secondary.state, field.secondary.unit, field.secondary.unit_white_space),
+            value: this.displayValue(field.secondary.state, field.secondary.unit, field.secondary.unit_white_space, field.secondary.decimals),
             template: templatesObj[`${key}Secondary`],
           })}`
         : ""}`;
@@ -1676,12 +1678,14 @@ export class PowerFlowCardPlus extends LitElement {
                   id="solar-battery-flow"
                   class="flat-line"
                 >
-                  <path id="battery-solar" class="battery-solar ${this.styleLine(
-                    solar.state.toBattery || 0
-                  )}" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
-                  ${
-                    solar.state.toBattery
-                      ? svg`<circle
+                  <path
+                    id="battery-solar"
+                    class="battery-solar ${this.styleLine(solar.state.toBattery || 0)}"
+                    d="M50,0 V100"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${solar.state.toBattery
+                    ? svg`<circle
                             r="1"
                             class="battery-solar"
                             vector-effect="non-scaling-stroke"
@@ -1694,8 +1698,7 @@ export class PowerFlowCardPlus extends LitElement {
                               <mpath xlink:href="#battery-solar" />
                             </animateMotion>
                           </circle>`
-                      : ""
-                  }
+                    : ""}
                 </svg>
               </div>`
             : ""}
