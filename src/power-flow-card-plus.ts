@@ -208,10 +208,10 @@ export class PowerFlowCardPlus extends LitElement {
     if (Number.isNaN(+value)) return value.toString();
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
-    const v = formatNumber(
-      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, decimals ?? this._config!.w_decimals),
-      this.hass.locale
-    );
+    const decimalsToUse = decimals ?? (isKW ? this._config!.kw_decimals : this._config!.w_decimals);
+    const v = formatNumber(round(valueInNumber / (isKW ? 1000 : 1), decimalsToUse), this.hass.locale, {
+      maximumFractionDigits: isKW ? this._config!.kw_decimals : decimals ?? this._config!.w_decimals, // fixes decimals being overriden by locale
+    });
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
   };
 
