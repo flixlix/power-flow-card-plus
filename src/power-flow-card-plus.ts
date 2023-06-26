@@ -208,10 +208,10 @@ export class PowerFlowCardPlus extends LitElement {
     if (Number.isNaN(+value)) return value.toString();
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
-    const v = formatNumber(
-      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, decimals ?? this._config!.w_decimals),
-      this.hass.locale
-    );
+    const decimalsToUse = decimals ?? (isKW ? this._config!.kw_decimals : this._config!.w_decimals);
+    const v = formatNumber(round(valueInNumber / (isKW ? 1000 : 1), decimalsToUse), this.hass.locale, {
+      maximumFractionDigits: isKW ? this._config!.kw_decimals : decimals ?? this._config!.w_decimals, // fixes decimals being overriden by locale
+    });
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
   };
 
@@ -1676,12 +1676,14 @@ export class PowerFlowCardPlus extends LitElement {
                   id="solar-battery-flow"
                   class="flat-line"
                 >
-                  <path id="battery-solar" class="battery-solar ${this.styleLine(
-                    solar.state.toBattery || 0
-                  )}" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
-                  ${
-                    solar.state.toBattery
-                      ? svg`<circle
+                  <path
+                    id="battery-solar"
+                    class="battery-solar ${this.styleLine(solar.state.toBattery || 0)}"
+                    d="M50,0 V100"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${solar.state.toBattery
+                    ? svg`<circle
                             r="1"
                             class="battery-solar"
                             vector-effect="non-scaling-stroke"
@@ -1694,8 +1696,7 @@ export class PowerFlowCardPlus extends LitElement {
                               <mpath xlink:href="#battery-solar" />
                             </animateMotion>
                           </circle>`
-                      : ""
-                  }
+                    : ""}
                 </svg>
               </div>`
             : ""}
