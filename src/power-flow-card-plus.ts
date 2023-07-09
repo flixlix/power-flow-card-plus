@@ -1828,15 +1828,29 @@ export class PowerFlowCardPlus extends LitElement {
               </div>`
             : ""}
         </div>
-        ${this._config.dashboard_link
+        ${this._config.dashboard_link || this._config.second_dashboard_link
           ? html`
               <div class="card-actions">
-                <a href=${this._config.dashboard_link}
-                  ><mwc-button>
-                    ${this._config.dashboard_link_label ||
-                    this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard")}
-                  </mwc-button></a
-                >
+                ${this._config.dashboard_link
+                  ? html`
+                      <a href=${this._config.dashboard_link}
+                        ><mwc-button>
+                          ${this._config.dashboard_link_label ||
+                          this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard")}
+                        </mwc-button></a
+                      >
+                    `
+                  : ""}
+                ${this._config.second_dashboard_link
+                  ? html`
+                      <a href=${this._config.second_dashboard_link}
+                        ><mwc-button>
+                          ${this._config.second_dashboard_link_label ||
+                          this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard")}
+                        </mwc-button></a
+                      >
+                    `
+                  : ""}
               </div>
             `
           : ""}
