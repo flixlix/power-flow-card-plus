@@ -24,6 +24,7 @@ export const styles = css`
     --text-battery-state-of-charge-color: var(--primary-text-color);
     --cirlce-grid-color: var(--energy-grid-consumption-color, #488fc2);
     --circle-battery-color: var(--energy-battery-in-color, #f06292);
+    --battery-grid-line: var(--energy-grid-return-color, #8353d1);
     --secondary-text-solar-color: var(--primary-text-color);
     --secondary-text-grid-color: var(--primary-text-color);
     --secondary-text-home-color: var(--primary-text-color);
@@ -142,7 +143,7 @@ export const styles = css`
     cursor: var(--clickable-cursor);
   }
   #battery-grid {
-    stroke: var(--energy-grid-return-color);
+    stroke: var(--battery-grid-line);
   }
   ha-icon {
     padding-bottom: 2px;
@@ -290,7 +291,7 @@ export const styles = css`
     stroke: var(--energy-grid-consumption-color);
   }
   path.battery-to-grid {
-    stroke: var(--energy-grid-return-color);
+    stroke: var(--battery-grid-line);
   }
   .battery ha-icon:not(.small) {
     color: var(--icon-battery-color);
