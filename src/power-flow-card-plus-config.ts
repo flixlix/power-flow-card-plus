@@ -4,6 +4,8 @@ import { ComboEntity, IndividualDeviceType, SecondaryInfoType, baseConfigEntity,
 interface mainConfigOptions {
   dashboard_link?: string;
   dashboard_link_label?: string;
+  second_dashboard_link?: string;
+  second_dashboard_link_label?: string;
   kw_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;

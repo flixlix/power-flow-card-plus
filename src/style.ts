@@ -399,6 +399,12 @@ export const styles = css`
     }
   }
 
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .card-actions a {
     text-decoration: none;
   }
