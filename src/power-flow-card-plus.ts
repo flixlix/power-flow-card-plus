@@ -554,6 +554,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
+      solar.state.toHome = 0;
       // What we returned to the grid and what went in to the battery is more
       // than produced, so we have used grid energy to fill the battery or
       // returned battery energy to the grid
@@ -564,7 +565,8 @@ export class PowerFlowCardPlus extends LitElement {
           grid.state.toBattery = grid.state.fromGrid;
         }
       }
-      solar.state.toHome = 0;
+    } else if (battery.state.toBattery && battery.state.toBattery > 0) {
+      grid.state.toBattery = battery.state.toBattery;
     }
 
     if (battery.has) {
@@ -914,6 +916,11 @@ export class PowerFlowCardPlus extends LitElement {
     this.style.setProperty(
       "--transparency-unused-lines",
       this._config?.display_zero_lines?.transparency ? this._config.display_zero_lines.transparency.toString() : "0"
+    );
+
+    this.style.setProperty(
+      "--battery-grid-line",
+      grid.state.toBattery || 0 > 0 ? "var(--energy-grid-consumption-color)" : "var(--energy-grid-return-color)"
     );
 
     if (this._config.display_zero_lines?.grey_color !== undefined) {
@@ -1678,12 +1685,14 @@ export class PowerFlowCardPlus extends LitElement {
                   id="solar-battery-flow"
                   class="flat-line"
                 >
-                  <path id="battery-solar" class="battery-solar ${this.styleLine(
-                    solar.state.toBattery || 0
-                  )}" d="M50,0 V100" vector-effect="non-scaling-stroke"></path>
-                  ${
-                    solar.state.toBattery
-                      ? svg`<circle
+                  <path
+                    id="battery-solar"
+                    class="battery-solar ${this.styleLine(solar.state.toBattery || 0)}"
+                    d="M50,0 V100"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  ${solar.state.toBattery
+                    ? svg`<circle
                             r="1"
                             class="battery-solar"
                             vector-effect="non-scaling-stroke"
@@ -1696,8 +1705,7 @@ export class PowerFlowCardPlus extends LitElement {
                               <mpath xlink:href="#battery-solar" />
                             </animateMotion>
                           </circle>`
-                      : ""
-                  }
+                    : ""}
                 </svg>
               </div>`
             : ""}
@@ -1781,7 +1789,7 @@ export class PowerFlowCardPlus extends LitElement {
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-grid-flow">
                   <path
                     id="battery-grid"
-                    class=${this.styleLine(battery.state.toGrid || 0)}
+                    class=${this.styleLine(battery.state.toGrid || grid.state.toBattery || 0)}
                     d="M45,100 v-15 c0,-30 -10,-30 -30,-30 h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
