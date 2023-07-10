@@ -554,7 +554,6 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
-      solar.state.toHome = 0;
       // What we returned to the grid and what went in to the battery is more
       // than produced, so we have used grid energy to fill the battery or
       // returned battery energy to the grid
@@ -565,7 +564,8 @@ export class PowerFlowCardPlus extends LitElement {
           grid.state.toBattery = grid.state.fromGrid;
         }
       }
-    } else if (battery.state.toBattery && battery.state.toBattery > 0) {
+      solar.state.toHome = 0;
+    } else if (!solar.has && battery.state.toBattery && battery.state.toBattery > 0) {
       grid.state.toBattery = battery.state.toBattery;
     }
 

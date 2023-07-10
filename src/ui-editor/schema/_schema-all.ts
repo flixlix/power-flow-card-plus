@@ -23,6 +23,8 @@ export const cardConfigStruct = assign(
     theme: optional(string()),
     dashboard_link: optional(string()),
     dashboard_link_label: optional(string()),
+    second_dashboard_link: optional(string()),
+    second_dashboard_link_label: optional(string()),
     inverted_entities: optional(any()),
     w_decimals: optional(integer()),
     kw_decimals: optional(integer()),
