@@ -9,6 +9,7 @@ import * as fr from "./languages/fr.json";
 import * as ru from "./languages/ru.json";
 import * as fi from "./languages/fi.json";
 import * as pl from "./languages/pl.json";
+import * as sk from "./languages/sk.json";
 
 const languages: Record<string, unknown> = {
   en,
@@ -22,6 +23,7 @@ const languages: Record<string, unknown> = {
   ru,
   fi,
   pl,
+  sk,
 };
 
 const defaultLang = "en";
