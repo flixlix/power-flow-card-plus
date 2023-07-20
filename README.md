@@ -11,7 +11,7 @@
 ## Additional Features / Enhancements
 
 - UI Editor!!! 🥳
-- Multiple Language support (🇺🇸, 🇩🇪, 🇵🇹, 🇪🇸, 🇧🇷, 🇳🇱, 🇮🇹, 🇫🇷, 🇷🇺, 🇫🇮, 🇵🇱)
+- Multiple Language support (🇺🇸, 🇩🇪, 🇵🇹, 🇪🇸, 🇧🇷, 🇳🇱, 🇮🇹, 🇫🇷, 🇷🇺, 🇫🇮, 🇵🇱, 🇩🇰, 🇸🇰)
 - Bidirectional Individual Entities ↕️
 - Secondary Information for all circles ℹ️
 - Display Grid Power Outage ⚡️
