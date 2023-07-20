@@ -552,6 +552,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (solar.has) {
       solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
+    const largestGridBatteryTolerance = Math.max(entities.grid?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
 
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
       // What we returned to the grid and what went in to the battery is more
@@ -568,6 +569,7 @@ export class PowerFlowCardPlus extends LitElement {
     } else if (!solar.has && battery.state.toBattery && battery.state.toBattery > 0) {
       grid.state.toBattery = battery.state.toBattery;
     }
+    grid.state.toBattery = (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
 
     if (battery.has) {
       if (solar.has) {
@@ -581,6 +583,7 @@ export class PowerFlowCardPlus extends LitElement {
       } else {
         battery.state.toGrid = grid.state.toGrid || 0;
       }
+      battery.state.toGrid = (battery.state.toGrid || 0) > largestGridBatteryTolerance ? grid.state.toGrid || 0 : 0;
       battery.state.toHome = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
