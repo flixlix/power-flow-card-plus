@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Generator",
         "combined": "Gecombineerde entiteit (één entiteit met positieve en negatieve waarden)",
         "separated": "Gescheiden entiteiten (één entiteit voor consumptie en één voor productie)",
         "custom_colors": "Aangepaste kleuren",

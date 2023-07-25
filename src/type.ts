@@ -30,11 +30,12 @@ export interface baseConfigEntity {
   invert_state?: boolean;
 }
 
-export type gridPowerOutage = {
+export type GridPowerOutage = {
   entity: string;
   state_alert?: string;
   label_alert?: string;
   icon_alert?: string;
+  entity_generator?: string;
 };
 
 export type IndividualDeviceType = baseConfigEntity & {

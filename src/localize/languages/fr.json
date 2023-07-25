@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Générateur",
         "combined": "Entité combinée (une entité avec des valeurs positives et négatives)",
         "separated": "Entités séparées (une entité pour la consommation et une pour la production)",
         "custom_colors": "Couleurs personnalisées",

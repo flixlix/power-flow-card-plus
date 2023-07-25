@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Generaattori",
         "combined": "Yhdistetty kokonaisuus (yksi kokonaisuus positiivisilla ja negatiivisilla arvoilla)",
         "separated": "Erotetut kokonaisuudet (yksi kulutukseen ja yksi tuotantoon)",
         "custom_colors": "Mukautetut värit",

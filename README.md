@@ -264,6 +264,7 @@ This feature allows you to configure how the card handles a Grid Power Outage sc
 | Name        | Type     | Description                                                                                       |
 | ----------- | -------- | ------------------------------------------------------------------------------------------------- |
 | entity| `string` required | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor. |
+| entity_generator | `string` | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power. | 
 | state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
 | icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`. |
 | label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |

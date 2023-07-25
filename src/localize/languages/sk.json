@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Generátor",
         "combined": "Kombinovaná entita (jedna entita s kladnými a zápornými hodnotami)",
         "separated": "Oddelené subjekty (jeden subjekt pre spotrebu a jeden pre výrobu)",
         "custom_colors": "Vlastné farby",
