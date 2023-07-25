@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { ComboEntity, IndividualDeviceType, SecondaryInfoType, baseConfigEntity, gridPowerOutage } from "./type.js";
+import { ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, baseConfigEntity } from "./type.js";
 
 interface mainConfigOptions {
   dashboard_link?: string;
@@ -36,7 +36,7 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigO
       color?: ComboEntity;
     };
     grid?: baseConfigEntity & {
-      power_outage: gridPowerOutage;
+      power_outage: GridPowerOutage;
       secondary_info?: SecondaryInfoType;
       color_circle: boolean | "production" | "consumption";
       color?: ComboEntity;

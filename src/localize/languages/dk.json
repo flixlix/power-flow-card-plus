@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Generator",
         "combined": "Kombineret enhed (Én enhed med positive og negative værdier)",
         "separated": "Adskilte enheder (én enhed til forbrug og én til produktion)",
         "custom_colors": "Brugerdefinerede farver",

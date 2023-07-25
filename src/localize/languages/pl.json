@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Generator",
         "combined": "Jednostka połączona (jedna jednostka z wartościami dodatnimi i ujemnymi)",
         "separated": "Oddzielne podmioty (jeden podmiot do konsumpcji i jeden do produkcji)",
         "custom_colors": "Kolory niestandardowe",

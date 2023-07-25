@@ -27,13 +27,11 @@ const mainSchema = {
 
 const powerOutageGridSchema = [
   {
-    name: "entity",
-    selector: { entity: {} },
-  },
-  {
     type: "grid",
     column_min_width: "200px",
     schema: [
+      { name: "entity", selector: { entity: {} } },
+      { name: "entity_generator", label: "Generator Entity", selector: { entity: {} } },
       { name: "label_alert", label: "Outage Label", selector: { text: {} } },
       { name: "icon_alert", label: "Outage Icon", selector: { icon: {} } },
       { name: "state_alert", label: "Outage State", selector: { text: {} } },

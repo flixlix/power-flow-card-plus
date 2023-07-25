@@ -314,6 +314,7 @@ export class PowerFlowCardPlus extends LitElement {
           (entities.grid && this.hass.states[entities.grid.power_outage?.entity]?.state) === (entities.grid?.power_outage?.state_alert ?? "on"),
         icon: entities.grid?.power_outage?.icon_alert || "mdi:transmission-tower-off",
         name: entities.grid?.power_outage?.label_alert ?? html`Power<br />Outage`,
+        entityGenerator: entities.grid?.power_outage?.entity_generator,
       },
       icon: this.computeFieldIcon(entities.grid, "mdi:transmission-tower"),
       name: this.computeFieldName(entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")) as
@@ -474,12 +475,6 @@ export class PowerFlowCardPlus extends LitElement {
         color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
       },
     };
-
-    if (grid.powerOutage.isOutage) {
-      grid.state.fromGrid = 0;
-      grid.state.toGrid = 0;
-      grid.icon = grid.powerOutage.icon;
-    }
 
     if (grid.has) {
       if (typeof entities.grid!.entity === "string") {
@@ -823,6 +818,17 @@ export class PowerFlowCardPlus extends LitElement {
 
     nonFossil.hasPercentage =
       (entities.fossil_fuel_percentage?.entity !== undefined && entities.fossil_fuel_percentage?.display_zero === true) || nonFossil.has;
+
+    if (grid.powerOutage.isOutage) {
+      grid.state.fromGrid = grid.powerOutage.entityGenerator ? Math.max(this.getEntityStateWatts(grid.powerOutage.entityGenerator), 0) : 0;
+      grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
+      grid.state.toGrid = 0;
+      battery.state.toGrid = 0;
+      solar.state.toGrid = 0;
+      grid.icon = grid.powerOutage.icon;
+      nonFossil.has = false;
+      nonFossil.hasPercentage = false;
+    }
 
     const totalLines =
       grid.state.toHome +
@@ -1357,17 +1363,20 @@ export class PowerFlowCardPlus extends LitElement {
                           ${this.displayValue(grid.state.toGrid)}
                         </span>`
                       : null}
-                    ${(entities.grid?.display_state === "two_way" ||
+                    ${((entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
                       (entities.grid?.display_state === "one_way_no_zero" && grid.state.fromGrid > 0) ||
                       (entities.grid?.display_state === "one_way" && (grid.state.toGrid === null || grid.state.toGrid === 0))) &&
-                    grid.state.fromGrid !== null &&
-                    !grid.powerOutage.isOutage
+                      grid.state.fromGrid !== null &&
+                      !grid.powerOutage.isOutage) ||
+                    (grid.powerOutage.isOutage && !!grid.powerOutage.entityGenerator)
                       ? html` <span class="consumption">
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(grid.state.fromGrid)}
                         </span>`
                       : ""}
-                    ${grid.powerOutage.isOutage ? html`<span class="grid power-outage"> ${grid.powerOutage.name} </span>` : ""}
+                    ${grid.powerOutage.isOutage && !grid.powerOutage.entityGenerator
+                      ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>`
+                      : ""}
                   </div>
                   <span class="label">${grid.name}</span>
                 </div>`
@@ -1491,7 +1500,9 @@ export class PowerFlowCardPlus extends LitElement {
                           .icon=${battery.icon}
                           style=${entities.battery?.display_state === "two_way"
                             ? "padding-top: 0px; padding-bottom: 2px;"
-                            : entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery === 0 && battery.state.fromBattery === 0
+                            : entities.battery?.display_state === "one_way_no_zero" &&
+                              battery.state.toBattery === 0 &&
+                              battery.state.fromBattery === 0
                             ? "padding-top: 2px; padding-bottom: 0px;"
                             : "padding-top: 2px; padding-bottom: 2px;"}
                           @click=${(e: { stopPropagation: () => void }) => {

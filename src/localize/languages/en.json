@@ -6,6 +6,7 @@
         }
     },
     "editor": {
+        "entity_generator": "Generator",
         "combined": "Combined Entity (One entity with positive and negative values)",
         "separated": "Separated Entities (One entity for consumption and one for production)",
         "custom_colors": "Custom Colors",
