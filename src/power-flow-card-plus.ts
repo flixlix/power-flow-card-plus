@@ -209,7 +209,7 @@ export class PowerFlowCardPlus extends LitElement {
     const valueInNumber = Number(value);
     const isKW = unit === undefined && valueInNumber >= this._config!.watt_threshold;
     const v = formatNumber(
-      isKW ? round(valueInNumber / 1000, this._config!.kw_decimals) : round(valueInNumber, decimals ?? this._config!.w_decimals),
+      isKW ? round(valueInNumber / 1000, decimals ?? this._config!.kw_decimals) : round(valueInNumber, decimals ?? this._config!.w_decimals),
       this.hass.locale
     );
     return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
@@ -436,6 +436,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit_white_space: entities[field]?.secondary_info?.unit_white_space,
         displayZero: entities[field]?.secondary_info?.display_zero,
         displayZeroTolerance: entities[field]?.secondary_info?.display_zero_tolerance,
+        decimals: entities[field]?.secondary_info?.decimals,
       },
     });
 
@@ -1065,7 +1066,12 @@ export class PowerFlowCardPlus extends LitElement {
     const individualSecondarySpan = (individual: Individual, key: string) => {
       const templateResult: string = templatesObj[`${key}Secondary`];
       const value = individual.secondary.has
-        ? this.displayValue(individual.secondary.state, individual.secondary.unit, individual.secondary.unit_white_space)
+        ? this.displayValue(
+            individual.secondary.state,
+            individual.secondary.unit,
+            individual.secondary.unit_white_space,
+            individual.secondary.decimals
+          )
         : undefined;
       const passesDisplayZeroCheck =
         individual.secondary.displayZero !== false ||
