@@ -1328,8 +1328,8 @@ export class PowerFlowCardPlus extends LitElement {
                     <ha-icon .icon=${grid.icon}></ha-icon>
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
-                      (entities.grid?.display_state === "one_way" && (grid.state.toGrid ?? 0) > 0) ||
-                      (entities.grid?.display_state === "one_way_no_zero" &&
+                      (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||
+                      (entities.grid?.display_state === "one_way" &&
                         (grid.state.fromGrid === null || grid.state.fromGrid === 0) &&
                         grid.state.toGrid !== 0)) &&
                     grid.state.toGrid !== null &&
@@ -1353,8 +1353,8 @@ export class PowerFlowCardPlus extends LitElement {
                       : null}
                     ${(entities.grid?.display_state === "two_way" ||
                       entities.grid?.display_state === undefined ||
-                      (entities.grid?.display_state === "one_way" && grid.state.fromGrid > 0) ||
-                      (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid === null || grid.state.toGrid === 0))) &&
+                      (entities.grid?.display_state === "one_way_no_zero" && grid.state.fromGrid > 0) ||
+                      (entities.grid?.display_state === "one_way" && (grid.state.toGrid === null || grid.state.toGrid === 0))) &&
                     grid.state.fromGrid !== null &&
                     !grid.powerOutage.isOutage
                       ? html` <span class="consumption">
@@ -1485,7 +1485,7 @@ export class PowerFlowCardPlus extends LitElement {
                           .icon=${battery.icon}
                           style=${entities.battery?.display_state === "two_way"
                             ? "padding-top: 0px; padding-bottom: 2px;"
-                            : entities.battery?.display_state === "one_way" && battery.state.toBattery === 0 && battery.state.fromBattery === 0
+                            : entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery === 0 && battery.state.fromBattery === 0
                             ? "padding-top: 2px; padding-bottom: 0px;"
                             : "padding-top: 2px; padding-bottom: 2px;"}
                           @click=${(e: { stopPropagation: () => void }) => {
@@ -1499,8 +1499,8 @@ export class PowerFlowCardPlus extends LitElement {
                         ></ha-icon>
                         ${entities.battery?.display_state === "two_way" ||
                         entities.battery?.display_state === undefined ||
-                        (entities.battery?.display_state === "one_way" && battery.state.toBattery > 0) ||
-                        (entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery !== 0)
+                        (entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery > 0) ||
+                        (entities.battery?.display_state === "one_way" && battery.state.toBattery !== 0)
                           ? html`<span
                               class="battery-in"
                               @click=${(e: { stopPropagation: () => void }) => {
@@ -1524,8 +1524,8 @@ export class PowerFlowCardPlus extends LitElement {
                           : ""}
                         ${entities.battery?.display_state === "two_way" ||
                         entities.battery?.display_state === undefined ||
-                        (entities.battery?.display_state === "one_way" && battery.state.fromBattery > 0) ||
-                        (entities.battery?.display_state === "one_way_no_zero" && (battery.state.toBattery === 0 || battery.state.fromBattery !== 0))
+                        (entities.battery?.display_state === "one_way_no_zero" && battery.state.fromBattery > 0) ||
+                        (entities.battery?.display_state === "one_way" && (battery.state.toBattery === 0 || battery.state.fromBattery !== 0))
                           ? html`<span
                               class="battery-out"
                               @click=${(e: { stopPropagation: () => void }) => {
