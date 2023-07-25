@@ -21,6 +21,9 @@ jobs:
 
       - name: Check JSON Files
         run: |
+          # Navigate to the root of the repository
+          cd $GITHUB_WORKSPACE
+
           # Navigate to the languages directory
           cd src/localize/languages
 
