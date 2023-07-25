@@ -27,18 +27,24 @@ jobs:
           # Navigate to the languages directory
           cd src/localize/languages
 
-          # Get the list of all JSON files
-          files=$(ls *.json)
+          # Initialize a variable to store the expected line count
+          expected_lines=""
 
-          # Check the number of lines in the first file
-          expected_lines=$(wc -l < "$files")
+          # Get the list of all JSON files and loop through them
+          for file in *.json; do
+            # Check the number of lines in the first file only
+            if [ -z "$expected_lines" ]; then
+              expected_lines=$(wc -l < "$file")
+            fi
 
-          # Loop through all files and check the line count
-          for file in $files; do
+            # Check the line count of the current file
             current_lines=$(wc -l < "$file")
 
+            # Compare the current file's line count with the expected line count
             if [ "$current_lines" -ne "$expected_lines" ]; then
               echo "ERROR: $file does not have the same number of lines as other JSON files."
               exit 1
             fi
           done
+          echo "SUCCESS: All JSON files have$expected_lines lines."
+
