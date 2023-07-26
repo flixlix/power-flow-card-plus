@@ -1318,20 +1318,24 @@ export class PowerFlowCardPlus extends LitElement {
                   <div
                     class="circle"
                     @click=${(e: { stopPropagation: () => void }) => {
-                      const target: string =
-                        typeof entities.grid!.entity === "string"
+                      const outageTarget = grid.powerOutage.entityGenerator ?? entities.grid?.power_outage.entity;
+                      const target =
+                        grid.powerOutage.isOutage && outageTarget
+                          ? outageTarget
+                          : typeof entities.grid!.entity === "string"
                           ? entities.grid!.entity
-                          : entities.grid!.entity!.consumption! || entities.grid!.entity!.production!;
-
+                          : entities.grid!.entity.production!;
                       this.openDetails(e, target);
                     }}
                     @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                       if (e.key === "Enter") {
-                        const target: string =
-                          typeof entities.grid!.entity === "string"
+                        const outageTarget = grid.powerOutage.entityGenerator ?? entities.grid?.power_outage.entity;
+                        const target =
+                          grid.powerOutage.isOutage && outageTarget
+                            ? outageTarget
+                            : typeof entities.grid!.entity === "string"
                             ? entities.grid!.entity
-                            : entities.grid!.entity!.consumption! || entities.grid!.entity!.production!;
-
+                            : entities.grid!.entity.production!;
                         this.openDetails(e, target);
                       }
                     }}
