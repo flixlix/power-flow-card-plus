@@ -1451,7 +1451,9 @@ export class PowerFlowCardPlus extends LitElement {
                   />
                 </svg>
               </div>
-              ${this.showLine(individual1.state || 0) && individual2.has && individual1.has ? "" : html` <span class="label">${home.name}</span>`}
+              ${this.showLine(individual1.state || 0) && individual2.has && individual1.has
+                ? html`<span class="label"></span>`
+                : html` <span class="label">${home.name}</span>`}
             </div>
           </div>
           ${battery.has || (individual1.has && individual2.has)
