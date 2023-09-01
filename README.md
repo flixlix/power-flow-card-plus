@@ -479,7 +479,6 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
-- Add Generator Functionality [#110](https://github.com/flixlix/power-flow-card-plus/issues/110)
 - Display Connected/Disconnected status [#111](https://github.com/flixlix/power-flow-card-plus/issues/111)
 - Grid Feed In Circle [#119](https://github.com/flixlix/power-flow-card-plus/issues/119)
 - Improve performance [#144](https://github.com/flixlix/power-flow-card-plus/issues/144)
