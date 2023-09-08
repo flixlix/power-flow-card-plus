@@ -22,6 +22,11 @@ const mainSchema = {
       label: "Use Metadata",
       selector: { boolean: {} },
     },
+    {
+      name: "color_value",
+      label: "Color of Value",
+      selector: { boolean: {} },
+    },
   ],
 };
 
