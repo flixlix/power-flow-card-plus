@@ -7,11 +7,118 @@ lovelace:
 demo:
 
 input_number:
-  test:
-    icon: mdi:battery-charging-outline
+  solar_power:
+    name: Solar Power
     min: 0
-    max: 255
-    step: 5
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  solar_secondary:
+    name: Solar Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+  home_power:
+    name: Home Power
+    min: 0
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  home_secondary:
+    name: Home Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+  battery_power:
+    name: Battery Power
+    min: -2000
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  battery_secondary:
+    name: Battery Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+  grid_power:
+    name: Grid Power
+    min: -2000
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  grid_secondary:
+    name: Grid Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+  fossil_fuel_percentage:
+    name: Fossil Fuel Percentage
+    min: 0
+    max: 100
+    step: 0.01
+    mode: box
+    unit_of_measurement: "%"
+  fossil_fuel_power:
+    name: Fossil Fuel Power
+    min: 0
+    max: 2000
+    step: 0.01
+    mode: box
+    unit_of_measurement: "W"
+  individual1_power:
+    name: Individual 1 Power
+    min: 0
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  individual1_secondary:
+    name: Individual 1 Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+  individual2_power:
+    name: Individual 2 Power
+    min: 0
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  individual2_secondary:
+    name: Individual 2 Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+  individual3_power:
+    name: Individual 3 Power
+    min: 0
+    max: 2000
+    step: 1
+    mode: box
+    unit_of_measurement: "W"
+  individual3_secondary:
+    name: Individual 3 Secondary
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
 
 homeassistant:
   customize:
