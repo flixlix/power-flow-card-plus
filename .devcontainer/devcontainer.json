@@ -1,0 +1,40 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+  "name": "Homekit Button Development",
+  "image": "ghcr.io/ludeeus/devcontainer/generic:latest",
+  "context": "..",
+  "remoteUser": "vscode",
+  "appPort": ["5000:5000", "9123:8123"],
+  "postCreateCommand": "yarn install && sudo container install",
+  "runArgs": ["-v", "${localWorkspaceFolder}/.devcontainer/www:/config/www"],
+  "extensions": [
+    "github.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bierner.lit-html",
+    "runem.lit-plugin",
+    "davidanson.vscode-markdownlint",
+    "redhat.vscode-yaml",
+    "msjsdiag.debugger-for-chrome",
+    "yzhang.markdown-all-in-one"
+  ],
+  "settings": {
+    "files.eol": "\n",
+    "editor.tabSize": 2,
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "markdown.extension.toc.githubCompatibility": true,
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/**": true,
+      "**/.hg/store/**": true,
+      "**/.rpt2_cache/**": true
+    }
+  }
+}
