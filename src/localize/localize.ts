@@ -1,3 +1,4 @@
+import * as cs from "./languages/cs.json";
 import * as en from "./languages/en.json";
 import * as de from "./languages/de.json";
 import * as dk from "./languages/dk.json";
@@ -13,6 +14,7 @@ import * as pl from "./languages/pl.json";
 import * as sk from "./languages/sk.json";
 
 const languages: Record<string, unknown> = {
+  cs,
   en,
   de,
   dk,
