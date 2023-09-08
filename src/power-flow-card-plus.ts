@@ -586,7 +586,7 @@ export class PowerFlowCardPlus extends LitElement {
       } else {
         battery.state.toGrid = grid.state.toGrid || 0;
       }
-      battery.state.toGrid = (battery.state.toGrid || 0) > largestGridBatteryTolerance ? grid.state.toGrid || 0 : 0;
+      battery.state.toGrid = (battery.state.toGrid || 0) > largestGridBatteryTolerance ? battery.state.toGrid || 0 : 0;
       battery.state.toHome = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
@@ -639,6 +639,8 @@ export class PowerFlowCardPlus extends LitElement {
         grid.state.toBattery = 0;
       }
     }
+
+    console.log("solar state", solar.state, "grid state", grid.state, "battery state", battery.state, "home state", home.state);
 
     this.style.setProperty(
       "--icon-grid-color",
