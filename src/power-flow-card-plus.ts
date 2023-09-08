@@ -466,6 +466,7 @@ export class PowerFlowCardPlus extends LitElement {
       color_value: entities.fossil_fuel_percentage?.color_value,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
+        decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
         template: entities.fossil_fuel_percentage?.secondary_info?.template,
         has: this.hasField(entities.fossil_fuel_percentage?.secondary_info, true),
         state: initialSecondaryState,
