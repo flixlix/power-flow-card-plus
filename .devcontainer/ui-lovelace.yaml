@@ -1,0 +1,5 @@
+views:
+  - title: Main
+    cards:
+      - type: button
+        entity: switch.skylight

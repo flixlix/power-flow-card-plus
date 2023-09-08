@@ -24,7 +24,8 @@
     "build": "rollup -c",
     "lint": "eslint src/*",
     "release": "semantic-release",
-    "start": "rollup -wc"
+    "start": "rollup -wc",
+    "watch": "rollup -c --watch"
   },
   "dependencies": {
     "@material/mwc-ripple": "^0.19.1",
