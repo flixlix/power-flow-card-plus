@@ -640,8 +640,6 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
-    console.log("solar state", solar.state, "grid state", grid.state, "battery state", battery.state, "home state", home.state);
-
     this.style.setProperty(
       "--icon-grid-color",
       grid.color.icon_type === "consumption"
