@@ -548,7 +548,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (solar.has) {
       solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
       if (entities.solar?.display_zero_tolerance) {
-        if (entities.solar.display_zero_tolerance >= (solar.state.total || 0) ) solar.state.toHome = 0;
+        if (entities.solar.display_zero_tolerance >= (solar.state.total || 0)) solar.state.toHome = 0;
       }
     }
     const largestGridBatteryTolerance = Math.max(entities.grid?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
@@ -580,12 +580,12 @@ export class PowerFlowCardPlus extends LitElement {
         }
         solar.state.toBattery = battery.state.toBattery - (grid.state.toBattery || 0);
         if (entities.solar?.display_zero_tolerance) {
-          if (entities.solar.display_zero_tolerance >= (solar.state.total || 0) ) solar.state.toBattery = 0;
+          if (entities.solar.display_zero_tolerance >= (solar.state.total || 0)) solar.state.toBattery = 0;
         }
       } else {
         battery.state.toGrid = grid.state.toGrid || 0;
       }
-      battery.state.toGrid = (battery.state.toGrid || 0) > largestGridBatteryTolerance ? grid.state.toGrid || 0 : 0;
+      battery.state.toGrid = (battery.state.toGrid || 0) > largestGridBatteryTolerance ? battery.state.toGrid || 0 : 0;
       battery.state.toHome = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
     }
 
@@ -593,7 +593,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     if (solar.has && grid.state.toGrid) solar.state.toGrid = grid.state.toGrid - (battery.state.toGrid ?? 0);
     if (entities.solar?.display_zero_tolerance) {
-      if (entities.solar.display_zero_tolerance >= (solar.state.total || 0) ) solar.state.toGrid = 0;
+      if (entities.solar.display_zero_tolerance >= (solar.state.total || 0)) solar.state.toGrid = 0;
     }
     this.style.setProperty("--text-solar-color", entities.solar?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)");
 
@@ -632,12 +632,14 @@ export class PowerFlowCardPlus extends LitElement {
     if (entities.grid?.display_zero_tolerance !== undefined) {
       solar.state.toGrid = (solar.state.toGrid ?? 0) > entities.grid?.display_zero_tolerance ? solar.state.toGrid : 0;
       grid.state.toGrid = (grid.state.toGrid ?? 0) > entities.grid?.display_zero_tolerance ? grid.state.toGrid : 0;
-      if(grid.state.fromGrid <= entities.grid?.display_zero_tolerance) {
+      if (grid.state.fromGrid <= entities.grid?.display_zero_tolerance) {
         grid.state.fromGrid = 0;
         grid.state.toHome = 0;
         grid.state.toBattery = 0;
       }
     }
+
+    console.log("solar state", solar.state, "grid state", grid.state, "battery state", battery.state, "home state", home.state);
 
     this.style.setProperty(
       "--icon-grid-color",
@@ -1251,7 +1253,7 @@ export class PowerFlowCardPlus extends LitElement {
                               vector-effect="non-scaling-stroke"
                             >
                               <animateMotion
-                                dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"    
+                                dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"
                                 repeatCount="indefinite"
                                 calcMode="linear"
                                 keyPoints=${individual2.invertAnimation ? "0;1" : "1;0"}
