@@ -35,6 +35,10 @@ export const styles = css`
     --lines-svg-not-flat-width: calc(103% - 165px);
     --transparency: var(--transparency-unused-lines);
     --greyed-out--line-color: #bdbdbd;
+    --text-grid-consumption-color: var(--energy-grid-consumption-color);
+    --text-grid-return-color: var(--energy-grid-return-color);
+    --text-battery-in-color: var(--energy-battery-in-color);
+    --text-battery-out-color: var(--energy-battery-out-color);
   }
 
   ha-card.full-size {
@@ -287,6 +291,12 @@ export const styles = css`
   .battery-out {
     color: var(--energy-battery-out-color);
   }
+  span.battery-in {
+    color: var(--text-battery-in-color);
+  }
+  span.battery-out {
+    color: var(--text-battery-out-color);
+  }
   path.battery-from-grid {
     stroke: var(--energy-grid-consumption-color);
   }
@@ -310,11 +320,17 @@ export const styles = css`
   .return {
     color: var(--energy-grid-return-color);
   }
+  span.return {
+    color: var(--text-grid-return-color);
+  }
   .grid .circle {
     border-color: var(--circle-grid-color);
   }
   .consumption {
     color: var(--energy-grid-consumption-color);
+  }
+  span.consumption {
+    color: var(--text-grid-consumption-color);
   }
   circle.grid,
   circle.battery-from-grid,

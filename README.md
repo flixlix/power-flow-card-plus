@@ -34,7 +34,7 @@
 - Display Low Carbon Energy from the grid
 - Customize Low Carbon Energy label, icon, circle color, icon color and state type
 - Customize Battery, Solar and Home's color, icon, color of icon and label
-  
+
 </details>
 
 ## Goal
@@ -77,7 +77,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 3. Click three dot icon
 4. Select Resources
 5. Hit (+ ADD RESOURCE) icon
-6. Enter URL `/local/power-flow-card-plus.js` and select type "JavaScript Module". 
+6. Enter URL `/local/power-flow-card-plus.js` and select type "JavaScript Module".
    (Use `/hacsfiles/power-flow-card-plus/power-flow-card-plus.js` and select "JavaScript Module" for HACS install if HACS didn't do it already)
 
 </details>
@@ -146,6 +146,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
 | display_zero_tolerance | `number` | `0` | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid. |
 | power_outage | `object` | `undefined` | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info. |
+| color_value | `boolean` | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |
 | invert_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption. |
 
 #### Solar Configuration
@@ -179,6 +180,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge. |
 | color_state_of_charge_value | `boolean` or "production" or "consumption" | If set to `true`, state of charge text color will match the highest value. If set to `production`, state of charge text color will match the production. If set to `consumption`, state of charge text color will match the consumption. |
 | color_circle | `boolean` or "production" or "consumption" | If set to `true`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption. |
+| color_value | `boolean` | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |
 | invert_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption. |
 
 #### Individual Configuration
@@ -264,7 +266,7 @@ This feature allows you to configure how the card handles a Grid Power Outage sc
 | Name        | Type     | Description                                                                                       |
 | ----------- | -------- | ------------------------------------------------------------------------------------------------- |
 | entity| `string` required | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor. |
-| entity_generator | `string` | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power. | 
+| entity_generator | `string` | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power. |
 | state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
 | icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`. |
 | label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
@@ -445,17 +447,17 @@ return ((value  -  minIn) * (maxOut  -  minOut)) / (maxIn  -  minIn) +  minOut;
 
 // value = value of the current line to calculate (eg: grid to home)
 //
-// minIn = amount of watts at which the lowest speed will be selected. 
+// minIn = amount of watts at which the lowest speed will be selected.
 //   ↳ In your configuration this is `min_expected_power`
 //   ↳ eg: setting this at `100` means that at `100` watts, the dots will still flow at the lowest speed
-// maxIn = amount of watts at which the highest speed will be selected. 
+// maxIn = amount of watts at which the highest speed will be selected.
 //   ↳ In your configuration this is `max_expected_power`
 //   ↳ eg: setting this at `2000` means that everything more than `2000` will flow at the highest speed selected
 //
-// minOut = amount of watts at which the lowest speed will be selected. 
+// minOut = amount of watts at which the lowest speed will be selected.
 //   ↳ In your configuration this is `max_flow_rate`
 //   ↳ eg: setting this at `5` means that one dot will take `5` second to travel
-// maxOut = amount of watts at which the highest speed will be selected. 
+// maxOut = amount of watts at which the highest speed will be selected.
 //   ↳ In your configuration this is `min_flow_rate`
 //   ↳ eg: setting this at `1` means that one dot will take `1` second to travel
 ```
@@ -465,7 +467,7 @@ The following video aims to show the diffence between the two flow formulas:
 
 https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4
 
-Notice that when the Power changes to only coming from the sun, the old formula accelerates to maintain a constant amount of dots/second. 
+Notice that when the Power changes to only coming from the sun, the old formula accelerates to maintain a constant amount of dots/second.
 Using the new formula is more intuitive, since you can immediately see that the Solar Power is relatively low since the dots are flowing very slowly.
 On the old Flow Formula you might think that the sun is producing a lot of power, which in this case is not true.
 

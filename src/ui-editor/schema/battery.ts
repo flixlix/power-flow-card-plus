@@ -13,6 +13,11 @@ const mainSchema = {
       selector: { boolean: {} },
     },
     {
+      name: "color_value",
+      label: "Color of Value",
+      selector: { boolean: {} },
+    },
+    {
       name: "use_metadata",
       label: "Use Metadata",
       selector: { boolean: {} },
