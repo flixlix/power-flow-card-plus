@@ -1348,9 +1348,9 @@ export class PowerFlowCardPlus extends LitElement {
                   <div
                     class="circle"
                     @click=${(e: { stopPropagation: () => void }) => {
-                      const outageTarget = grid.powerOutage.entityGenerator ?? entities.grid?.power_outage.entity;
+                      const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
                       const target =
-                        grid.powerOutage.isOutage && outageTarget
+                        grid.powerOutage?.isOutage && outageTarget
                           ? outageTarget
                           : typeof entities.grid!.entity === "string"
                           ? entities.grid!.entity
@@ -1359,9 +1359,9 @@ export class PowerFlowCardPlus extends LitElement {
                     }}
                     @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                       if (e.key === "Enter") {
-                        const outageTarget = grid.powerOutage.entityGenerator ?? entities.grid?.power_outage.entity;
+                        const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
                         const target =
-                          grid.powerOutage.isOutage && outageTarget
+                          grid.powerOutage?.isOutage && outageTarget
                             ? outageTarget
                             : typeof entities.grid!.entity === "string"
                             ? entities.grid!.entity
@@ -1408,7 +1408,7 @@ export class PowerFlowCardPlus extends LitElement {
                           <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${this.displayValue(grid.state.fromGrid)}
                         </span>`
                       : ""}
-                    ${grid.powerOutage.isOutage && !grid.powerOutage.entityGenerator
+                    ${grid.powerOutage?.isOutage && !grid.powerOutage?.entityGenerator
                       ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>`
                       : ""}
                   </div>
