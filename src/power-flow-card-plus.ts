@@ -947,7 +947,7 @@ export class PowerFlowCardPlus extends LitElement {
       grid.state.toBattery || 0 > 0 ? "var(--energy-grid-consumption-color)" : "var(--energy-grid-return-color)"
     );
 
-    if (!entities.grid?.color_value) {
+    if (entities.grid?.color_value === false) {
       this.style.setProperty("--text-grid-consumption-color", "var(--primary-text-color)");
       this.style.setProperty("--text-grid-return-color", "var(--primary-text-color)");
     } else {
@@ -955,7 +955,7 @@ export class PowerFlowCardPlus extends LitElement {
       this.style.setProperty("--text-grid-return-color", "var(--energy-grid-return-color)");
     }
 
-    if (!entities.battery?.color_value) {
+    if (entities.battery?.color_value === false) {
       this.style.setProperty("--text-battery-in-color", "var(--primary-text-color)");
       this.style.setProperty("--text-battery-out-color", "var(--primary-text-color)");
     } else {
