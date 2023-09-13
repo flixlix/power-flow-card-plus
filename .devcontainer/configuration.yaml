@@ -10,7 +10,7 @@ input_number:
   solar_power:
     name: Solar Power
     min: 0
-    max: 2000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
@@ -24,7 +24,7 @@ input_number:
   home_power:
     name: Home Power
     min: 0
-    max: 2000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
@@ -37,8 +37,8 @@ input_number:
     unit_of_measurement: "%"
   battery_power:
     name: Battery Power
-    min: -2000
-    max: 2000
+    min: -5000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
@@ -51,8 +51,8 @@ input_number:
     unit_of_measurement: "%"
   grid_power:
     name: Grid Power
-    min: -2000
-    max: 2000
+    min: -5000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
@@ -73,14 +73,14 @@ input_number:
   fossil_fuel_power:
     name: Fossil Fuel Power
     min: 0
-    max: 2000
+    max: 5000
     step: 0.01
     mode: box
     unit_of_measurement: "W"
   individual1_power:
     name: Individual 1 Power
     min: 0
-    max: 2000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
@@ -94,7 +94,7 @@ input_number:
   individual2_power:
     name: Individual 2 Power
     min: 0
-    max: 2000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
@@ -108,7 +108,7 @@ input_number:
   individual3_power:
     name: Individual 3 Power
     min: 0
-    max: 2000
+    max: 5000
     step: 1
     mode: box
     unit_of_measurement: "W"
