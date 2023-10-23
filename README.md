@@ -101,7 +101,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | entities            | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
 | title               | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
 | dashboard_link      | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label  to go to a different dashboard. |
+| dashboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label  to go to a different dashboard. |
 | second_dashboard_link      | `string`  |              | Shows another link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. (Only available in the YAML Editor) |
 | second_dashboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard. |
 | kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
