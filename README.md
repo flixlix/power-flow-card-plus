@@ -103,7 +103,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | dashboard_link      | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
 | dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label  to go to a different dashboard. |
 | second_dashboard_link      | `string`  |              | Shows another link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. (Only available in the YAML Editor) |
-| second_dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard. |
+| second_dashboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard. |
 | kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
 | w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate       | `number`  |     .75      | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds. |
@@ -235,6 +235,8 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | ----------- | ------- | ------------------------------------------------------------------------------------------------- |
 | production | `string` | HEX value of the color for circles labels and lines of production. |
 | consumption | `string` | HEX value of the color for circles labels and lines of consumption. |
+
+Can use an [online color picker](https://colors-picker.com/hex-color-picker/) as an easy way of picking the color you want
 
 #### Split entities
 
