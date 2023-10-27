@@ -15,6 +15,7 @@ export type SecondaryInfoType = {
   color_value?: boolean | "production" | "consumption";
   template?: string;
   decimals?: number;
+  accept_negative?: boolean;
 };
 
 export interface BaseConfigEntity {
@@ -130,6 +131,7 @@ export type GridObject = {
     icon?: string;
     unit?: string;
     unit_white_space?: boolean;
+    accept_negative?: boolean;
     color?: {
       type?: boolean | "production" | "consumption";
     };
