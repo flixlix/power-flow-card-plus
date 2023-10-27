@@ -18,6 +18,7 @@
         "fossil_fuel_percentage": "Fossiilinen polttoaine",
         "home": "Koti",
         "individual": "Yksittäinen",
+        "accept_negative": "Hyväksy negatiiviset arvot",
         "advanced": "Lisäasetukset",
         "decimals": "Desimaalit",
         "consumption": "Kulutus",
