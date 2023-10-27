@@ -6,16 +6,15 @@ import { HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
-import { coerceNumber, isNumberValue } from "./utils/utils";
+import { coerceNumber } from "./utils/utils";
 import { registerCustomCard } from "./utils/register-custom-card";
 import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
 import { styles } from "./style";
 import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
-import localize from "./localize/localize";
 import { getEntityStateWatts } from "./states/utils/getEntityStateWatts";
 import { getEntityState } from "./states/utils/getEntityState";
 import { doesEntityExist } from "./states/utils/existenceEntity";
-import { computeFlowRate } from "./utils/computeFlowRate";
+import { computeFlowRate, computeIndividualFlowRate } from "./utils/computeFlowRate";
 import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
 import { getSolarSecondaryState } from "./states/raw/solar";
 import { getSolarState } from "./states/raw/solar";
@@ -23,25 +22,24 @@ import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "
 import { computeFieldIcon, computeFieldName } from "./utils/computeFieldAttributes";
 import { convertColorListToHex } from "./utils/convertColor";
 import { adjustZeroTolerance } from "./states/tolerance/base";
-import { getIndividualState } from "./states/raw/individual";
-import { getSecondaryState } from "./states/raw/base";
 import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
 import { getHomeSecondaryState } from "./states/raw/home";
-import { generalSecondarySpan } from "./components/spans/generalSecondarySpan";
-import { HomeSources, NewDur, TemplatesObj } from "./type";
+import { GridObject, HomeSources, NewDur, TemplatesObj } from "./type";
 import { individualSecondarySpan } from "./components/spans/individualSecondarySpan";
 import { displayValue } from "./utils/displayValue";
 import { allDynamicStyles } from "./style/all";
-import { displayNonFossilState } from "./utils/displayNonFossilState";
 import { nonFossilElement } from "./components/nonFossil";
 import { solarElement } from "./components/solar";
 import { gridElement } from "./components/grid";
 import { homeElement } from "./components/home";
-import { individual2Element } from "./components/individual2";
+import { topindividualElement } from "./components/individualTop";
 import { batteryElement } from "./components/battery";
 import { flowElement } from "./components/flows";
 import { styleLine } from "./utils/styleLine";
 import { dashboardLinkElement } from "./components/misc/dashboard_link";
+import { showLine } from "./utils/showLine";
+import { getIndividualObject } from "./states/raw/individual/getIndividualObject";
+import { individualBottomElement } from "./components/individualBottom";
 
 const circleCircumference = 238.76104;
 
@@ -58,7 +56,6 @@ export class PowerFlowCardPlus extends LitElement {
   @state() private _config = {} as PowerFlowCardPlusConfig;
 
   @state() private _templateResults: Partial<Record<string, RenderTemplateResult>> = {};
-  @state() private _unsubRenderTemplate?: Promise<UnsubscribeFunc>;
   @state() private _unsubRenderTemplates?: Map<string, Promise<UnsubscribeFunc>> = new Map();
   @state() private _width = 0;
 
@@ -116,16 +113,6 @@ export class PowerFlowCardPlus extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
-  public additionalCircleRate = (entry?: boolean | number, value?: number) => {
-    if (entry === true && value) {
-      return value;
-    }
-    if (isNumberValue(entry)) {
-      return entry;
-    }
-    return 1.66;
-  };
-
   public openDetails(event: { stopPropagation: any; key?: string }, entityId?: string | undefined): void {
     event.stopPropagation();
     if (!entityId || !this._config.clickable_entities) return;
@@ -138,16 +125,6 @@ export class PowerFlowCardPlus extends LitElement {
     this.dispatchEvent(e);
   }
 
-  /**
-   * Determine wether to show the line or not based on if the power is flowing or not and if not, based on display_zero_lines mode
-   * @param power - power flowing through the line
-   * @returns  boolean - `true` if line should be shown, `false` if not
-   */
-  public showLine(power: number): boolean {
-    if (power > 0) return true;
-    return this._config?.display_zero_lines?.mode !== "hide";
-  }
-
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
       return html``;
@@ -158,12 +135,11 @@ export class PowerFlowCardPlus extends LitElement {
     this.style.setProperty("--clickable-cursor", this._config.clickable_entities ? "pointer" : "default");
 
     const initialNumericState = null as null | number;
-    const initialSecondaryState = null as null | string | number;
 
-    const grid = {
+    const grid: GridObject = {
       entity: entities.grid?.entity,
       has: entities?.grid?.entity !== undefined,
-      hasReturnToGrid: typeof entities.grid?.entity === "string" || entities.grid?.entity?.production,
+      hasReturnToGrid: typeof entities.grid?.entity === "string" || !!entities.grid?.entity?.production,
       state: {
         fromGrid: getGridConsumptionState(this.hass, this._config),
         toGrid: getGridProductionState(this.hass, this._config),
@@ -179,15 +155,13 @@ export class PowerFlowCardPlus extends LitElement {
         entityGenerator: entities.grid?.power_outage?.entity_generator,
       },
       icon: computeFieldIcon(this.hass, entities.grid, "mdi:transmission-tower"),
-      name: computeFieldName(this.hass, entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")) as
-        | string
-        | TemplateResult<1>,
+      name: computeFieldName(this.hass, entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
       mainEntity:
         typeof entities.grid?.entity === "object" ? entities.grid.entity.consumption || entities.grid.entity.production : entities.grid?.entity,
       color: {
         fromGrid: entities.grid?.color?.consumption,
         toGrid: entities.grid?.color?.production,
-        icon_type: entities.grid?.color_icon,
+        icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
         circle_type: entities.grid?.color_circle,
       },
       secondary: {
@@ -272,40 +246,9 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    const getIndividualObject = (field: "individual1" | "individual2") => ({
-      entity: entities[field]?.entity,
-      has: entities[field]?.entity !== undefined,
-      displayZero: entities[field]?.display_zero,
-      displayZeroTolerance: entities[field]?.display_zero_tolerance,
-      state: getIndividualState(this.hass, this._config, field),
-      icon: computeFieldIcon(this.hass, entities[field], field === "individual1" ? "mdi:car-electric" : "mdi:motorbike-electric"),
-      name: computeFieldName(this.hass, entities[field], field === "individual1" ? localize("card.label.car") : localize("card.label.motorbike")),
-      color: entities[field]?.color,
-      unit: entities[field]?.unit_of_measurement,
-      unit_white_space: entities[field]?.unit_white_space,
-      decimals: entities[field]?.decimals,
-      invertAnimation:
-        getIndividualState(this.hass, this._config, field) ?? 0 < 0
-          ? !entities[field]?.inverted_animation || false
-          : entities[field]?.inverted_animation || false,
-      showDirection: entities[field]?.show_direction || false,
-      secondary: {
-        entity: entities[field]?.secondary_info?.entity,
-        template: entities[field]?.secondary_info?.template,
-        has: entities[field]?.secondary_info?.entity !== undefined,
-        state: getSecondaryState(this.hass, this._config, field),
-        icon: entities[field]?.secondary_info?.icon,
-        unit: entities[field]?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities[field]?.secondary_info?.unit_white_space,
-        displayZero: entities[field]?.secondary_info?.display_zero,
-        displayZeroTolerance: entities[field]?.secondary_info?.display_zero_tolerance,
-        decimals: entities[field]?.secondary_info?.decimals,
-      },
-    });
+    const individual1 = getIndividualObject(this.hass, entities?.individual?.[0]);
 
-    const individual1 = getIndividualObject("individual1");
-
-    const individual2 = getIndividualObject("individual2");
+    const individual2 = getIndividualObject(this.hass, entities?.individual?.[1]);
 
     type Individual = typeof individual2 & typeof individual1;
 
@@ -578,10 +521,9 @@ export class PowerFlowCardPlus extends LitElement {
                   ? html`<div class="spacer"></div>`
                   : ""}
                 ${individual2.has
-                  ? individual2Element(this, {
-                      entities,
-                      individual2,
-                      individual2DisplayState,
+                  ? topindividualElement(this, this._config, {
+                      individualObj: individual2,
+                      displayState: individual2DisplayState,
                       newDur,
                       templatesObj,
                     })
@@ -616,7 +558,7 @@ export class PowerFlowCardPlus extends LitElement {
                             </span>`
                           : ""}
                       </div>
-                      ${this.showLine(individual1.state || 0)
+                      ${showLine(this._config, individual1.state || 0)
                         ? html`
                             <svg width="80" height="30">
                               <path d="M40 -10 v40" id="individual1" class="${styleLine(individual1.state || 0, this._config)}" />
@@ -627,7 +569,7 @@ export class PowerFlowCardPlus extends LitElement {
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
+                                  dur="${computeIndividualFlowRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
@@ -653,7 +595,7 @@ export class PowerFlowCardPlus extends LitElement {
                   templatesObj,
                 })
               : html`<div class="spacer"></div>`}
-            ${homeElement(this, {
+            ${homeElement(this, this._config, {
               circleCircumference,
               entities,
               grid,
@@ -674,65 +616,16 @@ export class PowerFlowCardPlus extends LitElement {
                 <div class="spacer"></div>
                 ${battery.has ? batteryElement(this, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individual2.has && individual1.has
-                  ? html`<div class="circle-container individual1 bottom">
-                      ${this.showLine(individual1.state || 0)
-                        ? html`
-                            <svg width="80" height="30">
-                              <path d="M40 40 v-40" id="individual1" class="${styleLine(individual1.state || 0, this._config)}" />
-                              ${individual1.state
-                                ? svg`<circle
-                                r="2.4"
-                                class="individual1"
-                                vector-effect="non-scaling-stroke"
-                              >
-                                <animateMotion
-                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
-                                  repeatCount="indefinite"
-                                  calcMode="linear"
-                                  keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
-                                  keyTimes="0;1"
-                                >
-                                  <mpath xlink:href="#individual1" />
-                                </animateMotion>
-                              </circle>`
-                                : ""}
-                            </svg>
-                          `
-                        : html` <svg width="80" height="30"></svg> `}
-                      <div
-                        class="circle"
-                        @click=${(e: { stopPropagation: () => void }) => {
-                          this.openDetails(e, entities.individual1?.entity);
-                        }}
-                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                          if (e.key === "Enter") {
-                            this.openDetails(e, entities.individual1?.entity);
-                          }
-                        }}
-                      >
-                        ${individualSecondarySpan(this.hass, this, templatesObj, individual1, "individual1")}
-                        <ha-icon
-                          id="individual1-icon"
-                          .icon=${individual1.icon}
-                          style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                            ? "padding-bottom: 2px;"
-                            : "padding-bottom: 0px;"}"
-                        ></ha-icon>
-                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1"
-                              >${individual1.showDirection
-                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                : ""}${individual1DisplayState}
-                            </span>`
-                          : ""}
-                      </div>
-                      <span class="label">${individual1.name}</span>
-                    </div>`
+                  ? individualBottomElement(this, this.hass, this._config, {
+                      displayState: individual1DisplayState,
+                      individualObj: individual1,
+                      newDur,
+                      templatesObj,
+                    })
                   : html`<div class="spacer"></div>`}
               </div>`
             : html`<div class="spacer"></div>`}
-          ${flowElement(this, this._config, {
+          ${flowElement(this._config, {
             battery,
             grid,
             individual1,

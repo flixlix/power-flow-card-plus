@@ -4,6 +4,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { NewDur } from "../../type";
 import { styleLine } from "../../utils/styleLine";
 import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { showLine } from "../../utils/showLine";
 
 interface Flows {
   battery: any;
@@ -15,12 +16,11 @@ interface Flows {
 }
 
 export const flowElement = (
-  main: PowerFlowCardPlus,
   config: PowerFlowCardPlusConfig,
   { battery, grid, individual1, individual2, solar, newDur }: Flows
 ) => {
   return html`${
-    solar.has && main.showLine(solar.state.toHome || 0)
+    solar.has && showLine(config, solar.state.toHome || 0)
       ? html`<div
           class="lines ${classMap({
             high: battery.has,
@@ -54,7 +54,7 @@ export const flowElement = (
       : ""
   }
   ${
-    grid.hasReturnToGrid && solar.has && main.showLine(solar.state.toGrid || 0)
+    grid.hasReturnToGrid && solar.has && showLine(config, solar.state.toGrid || 0)
       ? html`<div
           class="lines ${classMap({
             high: battery.has,
@@ -88,7 +88,7 @@ export const flowElement = (
       : ""
   }
   ${
-    battery.has && solar.has && main.showLine(solar.state.toBattery || 0)
+    battery.has && solar.has && showLine(config, solar.state.toBattery || 0)
       ? html`<div
           class="lines ${classMap({
             high: battery.has,
@@ -128,7 +128,7 @@ export const flowElement = (
       : ""
   }
   ${
-    grid.has && main.showLine(grid.state.fromGrid)
+    grid.has && showLine(config, grid.state.fromGrid)
       ? html`<div
           class="lines ${classMap({
             high: battery.has,
@@ -162,7 +162,7 @@ export const flowElement = (
       : null
   }
   ${
-    battery.has && main.showLine(battery.state.toHome)
+    battery.has && showLine(config, battery.state.toHome)
       ? html`<div
           class="lines ${classMap({
             high: battery.has,
@@ -196,7 +196,7 @@ export const flowElement = (
       : ""
   }
   ${
-    grid.has && battery.has && main.showLine(Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0))
+    grid.has && battery.has && showLine(config, Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0))
       ? html`<div
           class="lines ${classMap({
             high: battery.has,

@@ -1,31 +1,25 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable import/extensions */
-
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import { EntityConfig, fireEvent, HASSDomEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { assert } from "superstruct";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema-all";
 import localize from "../localize/localize";
 import { defaultValues } from "../utils/get-default-config";
-import { coerceNumber } from "../utils/utils";
-
-export const loadHaForm = async () => {
-  if (customElements.get("ha-form")) return;
-
-  const helpers = await (window as any).loadCardHelpers?.();
-  if (!helpers) return;
-  const card = await helpers.createCardElement({ type: "entity" });
-  if (!card) return;
-  await card.getConfigElement();
-};
+import { EditSubElementEvent, LovelaceRowConfig, OpenSubElementPage, SubElementEditorConfig } from "./types/entity-rows";
+import "./components/individual-devices-editor";
+import "./components/link-subpage";
+import { loadHaForm } from "./utils/loadHAForm";
+import { processEditorEntities } from "./components/individual-devices-editor";
 
 @customElement("power-flow-card-plus-editor")
 export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: PowerFlowCardPlusConfig;
-  @state() private showOther = false;
+  @state() private _configEntities?: LovelaceRowConfig[] = [];
+  @state() private _subElementEditorConfig?: boolean;
 
   public async setConfig(config: PowerFlowCardPlusConfig): Promise<void> {
     assert(config, cardConfigStruct);
@@ -36,6 +30,14 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     // eslint-disable-next-line wc/guard-super-call
     super.connectedCallback();
     loadHaForm();
+  }
+
+  private _editDetailElement(ev: HASSDomEvent<OpenSubElementPage>): void {
+    this._subElementEditorConfig = ev.detail.open;
+  }
+
+  private _goBack(): void {
+    this._subElementEditorConfig = false;
   }
 
   protected render() {
@@ -51,6 +53,18 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       },
     };
 
+    if (this._subElementEditorConfig) {
+      return html`
+        <individual-devices-editor
+          .hass=${this.hass}
+          .config=${this._config}
+          @go-back=${this._goBack}
+          style="width: 100%;"
+          @config-changed=${this._handleSubElementChanged}
+        ></individual-devices-editor>
+      `;
+    }
+
     return html`
       <div class="card-config">
         <ha-form
@@ -61,6 +75,14 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
           @value-changed=${this._valueChanged}
         ></ha-form>
         <div style="height: 24px"></div>
+        <link-subpage
+          path="individual"
+          header="${localize("editor.individual")}"
+          style="width: 100%;"
+          @open-sub-element-editor=${this._editDetailElement}
+        >
+        </link-subpage>
+        <div style="height: 24px"></div>
         <ha-form
           .hass=${this.hass}
           .data=${data}
@@ -69,6 +91,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
           @value-changed=${this._valueChanged}
           class="entities-section"
         ></ha-form>
+
         <div style="height: 24px"></div>
         <ha-form
           .hass=${this.hass}
@@ -80,6 +103,23 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       </div>
     `;
   }
+
+  private _handleSubElementChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    if (!this._config || !this.hass) {
+      return;
+    }
+
+    const value = ev.detail.config;
+
+    const newConfigEntities = this._configEntities!.concat();
+
+    this._config = { ...this._config!, ...newConfigEntities };
+    this._configEntities = processEditorEntities(this._config!.entities);
+
+    fireEvent(this, "config-changed", { config: this._config });
+  }
+
   private _valueChanged(ev: any): void {
     const config = ev.detail.value || "";
     if (!this._config || !this.hass) {

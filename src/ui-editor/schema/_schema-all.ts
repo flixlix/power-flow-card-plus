@@ -9,7 +9,7 @@ import { individualSchema } from "./individual";
 import { nonFossilSchema } from "./fossil_fuel_percentage";
 import { homeSchema } from "./home";
 import { displayZeroLinesSchema } from "./display_zero_lines";
-import { html } from "lit-html";
+import { mdiBattery90, mdiBatteryHigh, mdiCog, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny,  } from "@mdi/js";
 
 const baseLovelaceCardConfig = object({
   type: string(),
@@ -49,6 +49,7 @@ export const cardConfigStruct = assign(
       fossil_fuel_percentage: optional(any()),
       individual1: optional(any()),
       individual2: optional(any()),
+      individual: optional(any()),
     }),
   })
 );
@@ -71,32 +72,47 @@ export const entitiesSchema = memoizeOne((localize) => [
         title: localize("editor.grid"),
         name: "grid",
         type: "expandable",
+        iconPath: mdiTransmissionTower,
         schema: gridSchema,
       },
       {
         title: localize("editor.solar"),
         name: "solar",
         type: "expandable",
+        iconPath: mdiWeatherSunny,
         schema: solarSchema,
       },
       {
         title: localize("editor.battery"),
         name: "battery",
         type: "expandable",
+        iconPath: mdiBatteryHigh,
         schema: batterySchema,
       },
       {
         title: localize("editor.fossil_fuel_percentage"),
         name: "fossil_fuel_percentage",
         type: "expandable",
+        iconPath: mdiLeaf,
         schema: nonFossilSchema,
       },
       {
         title: localize("editor.home"),
         name: "home",
         type: "expandable",
+        iconPath: mdiHome,
         schema: homeSchema,
       },
+    ],
+  },
+]);
+
+export const indvidualDevicesSchema = memoizeOne((localize) => [
+  {
+    name: "entities",
+    type: "grid",
+    column_min_width: "400px",
+    schema: [
       {
         title: `${localize("editor.individual")} 1`,
         name: "individual1",
@@ -117,6 +133,7 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode)
   {
     title: localize("editor.advanced"),
     type: "expandable",
+    iconPath: mdiCog,
     schema: [
       {
         type: "grid",

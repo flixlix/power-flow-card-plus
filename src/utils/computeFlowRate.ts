@@ -24,3 +24,13 @@ export const computeFlowRate = (config: PowerFlowCardPlusConfig, value: number, 
   if (isNewFlowRateModel) return newFlowRate(config, value);
   return oldFlowRate(config, value, total);
 };
+
+export const computeIndividualFlowRate = (entry?: boolean | number, value?: number): number => {
+  if (entry === true && value) {
+    return value;
+  }
+  if (typeof entry === "number") {
+    return entry;
+  }
+  return 1.66;
+};

@@ -1,6 +1,13 @@
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
+import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 import { convertColorListToHex } from "../utils/convertColor";
 import { computeColor } from "./colors";
+
+interface AllDynamicStyles {
+  individual1: IndividualObject;
+  individual2: IndividualObject;
+  [key: string]: any;
+}
 
 export const allDynamicStyles = (
   main: PowerFlowCardPlus,
@@ -17,7 +24,7 @@ export const allDynamicStyles = (
     display_zero_lines_transparency,
     display_zero_lines_grey_color,
     isCardWideEnough,
-  }
+  }: AllDynamicStyles
 ) => {
   // Grid
   main.style.setProperty(
@@ -91,7 +98,6 @@ export const allDynamicStyles = (
 
   // Individual 1
   if (individual1.color !== undefined) {
-    if (typeof individual1.color === "object") individual1.color = convertColorListToHex(individual1.color);
     main.style.setProperty("--individualone-color", individual1.color);
   }
   main.style.setProperty("--icon-individualone-color", entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)");
@@ -106,7 +112,6 @@ export const allDynamicStyles = (
 
   // Individual 2
   if (individual2.color !== undefined) {
-    if (typeof individual2.color === "object") individual2.color = convertColorListToHex(individual2.color);
     main.style.setProperty("--individualtwo-color", individual2.color);
   }
   main.style.setProperty("--icon-individualtwo-color", entities.individual2?.color_icon ? "var(--individualtwo-color)" : "var(--primary-text-color)");

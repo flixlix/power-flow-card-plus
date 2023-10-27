@@ -2,7 +2,8 @@ import { html, svg } from "lit";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { generalSecondarySpan } from "./spans/generalSecondarySpan";
 import { NewDur, TemplatesObj } from "../type";
-import { ConfigEntities } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { showLine } from "../utils/showLine";
 
 interface Home {
   home: any;
@@ -22,6 +23,7 @@ interface Home {
 
 export const homeElement = (
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   {
     home,
     entities,
@@ -108,7 +110,7 @@ export const homeElement = (
     </svg>
   </div>
   ${
-    main.showLine(individual1.state || 0) && individual2.has && individual1.has
+    showLine(config, individual1.state || 0) && individual2.has && individual1.has
       ? html`<span class="label"></span>`
       : html` <span class="label">${home.name}</span>`
   }

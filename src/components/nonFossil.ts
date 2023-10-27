@@ -5,6 +5,8 @@ import { displayNonFossilState } from "../utils/displayNonFossilState";
 import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { NewDur, TemplatesObj } from "../type";
 import { styleLine } from "../utils/styleLine";
+import { computeIndividualFlowRate } from "../utils/computeFlowRate";
+import { showLine } from "../utils/showLine";
 
 interface NonFossil {
   newDur: NewDur;
@@ -53,7 +55,7 @@ export const nonFossilElement = (
               `
             : ""}
         </div>
-        ${main.showLine(nonFossil.state.power || 0)
+        ${showLine(config, nonFossil.state.power || 0)
           ? html`
               <svg width="80" height="30">
                 <path d="M40 -10 v40" class="low-carbon ${styleLine(nonFossil.state.power || 0, config)}" id="low-carbon" />
@@ -64,7 +66,7 @@ export const nonFossilElement = (
                 vector-effect="non-scaling-stroke"
               >
                   <animateMotion
-                    dur="${main.additionalCircleRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
+                    dur="${computeIndividualFlowRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
                     repeatCount="indefinite"
                     calcMode="linear"
                   >
