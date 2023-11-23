@@ -86,9 +86,6 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
-<br/>
-
-> ⚠️ Version 0.1 introduced the UI Editor. This Editor is currently incompatible with Card Mod. I created a PR to fix this issue, but it hasn't been merged yet. Here is the [PR #277](https://github.com/thomasloven/lovelace-card-mod/pull/277). Since it hasn't been merged yet, I also released a fork with the changes from the PR. Installing this Version of Card Mod you can use this card in conjunction with Card Mod. [Here is my fork](https://github.com/flixlix/lovelace-card-mod)
 
 
 ### Options
