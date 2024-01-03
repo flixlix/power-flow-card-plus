@@ -6,11 +6,17 @@ export const styles = css`
     --clickable-cursor: pointer;
     --individualone-color: #d0cc5b;
     --individualtwo-color: #964cb5;
+    --individualthree-color: #48DE02;
+    --individualfour-color: #d117bb;
+    --individualfive-color: #e30505;
     --non-fossil-color: var(--energy-non-fossil-color, #0f9d58);
     --icon-non-fossil-color: var(--non-fossil-color, #0f9d58);
     --icon-solar-color: var(--energy-solar-color, #ff9800);
     --icon-individualone-color: var(--individualone-color, #d0cc5b);
     --icon-individualtwo-color: var(--individualtwo-color, #964cb5);
+    --icon-individualthree-color: var(--individualthree-color, #48DE02);
+    --icon-individualfour-color: var(--individualfour-color, #d117bb);
+    --icon-individualfive-color: var(--individualfive-color, #e30505);
     --icon-grid-color: var(--energy-grid-consumption-color, #488fc2);
     --icon-battery-color: var(--energy-battery-in-color, #f06292);
     --icon-home-color: var(--energy-grid-consumption-color, #488fc2);
@@ -18,9 +24,15 @@ export const styles = css`
     --text-non-fossil-color: var(--primary-text-color);
     --text-individualone-color: var(--primary-text-color);
     --text-individualtwo-color: var(--primary-text-color);
+    --text-individualthree-color: var(--primary-text-color);
+    --text-individualfour-color: var(--primary-text-color);
+    --text-individualfive-color: var(--primary-text-color);
     --text-home-color: var(--primary-text-color);
     --secondary-text-individualone-color: var(--primary-text-color);
     --secondary-text-individualtwo-color: var(--primary-text-color);
+    --secondary-text-individualthree-color: var(--primary-text-color);
+    --secondary-text-individualfour-color: var(--primary-text-color);
+    --secondary-text-individualfive-color: var(--primary-text-color);
     --text-battery-state-of-charge-color: var(--primary-text-color);
     --cirlce-grid-color: var(--energy-grid-consumption-color, #488fc2);
     --circle-battery-color: var(--energy-battery-in-color, #f06292);
@@ -106,6 +118,18 @@ export const styles = css`
     height: 130px;
   }
   .circle-container.individual2 {
+    margin-left: 4px;
+    height: 130px;
+  }
+  .circle-container.individual3 {
+    margin-left: 4px;
+    height: 130px;
+  }
+  .circle-container.individual4 {
+    margin-left: 4px;
+    height: 130px;
+  }
+  .circle-container.individual5 {
     margin-left: 4px;
     height: 130px;
   }
@@ -199,12 +223,33 @@ export const styles = css`
   .individual2 circle {
     stroke: var(--individualtwo-color);
   }
+  .individual3 path,
+  .individual3 circle {
+    stroke: var(--individualthree-color);
+  }
+  .individual4 path,
+  .individual4 circle {
+    stroke: var(--individualfour-color);
+  }
+  .individual5 path,
+  .individual5 circle {
+    stroke: var(--individualfive-color);
+  }
 
   #individual1-icon {
     color: var(--icon-individualone-color);
   }
   #individual2-icon {
     color: var(--icon-individualtwo-color);
+  }
+  #individual3-icon {
+    color: var(--icon-individualthree-color);
+  }
+  #individual4-icon {
+    color: var(--icon-individualfour-color);
+  }
+  #individual5-icon {
+    color: var(--icon-individualfive-color);
   }
   #solar-icon {
     color: var(--icon-solar-color);
@@ -213,8 +258,29 @@ export const styles = css`
     stroke-width: 4;
     fill: var(--individualtwo-color);
   }
+  circle.individual3 {
+    stroke-width: 4;
+    fill: var(--individualthree-color);
+  }
+  circle.individual4 {
+    stroke-width: 4;
+    fill: var(--individualfour-color);
+  }
+  circle.individual5 {
+    stroke-width: 4;
+    fill: var(--individualfive-color);
+  }
   .individual2 .circle {
     border-color: var(--individualtwo-color);
+  }
+  .individual3 .circle {
+    border-color: var(--individualthree-color);
+  }
+  .individual4 .circle {
+    border-color: var(--individualfour-color);
+  }
+  .individual5 .circle {
+    border-color: var(--individualfive-color);
   }
   .individual1 path,
   .individual1 circle {
@@ -384,12 +450,35 @@ export const styles = css`
     color: var(--text-individualtwo-color);
   }
 
+  .individual3 .circle {
+    color: var(--text-individualthree-color);
+  }
+
+  .individual4 .circle {
+    color: var(--text-individualfour-color);
+  }
+
+  .individual5 .circle {
+    color: var(--text-individualfive-color);
+  }
+
   .individual1 span.secondary-info {
     color: var(--secondary-text-individualone-color);
   }
 
   .individual2 span.secondary-info {
     color: var(--secondary-text-individualtwo-color);
+  }
+
+  .individual3 span.secondary-info {
+    color: var(--secondary-text-individualthree-color);
+  }
+
+  .individual4 span.secondary-info {
+    color: var(--secondary-text-individualfour-color);
+  }
+  .individual5 span.secondary-info {
+    color: var(--secondary-text-individualfive-color);
   }
 
   .solar span.secondary-info {

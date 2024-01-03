@@ -76,5 +76,8 @@ export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigO
     };
     individual1?: IndividualDeviceType;
     individual2?: IndividualDeviceType;
+    individual3?: IndividualDeviceType;
+    individual4?: IndividualDeviceType;
+    individual5?: IndividualDeviceType;
   };
 }

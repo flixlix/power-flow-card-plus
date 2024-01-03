@@ -53,4 +53,4 @@ export type IndividualDeviceType = baseConfigEntity & {
   show_direction?: boolean;
 };
 
-export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2";
+export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2" | "individual3" | "individual4" | "individual5";

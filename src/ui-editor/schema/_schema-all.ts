@@ -49,6 +49,9 @@ export const cardConfigStruct = assign(
       fossil_fuel_percentage: optional(any()),
       individual1: optional(any()),
       individual2: optional(any()),
+      individual3: optional(any()),
+      individual4: optional(any()),
+      individual5: optional(any()),
     }),
   })
 );
@@ -106,6 +109,24 @@ export const entitiesSchema = memoizeOne((localize) => [
       {
         title: `${localize("editor.individual")} 2`,
         name: "individual2",
+        type: "expandable",
+        schema: individualSchema,
+      },
+      {
+        title: `${localize("editor.individual")} 3`,
+        name: "individual3",
+        type: "expandable",
+        schema: individualSchema,
+      },
+      {
+        title: `${localize("editor.individual")} 4`,
+        name: "individual4",
+        type: "expandable",
+        schema: individualSchema,
+      },
+      {
+        title: `${localize("editor.individual")} 5`,
+        name: "individual5",
         type: "expandable",
         schema: individualSchema,
       },
