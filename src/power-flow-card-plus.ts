@@ -20,13 +20,13 @@ import localize from "./localize/localize";
 const circleCircumference = 238.76104;
 
 registerCustomCard({
-  type: "power-flow-card-plus",
-  name: "Power Flow Card Plus",
+  type: "power-flow-card-plus-multiple",
+  name: "Power Flow Card Plus-Multiple",
   description:
     "An extended version of the power flow card with richer options, advanced features and a few small UI enhancements. Inspired by the Energy Dashboard.",
 });
 
-@customElement("power-flow-card-plus")
+@customElement("power-flow-card-plus-multiple")
 export class PowerFlowCardPlus extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config = {} as PowerFlowCardPlusConfig;
@@ -76,7 +76,7 @@ export class PowerFlowCardPlus extends LitElement {
   // do not use ui editor for now, as it is not working
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
-    return document.createElement("power-flow-card-plus-editor");
+    return document.createElement("power-flow-card-plus-multiple-editor");
   }
 
   public static getStubConfig(hass: HomeAssistant): object {
@@ -413,7 +413,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    const getIndividualObject = (field: "individual1" | "individual2") => ({
+    const getIndividualObject = (field: "individual1" | "individual2" | "individual3" | "individual4" | "individual5") => ({
       entity: entities[field]?.entity,
       has: this.hasField(entities[field]),
       displayZero: entities[field]?.display_zero,
@@ -442,10 +442,12 @@ export class PowerFlowCardPlus extends LitElement {
     });
 
     const individual1 = getIndividualObject("individual1");
-
     const individual2 = getIndividualObject("individual2");
+    const individual3 = getIndividualObject("individual3");
+    const individual4 = getIndividualObject("individual4");
+    const individual5 = getIndividualObject("individual5");
 
-    type Individual = typeof individual2 & typeof individual1;
+    type Individual = typeof individual2 & typeof individual1 & typeof individual3 & typeof individual4 & typeof individual5;
 
     const nonFossil = {
       entity: entities.fossil_fuel_percentage?.entity,
@@ -733,6 +735,75 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
+    if (individual3.color !== undefined) {
+      if (typeof individual3.color === "object") individual3.color = this.convertColorListToHex(individual3.color);
+      this.style.setProperty("--individualthree-color", individual3.color); /* dynamically update color of entity depending on user's input */
+    }
+    this.style.setProperty(
+      "--icon-individualthree-color",
+      entities.individual3?.color_icon ? "var(--individualthree-color)" : "var(--primary-text-color)"
+    );
+    if (individual3.has) {
+      const individual3State = this.getEntityStateWatts(entities.individual3?.entity);
+      if (individual3State < 0) individual3.invertAnimation = !individual3.invertAnimation;
+      individual3.state = Math.abs(individual3State);
+    }
+    if (individual3.secondary.has) {
+      const individual3SecondaryEntity = this.hass.states[entities.individual3?.secondary_info?.entity!];
+      const individual3SecondaryState = individual3SecondaryEntity.state;
+      if (typeof individual3SecondaryState === "number") {
+        individual3.secondary.state = Math.max(individual3SecondaryState, 0);
+      } else if (typeof individual3SecondaryState === "string") {
+        individual3.secondary.state = individual3SecondaryState;
+      }
+    }
+
+    if (individual4.color !== undefined) {
+      if (typeof individual4.color === "object") individual4.color = this.convertColorListToHex(individual4.color);
+      this.style.setProperty("--individualfour-color", individual4.color); /* dynamically update color of entity depending on user's input */
+    }
+    this.style.setProperty(
+      "--icon-individualfour-color",
+      entities.individual4?.color_icon ? "var(--individualfour-color)" : "var(--primary-text-color)"
+    );
+    if (individual4.has) {
+      const individual4State = this.getEntityStateWatts(entities.individual4?.entity);
+      if (individual4State < 0) individual4.invertAnimation = !individual4.invertAnimation;
+      individual4.state = Math.abs(individual4State);
+    }
+    if (individual4.secondary.has) {
+      const individual4SecondaryEntity = this.hass.states[entities.individual4?.secondary_info?.entity!];
+      const individual4SecondaryState = individual4SecondaryEntity.state;
+      if (typeof individual4SecondaryState === "number") {
+        individual4.secondary.state = Math.max(individual4SecondaryState, 0);
+      } else if (typeof individual4SecondaryState === "string") {
+        individual4.secondary.state = individual4SecondaryState;
+      }
+    }
+
+    if (individual5.color !== undefined) {
+      if (typeof individual5.color === "object") individual5.color = this.convertColorListToHex(individual5.color);
+      this.style.setProperty("--individualfive-color", individual5.color); /* dynamically update color of entity depending on user's input */
+    }
+    this.style.setProperty(
+      "--icon-individualfive-color",
+      entities.individual5?.color_icon ? "var(--individualfive-color)" : "var(--primary-text-color)"
+    );
+    if (individual5.has) {
+      const individual5State = this.getEntityStateWatts(entities.individual5?.entity);
+      if (individual5State < 0) individual5.invertAnimation = !individual5.invertAnimation;
+      individual5.state = Math.abs(individual5State);
+    }
+    if (individual5.secondary.has) {
+      const individual5SecondaryEntity = this.hass.states[entities.individual5?.secondary_info?.entity!];
+      const individual5SecondaryState = individual5SecondaryEntity.state;
+      if (typeof individual5SecondaryState === "number") {
+        individual5.secondary.state = Math.max(individual5SecondaryState, 0);
+      } else if (typeof individual5SecondaryState === "string") {
+        individual5.secondary.state = individual5SecondaryState;
+      }
+    }
+
     if (home.secondary.has) {
       const homeSecondaryEntity = this.hass.states[entities.home?.secondary_info?.entity!];
       const homeSecondaryState = homeSecondaryEntity.state;
@@ -795,7 +866,10 @@ export class PowerFlowCardPlus extends LitElement {
 
     const totalIndividualConsumption =
       coerceNumber(individual1.state, 0) * (individual1.invertAnimation ? -1 : 1) +
-      coerceNumber(individual2.state, 0) * (individual2.invertAnimation ? -1 : 1);
+      coerceNumber(individual2.state, 0) * (individual2.invertAnimation ? -1 : 1) +
+      coerceNumber(individual3.state, 0) * (individual3.invertAnimation ? -1 : 1) +
+      coerceNumber(individual4.state, 0) * (individual4.invertAnimation ? -1 : 1) +
+      coerceNumber(individual5.state, 0) * (individual5.invertAnimation ? -1 : 1);
 
     const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
 
@@ -873,6 +947,9 @@ export class PowerFlowCardPlus extends LitElement {
       solarToHome: this.circleRate(solar.state.toHome ?? 0, totalLines),
       individual1: this.circleRate(individual1.state ?? 0, totalIndividualConsumption),
       individual2: this.circleRate(individual2.state ?? 0, totalIndividualConsumption),
+      individual3: this.circleRate(individual3.state ?? 0, totalIndividualConsumption),
+      individual4: this.circleRate(individual4.state ?? 0, totalIndividualConsumption),
+      individual5: this.circleRate(individual5.state ?? 0, totalIndividualConsumption),
       nonFossil: this.circleRate(nonFossil.state.power ?? 0, totalLines),
     };
 
@@ -902,8 +979,10 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     const individual1DisplayState = getIndividualDisplayState(individual1);
-
     const individual2DisplayState = getIndividualDisplayState(individual2);
+    const individual3DisplayState = getIndividualDisplayState(individual3);
+    const individual4DisplayState = getIndividualDisplayState(individual4);
+    const individual5DisplayState = getIndividualDisplayState(individual5);
 
     this.style.setProperty(
       "--text-non-fossil-color",
@@ -922,6 +1001,18 @@ export class PowerFlowCardPlus extends LitElement {
       "--text-individualtwo-color",
       entities.individual2?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
     );
+    this.style.setProperty(
+      "--text-individualthree-color",
+      entities.individual3?.color_value ? "var(--individualthree-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--text-individualfour-color",
+      entities.individual4?.color_value ? "var(--individualfour-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--text-individualfive-color",
+      entities.individual5?.color_value ? "var(--individualfive-color)" : "var(--primary-text-color)"
+    );
 
     this.style.setProperty(
       "--secondary-text-individualone-color",
@@ -930,6 +1021,18 @@ export class PowerFlowCardPlus extends LitElement {
     this.style.setProperty(
       "--secondary-text-individualtwo-color",
       entities.individual2?.secondary_info?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--secondary-text-individualthree-color",
+      entities.individual3?.secondary_info?.color_value ? "var(--individualthree-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--secondary-text-individualfour-color",
+      entities.individual4?.secondary_info?.color_value ? "var(--individualfour-color)" : "var(--primary-text-color)"
+    );
+    this.style.setProperty(
+      "--secondary-text-individualfive-color",
+      entities.individual5?.secondary_info?.color_value ? "var(--individualfive-color)" : "var(--primary-text-color)"
     );
 
     this.style.setProperty(
@@ -975,6 +1078,9 @@ export class PowerFlowCardPlus extends LitElement {
       homeSecondary: this._templateResults.homeSecondary?.result,
       individual1Secondary: this._templateResults.individual1Secondary?.result,
       individual2Secondary: this._templateResults.individual2Secondary?.result,
+      individual3Secondary: this._templateResults.individual3Secondary?.result,
+      individual4Secondary: this._templateResults.individual4Secondary?.result,
+      individual5Secondary: this._templateResults.individual5Secondary?.result,
       nonFossilFuelSecondary: this._templateResults.nonFossilFuelSecondary?.result,
     };
 
@@ -1125,6 +1231,18 @@ export class PowerFlowCardPlus extends LitElement {
         : ""}`;
     };
 
+    const individuals = [
+      individual1,
+      individual2,
+      individual3,
+      individual4,
+      individual5,
+    ].filter((individual) => individual.has);
+
+    this.style.setProperty(
+      "--lines-width",
+      individuals.length>2 ? "75%" : "100%"
+    );
     return html`
       <ha-card
         .header=${this._config.title}
@@ -1136,7 +1254,7 @@ export class PowerFlowCardPlus extends LitElement {
           id="power-flow-card-plus"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >
-          ${solar.has || individual2.has || individual1.has || nonFossil.hasPercentage
+          ${solar.has || individuals.length>0 || nonFossil.hasPercentage
             ? html`<div class="row">
                 ${!nonFossil.hasPercentage
                   ? html`<div class="spacer"></div>`
@@ -1223,10 +1341,66 @@ export class PowerFlowCardPlus extends LitElement {
                           : ""}
                       </div>
                     </div>`
-                  : individual2.has || individual1.has
+                  : individuals.length>0
                   ? html`<div class="spacer"></div>`
                   : ""}
-                ${individual2.has
+                ${individual1.has
+                  ? html`<div class="circle-container individual1">
+                      <span class="label">${individual1.name}</span>
+                      <div
+                        class="circle"
+                        @click=${(e: { stopPropagation: () => void }) => {
+                          this.openDetails(e, entities.individual1?.entity);
+                        }}
+                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                          if (e.key === "Enter") {
+                            this.openDetails(e, entities.individual1?.entity);
+                          }
+                        }}
+                      >
+                        ${individualSecondarySpan(individual1, "individual1")}
+                        <ha-icon
+                          id="individual1-icon"
+                          .icon=${individual1.icon}
+                          style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
+                            ? "padding-bottom: 2px;"
+                            : "padding-bottom: 0px;"}"
+                        ></ha-icon>
+                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
+                          ? html` <span class="individual1">
+                              ${individual1.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                : ""}${individual1DisplayState}
+                            </span>`
+                          : ""}
+                      </div>
+                      ${this.showLine(individual1.state || 0)
+                        ? html`
+                            <svg width="80" height="30">
+                              <path d="M40 -10 v50" id="individual1" class="${this.styleLine(individual1.state || 0)}" />
+                              ${individual1.state
+                                ? svg`<circle
+                              r="2.4"
+                              class="individual1"
+                              vector-effect="non-scaling-stroke"
+                            >
+                              <animateMotion
+                                dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
+                                repeatCount="indefinite"
+                                calcMode="linear"
+                                keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
+                                keyTimes="0;1"
+                              >
+                                <mpath xlink:href="#individual1" />
+                              </animateMotion>
+                            </circle>`
+                                : ""}
+                            </svg>
+                          `
+                        : ""}
+                    </div>`
+                  : individual2.has
                   ? html`<div class="circle-container individual2">
                       <span class="label">${individual2.name}</span>
                       <div
@@ -1282,64 +1456,292 @@ export class PowerFlowCardPlus extends LitElement {
                           `
                         : ""}
                     </div>`
-                  : individual1.has
-                  ? html`<div class="circle-container individual1">
-                      <span class="label">${individual1.name}</span>
-                      <div
-                        class="circle"
-                        @click=${(e: { stopPropagation: () => void }) => {
-                          this.openDetails(e, entities.individual1?.entity);
-                        }}
-                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                          if (e.key === "Enter") {
-                            this.openDetails(e, entities.individual1?.entity);
-                          }
-                        }}
-                      >
-                        ${individualSecondarySpan(individual1, "individual1")}
-                        <ha-icon
-                          id="individual1-icon"
-                          .icon=${individual1.icon}
-                          style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                            ? "padding-bottom: 2px;"
-                            : "padding-bottom: 0px;"}"
-                        ></ha-icon>
-                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1"
-                              >${individual1.showDirection
-                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                : ""}${individual1DisplayState}
-                            </span>`
-                          : ""}
-                      </div>
-                      ${this.showLine(individual1.state || 0)
-                        ? html`
-                            <svg width="80" height="30">
-                              <path d="M40 -10 v40" id="individual1" class="${this.styleLine(individual1.state || 0)}" />
-                              ${individual1.state
-                                ? svg`<circle
+                    : individual3.has
+                    ? html`<div class="circle-container individual3">
+                        <span class="label">${individual3.name}</span>
+                        <div
+                          class="circle"
+                          @click=${(e: { stopPropagation: () => void }) => {
+                            this.openDetails(e, entities.individual3?.entity);
+                          }}
+                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                            if (e.key === "Enter") {
+                              this.openDetails(e, entities.individual3?.entity);
+                            }
+                          }}
+                        >
+                          ${individualSecondarySpan(individual3, "individual3")}
+                          <ha-icon
+                            id="individual3-icon"
+                            .icon=${individual3.icon}
+                            style="${individual3.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                            ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
+                              ? "padding-bottom: 2px;"
+                              : "padding-bottom: 0px;"}"
+                          ></ha-icon>
+                          ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
+                            ? html` <span class="individual3">
+                                ${individual3.showDirection
+                                  ? html`<ha-icon class="small" .icon=${individual3.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                  : ""}${individual3DisplayState}
+                              </span>`
+                            : ""}
+                        </div>
+                        ${this.showLine(individual3.state || 0)
+                          ? html`
+                              <svg width="80" height="30">
+                                <path d="M40 -10 v50" id="individual3" class="${this.styleLine(individual3.state || 0)}" />
+                                ${individual3.state
+                                  ? svg`<circle
                                 r="2.4"
-                                class="individual1"
+                                class="individual3"
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
+                                  dur="${this.additionalCircleRate(entities.individual3?.calculate_flow_rate, newDur.individual3)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
+                                  keyPoints=${individual3.invertAnimation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
-
                                 >
-                                  <mpath xlink:href="#individual1" />
+                                  <mpath xlink:href="#individual3" />
                                 </animateMotion>
                               </circle>`
+                                  : ""}
+                              </svg>
+                            `
+                          : ""}
+                      </div>`
+                      : individual4.has
+                      ? html`<div class="circle-container individual4">
+                          <span class="label">${individual4.name}</span>
+                          <div
+                            class="circle"
+                            @click=${(e: { stopPropagation: () => void }) => {
+                              this.openDetails(e, entities.individual4?.entity);
+                            }}
+                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                              if (e.key === "Enter") {
+                                this.openDetails(e, entities.individual4?.entity);
+                              }
+                            }}
+                          >
+                            ${individualSecondarySpan(individual4, "individual4")}
+                            <ha-icon
+                              id="individual4-icon"
+                              .icon=${individual4.icon}
+                              style="${individual4.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                              ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
+                                ? "padding-bottom: 2px;"
+                                : "padding-bottom: 0px;"}"
+                            ></ha-icon>
+                            ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
+                              ? html` <span class="individual4">
+                                  ${individual4.showDirection
+                                    ? html`<ha-icon class="small" .icon=${individual4.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                    : ""}${individual4DisplayState}
+                                </span>`
+                              : ""}
+                          </div>
+                          ${this.showLine(individual4.state || 0)
+                            ? html`
+                                <svg width="80" height="30">
+                                  <path d="M40 -10 v50" id="individual4" class="${this.styleLine(individual4.state || 0)}" />
+                                  ${individual4.state
+                                    ? svg`<circle
+                                  r="2.4"
+                                  class="individual4"
+                                  vector-effect="non-scaling-stroke"
+                                >
+                                  <animateMotion
+                                    dur="${this.additionalCircleRate(entities.individual4?.calculate_flow_rate, newDur.individual4)}s"
+                                    repeatCount="indefinite"
+                                    calcMode="linear"
+                                    keyPoints=${individual4.invertAnimation ? "0;1" : "1;0"}
+                                    keyTimes="0;1"
+                                  >
+                                    <mpath xlink:href="#individual4" />
+                                  </animateMotion>
+                                </circle>`
+                                    : ""}
+                                </svg>
+                              `
+                            : ""}
+                        </div>`
+                        : individual5.has
+                        ? html`<div class="circle-container individual5">
+                            <span class="label">${individual5.name}</span>
+                            <div
+                              class="circle"
+                              @click=${(e: { stopPropagation: () => void }) => {
+                                this.openDetails(e, entities.individual5?.entity);
+                              }}
+                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                if (e.key === "Enter") {
+                                  this.openDetails(e, entities.individual5?.entity);
+                                }
+                              }}
+                            >
+                              ${individualSecondarySpan(individual5, "individual5")}
+                              <ha-icon
+                                id="individual5-icon"
+                                .icon=${individual5.icon}
+                                style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                  ? "padding-bottom: 2px;"
+                                  : "padding-bottom: 0px;"}"
+                              ></ha-icon>
+                              ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                ? html` <span class="individual5">
+                                    ${individual5.showDirection
+                                      ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                      : ""}${individual5DisplayState}
+                                  </span>`
                                 : ""}
-                            </svg>
-                          `
-                        : html``}
-                    </div> `
-                  : html`<div class="spacer"></div>`}
+                            </div>
+                            ${this.showLine(individual5.state || 0)
+                              ? html`
+                                  <svg width="80" height="30">
+                                    <path d="M40 -10 v50" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
+                                    ${individual5.state
+                                      ? svg`<circle
+                                    r="2.4"
+                                    class="individual5"
+                                    vector-effect="non-scaling-stroke"
+                                  >
+                                    <animateMotion
+                                      dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
+                                      repeatCount="indefinite"
+                                      calcMode="linear"
+                                      keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
+                                      keyTimes="0;1"
+                                    >
+                                      <mpath xlink:href="#individual5" />
+                                    </animateMotion>
+                                  </circle>`
+                                      : ""}
+                                  </svg>
+                                `
+                              : ""}
+                          </div>`
+                  : ""}
+                  ${ individuals.length>2 ? 
+                        individuals.length>3 ? 
+                          individual4.has && individuals.length >= 4
+                          ? html`<div class="circle-container individual4">
+                              <span class="label">${individual4.name}</span>
+                              <div
+                                class="circle"
+                                @click=${(e: { stopPropagation: () => void }) => {
+                                  this.openDetails(e, entities.individual4?.entity);
+                                }}
+                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                  if (e.key === "Enter") {
+                                    this.openDetails(e, entities.individual4?.entity);
+                                  }
+                                }}
+                              >
+                                ${individualSecondarySpan(individual4, "individual4")}
+                                <ha-icon
+                                  id="individual4-icon"
+                                  .icon=${individual4.icon}
+                                  style="${individual4.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                  ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
+                                    ? "padding-bottom: 2px;"
+                                    : "padding-bottom: 0px;"}"
+                                ></ha-icon>
+                                ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
+                                  ? html` <span class="individual4">
+                                      ${individual4.showDirection
+                                        ? html`<ha-icon class="small" .icon=${individual4.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                        : ""}${individual4DisplayState}
+                                    </span>`
+                                  : ""}
+                              </div>
+                              ${this.showLine(individual4.state || 0)
+                                ? html`
+                                    <svg width="80" height="30">
+                                      <path d="M40 -10 v50" id="individual4" class="${this.styleLine(individual4.state || 0)}" />
+                                      ${individual4.state
+                                        ? svg`<circle
+                                      r="2.4"
+                                      class="individual4"
+                                      vector-effect="non-scaling-stroke"
+                                    >
+                                      <animateMotion
+                                        dur="${this.additionalCircleRate(entities.individual4?.calculate_flow_rate, newDur.individual4)}s"
+                                        repeatCount="indefinite"
+                                        calcMode="linear"
+                                        keyPoints=${individual4.invertAnimation ? "0;1" : "1;0"}
+                                        keyTimes="0;1"
+                                      >
+                                        <mpath xlink:href="#individual4" />
+                                      </animateMotion>
+                                    </circle>`
+                                        : ""}
+                                    </svg>
+                                  `
+                                : ""}
+                            </div>`
+                            : individual5.has
+                            ? html`<div class="circle-container individual5">
+                                <span class="label">${individual5.name}</span>
+                                <div
+                                  class="circle"
+                                  @click=${(e: { stopPropagation: () => void }) => {
+                                    this.openDetails(e, entities.individual5?.entity);
+                                  }}
+                                  @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                    if (e.key === "Enter") {
+                                      this.openDetails(e, entities.individual5?.entity);
+                                    }
+                                  }}
+                                >
+                                  ${individualSecondarySpan(individual5, "individual5")}
+                                  <ha-icon
+                                    id="individual5-icon"
+                                    .icon=${individual5.icon}
+                                    style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                    ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                      ? "padding-bottom: 2px;"
+                                      : "padding-bottom: 0px;"}"
+                                  ></ha-icon>
+                                  ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                    ? html` <span class="individual5">
+                                        ${individual5.showDirection
+                                          ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                          : ""}${individual5DisplayState}
+                                      </span>`
+                                    : ""}
+                                </div>
+                                ${this.showLine(individual5.state || 0)
+                                  ? html`
+                                      <svg width="80" height="30">
+                                        <path d="M40 -10 v50" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
+                                        ${individual5.state
+                                          ? svg`<circle
+                                        r="2.4"
+                                        class="individual5"
+                                        vector-effect="non-scaling-stroke"
+                                      >
+                                        <animateMotion
+                                          dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
+                                          repeatCount="indefinite"
+                                          calcMode="linear"
+                                          keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
+                                          keyTimes="0;1"
+                                        >
+                                          <mpath xlink:href="#individual5" />
+                                        </animateMotion>
+                                      </circle>`
+                                          : ""}
+                                      </svg>
+                                    `
+                                  : ""}
+                              </div>`
+                        : html`<div class="spacer"></div>`
+                        : html`<div class="spacer"></div>`
+                    : ""}
               </div>`
             : html``}
           <div class="row">
@@ -1415,6 +1817,7 @@ export class PowerFlowCardPlus extends LitElement {
                   <span class="label">${grid.name}</span>
                 </div>`
               : html`<div class="spacer"></div>`}
+              ${individuals.length>2 ? html`<div class="spacer"></div>`: ""}
             <div class="circle-container home">
               <div
                 class="circle"
@@ -1481,12 +1884,48 @@ export class PowerFlowCardPlus extends LitElement {
                   />
                 </svg>
               </div>
-              ${this.showLine(individual1.state || 0) && individual2.has && individual1.has
+              ${this.showLine(individual1.state || 0) && individuals.length > 1
                 ? html`<span class="label"></span>`
                 : html` <span class="label">${home.name}</span>`}
             </div>
+            ${individuals.length>2 ? 
+              individuals.length>4 ? 
+              html`<div class="circle-container individual5 middle">
+              <div
+                class="circle"
+                @click=${(e: { stopPropagation: () => void }) => {
+                  this.openDetails(e, entities.individual5?.entity);
+                }}
+                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                  if (e.key === "Enter") {
+                    this.openDetails(e, entities.individual5?.entity);
+                  }
+                }}
+              >
+                ${individualSecondarySpan(individual5, "individual5")}
+                <ha-icon
+                  id="individual5-icon"
+                  .icon=${individual5.icon}
+                  style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                  ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                    ? "padding-bottom: 2px;"
+                    : "padding-bottom: 0px;"}"
+                ></ha-icon>
+                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                  ? html` <span class="individual5"
+                      >${individual5.showDirection
+                        ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                        : ""}${individual5DisplayState}
+                    </span>`
+                  : ""}
+              </div>
+              <span class="label">${individual5.name}</span>
+            </div>`
+                    
+          : html`<div class="spacer"></div>`
+            : ""}
           </div>
-          ${battery.has || (individual1.has && individual2.has)
+          ${battery.has || individuals.length>1
             ? html`<div class="row">
                 <div class="spacer"></div>
                 ${battery.has
@@ -1605,25 +2044,25 @@ export class PowerFlowCardPlus extends LitElement {
                     </div>`
                   : html`<div class="spacer"></div>`}
                 ${individual2.has && individual1.has
-                  ? html`<div class="circle-container individual1 bottom">
-                      ${this.showLine(individual1.state || 0)
+                  ? html`<div class="circle-container individual2 bottom">
+                      ${this.showLine(individual2.state || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 40 v-40" id="individual1" class="${this.styleLine(individual1.state || 0)}" />
-                              ${individual1.state
+                              <path d="M40 40 v-40" id="individual2" class="${this.styleLine(individual2.state || 0)}" />
+                              ${individual2.state
                                 ? svg`<circle
                                 r="2.4"
-                                class="individual1"
+                                class="individual2"
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
+                                  dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
+                                  keyPoints=${individual2.invertAnimation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
                                 >
-                                  <mpath xlink:href="#individual1" />
+                                  <mpath xlink:href="#individual2" />
                                 </animateMotion>
                               </circle>`
                                 : ""}
@@ -1633,41 +2072,269 @@ export class PowerFlowCardPlus extends LitElement {
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
-                          this.openDetails(e, entities.individual1?.entity);
+                          this.openDetails(e, entities.individual2?.entity);
                         }}
                         @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
-                            this.openDetails(e, entities.individual1?.entity);
+                            this.openDetails(e, entities.individual2?.entity);
                           }
                         }}
                       >
-                        ${individualSecondarySpan(individual1, "individual1")}
+                        ${individualSecondarySpan(individual2, "individual2")}
                         <ha-icon
-                          id="individual1-icon"
-                          .icon=${individual1.icon}
-                          style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
+                          id="individual2-icon"
+                          .icon=${individual2.icon}
+                          style="${individual2.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1"
-                              >${individual1.showDirection
-                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                : ""}${individual1DisplayState}
+                        ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
+                          ? html` <span class="individual2"
+                              >${individual2.showDirection
+                                ? html`<ha-icon class="small" .icon=${individual2.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                : ""}${individual2DisplayState}
                             </span>`
                           : ""}
                       </div>
-                      <span class="label">${individual1.name}</span>
+                      <span class="label">${individual2.name}</span>
                     </div>`
-                  : html`<div class="spacer"></div>`}
+                  : individual3.has && (individual1.has || individual2.has)
+                    ? html`<div class="circle-container individual3 bottom">
+                        ${this.showLine(individual3.state || 0)
+                          ? html`
+                              <svg width="80" height="30">
+                                <path d="M40 40 v-40" id="individual3" class="${this.styleLine(individual3.state || 0)}" />
+                                ${individual3.state
+                                  ? svg`<circle
+                                  r="2.4"
+                                  class="individual3"
+                                  vector-effect="non-scaling-stroke"
+                                >
+                                  <animateMotion
+                                    dur="${this.additionalCircleRate(entities.individual3?.calculate_flow_rate, newDur.individual3)}s"
+                                    repeatCount="indefinite"
+                                    calcMode="linear"
+                                    keyPoints=${individual3.invertAnimation ? "0;1" : "1;0"}
+                                    keyTimes="0;1"
+                                  >
+                                    <mpath xlink:href="#individual3" />
+                                  </animateMotion>
+                                </circle>`
+                                  : ""}
+                              </svg>
+                            `
+                          : html` <svg width="80" height="30"></svg> `}
+                        <div
+                          class="circle"
+                          @click=${(e: { stopPropagation: () => void }) => {
+                            this.openDetails(e, entities.individual3?.entity);
+                          }}
+                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                            if (e.key === "Enter") {
+                              this.openDetails(e, entities.individual3?.entity);
+                            }
+                          }}
+                        >
+                          ${individualSecondarySpan(individual3, "individual3")}
+                          <ha-icon
+                            id="individual3-icon"
+                            .icon=${individual3.icon}
+                            style="${individual3.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                            ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
+                              ? "padding-bottom: 2px;"
+                              : "padding-bottom: 0px;"}"
+                          ></ha-icon>
+                          ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
+                            ? html` <span class="individual3"
+                                >${individual3.showDirection
+                                  ? html`<ha-icon class="small" .icon=${individual3.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                  : ""}${individual3DisplayState}
+                              </span>`
+                            : ""}
+                        </div>
+                        <span class="label">${individual3.name}</span>
+                      </div>`
+                    : individual4.has && (individual1.has || individual2.has || individual3.has)
+                      ? html`<div class="circle-container individual4 bottom">
+                          ${this.showLine(individual4.state || 0)
+                            ? html`
+                                <svg width="80" height="30">
+                                  <path d="M40 40 v-40" id="individual4" class="${this.styleLine(individual4.state || 0)}" />
+                                  ${individual4.state
+                                    ? svg`<circle
+                                    r="2.4"
+                                    class="individual4"
+                                    vector-effect="non-scaling-stroke"
+                                  >
+                                    <animateMotion
+                                      dur="${this.additionalCircleRate(entities.individual4?.calculate_flow_rate, newDur.individual4)}s"
+                                      repeatCount="indefinite"
+                                      calcMode="linear"
+                                      keyPoints=${individual4.invertAnimation ? "0;1" : "1;0"}
+                                      keyTimes="0;1"
+                                    >
+                                      <mpath xlink:href="#individual4" />
+                                    </animateMotion>
+                                  </circle>`
+                                    : ""}
+                                </svg>
+                              `
+                            : html` <svg width="80" height="30"></svg> `}
+                          <div
+                            class="circle"
+                            @click=${(e: { stopPropagation: () => void }) => {
+                              this.openDetails(e, entities.individual4?.entity);
+                            }}
+                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                              if (e.key === "Enter") {
+                                this.openDetails(e, entities.individual4?.entity);
+                              }
+                            }}
+                          >
+                            ${individualSecondarySpan(individual4, "individual4")}
+                            <ha-icon
+                              id="individual4-icon"
+                              .icon=${individual4.icon}
+                              style="${individual4.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                              ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
+                                ? "padding-bottom: 2px;"
+                                : "padding-bottom: 0px;"}"
+                            ></ha-icon>
+                            ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
+                              ? html` <span class="individual4"
+                                  >${individual4.showDirection
+                                    ? html`<ha-icon class="small" .icon=${individual4.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                    : ""}${individual4DisplayState}
+                                </span>`
+                              : ""}
+                          </div>
+                          <span class="label">${individual4.name}</span>
+                        </div>`
+                      : individual5.has && (individual1.has || individual2.has || individual3.has || individual4.has)
+                        ? html`<div class="circle-container individual5 bottom">
+                            ${this.showLine(individual5.state || 0)
+                              ? html`
+                                  <svg width="80" height="30">
+                                    <path d="M40 40 v-40" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
+                                    ${individual5.state
+                                      ? svg`<circle
+                                      r="2.4"
+                                      class="individual5"
+                                      vector-effect="non-scaling-stroke"
+                                    >
+                                      <animateMotion
+                                        dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
+                                        repeatCount="indefinite"
+                                        calcMode="linear"
+                                        keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
+                                        keyTimes="0;1"
+                                      >
+                                        <mpath xlink:href="#individual5" />
+                                      </animateMotion>
+                                    </circle>`
+                                      : ""}
+                                  </svg>
+                                `
+                              : html` <svg width="80" height="30"></svg> `}
+                            <div
+                              class="circle"
+                              @click=${(e: { stopPropagation: () => void }) => {
+                                this.openDetails(e, entities.individual5?.entity);
+                              }}
+                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                if (e.key === "Enter") {
+                                  this.openDetails(e, entities.individual5?.entity);
+                                }
+                              }}
+                            >
+                              ${individualSecondarySpan(individual5, "individual5")}
+                              <ha-icon
+                                id="individual5-icon"
+                                .icon=${individual5.icon}
+                                style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                  ? "padding-bottom: 2px;"
+                                  : "padding-bottom: 0px;"}"
+                              ></ha-icon>
+                              ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                ? html` <span class="individual5"
+                                    >${individual5.showDirection
+                                      ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                      : ""}${individual5DisplayState}
+                                  </span>`
+                                : ""}
+                            </div>
+                            <span class="label">${individual5.name}</span>
+                          </div>`
+                        : html`<div class="spacer"></div>`}
+                        ${individuals.length>2 ? 
+                            individuals.length>4 ? 
+                            html`<div class="circle-container individual5 bottom">
+                            ${this.showLine(individual5.state || 0)
+                              ? html`
+                                  <svg width="80" height="30">
+                                    <path d="M40 40 v-40" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
+                                    ${individual5.state
+                                      ? svg`<circle
+                                      r="2.4"
+                                      class="individual5"
+                                      vector-effect="non-scaling-stroke"
+                                    >
+                                      <animateMotion
+                                        dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
+                                        repeatCount="indefinite"
+                                        calcMode="linear"
+                                        keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
+                                        keyTimes="0;1"
+                                      >
+                                        <mpath xlink:href="#individual5" />
+                                      </animateMotion>
+                                    </circle>`
+                                      : ""}
+                                  </svg>
+                                `
+                              : html` <svg width="80" height="30"></svg> `}
+                            <div
+                              class="circle"
+                              @click=${(e: { stopPropagation: () => void }) => {
+                                this.openDetails(e, entities.individual5?.entity);
+                              }}
+                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+                                if (e.key === "Enter") {
+                                  this.openDetails(e, entities.individual5?.entity);
+                                }
+                              }}
+                            >
+                              ${individualSecondarySpan(individual5, "individual5")}
+                              <ha-icon
+                                id="individual5-icon"
+                                .icon=${individual5.icon}
+                                style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                  ? "padding-bottom: 2px;"
+                                  : "padding-bottom: 0px;"}"
+                              ></ha-icon>
+                              ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                ? html` <span class="individual5"
+                                    >${individual5.showDirection
+                                      ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                      : ""}${individual5DisplayState}
+                                  </span>`
+                                : ""}
+                            </div>
+                            <span class="label">${individual5.name}</span>
+                          </div>`
+                                  
+                        : html`<div class="spacer"></div>`
+                          : ""}
               </div>`
-            : html`<div class="spacer"></div>`}
+            : ""}
           ${solar.has && this.showLine(solar.state.toHome || 0)
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
-                  "individual1-individual2": !battery.has && individual2.has && individual1.has,
+                  "individual1-individual2": !battery.has && individuals.length>1,
                 })}"
               >
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-home-flow">
@@ -1699,7 +2366,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
-                  "individual1-individual2": !battery.has && individual2.has && individual1.has,
+                  "individual1-individual2": !battery.has && individuals.length>1,
                 })}"
               >
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-grid-flow">
@@ -1731,7 +2398,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
-                  "individual1-individual2": !battery.has && individual2.has && individual1.has,
+                  "individual1-individual2": !battery.has && individuals.length>1,
                 })}"
               >
                 <svg
@@ -1769,7 +2436,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
-                  "individual1-individual2": !battery.has && individual2.has && individual1.has,
+                  "individual1-individual2": !battery.has && individuals.length>1,
                 })}"
               >
                 <svg
@@ -1807,7 +2474,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
-                  "individual1-individual2": !battery.has && individual2.has && individual1.has,
+                  "individual1-individual2": !battery.has && individuals.length>1,
                 })}"
               >
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-home-flow">
@@ -1839,7 +2506,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div
                 class="lines ${classMap({
                   high: battery.has,
-                  "individual1-individual2": !battery.has && individual2.has && individual1.has,
+                  "individual1-individual2": !battery.has && individuals.length>1,
                 })}"
               >
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-grid-flow">
@@ -1935,6 +2602,9 @@ export class PowerFlowCardPlus extends LitElement {
       homeSecondary: entities.home?.secondary_info?.template,
       individual1Secondary: entities.individual1?.secondary_info?.template,
       individual2Secondary: entities.individual2?.secondary_info?.template,
+      individual3Secondary: entities.individual3?.secondary_info?.template,
+      individual4Secondary: entities.individual4?.secondary_info?.template,
+      individual5Secondary: entities.individual5?.secondary_info?.template,
       nonFossilFuelSecondary: entities.fossil_fuel_percentage?.secondary_info?.template,
     };
 
@@ -1989,6 +2659,9 @@ export class PowerFlowCardPlus extends LitElement {
 
       individual1Secondary: entities.individual1?.secondary_info?.template,
       individual2Secondary: entities.individual2?.secondary_info?.template,
+      individual3Secondary: entities.individual3?.secondary_info?.template,
+      individual4Secondary: entities.individual4?.secondary_info?.template,
+      individual5Secondary: entities.individual5?.secondary_info?.template,
     };
 
     for (const [key, value] of Object.entries(templatesObj)) {

@@ -2,6 +2,7 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
+    --lines-width: 100%;
     --mdc-icon-size: 24px;
     --clickable-cursor: pointer;
     --individualone-color: #d0cc5b;
@@ -74,7 +75,7 @@ export const styles = css`
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: var(--lines-width);
     height: 146px;
     display: flex;
     justify-content: center;
@@ -114,33 +115,45 @@ export const styles = css`
     z-index: 2;
   }
   .circle-container.solar {
-    margin: 0 4px;
     height: 130px;
   }
   .circle-container.individual2 {
-    margin-left: 4px;
     height: 130px;
   }
   .circle-container.individual3 {
-    margin-left: 4px;
     height: 130px;
   }
   .circle-container.individual4 {
-    margin-left: 4px;
     height: 130px;
   }
   .circle-container.individual5 {
-    margin-left: 4px;
     height: 130px;
   }
   .circle-container.individual1 {
-    margin-left: 4px;
     height: 130px;
   }
-  .circle-container.individual1.bottom {
+  .circle-container.individual2.bottom {
     position: relative;
     top: -20px;
     margin-bottom: -20px;
+  }
+  .circle-container.individual3.bottom {
+    position: relative;
+    top: -20px;
+    margin-bottom: -20px;
+  }
+  .circle-container.individual4.bottom {
+    position: relative;
+    top: -20px;
+    margin-bottom: -20px;
+  }
+  .circle-container.individual5.bottom {
+    position: relative;
+    top: -20px;
+    margin-bottom: -20px;
+  }
+  .circle-container.middle {
+    height: 100%;
   }
   .circle-container.battery {
     height: 110px;
