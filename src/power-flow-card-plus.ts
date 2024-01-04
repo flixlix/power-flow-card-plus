@@ -415,8 +415,10 @@ export class PowerFlowCardPlus extends LitElement {
 
     const getIndividualObject = (field: "individual1" | "individual2" | "individual3" | "individual4" | "individual5") => ({
       entity: entities[field]?.entity,
+      field: field,
       has: this.hasField(entities[field]),
       displayZero: entities[field]?.display_zero,
+      displayZeroState: entities[field]?.display_zero_state,
       displayZeroTolerance: entities[field]?.display_zero_tolerance,
       state: initialNumericState,
       icon: this.computeFieldIcon(entities[field], field === "individual1" ? "mdi:car-electric" : "mdi:motorbike-electric"),
@@ -427,6 +429,7 @@ export class PowerFlowCardPlus extends LitElement {
       decimals: entities[field]?.decimals,
       invertAnimation: entities[field]?.inverted_animation || false,
       showDirection: entities[field]?.show_direction || false,
+      calculateFlowRate: entities[field]?.calculate_flow_rate || false,
       secondary: {
         entity: entities[field]?.secondary_info?.entity,
         template: entities[field]?.secondary_info?.template,
@@ -945,11 +948,6 @@ export class PowerFlowCardPlus extends LitElement {
       solarToBattery: this.circleRate(solar.state.toBattery ?? 0, totalLines),
       solarToGrid: this.circleRate(solar.state.toGrid ?? 0, totalLines),
       solarToHome: this.circleRate(solar.state.toHome ?? 0, totalLines),
-      individual1: this.circleRate(individual1.state ?? 0, totalIndividualConsumption),
-      individual2: this.circleRate(individual2.state ?? 0, totalIndividualConsumption),
-      individual3: this.circleRate(individual3.state ?? 0, totalIndividualConsumption),
-      individual4: this.circleRate(individual4.state ?? 0, totalIndividualConsumption),
-      individual5: this.circleRate(individual5.state ?? 0, totalIndividualConsumption),
       nonFossil: this.circleRate(nonFossil.state.power ?? 0, totalLines),
     };
 
@@ -977,12 +975,6 @@ export class PowerFlowCardPlus extends LitElement {
       if (field.state === undefined) return "";
       return this.displayValue(field.state, field.unit, field.unit_white_space, field.decimals);
     };
-
-    const individual1DisplayState = getIndividualDisplayState(individual1);
-    const individual2DisplayState = getIndividualDisplayState(individual2);
-    const individual3DisplayState = getIndividualDisplayState(individual3);
-    const individual4DisplayState = getIndividualDisplayState(individual4);
-    const individual5DisplayState = getIndividualDisplayState(individual5);
 
     this.style.setProperty(
       "--text-non-fossil-color",
@@ -1305,7 +1297,7 @@ export class PowerFlowCardPlus extends LitElement {
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                 >
-                                  <mpath xlink:href="#low-carbon" />
+                                  <mpath href="#low-carbon" />
                                 </animateMotion>
                             </circle>`
                                 : ""}
@@ -1344,55 +1336,55 @@ export class PowerFlowCardPlus extends LitElement {
                   : individuals.length>0
                   ? html`<div class="spacer"></div>`
                   : ""}
-                ${individual1.has
-                  ? html`<div class="circle-container individual1">
-                      <span class="label">${individual1.name}</span>
+                ${individuals.length>0
+                  ? html`<div class="circle-container ${individuals[0].field}">
+                      <span class="label">${individuals[0].name}</span>
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
-                          this.openDetails(e, entities.individual1?.entity);
+                          this.openDetails(e, individuals[0].entity);
                         }}
                         @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
-                            this.openDetails(e, entities.individual1?.entity);
+                            this.openDetails(e, individuals[0].entity);
                           }
                         }}
                       >
-                        ${individualSecondarySpan(individual1, "individual1")}
+                        ${individualSecondarySpan(individuals[0], individuals[0].field)}
                         <ha-icon
-                          id="individual1-icon"
-                          .icon=${individual1.icon}
-                          style="${individual1.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
+                          id="${individuals[0].field}-icon"
+                          .icon=${individuals[0].icon}
+                          style="${individuals[0].secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${individuals[0].displayZeroState !== false || (individuals[0].state || 0) > (individuals[0].displayZeroTolerance ?? 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.individual1?.display_zero_state !== false || (individual1.state || 0) > (individual1.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual1">
-                              ${individual1.showDirection
-                                ? html`<ha-icon class="small" .icon=${individual1.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                : ""}${individual1DisplayState}
+                        ${individuals[0].displayZeroState !== false || (individuals[0].state || 0) > (individuals[0].displayZeroTolerance ?? 0)
+                          ? html` <span class="${individuals[0].field}">
+                              ${individuals[0].showDirection
+                                ? html`<ha-icon class="small" .icon=${individuals[0].invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                : ""}${getIndividualDisplayState(individuals[0])}
                             </span>`
                           : ""}
                       </div>
-                      ${this.showLine(individual1.state || 0)
+                      ${this.showLine(individuals[0].state || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 -10 v50" id="individual1" class="${this.styleLine(individual1.state || 0)}" />
-                              ${individual1.state
+                              <path d="M40 -10 v50" id="${individuals[0].field}" class="${this.styleLine(individuals[0].state || 0)}" />
+                              ${individuals[0].state
                                 ? svg`<circle
                               r="2.4"
-                              class="individual1"
+                              class="${individuals[0].field}"
                               vector-effect="non-scaling-stroke"
                             >
                               <animateMotion
-                                dur="${this.additionalCircleRate(entities.individual1?.calculate_flow_rate, newDur.individual1)}s"
+                                dur="${this.additionalCircleRate(individuals[0].calculateFlowRate, this.circleRate(individuals[0].state ?? 0, totalIndividualConsumption))}s"
                                 repeatCount="indefinite"
                                 calcMode="linear"
-                                keyPoints=${individual1.invertAnimation ? "0;1" : "1;0"}
+                                keyPoints=${individuals[0].invertAnimation ? "0;1" : "1;0"}
                                 keyTimes="0;1"
                               >
-                                <mpath xlink:href="#individual1" />
+                                <mpath href="#${individuals[0].field}" />
                               </animateMotion>
                             </circle>`
                                 : ""}
@@ -1400,338 +1392,57 @@ export class PowerFlowCardPlus extends LitElement {
                           `
                         : ""}
                     </div>`
-                  : individual2.has
-                  ? html`<div class="circle-container individual2">
-                      <span class="label">${individual2.name}</span>
-                      <div
-                        class="circle"
-                        @click=${(e: { stopPropagation: () => void }) => {
-                          this.openDetails(e, entities.individual2?.entity);
-                        }}
-                        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                          if (e.key === "Enter") {
-                            this.openDetails(e, entities.individual2?.entity);
-                          }
-                        }}
-                      >
-                        ${individualSecondarySpan(individual2, "individual2")}
-                        <ha-icon
-                          id="individual2-icon"
-                          .icon=${individual2.icon}
-                          style="${individual2.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
-                            ? "padding-bottom: 2px;"
-                            : "padding-bottom: 0px;"}"
-                        ></ha-icon>
-                        ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual2">
-                              ${individual2.showDirection
-                                ? html`<ha-icon class="small" .icon=${individual2.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                : ""}${individual2DisplayState}
-                            </span>`
-                          : ""}
-                      </div>
-                      ${this.showLine(individual2.state || 0)
-                        ? html`
-                            <svg width="80" height="30">
-                              <path d="M40 -10 v50" id="individual2" class="${this.styleLine(individual2.state || 0)}" />
-                              ${individual2.state
-                                ? svg`<circle
-                              r="2.4"
-                              class="individual2"
-                              vector-effect="non-scaling-stroke"
-                            >
-                              <animateMotion
-                                dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"
-                                repeatCount="indefinite"
-                                calcMode="linear"
-                                keyPoints=${individual2.invertAnimation ? "0;1" : "1;0"}
-                                keyTimes="0;1"
-                              >
-                                <mpath xlink:href="#individual2" />
-                              </animateMotion>
-                            </circle>`
-                                : ""}
-                            </svg>
-                          `
-                        : ""}
-                    </div>`
-                    : individual3.has
-                    ? html`<div class="circle-container individual3">
-                        <span class="label">${individual3.name}</span>
-                        <div
-                          class="circle"
-                          @click=${(e: { stopPropagation: () => void }) => {
-                            this.openDetails(e, entities.individual3?.entity);
-                          }}
-                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                            if (e.key === "Enter") {
-                              this.openDetails(e, entities.individual3?.entity);
-                            }
-                          }}
-                        >
-                          ${individualSecondarySpan(individual3, "individual3")}
-                          <ha-icon
-                            id="individual3-icon"
-                            .icon=${individual3.icon}
-                            style="${individual3.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                            ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
-                              ? "padding-bottom: 2px;"
-                              : "padding-bottom: 0px;"}"
-                          ></ha-icon>
-                          ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
-                            ? html` <span class="individual3">
-                                ${individual3.showDirection
-                                  ? html`<ha-icon class="small" .icon=${individual3.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                  : ""}${individual3DisplayState}
-                              </span>`
-                            : ""}
-                        </div>
-                        ${this.showLine(individual3.state || 0)
-                          ? html`
-                              <svg width="80" height="30">
-                                <path d="M40 -10 v50" id="individual3" class="${this.styleLine(individual3.state || 0)}" />
-                                ${individual3.state
-                                  ? svg`<circle
-                                r="2.4"
-                                class="individual3"
-                                vector-effect="non-scaling-stroke"
-                              >
-                                <animateMotion
-                                  dur="${this.additionalCircleRate(entities.individual3?.calculate_flow_rate, newDur.individual3)}s"
-                                  repeatCount="indefinite"
-                                  calcMode="linear"
-                                  keyPoints=${individual3.invertAnimation ? "0;1" : "1;0"}
-                                  keyTimes="0;1"
-                                >
-                                  <mpath xlink:href="#individual3" />
-                                </animateMotion>
-                              </circle>`
-                                  : ""}
-                              </svg>
-                            `
-                          : ""}
-                      </div>`
-                      : individual4.has
-                      ? html`<div class="circle-container individual4">
-                          <span class="label">${individual4.name}</span>
-                          <div
-                            class="circle"
-                            @click=${(e: { stopPropagation: () => void }) => {
-                              this.openDetails(e, entities.individual4?.entity);
-                            }}
-                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                              if (e.key === "Enter") {
-                                this.openDetails(e, entities.individual4?.entity);
-                              }
-                            }}
-                          >
-                            ${individualSecondarySpan(individual4, "individual4")}
-                            <ha-icon
-                              id="individual4-icon"
-                              .icon=${individual4.icon}
-                              style="${individual4.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                              ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
-                                ? "padding-bottom: 2px;"
-                                : "padding-bottom: 0px;"}"
-                            ></ha-icon>
-                            ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
-                              ? html` <span class="individual4">
-                                  ${individual4.showDirection
-                                    ? html`<ha-icon class="small" .icon=${individual4.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                    : ""}${individual4DisplayState}
-                                </span>`
-                              : ""}
-                          </div>
-                          ${this.showLine(individual4.state || 0)
-                            ? html`
-                                <svg width="80" height="30">
-                                  <path d="M40 -10 v50" id="individual4" class="${this.styleLine(individual4.state || 0)}" />
-                                  ${individual4.state
-                                    ? svg`<circle
-                                  r="2.4"
-                                  class="individual4"
-                                  vector-effect="non-scaling-stroke"
-                                >
-                                  <animateMotion
-                                    dur="${this.additionalCircleRate(entities.individual4?.calculate_flow_rate, newDur.individual4)}s"
-                                    repeatCount="indefinite"
-                                    calcMode="linear"
-                                    keyPoints=${individual4.invertAnimation ? "0;1" : "1;0"}
-                                    keyTimes="0;1"
-                                  >
-                                    <mpath xlink:href="#individual4" />
-                                  </animateMotion>
-                                </circle>`
-                                    : ""}
-                                </svg>
-                              `
-                            : ""}
-                        </div>`
-                        : individual5.has
-                        ? html`<div class="circle-container individual5">
-                            <span class="label">${individual5.name}</span>
-                            <div
-                              class="circle"
-                              @click=${(e: { stopPropagation: () => void }) => {
-                                this.openDetails(e, entities.individual5?.entity);
-                              }}
-                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                                if (e.key === "Enter") {
-                                  this.openDetails(e, entities.individual5?.entity);
-                                }
-                              }}
-                            >
-                              ${individualSecondarySpan(individual5, "individual5")}
-                              <ha-icon
-                                id="individual5-icon"
-                                .icon=${individual5.icon}
-                                style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                                  ? "padding-bottom: 2px;"
-                                  : "padding-bottom: 0px;"}"
-                              ></ha-icon>
-                              ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                                ? html` <span class="individual5">
-                                    ${individual5.showDirection
-                                      ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                      : ""}${individual5DisplayState}
-                                  </span>`
-                                : ""}
-                            </div>
-                            ${this.showLine(individual5.state || 0)
-                              ? html`
-                                  <svg width="80" height="30">
-                                    <path d="M40 -10 v50" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
-                                    ${individual5.state
-                                      ? svg`<circle
-                                    r="2.4"
-                                    class="individual5"
-                                    vector-effect="non-scaling-stroke"
-                                  >
-                                    <animateMotion
-                                      dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
-                                      repeatCount="indefinite"
-                                      calcMode="linear"
-                                      keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
-                                      keyTimes="0;1"
-                                    >
-                                      <mpath xlink:href="#individual5" />
-                                    </animateMotion>
-                                  </circle>`
-                                      : ""}
-                                  </svg>
-                                `
-                              : ""}
-                          </div>`
                   : ""}
                   ${ individuals.length>2 ? 
                         individuals.length>3 ? 
-                          individual4.has && individuals.length >= 4
-                          ? html`<div class="circle-container individual4">
-                              <span class="label">${individual4.name}</span>
-                              <div
-                                class="circle"
-                                @click=${(e: { stopPropagation: () => void }) => {
-                                  this.openDetails(e, entities.individual4?.entity);
-                                }}
-                                @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                                  if (e.key === "Enter") {
-                                    this.openDetails(e, entities.individual4?.entity);
-                                  }
-                                }}
-                              >
-                                ${individualSecondarySpan(individual4, "individual4")}
-                                <ha-icon
-                                  id="individual4-icon"
-                                  .icon=${individual4.icon}
-                                  style="${individual4.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                                  ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
-                                    ? "padding-bottom: 2px;"
-                                    : "padding-bottom: 0px;"}"
-                                ></ha-icon>
-                                ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
-                                  ? html` <span class="individual4">
-                                      ${individual4.showDirection
-                                        ? html`<ha-icon class="small" .icon=${individual4.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                        : ""}${individual4DisplayState}
-                                    </span>`
-                                  : ""}
-                              </div>
-                              ${this.showLine(individual4.state || 0)
-                                ? html`
-                                    <svg width="80" height="30">
-                                      <path d="M40 -10 v50" id="individual4" class="${this.styleLine(individual4.state || 0)}" />
-                                      ${individual4.state
-                                        ? svg`<circle
-                                      r="2.4"
-                                      class="individual4"
-                                      vector-effect="non-scaling-stroke"
-                                    >
-                                      <animateMotion
-                                        dur="${this.additionalCircleRate(entities.individual4?.calculate_flow_rate, newDur.individual4)}s"
-                                        repeatCount="indefinite"
-                                        calcMode="linear"
-                                        keyPoints=${individual4.invertAnimation ? "0;1" : "1;0"}
-                                        keyTimes="0;1"
-                                      >
-                                        <mpath xlink:href="#individual4" />
-                                      </animateMotion>
-                                    </circle>`
-                                        : ""}
-                                    </svg>
-                                  `
-                                : ""}
-                            </div>`
-                            : individual5.has
-                            ? html`<div class="circle-container individual5">
-                                <span class="label">${individual5.name}</span>
+                          html`<div class="circle-container ${individuals[3].field}">
+                                <span class="label">${individuals[3].name}</span>
                                 <div
                                   class="circle"
                                   @click=${(e: { stopPropagation: () => void }) => {
-                                    this.openDetails(e, entities.individual5?.entity);
+                                    this.openDetails(e, individuals[3].entity);
                                   }}
                                   @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                                     if (e.key === "Enter") {
-                                      this.openDetails(e, entities.individual5?.entity);
+                                      this.openDetails(e, individuals[3].entity);
                                     }
                                   }}
                                 >
-                                  ${individualSecondarySpan(individual5, "individual5")}
+                                  ${individualSecondarySpan(individuals[3], individuals[3].field)}
                                   <ha-icon
-                                    id="individual5-icon"
-                                    .icon=${individual5.icon}
-                                    style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                                    ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                    id="${individuals[3].field}-icon"
+                                    .icon=${individuals[3].icon}
+                                    style="${individuals[3].secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                    ${individuals[3].displayZeroState !== false || (individuals[3].state || 0) > (individuals[3].displayZeroTolerance ?? 0)
                                       ? "padding-bottom: 2px;"
                                       : "padding-bottom: 0px;"}"
                                   ></ha-icon>
-                                  ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                                    ? html` <span class="individual5">
-                                        ${individual5.showDirection
-                                          ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-                                          : ""}${individual5DisplayState}
+                                  ${individuals[3].displayZeroState !== false || (individuals[3].state || 0) > (individuals[3].displayZeroTolerance ?? 0)
+                                    ? html` <span class="${individuals[3].field}">
+                                        ${individuals[3].showDirection
+                                          ? html`<ha-icon class="small" .icon=${individuals[3].invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
+                                          : ""}${getIndividualDisplayState(individuals[3])}
                                       </span>`
                                     : ""}
                                 </div>
-                                ${this.showLine(individual5.state || 0)
+                                ${this.showLine(individuals[3].state || 0)
                                   ? html`
                                       <svg width="80" height="30">
-                                        <path d="M40 -10 v50" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
-                                        ${individual5.state
+                                        <path d="M40 -10 v50" id="${individuals[3].field}" class="${this.styleLine(individuals[3].state || 0)}" />
+                                        ${individuals[3].state
                                           ? svg`<circle
                                         r="2.4"
-                                        class="individual5"
+                                        class="${individuals[3].field}"
                                         vector-effect="non-scaling-stroke"
                                       >
                                         <animateMotion
-                                          dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
+                                          dur="${this.additionalCircleRate(individuals[3].calculateFlowRate, this.circleRate(individuals[3].state ?? 0, totalIndividualConsumption))}s"
                                           repeatCount="indefinite"
                                           calcMode="linear"
-                                          keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
+                                          keyPoints=${individuals[3].invertAnimation ? "0;1" : "1;0"}
                                           keyTimes="0;1"
                                         >
-                                          <mpath xlink:href="#individual5" />
+                                          <mpath href="#${individuals[3].field}" />
                                         </animateMotion>
                                       </circle>`
                                           : ""}
@@ -1739,7 +1450,6 @@ export class PowerFlowCardPlus extends LitElement {
                                     `
                                   : ""}
                               </div>`
-                        : html`<div class="spacer"></div>`
                         : html`<div class="spacer"></div>`
                     : ""}
               </div>`
@@ -1884,45 +1594,42 @@ export class PowerFlowCardPlus extends LitElement {
                   />
                 </svg>
               </div>
-              ${this.showLine(individual1.state || 0) && individuals.length > 1
+              ${this.showLine(individuals[0].state || 0) && individuals.length > 1
                 ? html`<span class="label"></span>`
                 : html` <span class="label">${home.name}</span>`}
             </div>
             ${individuals.length>2 ? 
-              individuals.length>4 ? 
-              html`<div class="circle-container individual5 middle">
+              html`<div class="circle-container ${individuals[2].field} middle">
               <div
                 class="circle"
                 @click=${(e: { stopPropagation: () => void }) => {
-                  this.openDetails(e, entities.individual5?.entity);
+                  this.openDetails(e, individuals[2].entity);
                 }}
                 @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                   if (e.key === "Enter") {
-                    this.openDetails(e, entities.individual5?.entity);
+                    this.openDetails(e, individuals[2].entity);
                   }
                 }}
               >
-                ${individualSecondarySpan(individual5, "individual5")}
+                ${individualSecondarySpan(individuals[2], individuals[2].field)}
                 <ha-icon
-                  id="individual5-icon"
-                  .icon=${individual5.icon}
-                  style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                  ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                  id="${individuals[2].field}-icon"
+                  .icon=${individuals[2].icon}
+                  style="${individuals[2].secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                  ${individuals[2].displayZeroState !== false || (individuals[2].state || 0) > (individuals[2].displayZeroTolerance ?? 0)
                     ? "padding-bottom: 2px;"
                     : "padding-bottom: 0px;"}"
                 ></ha-icon>
-                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                  ? html` <span class="individual5"
-                      >${individual5.showDirection
-                        ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                        : ""}${individual5DisplayState}
+                ${individuals[2].displayZeroState !== false || (individuals[2].state || 0) > (individuals[2].displayZeroTolerance ?? 0)
+                  ? html` <span class="${individuals[2].field}"
+                      >${individuals[2].showDirection
+                        ? html`<ha-icon class="small" .icon=${individuals[2].invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                        : ""}${getIndividualDisplayState(individuals[2])}
                     </span>`
                   : ""}
               </div>
-              <span class="label">${individual5.name}</span>
+              <span class="label">${individuals[2].name}</span>
             </div>`
-                    
-          : html`<div class="spacer"></div>`
             : ""}
           </div>
           ${battery.has || individuals.length>1
@@ -2043,26 +1750,26 @@ export class PowerFlowCardPlus extends LitElement {
                       <span class="label">${battery.name}</span>
                     </div>`
                   : html`<div class="spacer"></div>`}
-                ${individual2.has && individual1.has
-                  ? html`<div class="circle-container individual2 bottom">
-                      ${this.showLine(individual2.state || 0)
+                ${individuals.length>1
+                  ? html`<div class="circle-container ${individuals[1].field} bottom">
+                      ${this.showLine(individuals[1].state || 0)
                         ? html`
                             <svg width="80" height="30">
-                              <path d="M40 40 v-40" id="individual2" class="${this.styleLine(individual2.state || 0)}" />
-                              ${individual2.state
+                              <path d="M40 40 v-40" id="${individuals[1].field}" class="${this.styleLine(individuals[1].state || 0)}" />
+                              ${individuals[1].state
                                 ? svg`<circle
                                 r="2.4"
-                                class="individual2"
+                                class="${individuals[1].field}"
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="${this.additionalCircleRate(entities.individual2?.calculate_flow_rate, newDur.individual2)}s"
+                                  dur="${this.additionalCircleRate(individuals[1].calculateFlowRate, this.circleRate(individuals[1].state ?? 0, totalIndividualConsumption))}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
-                                  keyPoints=${individual2.invertAnimation ? "0;1" : "1;0"}
+                                  keyPoints=${individuals[1].invertAnimation ? "0;1" : "1;0"}
                                   keyTimes="0;1"
                                 >
-                                  <mpath xlink:href="#individual2" />
+                                  <mpath href="#${individuals[1].field}" />
                                 </animateMotion>
                               </circle>`
                                 : ""}
@@ -2072,223 +1779,55 @@ export class PowerFlowCardPlus extends LitElement {
                       <div
                         class="circle"
                         @click=${(e: { stopPropagation: () => void }) => {
-                          this.openDetails(e, entities.individual2?.entity);
+                          this.openDetails(e, individuals[1].entity);
                         }}
                         @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                           if (e.key === "Enter") {
-                            this.openDetails(e, entities.individual2?.entity);
+                            this.openDetails(e, individuals[1].entity);
                           }
                         }}
                       >
-                        ${individualSecondarySpan(individual2, "individual2")}
+                        ${individualSecondarySpan(individuals[1], individuals[1].field)}
                         <ha-icon
-                          id="individual2-icon"
-                          .icon=${individual2.icon}
-                          style="${individual2.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
+                          id="${individuals[1].field}-icon"
+                          .icon=${individuals[1].icon}
+                          style="${individuals[1].secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${individuals[1].displayZeroState !== false || (individuals[1].state || 0) > (individuals[1].displayZeroTolerance ?? 0)
                             ? "padding-bottom: 2px;"
                             : "padding-bottom: 0px;"}"
                         ></ha-icon>
-                        ${entities.individual2?.display_zero_state !== false || (individual2.state || 0) > (individual2.displayZeroTolerance ?? 0)
-                          ? html` <span class="individual2"
-                              >${individual2.showDirection
-                                ? html`<ha-icon class="small" .icon=${individual2.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                : ""}${individual2DisplayState}
+                        ${individuals[1].displayZeroState !== false || (individuals[1].state || 0) > (individuals[1].displayZeroTolerance ?? 0)
+                          ? html` <span class="${individuals[1].field}"
+                              >${individuals[1].showDirection
+                                ? html`<ha-icon class="small" .icon=${individuals[1].invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                : ""}${getIndividualDisplayState(individuals[1])}
                             </span>`
                           : ""}
                       </div>
-                      <span class="label">${individual2.name}</span>
+                      <span class="label">${individuals[1].name}</span>
                     </div>`
-                  : individual3.has && (individual1.has || individual2.has)
-                    ? html`<div class="circle-container individual3 bottom">
-                        ${this.showLine(individual3.state || 0)
-                          ? html`
-                              <svg width="80" height="30">
-                                <path d="M40 40 v-40" id="individual3" class="${this.styleLine(individual3.state || 0)}" />
-                                ${individual3.state
-                                  ? svg`<circle
-                                  r="2.4"
-                                  class="individual3"
-                                  vector-effect="non-scaling-stroke"
-                                >
-                                  <animateMotion
-                                    dur="${this.additionalCircleRate(entities.individual3?.calculate_flow_rate, newDur.individual3)}s"
-                                    repeatCount="indefinite"
-                                    calcMode="linear"
-                                    keyPoints=${individual3.invertAnimation ? "0;1" : "1;0"}
-                                    keyTimes="0;1"
-                                  >
-                                    <mpath xlink:href="#individual3" />
-                                  </animateMotion>
-                                </circle>`
-                                  : ""}
-                              </svg>
-                            `
-                          : html` <svg width="80" height="30"></svg> `}
-                        <div
-                          class="circle"
-                          @click=${(e: { stopPropagation: () => void }) => {
-                            this.openDetails(e, entities.individual3?.entity);
-                          }}
-                          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                            if (e.key === "Enter") {
-                              this.openDetails(e, entities.individual3?.entity);
-                            }
-                          }}
-                        >
-                          ${individualSecondarySpan(individual3, "individual3")}
-                          <ha-icon
-                            id="individual3-icon"
-                            .icon=${individual3.icon}
-                            style="${individual3.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                            ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
-                              ? "padding-bottom: 2px;"
-                              : "padding-bottom: 0px;"}"
-                          ></ha-icon>
-                          ${entities.individual3?.display_zero_state !== false || (individual3.state || 0) > (individual3.displayZeroTolerance ?? 0)
-                            ? html` <span class="individual3"
-                                >${individual3.showDirection
-                                  ? html`<ha-icon class="small" .icon=${individual3.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                  : ""}${individual3DisplayState}
-                              </span>`
-                            : ""}
-                        </div>
-                        <span class="label">${individual3.name}</span>
-                      </div>`
-                    : individual4.has && (individual1.has || individual2.has || individual3.has)
-                      ? html`<div class="circle-container individual4 bottom">
-                          ${this.showLine(individual4.state || 0)
-                            ? html`
-                                <svg width="80" height="30">
-                                  <path d="M40 40 v-40" id="individual4" class="${this.styleLine(individual4.state || 0)}" />
-                                  ${individual4.state
-                                    ? svg`<circle
-                                    r="2.4"
-                                    class="individual4"
-                                    vector-effect="non-scaling-stroke"
-                                  >
-                                    <animateMotion
-                                      dur="${this.additionalCircleRate(entities.individual4?.calculate_flow_rate, newDur.individual4)}s"
-                                      repeatCount="indefinite"
-                                      calcMode="linear"
-                                      keyPoints=${individual4.invertAnimation ? "0;1" : "1;0"}
-                                      keyTimes="0;1"
-                                    >
-                                      <mpath xlink:href="#individual4" />
-                                    </animateMotion>
-                                  </circle>`
-                                    : ""}
-                                </svg>
-                              `
-                            : html` <svg width="80" height="30"></svg> `}
-                          <div
-                            class="circle"
-                            @click=${(e: { stopPropagation: () => void }) => {
-                              this.openDetails(e, entities.individual4?.entity);
-                            }}
-                            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                              if (e.key === "Enter") {
-                                this.openDetails(e, entities.individual4?.entity);
-                              }
-                            }}
-                          >
-                            ${individualSecondarySpan(individual4, "individual4")}
-                            <ha-icon
-                              id="individual4-icon"
-                              .icon=${individual4.icon}
-                              style="${individual4.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                              ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
-                                ? "padding-bottom: 2px;"
-                                : "padding-bottom: 0px;"}"
-                            ></ha-icon>
-                            ${entities.individual4?.display_zero_state !== false || (individual4.state || 0) > (individual4.displayZeroTolerance ?? 0)
-                              ? html` <span class="individual4"
-                                  >${individual4.showDirection
-                                    ? html`<ha-icon class="small" .icon=${individual4.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                    : ""}${individual4DisplayState}
-                                </span>`
-                              : ""}
-                          </div>
-                          <span class="label">${individual4.name}</span>
-                        </div>`
-                      : individual5.has && (individual1.has || individual2.has || individual3.has || individual4.has)
-                        ? html`<div class="circle-container individual5 bottom">
-                            ${this.showLine(individual5.state || 0)
-                              ? html`
-                                  <svg width="80" height="30">
-                                    <path d="M40 40 v-40" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
-                                    ${individual5.state
-                                      ? svg`<circle
-                                      r="2.4"
-                                      class="individual5"
-                                      vector-effect="non-scaling-stroke"
-                                    >
-                                      <animateMotion
-                                        dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
-                                        repeatCount="indefinite"
-                                        calcMode="linear"
-                                        keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
-                                        keyTimes="0;1"
-                                      >
-                                        <mpath xlink:href="#individual5" />
-                                      </animateMotion>
-                                    </circle>`
-                                      : ""}
-                                  </svg>
-                                `
-                              : html` <svg width="80" height="30"></svg> `}
-                            <div
-                              class="circle"
-                              @click=${(e: { stopPropagation: () => void }) => {
-                                this.openDetails(e, entities.individual5?.entity);
-                              }}
-                              @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-                                if (e.key === "Enter") {
-                                  this.openDetails(e, entities.individual5?.entity);
-                                }
-                              }}
-                            >
-                              ${individualSecondarySpan(individual5, "individual5")}
-                              <ha-icon
-                                id="individual5-icon"
-                                .icon=${individual5.icon}
-                                style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                                  ? "padding-bottom: 2px;"
-                                  : "padding-bottom: 0px;"}"
-                              ></ha-icon>
-                              ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                                ? html` <span class="individual5"
-                                    >${individual5.showDirection
-                                      ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                      : ""}${individual5DisplayState}
-                                  </span>`
-                                : ""}
-                            </div>
-                            <span class="label">${individual5.name}</span>
-                          </div>`
                         : html`<div class="spacer"></div>`}
                         ${individuals.length>2 ? 
                             individuals.length>4 ? 
-                            html`<div class="circle-container individual5 bottom">
-                            ${this.showLine(individual5.state || 0)
+                            html`<div class="circle-container ${individuals[4].field} bottom">
+                            ${this.showLine(individuals[4].state || 0)
                               ? html`
                                   <svg width="80" height="30">
-                                    <path d="M40 40 v-40" id="individual5" class="${this.styleLine(individual5.state || 0)}" />
-                                    ${individual5.state
+                                    <path d="M40 40 v-40" id="${individuals[4].field}" class="${this.styleLine(individuals[4].state || 0)}" />
+                                    ${individuals[4].state
                                       ? svg`<circle
                                       r="2.4"
-                                      class="individual5"
+                                      class="${individuals[4].field}"
                                       vector-effect="non-scaling-stroke"
                                     >
                                       <animateMotion
-                                        dur="${this.additionalCircleRate(entities.individual5?.calculate_flow_rate, newDur.individual5)}s"
+                                        dur="${this.additionalCircleRate(individuals[4].calculateFlowRate, this.circleRate(individuals[4].state ?? 0, totalIndividualConsumption))}s"
                                         repeatCount="indefinite"
                                         calcMode="linear"
-                                        keyPoints=${individual5.invertAnimation ? "0;1" : "1;0"}
+                                        keyPoints=${individuals[4].invertAnimation ? "0;1" : "1;0"}
                                         keyTimes="0;1"
                                       >
-                                        <mpath xlink:href="#individual5" />
+                                        <mpath href="#${individuals[4].field}" />
                                       </animateMotion>
                                     </circle>`
                                       : ""}
@@ -2298,32 +1837,32 @@ export class PowerFlowCardPlus extends LitElement {
                             <div
                               class="circle"
                               @click=${(e: { stopPropagation: () => void }) => {
-                                this.openDetails(e, entities.individual5?.entity);
+                                this.openDetails(e, individuals[4].entity);
                               }}
                               @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
                                 if (e.key === "Enter") {
-                                  this.openDetails(e, entities.individual5?.entity);
+                                  this.openDetails(e, individuals[4].entity);
                                 }
                               }}
                             >
-                              ${individualSecondarySpan(individual5, "individual5")}
+                              ${individualSecondarySpan(individuals[4], individuals[4].field)}
                               <ha-icon
-                                id="individual5-icon"
-                                .icon=${individual5.icon}
-                                style="${individual5.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                                ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
+                                id="${individuals[4].field}-icon"
+                                .icon=${individuals[4].icon}
+                                style="${individuals[4].secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                                ${individuals[4].displayZeroState !== false || (individuals[4].state || 0) > (individuals[4].displayZeroTolerance ?? 0)
                                   ? "padding-bottom: 2px;"
                                   : "padding-bottom: 0px;"}"
                               ></ha-icon>
-                              ${entities.individual5?.display_zero_state !== false || (individual5.state || 0) > (individual5.displayZeroTolerance ?? 0)
-                                ? html` <span class="individual5"
-                                    >${individual5.showDirection
-                                      ? html`<ha-icon class="small" .icon=${individual5.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
-                                      : ""}${individual5DisplayState}
+                              ${individuals[4].displayZeroState !== false || (individuals[4].state || 0) > (individuals[4].displayZeroTolerance ?? 0)
+                                ? html` <span class="${individuals[4].field}"
+                                    >${individuals[4].showDirection
+                                      ? html`<ha-icon class="small" .icon=${individuals[4].invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+                                      : ""}${getIndividualDisplayState(individuals[4])}
                                   </span>`
                                 : ""}
                             </div>
-                            <span class="label">${individual5.name}</span>
+                            <span class="label">${individuals[4].name}</span>
                           </div>`
                                   
                         : html`<div class="spacer"></div>`
@@ -2355,7 +1894,7 @@ export class PowerFlowCardPlus extends LitElement {
                               repeatCount="indefinite"
                               calcMode="linear"
                             >
-                              <mpath xlink:href="#solar" />
+                              <mpath href="#solar" />
                             </animateMotion>
                           </circle>`
                     : ""}
@@ -2387,7 +1926,7 @@ export class PowerFlowCardPlus extends LitElement {
                           repeatCount="indefinite"
                           calcMode="linear"
                         >
-                          <mpath xlink:href="#return" />
+                          <mpath href="#return" />
                         </animateMotion>
                       </circle>`
                     : ""}
@@ -2425,7 +1964,7 @@ export class PowerFlowCardPlus extends LitElement {
                               repeatCount="indefinite"
                               calcMode="linear"
                             >
-                              <mpath xlink:href="#battery-solar" />
+                              <mpath href="#battery-solar" />
                             </animateMotion>
                           </circle>`
                     : ""}
@@ -2463,7 +2002,7 @@ export class PowerFlowCardPlus extends LitElement {
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
-                      <mpath xlink:href="#grid" />
+                      <mpath href="#grid" />
                     </animateMotion>
                   </circle>`
                     : ""}
@@ -2495,7 +2034,7 @@ export class PowerFlowCardPlus extends LitElement {
                           repeatCount="indefinite"
                           calcMode="linear"
                         >
-                          <mpath xlink:href="#battery-home" />
+                          <mpath href="#battery-home" />
                         </animateMotion>
                       </circle>`
                     : ""}
@@ -2528,7 +2067,7 @@ export class PowerFlowCardPlus extends LitElement {
                       keyPoints="1;0" keyTimes="0;1"
                       calcMode="linear"
                     >
-                      <mpath xlink:href="#battery-grid" />
+                      <mpath href="#battery-grid" />
                     </animateMotion>
                   </circle>`
                     : ""}
@@ -2543,7 +2082,7 @@ export class PowerFlowCardPlus extends LitElement {
                           repeatCount="indefinite"
                           calcMode="linear"
                         >
-                          <mpath xlink:href="#battery-grid" />
+                          <mpath href="#battery-grid" />
                         </animateMotion>
                       </circle>`
                     : ""}
