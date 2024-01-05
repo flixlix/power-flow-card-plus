@@ -1425,30 +1425,6 @@ export class PowerFlowCardPlus extends LitElement {
                                       </span>`
                                     : ""}
                                 </div>
-                                ${this.showLine(individuals[3].state || 0)
-                                  ? html`
-                                      <svg width="80" height="30">
-                                        <path d="M40 -10 v50" id="${individuals[3].field}" class="${this.styleLine(individuals[3].state || 0)}" />
-                                        ${individuals[3].state
-                                          ? svg`<circle
-                                        r="2.4"
-                                        class="${individuals[3].field}"
-                                        vector-effect="non-scaling-stroke"
-                                      >
-                                        <animateMotion
-                                          dur="${this.additionalCircleRate(individuals[3].calculateFlowRate, this.circleRate(individuals[3].state ?? 0, totalIndividualConsumption))}s"
-                                          repeatCount="indefinite"
-                                          calcMode="linear"
-                                          keyPoints=${individuals[3].invertAnimation ? "0;1" : "1;0"}
-                                          keyTimes="0;1"
-                                        >
-                                          <mpath href="#${individuals[3].field}" />
-                                        </animateMotion>
-                                      </circle>`
-                                          : ""}
-                                      </svg>
-                                    `
-                                  : ""}
                               </div>`
                         : html`<div class="spacer"></div>`
                     : ""}
@@ -1810,30 +1786,7 @@ export class PowerFlowCardPlus extends LitElement {
                         ${individuals.length>2 ? 
                             individuals.length>4 ? 
                             html`<div class="circle-container ${individuals[4].field} bottom">
-                            ${this.showLine(individuals[4].state || 0)
-                              ? html`
-                                  <svg width="80" height="30">
-                                    <path d="M40 40 v-40" id="${individuals[4].field}" class="${this.styleLine(individuals[4].state || 0)}" />
-                                    ${individuals[4].state
-                                      ? svg`<circle
-                                      r="2.4"
-                                      class="${individuals[4].field}"
-                                      vector-effect="non-scaling-stroke"
-                                    >
-                                      <animateMotion
-                                        dur="${this.additionalCircleRate(individuals[4].calculateFlowRate, this.circleRate(individuals[4].state ?? 0, totalIndividualConsumption))}s"
-                                        repeatCount="indefinite"
-                                        calcMode="linear"
-                                        keyPoints=${individuals[4].invertAnimation ? "0;1" : "1;0"}
-                                        keyTimes="0;1"
-                                      >
-                                        <mpath href="#${individuals[4].field}" />
-                                      </animateMotion>
-                                    </circle>`
-                                      : ""}
-                                  </svg>
-                                `
-                              : html` <svg width="80" height="30"></svg> `}
+                            <svg width="80" height="30"></svg>
                             <div
                               class="circle"
                               @click=${(e: { stopPropagation: () => void }) => {
@@ -2089,6 +2042,117 @@ export class PowerFlowCardPlus extends LitElement {
                 </svg>
               </div>`
             : ""}
+            ${individuals.length>2
+              ? html`<div
+                  class="indiv3"
+                >
+                  <svg
+                    viewBox="0 0 100 100"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="xMidYMid slice"
+                    id="indiv3-home-flow"
+                    class="flat-line individual3"
+                  >
+                    <path
+                      class="individual3 ${this.styleLine(individuals[2].state || 0)}"
+                      id="indiv3"
+                      d="M20,60 H50"
+                      vector-effect="non-scaling-stroke"
+                    ></path>
+                    ${individuals[2].state
+                      ? svg`<circle
+                      r="1.8"
+                      class="individual3"
+                      vector-effect="non-scaling-stroke"
+                    >
+                      <animateMotion
+                        dur="${this.additionalCircleRate(individuals[2].calculateFlowRate, this.circleRate(individuals[2].state ?? 0, totalIndividualConsumption))}s"
+                        repeatCount="indefinite"
+                        calcMode="linear"
+                        keyPoints=${individuals[2].invertAnimation ? "1;0" : "0;1"}
+                        keyTimes="0;1"
+                      >
+                        <mpath href="#indiv3" />
+                      </animateMotion>
+                    </circle>`
+                      : ""}
+                  </svg>
+                </div>`
+              : ""}
+              ${individuals.length>3
+                ? html`<div
+                    class="indiv4"
+                  >
+                    <svg
+                      viewBox="0 0 100 100"
+                      xmlns="http://www.w3.org/2000/svg"
+                      preserveAspectRatio="xMidYMid slice"
+                      id="indiv4-home-flow"
+                      class="flat-line individual4"
+                    >
+                      <path
+                        class="individual4 ${this.styleLine(individuals[3].state || 0)}"
+                        id="indiv4"
+                        d="M13,44 L55,7"
+                        vector-effect="non-scaling-stroke"
+                      ></path>
+                      ${individuals[3].state
+                        ? svg`<circle
+                        r="1.8"
+                        class="individual4"
+                        vector-effect="non-scaling-stroke"
+                      >
+                        <animateMotion
+                          dur="${this.additionalCircleRate(individuals[3].calculateFlowRate, this.circleRate(individuals[3].state ?? 0, totalIndividualConsumption))}s"
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                          keyPoints=${individuals[3].invertAnimation ? "1;0" : "0;1"}
+                          keyTimes="0;1"
+                        >
+                          <mpath href="#indiv4" />
+                        </animateMotion>
+                      </circle>`
+                        : ""}
+                    </svg>
+                  </div>`
+                : ""}
+              ${individuals.length>4
+                ? html`<div
+                    class="indiv5"
+                  >
+                    <svg
+                      viewBox="0 0 100 100"
+                      xmlns="http://www.w3.org/2000/svg"
+                      preserveAspectRatio="xMidYMid slice"
+                      id="indiv5-home-flow"
+                      class="flat-line individual5"
+                    >
+                      <path
+                        class="individual5 ${this.styleLine(individuals[4].state || 0)}"
+                        id="indiv5"
+                        d="M13,7 L55,44"
+                        vector-effect="non-scaling-stroke"
+                      ></path>
+                      ${individuals[4].state
+                        ? svg`<circle
+                        r="1.8"
+                        class="individual5"
+                        vector-effect="non-scaling-stroke"
+                      >
+                        <animateMotion
+                          dur="${this.additionalCircleRate(individuals[4].calculateFlowRate, this.circleRate(individuals[4].state ?? 0, totalIndividualConsumption))}s"
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                          keyPoints=${individuals[4].invertAnimation ? "1;0" : "0;1"}
+                          keyTimes="0;1"
+                        >
+                          <mpath href="#indiv5" />
+                        </animateMotion>
+                      </circle>`
+                        : ""}
+                    </svg>
+                  </div>`
+                : ""}
         </div>
         ${this._config.dashboard_link || this._config.second_dashboard_link
           ? html`

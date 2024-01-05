@@ -89,6 +89,33 @@ export const styles = css`
     bottom: 100px;
     height: 156px;
   }
+  .indiv3 {
+    position: absolute;
+    bottom: 110px;
+    height: 156px;
+    left: auto;
+    right: 0px;
+    display: flex;
+    padding: 0 16px 16px;
+  }
+  .indiv4 {
+    position: absolute;
+    bottom: 110px;
+    height: 156px;
+    left: auto;
+    right: 0px;
+    display: flex;
+    padding: 0 16px 16px;
+  }
+  .indiv5 {
+    position: absolute;
+    bottom: 0px;
+    height: 156px;
+    left: auto;
+    right: 0px;
+    display: flex;
+    padding: 0 16px 16px;
+  }
   .lines svg {
     width: var(--lines-svg-flat-width);
     height: 100%;
