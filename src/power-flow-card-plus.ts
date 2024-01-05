@@ -2051,10 +2051,10 @@ export class PowerFlowCardPlus extends LitElement {
                     xmlns="http://www.w3.org/2000/svg"
                     preserveAspectRatio="xMidYMid slice"
                     id="indiv3-home-flow"
-                    class="flat-line individual3"
+                    class="flat-line ${individuals[2].field}"
                   >
                     <path
-                      class="individual3 ${this.styleLine(individuals[2].state || 0)}"
+                      class="${individuals[2].field} ${this.styleLine(individuals[2].state || 0)}"
                       id="indiv3"
                       d="M20,60 H50"
                       vector-effect="non-scaling-stroke"
@@ -2062,7 +2062,7 @@ export class PowerFlowCardPlus extends LitElement {
                     ${individuals[2].state
                       ? svg`<circle
                       r="1.8"
-                      class="individual3"
+                      class="${individuals[2].field}"
                       vector-effect="non-scaling-stroke"
                     >
                       <animateMotion
@@ -2088,10 +2088,10 @@ export class PowerFlowCardPlus extends LitElement {
                       xmlns="http://www.w3.org/2000/svg"
                       preserveAspectRatio="xMidYMid slice"
                       id="indiv4-home-flow"
-                      class="flat-line individual4"
+                      class="flat-line ${individuals[3].field}"
                     >
                       <path
-                        class="individual4 ${this.styleLine(individuals[3].state || 0)}"
+                        class="${individuals[3].field} ${this.styleLine(individuals[3].state || 0)}"
                         id="indiv4"
                         d="M13,44 L55,7"
                         vector-effect="non-scaling-stroke"
@@ -2099,7 +2099,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ${individuals[3].state
                         ? svg`<circle
                         r="1.8"
-                        class="individual4"
+                        class="${individuals[3].field}"
                         vector-effect="non-scaling-stroke"
                       >
                         <animateMotion
@@ -2125,10 +2125,10 @@ export class PowerFlowCardPlus extends LitElement {
                       xmlns="http://www.w3.org/2000/svg"
                       preserveAspectRatio="xMidYMid slice"
                       id="indiv5-home-flow"
-                      class="flat-line individual5"
+                      class="flat-line ${individuals[4].field}"
                     >
                       <path
-                        class="individual5 ${this.styleLine(individuals[4].state || 0)}"
+                        class="${individuals[4].field} ${this.styleLine(individuals[4].state || 0)}"
                         id="indiv5"
                         d="M13,7 L55,44"
                         vector-effect="non-scaling-stroke"
@@ -2136,7 +2136,7 @@ export class PowerFlowCardPlus extends LitElement {
                       ${individuals[4].state
                         ? svg`<circle
                         r="1.8"
-                        class="individual5"
+                        class="${individuals[4].field}"
                         vector-effect="non-scaling-stroke"
                       >
                         <animateMotion
