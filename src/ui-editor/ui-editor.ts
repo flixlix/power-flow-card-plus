@@ -21,7 +21,7 @@ export const loadHaForm = async () => {
   await card.getConfigElement();
 };
 
-@customElement("power-flow-card-plus-multiple-editor")
+@customElement("power-flow-card-plus-editor")
 export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: PowerFlowCardPlusConfig;
@@ -137,6 +137,6 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
 
 declare global {
   interface HTMLElementTagNameMap {
-    "power-flow-card-plus-multiple-editor": PowerFlowCardPlusEditor;
+    "power-flow-card-plus-editor": PowerFlowCardPlusEditor;
   }
 }
