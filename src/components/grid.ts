@@ -19,7 +19,7 @@ export const gridElement = (
             ? outageTarget
             : typeof entities.grid!.entity === "string"
             ? entities.grid!.entity
-            : entities.grid!.entity.production!;
+            : entities.grid!.entity.consumption!;
         main.openDetails(e, target);
       }}
       @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
@@ -30,7 +30,7 @@ export const gridElement = (
               ? outageTarget
               : typeof entities.grid!.entity === "string"
               ? entities.grid!.entity
-              : entities.grid!.entity.production!;
+              : entities.grid!.entity.consumption!;
           main.openDetails(e, target);
         }
       }}
@@ -67,7 +67,19 @@ export const gridElement = (
         grid.state.fromGrid !== null &&
         !grid.powerOutage.isOutage) ||
       (grid.powerOutage.isOutage && !!grid.powerOutage.entityGenerator)
-        ? html` <span class="consumption">
+        ? html` <span
+            class="consumption"
+            @click=${(e: { stopPropagation: () => void }) => {
+              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
+              main.openDetails(e, target);
+            }}
+            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+              if (e.key === "Enter") {
+                const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
+                main.openDetails(e, target);
+              }
+            }}
+          >
             <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${displayValue(main.hass, grid.state.fromGrid)}
           </span>`
         : ""}
