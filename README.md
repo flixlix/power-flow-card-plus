@@ -98,9 +98,9 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | entities            | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
 | title               | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
 | dashboard_link      | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label  to go to a different dashboard. |
+| dashboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label  to go to a different dashboard. |
 | second_dashboard_link      | `string`  |              | Shows another link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. (Only available in the YAML Editor) |
-| second_dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard. |
+| second_dashboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard. |
 | kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
 | w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
 | min_flow_rate       | `number`  |     .75      | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds. |
@@ -192,7 +192,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | unit_of_measurement | `string` | `W`or `kW` (dynamic) | Sets the unit of measurement to show in the corresponding circle |
 | inverted_animation |`boolean` | `false` | If set to true, the small dots will flow in the opposite direction. |
 | secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration). The `secondary_info` entity can provide a number or a string (eg: EV State `charging` and `discharging`). |
-| display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
+| display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the individual device section will be hidden. |
 | display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
 | display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
 | color_value | `boolean` | `false` | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.  |
