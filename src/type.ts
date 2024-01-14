@@ -13,6 +13,7 @@ export type SecondaryInfoType = {
   color_value?: boolean | "production" | "consumption";
   template?: string;
   decimals?: number;
+  accept_negative?: boolean;
 };
 
 export interface baseConfigEntity {

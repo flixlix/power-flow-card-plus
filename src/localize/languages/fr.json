@@ -18,6 +18,7 @@
         "fossil_fuel_percentage": "Carburant fossile",
         "home": "Domicile",
         "individual": "Individuel",
+        "accept_negative": "Accepter les valeurs négatives",
         "advanced": "Options avancées",
         "decimals": "Décimales",
         "consumption": "Consommation",

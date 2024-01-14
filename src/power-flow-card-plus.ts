@@ -337,6 +337,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.grid?.secondary_info?.icon,
         unit: entities.grid?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.grid?.secondary_info?.unit_white_space,
+        accept_negative: entities.grid?.secondary_info?.accept_negative || false,
         color: {
           type: entities.grid?.secondary_info?.color_value,
         },
@@ -359,6 +360,7 @@ export class PowerFlowCardPlus extends LitElement {
         decimals: entities.solar?.secondary_info?.decimals,
         template: entities.solar?.secondary_info?.template,
         has: this.hasField(entities.solar?.secondary_info, true),
+        accept_negative: entities.solar?.secondary_info?.accept_negative || false,
         state: initialSecondaryState,
         icon: entities.solar?.secondary_info?.icon,
         unit: entities.solar?.secondary_info?.unit_of_measurement,
@@ -406,6 +408,7 @@ export class PowerFlowCardPlus extends LitElement {
         template: entities.home?.secondary_info?.template,
         has: this.hasField(entities.home?.secondary_info, true),
         state: null as number | string | null,
+        accept_negative: entities.home?.secondary_info?.accept_negative || false,
         unit: entities.home?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.home?.secondary_info?.unit_white_space,
         icon: entities.home?.secondary_info?.icon,
@@ -431,6 +434,7 @@ export class PowerFlowCardPlus extends LitElement {
         entity: entities[field]?.secondary_info?.entity,
         template: entities[field]?.secondary_info?.template,
         has: this.hasField(entities[field]?.secondary_info, true),
+        accept_negative: entities[field]?.secondary_info?.accept_negative || false,
         state: initialSecondaryState,
         icon: entities[field]?.secondary_info?.icon,
         unit: entities[field]?.secondary_info?.unit_of_measurement,
@@ -469,6 +473,7 @@ export class PowerFlowCardPlus extends LitElement {
         decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
         template: entities.fossil_fuel_percentage?.secondary_info?.template,
         has: this.hasField(entities.fossil_fuel_percentage?.secondary_info, true),
+        accept_negative: entities.fossil_fuel_percentage?.secondary_info?.accept_negative || false,
         state: initialSecondaryState,
         icon: entities.fossil_fuel_percentage?.secondary_info?.icon,
         unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
@@ -507,7 +512,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (solar.secondary.has) {
       const solarSecondaryEntity = this.hass.states[entities.solar?.secondary_info?.entity!];
       const solarSecondaryState = solarSecondaryEntity.state;
-      if (Number.isNaN(+solarSecondaryState)) {
+      if (Number.isNaN(+solarSecondaryState) || solar.secondary.accept_negative) {
         solar.secondary.state = solarSecondaryState;
       } else {
         solar.secondary.state = Math.max(Number(solarSecondaryState), 0);
@@ -608,7 +613,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (grid.secondary.has) {
       const gridSecondaryEntity = this.hass.states[entities.grid?.secondary_info?.entity!];
       const gridSecondaryState = gridSecondaryEntity.state;
-      if (Number.isNaN(+gridSecondaryState)) {
+      if (Number.isNaN(+gridSecondaryState) || grid.secondary.accept_negative) {
         grid.secondary.state = gridSecondaryState;
       } else {
         grid.secondary.state = Math.max(Number(gridSecondaryState), 0);
@@ -695,7 +700,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (individual1.secondary.has) {
       const individual1SecondaryEntity = this.hass.states[entities.individual1?.secondary_info?.entity!];
       const individual1SecondaryState = individual1SecondaryEntity.state;
-      if (typeof individual1SecondaryState === "number") {
+      if (typeof individual1SecondaryState === "number" && !individual1.secondary.accept_negative) {
         individual1.secondary.state = Math.max(individual1SecondaryState, 0);
       } else if (typeof individual1SecondaryState === "string") {
         individual1.secondary.state = individual1SecondaryState;
@@ -726,7 +731,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (individual2.secondary.has) {
       const individual2SecondaryEntity = this.hass.states[entities.individual2?.secondary_info?.entity!];
       const individual2SecondaryState = individual2SecondaryEntity.state;
-      if (typeof individual2SecondaryState === "number") {
+      if (typeof individual2SecondaryState === "number" && !individual2.secondary.accept_negative) {
         individual2.secondary.state = Math.max(individual2SecondaryState, 0);
       } else if (typeof individual2SecondaryState === "string") {
         individual2.secondary.state = individual2SecondaryState;
@@ -736,7 +741,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (home.secondary.has) {
       const homeSecondaryEntity = this.hass.states[entities.home?.secondary_info?.entity!];
       const homeSecondaryState = homeSecondaryEntity.state;
-      if (Number.isNaN(+homeSecondaryState)) {
+      if (Number.isNaN(+homeSecondaryState) || home.secondary.accept_negative) {
         home.secondary.state = homeSecondaryState;
       } else {
         home.secondary.state = Math.max(Number(homeSecondaryState), 0);
@@ -810,7 +815,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (nonFossil.secondary.has) {
       const nonFossilFuelSecondaryEntity = this.hass.states[entities.fossil_fuel_percentage?.secondary_info?.entity!];
       const nonFossilFuelSecondaryState = nonFossilFuelSecondaryEntity.state;
-      if (typeof nonFossilFuelSecondaryState === "number") {
+      if (typeof nonFossilFuelSecondaryState === "number" && !nonFossil.secondary.accept_negative) {
         nonFossil.secondary.state = Math.max(nonFossilFuelSecondaryState, 0);
       } else if (typeof nonFossilFuelSecondaryState === "string") {
         nonFossil.secondary.state = nonFossilFuelSecondaryState;
