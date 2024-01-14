@@ -327,8 +327,8 @@ export class PowerFlowCardPlus extends LitElement {
         }
       }
       solar.state.toHome = 0;
-    } else if (battery.state.toBattery && battery.state.toBattery > 0) {
-      grid.state.toBattery = battery.state.toBattery;
+    } else {
+      grid.state.toBattery = 0;
     }
     grid.state.toBattery = (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
 
