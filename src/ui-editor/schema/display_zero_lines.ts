@@ -37,7 +37,7 @@ const displayZeroLinesOptionsSchema = (mode: string) => {
   }
 };
 
-export const displayZeroLinesSchema = memoizeOne((localize, mode) => [
+export const displayZeroLinesSchema = memoizeOne((localize, mode: string) => [
   {
     name: "display_zero_lines",
     type: "grid",

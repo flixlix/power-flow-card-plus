@@ -15,9 +15,9 @@ export const getIndividualState = (hass: HomeAssistant, field: IndividualDeviceT
 };
 
 export const getIndividualSecondaryState = (hass: HomeAssistant, field: IndividualDeviceType) => {
-  if (typeof field.entity !== "string") return null;
+  if (typeof field?.entity !== "string") return null;
 
-  const entityObj = getEntityStateObj(hass, field.entity);
+  const entityObj = getEntityStateObj(hass, field?.secondary_info?.entity);
   const secondaryState = entityObj?.state;
 
   if (isNumberValue(secondaryState)) return Math.abs(Number(secondaryState));

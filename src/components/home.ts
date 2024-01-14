@@ -4,6 +4,7 @@ import { generalSecondarySpan } from "./spans/generalSecondarySpan";
 import { NewDur, TemplatesObj } from "../type";
 import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { showLine } from "../utils/showLine";
+import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 
 interface Home {
   home: any;
@@ -17,8 +18,7 @@ interface Home {
   homeBatteryCircumference: number;
   homeNonFossilCircumference: number;
   homeGridCircumference: number;
-  individual1: any;
-  individual2: any;
+  individual: IndividualObject[];
 }
 
 export const homeElement = (
@@ -34,8 +34,7 @@ export const homeElement = (
     homeBatteryCircumference,
     homeNonFossilCircumference,
     homeGridCircumference,
-    individual1,
-    individual2,
+    individual,
   }: Home
 ) => {
   return html`<div class="circle-container home">
@@ -110,9 +109,9 @@ export const homeElement = (
     </svg>
   </div>
   ${
-    showLine(config, individual1.state || 0) && individual2.has && individual1.has
+    individual?.length > 1 && showLine(config, individual?.[1]?.state || 0)
       ? html`<span class="label"></span>`
-      : html` <span class="label">${home.name}</span>`
+      : html`<span class="label">${home.name}</span>`
   }
 </div>
 </div>`;

@@ -1,15 +1,12 @@
-import { mdiArrowLeft, mdiCodeBraces, mdiListBoxOutline } from "@mdi/js";
-import { ActionConfig, EntityConfig, HASSDomEvent, HomeAssistant, fireEvent } from "custom-card-helpers";
+import { ActionConfig, HASSDomEvent, HomeAssistant, fireEvent } from "custom-card-helpers";
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, query, state } from "lit-element";
-import { EditSubElementEvent, LovelaceRowConfig, OpenSubElementPage, SubElementEditorConfig } from "../types/entity-rows";
-import { cardConfigStruct, entitiesSchema, indvidualDevicesSchema } from "../schema/_schema-all";
+import { customElement, property, state } from "lit-element";
+import { EditSubElementEvent, LovelaceRowConfig, SubElementEditorConfig } from "../types/entity-rows";
+import { individualDevicesSchema } from "../schema/_schema-all";
 import localize from "../../localize/localize";
 import { IndividualDeviceType } from "../../type";
-import { ConfigEntities, IndividualField, PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { assert } from "superstruct";
+import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 import "./individual-row-editor";
-import { loadHaForm } from "../utils/loadHAForm";
 
 export interface GUIModeChangedEvent {
   guiMode: boolean;
@@ -23,12 +20,6 @@ export interface EditorTarget extends EventTarget {
   configValue?: string;
   type?: HTMLInputElement["type"];
   config: ActionConfig;
-}
-
-declare global {
-  interface HASSDomEvents {
-    "go-back": undefined;
-  }
 }
 
 export function processEditorEntities(entities): IndividualDeviceType[] {
@@ -49,27 +40,26 @@ export class IndividualDevicesEditor extends LitElement {
 
   @state() private _configEntities?: LovelaceRowConfig[];
 
-  @query(".editor") private _editorElement?: any;
-
   protected render(): TemplateResult {
     if (!this.config || !this.hass) {
       return html`<div>no config</div>`;
     }
+
     this._configEntities = this.config.entities.individual;
 
     if (this._subElementEditorConfig) {
       return html`
-        <ha-form .data=${this.config} .schema=${indvidualDevicesSchema(this.hass)} .computeLabel=${(label) => localize(`editor.${label}`)}></ha-form>
+        <ha-form
+          .hass=${this.hass}
+          @value-changed=${this._valueChanged}
+          .data=${this.config}
+          .schema=${individualDevicesSchema(this.hass)}
+          .computeLabel=${this._computeLabelCallback}
+        ></ha-form>
       `;
     }
 
     return html`
-      <div class="header">
-        <div class="back-title">
-          <ha-icon-button .label=${"Go Back"} .path=${mdiArrowLeft} @click=${this._goBack}></ha-icon-button>
-          <span>${localize(`editor.individual`)}</span>
-        </div>
-      </div>
       <individual-row-editor
         .hass=${this.hass}
         .config=${this.config}
@@ -79,6 +69,16 @@ export class IndividualDevicesEditor extends LitElement {
         style="width: 100%;"
       ></individual-row-editor>
     `;
+  }
+
+  private _valueChanged(ev: any): void {
+    let config = ev.detail.value || "";
+
+    if (!this.config || !this.hass) {
+      return;
+    }
+
+    fireEvent(this, "config-changed", { config });
   }
 
   private _entitiesChanged(ev: CustomEvent): void {
@@ -96,27 +96,15 @@ export class IndividualDevicesEditor extends LitElement {
     fireEvent(this, "config-changed", { config });
   }
 
-  private _goBack(): void {
-    fireEvent(this, "go-back");
-  }
+  private _computeLabelCallback = (schema: any) =>
+    this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`) || localize(`editor.${schema?.name}`);
 
   private _editDetailElement(ev: HASSDomEvent<EditSubElementEvent>): void {
     this._subElementEditorConfig = ev.detail.subElementConfig;
   }
 
   static get styles(): CSSResultGroup {
-    return css`
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .back-title {
-        display: flex;
-        align-items: center;
-        font-size: 18px;
-      }
-    `;
+    return css``;
   }
 }
 

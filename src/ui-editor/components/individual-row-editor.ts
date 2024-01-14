@@ -1,6 +1,6 @@
 import { mdiClose, mdiDrag, mdiPencil } from "@mdi/js";
 import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import type { SortableEvent } from "sortablejs";
 import { EditSubElementEvent, EntityConfig, LovelaceRowConfig } from "../types/entity-rows";
@@ -8,7 +8,10 @@ import { HomeAssistant } from "custom-card-helpers";
 import { loadSortable, SortableInstance } from "../utils/sortable.ondemand";
 import { fireEvent } from "../utils/fire_event";
 import { sortableStyles } from "../utils/sortable_styles";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { loadHaForm } from "../utils/loadHAForm";
+import { individualSchema } from "../schema/individual";
+import localize from "../../localize/localize";
 
 declare global {
   interface HASSDomEvents {
@@ -33,13 +36,24 @@ export class IndividualRowEditor extends LitElement {
 
   @property() protected label?: string;
 
+  @state() protected _indexBeingEdited: number = -1;
+
   private _entityKeys = new WeakMap<LovelaceRowConfig, string>();
 
   private _sortable?: SortableInstance;
 
+  public connectedCallback(): void {
+    super.connectedCallback();
+    void loadHaForm();
+  }
+
   public disconnectedCallback() {
     super.disconnectedCallback();
     this._destroySortable();
+  }
+
+  private _editRowElement(index: number): void {
+    this._indexBeingEdited = index;
   }
 
   private _getKey(action: LovelaceRowConfig) {
@@ -55,9 +69,29 @@ export class IndividualRowEditor extends LitElement {
       return html` <p>No entities configured.</p> `;
     }
 
+    if (this._indexBeingEdited !== -1) {
+      return html`
+        <div class="individual-header">
+          <h4>${this._indexBeingEdited + 1} / ${this.entities.length} ${localize("editor.individual")}</h4>
+          <ha-icon-button
+            .label=${this.hass!.localize("ui.components.entity.entity-picker.clear")}
+            .path=${mdiClose}
+            class="remove-icon"
+            @click=${() => (this._indexBeingEdited = -1)}
+          ></ha-icon-button>
+        </div>
+        <ha-form
+          .hass=${this.hass}
+          .data=${this.entities[this._indexBeingEdited]}
+          .schema=${individualSchema}
+          .computeLabel=${this._computeLabelCallback}
+          @value-changed=${this._configChanged}
+        ></ha-form>
+      `;
+    }
+
     return html`
       <div class="entities">
-        ${JSON.stringify(this.entities)}
         ${repeat(
           this.entities,
           (entityConf) => this._getKey(entityConf),
@@ -97,19 +131,48 @@ export class IndividualRowEditor extends LitElement {
                 .path=${mdiPencil}
                 class="edit-icon"
                 .index=${index}
-                @click=${this._editRow}
+                @click=${() => this._editRowElement(index)}
               ></ha-icon-button>
             </div>
           `
         )}
       </div>
-      <ha-entity-picker class="add-entity" .hass=${this.hass} @value-changed=${this._addEntity}></ha-entity-picker>
+
+      ${this.entities.length >= MAX_INDIVIDUAL_ENTITIES
+        ? nothing
+        : html` <ha-entity-picker class="add-entity" .hass=${this.hass} @value-changed=${this._addEntity}></ha-entity-picker>`}
     `;
+  }
+
+  private _configChanged(ev: any): void {
+    const newRowConfig = ev.detail.value || "";
+
+    if (!this.config || !this.hass) {
+      return;
+    }
+
+    const individualConfig = this.config.entities.individual; // this is an array
+    if (!individualConfig) return;
+    // inject the new config into the array into the correct index
+    individualConfig[this._indexBeingEdited] = newRowConfig;
+
+    const config = {
+      ...this.config,
+      entities: {
+        ...this.config.entities,
+        individual: individualConfig,
+      },
+    };
+
+    fireEvent(this, "config-changed", { config });
   }
 
   protected firstUpdated(): void {
     this._createSortable();
   }
+
+  private _computeLabelCallback = (schema: any) =>
+    this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`) || localize(`editor.${schema?.name}`);
 
   private async _createSortable() {
     const Sortable = await loadSortable();
@@ -206,6 +269,15 @@ export class IndividualRowEditor extends LitElement {
         ha-entity-picker {
           margin-top: 8px;
         }
+
+        .individual-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-inline: 0.2rem;
+          margin-bottom: 1rem;
+        }
+
         .add-entity {
           display: block;
           margin-left: 31px;

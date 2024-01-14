@@ -12,29 +12,32 @@ import { computeIndividualFlowRate } from "../utils/computeFlowRate";
 interface IndividualBottom {
   newDur: NewDur;
   templatesObj: TemplatesObj;
-  individualObj: IndividualObject;
+  individualObj?: IndividualObject;
   displayState: string;
 }
 
-export const individualBottomElement = (
+export const individualLeftBottomElement = (
   main: PowerFlowCardPlus,
   hass: HomeAssistant,
   config: PowerFlowCardPlusConfig,
   { individualObj, templatesObj, displayState, newDur }: IndividualBottom
 ) => {
+  if (!individualObj) return html`<div class="spacer"></div>`;
+  const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity) || 0;
+  const duration = newDur.individual[indexOfIndividual] || 0;
   return html`<div class="circle-container individual-bottom bottom">
-    ${showLine(config, individualObj.state || 0)
+    ${showLine(config, individualObj?.state || 0)
       ? html`
           <svg width="80" height="30">
-            <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj.state || 0, config)}" />
-            ${individualObj.state
+            <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />
+            ${individualObj?.state
               ? svg`<circle
-                                r="2.4"
+                                r="1.75"
                                 class="individual-bottom"
                                 vector-effect="non-scaling-stroke"
                               >
                                 <animateMotion
-                                  dur="${computeIndividualFlowRate(individualObj.field?.calculate_flow_rate, newDur.individual1)}s"
+                                  dur="${computeIndividualFlowRate(individualObj.field?.calculate_flow_rate !== false, duration)}s"
                                   repeatCount="indefinite"
                                   calcMode="linear"
                                   keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
@@ -58,23 +61,24 @@ export const individualBottomElement = (
         }
       }}
     >
-      ${individualSecondarySpan(hass, main, templatesObj, individualObj, "individual-bottom")}
+      ${individualSecondarySpan(hass, main, templatesObj, individualObj, 1, "left-bottom")}
       <ha-icon
-        id="individual-bottom-icon"
-        .icon=${individualObj.icon}
-        style="${individualObj.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-                          ${individualObj.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
+        id="individual-left-bottom-icon"
+        .icon=${individualObj?.icon}
+        style="${individualObj?.secondary?.has ? "padding-top: 2px;" : "padding-top: 0px;"}
+                          ${individualObj?.field?.display_zero_state !== false ||
+        (individualObj?.state || 0) > (individualObj.displayZeroTolerance ?? 0)
           ? "padding-bottom: 2px;"
           : "padding-bottom: 0px;"}"
       ></ha-icon>
-      ${individualObj.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
-        ? html` <span class="individual-bottom"
-            >${individualObj.showDirection
-              ? html`<ha-icon class="small" .icon=${individualObj.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
+      ${individualObj?.field?.display_zero_state !== false || (individualObj?.state || 0) > (individualObj.displayZeroTolerance ?? 0)
+        ? html` <span class="individual-bottom individual-left-top"
+            >${individualObj?.showDirection
+              ? html`<ha-icon class="small" .icon=${individualObj?.invertAnimation ? "mdi:arrow-up" : "mdi:arrow-down"}></ha-icon>`
               : ""}${displayState}
           </span>`
         : ""}
     </div>
-    <span class="label">${individualObj.name}</span>
+    <span class="label">${individualObj?.name}</span>
   </div> `;
 };

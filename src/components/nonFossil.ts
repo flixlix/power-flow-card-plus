@@ -61,7 +61,7 @@ export const nonFossilElement = (
                 <path d="M40 -10 v40" class="low-carbon ${styleLine(nonFossil.state.power || 0, config)}" id="low-carbon" />
                 ${nonFossil.has
                   ? svg`<circle
-                r="2.4"
+                r="1.75"
                 class="low-carbon"
                 vector-effect="non-scaling-stroke"
               >

@@ -23,30 +23,30 @@ export class LinkSubpage extends LitElement {
 
   @property() header?: string;
 
+  @property({ type: String }) icon = "mdi:format-list-bulleted-type";
+
   @property() secondary?: string;
 
   @query(".container") private _container!: HTMLDivElement;
 
   protected render(): TemplateResult {
     return html`
-      <div class="top">
-        <div
-          id="summary"
-          @click=${this._openSubElementPage}
-          @keydown=${this._openSubElementPage}
-          @focus=${this._focusChanged}
-          @blur=${this._focusChanged}
-          role="button"
-        >
-          <slot name="header">
-            <div class="header">
-              ${this.header}
-              <slot class="secondary" name="secondary">${this.secondary}</slot>
-            </div>
-          </slot>
-          <ha-svg-icon .path=${mdiChevronRight} class="summary-icon-right"></ha-svg-icon>
-        </div>
-        <slot name="icons"></slot>
+      <div
+        class="link-subpage"
+        @click=${this._openSubElementPage}
+        @keydown=${this._openSubElementPage}
+        @focus=${this._focusChanged}
+        @blur=${this._focusChanged}
+        role="button"
+      >
+        <ha-icon icon=${this.icon} class="summary-icon"></ha-icon>
+        <slot name="header">
+          <div class="header">
+            ${this.header}
+            <slot class="secondary" name="secondary">${this.secondary}</slot>
+          </div>
+        </slot>
+        <ha-svg-icon .path=${mdiChevronRight} class="summary-icon-right"></ha-svg-icon>
       </div>
     `;
   }
@@ -65,21 +65,6 @@ export class LinkSubpage extends LitElement {
         display: block;
       }
 
-      .top {
-        display: flex;
-        align-items: center;
-        border-radius: var(--ha-card-border-radius, 12px);
-      }
-
-      .top.expanded {
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-      }
-
-      .top.focused {
-        background: var(--input-fill-color);
-      }
-
       :host([outlined]) {
         box-shadow: none;
         border-width: 1px;
@@ -88,18 +73,15 @@ export class LinkSubpage extends LitElement {
         border-radius: var(--ha-card-border-radius, 12px);
       }
 
-      .summary-icon {
-        margin-left: 8px;
-      }
-
       :host([leftchevron]) .summary-icon {
         margin-left: 0;
         margin-right: 8px;
       }
 
-      #summary {
-        flex: 1;
+      .link-subpage {
+        width: 100%;
         display: flex;
+        gap: 1rem;
         padding: var(--expansion-panel-summary-padding, 0 8px);
         min-height: 48px;
         align-items: center;
@@ -112,10 +94,7 @@ export class LinkSubpage extends LitElement {
       .summary-icon {
         transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
         direction: var(--direction);
-      }
-
-      .summary-icon.expanded {
-        transform: rotate(180deg);
+        color: var(--secondary-text-color);
       }
 
       .header,

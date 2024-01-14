@@ -9,7 +9,7 @@ import { individualSchema } from "./individual";
 import { nonFossilSchema } from "./fossil_fuel_percentage";
 import { homeSchema } from "./home";
 import { displayZeroLinesSchema } from "./display_zero_lines";
-import { mdiBattery90, mdiBatteryHigh, mdiCog, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny,  } from "@mdi/js";
+import { mdiBattery90, mdiBatteryHigh, mdiCog, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny } from "@mdi/js";
 
 const baseLovelaceCardConfig = object({
   type: string(),
@@ -107,7 +107,7 @@ export const entitiesSchema = memoizeOne((localize) => [
   },
 ]);
 
-export const indvidualDevicesSchema = memoizeOne((localize) => [
+export const individualDevicesSchema = memoizeOne((localize) => [
   {
     name: "entities",
     type: "grid",
@@ -129,79 +129,72 @@ export const indvidualDevicesSchema = memoizeOne((localize) => [
   },
 ]);
 
-export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode) => [
+export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode: string) => [
   {
-    title: localize("editor.advanced"),
-    type: "expandable",
-    iconPath: mdiCog,
+    type: "grid",
+    column_min_width: "200px",
     schema: [
       {
-        type: "grid",
-        column_min_width: "200px",
-        schema: [
-          {
-            name: "dashboard_link",
-            label: "Dashboard Link",
-            selector: { navigation: {} },
-          },
-          {
-            name: "dashboard_link_label",
-            label: "Dashboard Link Label",
-            selector: { text: {} },
-          },
-          {
-            name: "w_decimals",
-            label: "Watt Decimals",
-            selector: { number: { mode: "box", min: 0, max: 5, step: 1 } },
-          },
-          {
-            name: "kw_decimals",
-            label: "kW Decimals",
-            selector: { number: { mode: "box", min: 0, max: 5, step: 1 } },
-          },
-          {
-            name: "max_flow_rate",
-            label: "Max Flow Rate (Sec/Dot)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
-          },
-          {
-            name: "min_flow_rate",
-            label: "Min Flow Rate (Sec/Dot)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
-          },
-          {
-            name: "max_expected_power",
-            label: "Max Expected Power (in Watts)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
-          },
-          {
-            name: "min_expected_power",
-            label: "Min Expected Power (in Watts)",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
-          },
-          {
-            name: "watt_threshold",
-            label: "Watt to Kilowatt Threshold",
-            selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
-          },
-
-          {
-            name: "clickable_entities",
-            label: "Clickable Entities",
-            selector: { boolean: {} },
-          },
-          {
-            name: "use_new_flow_rate_model",
-            label: "New Flow Model?",
-            selector: { boolean: {} },
-          },
-        ],
+        name: "dashboard_link",
+        label: "Dashboard Link",
+        selector: { navigation: {} },
       },
       {
-        type: "expandable",
-        title: localize("editor.display_zero_lines"),
-        schema: [...displayZeroLinesSchema(localize, displayZeroLinesMode)],
+        name: "dashboard_link_label",
+        label: "Dashboard Link Label",
+        selector: { text: {} },
+      },
+      {
+        name: "w_decimals",
+        label: "Watt Decimals",
+        selector: { number: { mode: "box", min: 0, max: 5, step: 1 } },
+      },
+      {
+        name: "kw_decimals",
+        label: "kW Decimals",
+        selector: { number: { mode: "box", min: 0, max: 5, step: 1 } },
+      },
+      {
+        name: "max_flow_rate",
+        label: "Max Flow Rate (Sec/Dot)",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
+      },
+      {
+        name: "min_flow_rate",
+        label: "Min Flow Rate (Sec/Dot)",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
+      },
+      {
+        name: "max_expected_power",
+        label: "Max Expected Power (in Watts)",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
+      },
+      {
+        name: "min_expected_power",
+        label: "Min Expected Power (in Watts)",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
+      },
+      {
+        name: "watt_threshold",
+        label: "Watt to Kilowatt Threshold",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
+      },
+
+      {
+        name: "clickable_entities",
+        label: "Clickable Entities",
+        selector: { boolean: {} },
+      },
+      {
+        name: "use_new_flow_rate_model",
+        label: "New Flow Model?",
+        selector: { boolean: {} },
       },
     ],
+  },
+  {
+    type: "expandable",
+    title: localize("editor.display_zero_lines"),
+    schema: [...displayZeroLinesSchema(localize, displayZeroLinesMode)],
   },
 ]);

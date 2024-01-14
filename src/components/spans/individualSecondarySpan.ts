@@ -5,32 +5,48 @@ import { TemplatesObj } from "../../type";
 import { displayValue } from "../../utils/displayValue";
 import { isNumberValue } from "../../utils/utils";
 import { baseSecondarySpan } from "./baseSecondarySpan";
+import { IndividualObject } from "../../states/raw/individual/getIndividualObject";
 
+export type IndividualKey = `left-top` | `left-bottom` | `right-top` | `right-bottom`;
 
 export const individualSecondarySpan = (
   hass: HomeAssistant,
   main: PowerFlowCardPlus,
   templatesObj: TemplatesObj,
-  individual: {
-    [key: string]: any;
-  },
-  key: string
+  individual: IndividualObject,
+  index: number,
+  key: IndividualKey
 ) => {
-  const templateResult: string = templatesObj[`${key}Secondary`];
-  const value = individual.secondary.has
-    ? displayValue(hass, individual.secondary.state, individual.secondary.unit, individual.secondary.unit_white_space, individual.secondary.decimals)
+  const templateResult: string | undefined = templatesObj.individual[index];
+
+  const value = individual?.secondary?.has
+    ? displayValue(
+        hass,
+        individual?.secondary?.state,
+        individual?.secondary?.unit || undefined,
+        individual?.secondary.unit_white_space,
+        individual?.secondary.decimals || 0
+      )
     : undefined;
-  const passesDisplayZeroCheck =
-    individual.secondary.displayZero !== false ||
-    (isNumberValue(individual.secondary.state) ? (Number(individual.secondary.state) ?? 0) > (individual.secondary.displayZeroTolerance ?? 0) : true);
-  return html` ${(individual.secondary.has && passesDisplayZeroCheck) || templateResult
+
+  const shouldShowSecondary = () => {
+    if (!!templateResult) return true;
+    if (!individual?.secondary?.state) return false;
+    if (!isNumberValue(individual?.secondary?.state)) return true;
+    if (individual?.secondary?.displayZero === true) return true;
+
+    const toleranceSet = individual?.secondary?.displayZeroTolerance ?? 0;
+    return Number(individual.secondary.state) >= toleranceSet;
+  };
+
+  return html` ${shouldShowSecondary()
     ? html`${baseSecondarySpan({
         main: main,
         className: key,
-        entityId: individual.secondary.entity,
-        icon: individual.secondary.icon,
+        entityId: individual?.secondary.entity || undefined,
+        icon: individual?.secondary?.icon || undefined,
         value,
-        template: templatesObj[`${key}Secondary`],
+        template: templatesObj.individual[index] || undefined,
       })}`
     : ""}`;
 };

@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { HomeAssistant } from "custom-card-helpers";
+import { DisplayZeroLinesMode } from "../power-flow-card-plus-config";
 
 export const defaultValues = {
   maxFlowRate: 6,
@@ -11,11 +12,11 @@ export const defaultValues = {
   wattThreshold: 1000,
   transparencyZeroLines: 0,
   displayZeroLines: {
-    mode: "show",
+    mode: "show" as DisplayZeroLinesMode,
     transparency: 50,
     grey_color: [189, 189, 189],
   },
-};
+}
 
 export function getDefaultConfig(hass: HomeAssistant): object {
   function checkStrings(entiyId: string, testStrings: string[]): boolean {

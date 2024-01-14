@@ -42,7 +42,7 @@ export type IndividualObject = {
   displayZeroTolerance: number;
   icon: string;
   name: string;
-  color: string | null;
+  color: any;
   unit?: string;
   unit_white_space: boolean;
   decimals?: number;

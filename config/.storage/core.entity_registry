@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "minor_version": 11,
+  "key": "core.entity_registry",
+  "data": {
+    "entities": [
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": null,
+        "device_class": null,
+        "device_id": null,
+        "disabled_by": null,
+        "entity_category": null,
+        "entity_id": "person.test",
+        "hidden_by": null,
+        "icon": null,
+        "id": "7d7a5b17f5c37bcc3a4fde84d3de54a3",
+        "has_entity_name": false,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": null,
+        "original_icon": null,
+        "original_name": "test",
+        "platform": "person",
+        "supported_features": 0,
+        "translation_key": null,
+        "unique_id": "test",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "68b9654fad0b8c7ab1451271a3e5ec33",
+        "device_class": null,
+        "device_id": "a81fdade5e278d57f71ef20fba76ef93",
+        "disabled_by": null,
+        "entity_category": null,
+        "entity_id": "weather.forecast_home",
+        "hidden_by": null,
+        "icon": null,
+        "id": "d6a34c6b6b757b3d00cbe562fbd0ca13",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": null,
+        "original_icon": null,
+        "original_name": "Home",
+        "platform": "met",
+        "supported_features": 0,
+        "translation_key": null,
+        "unique_id": "home",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "68b9654fad0b8c7ab1451271a3e5ec33",
+        "device_class": null,
+        "device_id": "a81fdade5e278d57f71ef20fba76ef93",
+        "disabled_by": "integration",
+        "entity_category": null,
+        "entity_id": "weather.forecast_home_hourly",
+        "hidden_by": null,
+        "icon": null,
+        "id": "29361ce95d4152999d33c55dd29d42af",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": null,
+        "original_icon": null,
+        "original_name": "Home hourly",
+        "platform": "met",
+        "supported_features": 0,
+        "translation_key": null,
+        "unique_id": "home-hourly",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": null,
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_next_dawn",
+        "hidden_by": null,
+        "icon": null,
+        "id": "87b4ff0da8014fdda689cdb6609c11db",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": "timestamp",
+        "original_icon": "mdi:sun-clock",
+        "original_name": "Nächste Morgendämmerung",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "next_dawn",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-next_dawn",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": null,
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_next_dusk",
+        "hidden_by": null,
+        "icon": null,
+        "id": "c76b5c1ee7955dfc5ab8aa98e1710c98",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": "timestamp",
+        "original_icon": "mdi:sun-clock",
+        "original_name": "Nächste Abenddämmerung",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "next_dusk",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-next_dusk",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": null,
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_next_midnight",
+        "hidden_by": null,
+        "icon": null,
+        "id": "c6fab570bbdf8c29cb47ac2d3f9902fd",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": "timestamp",
+        "original_icon": "mdi:sun-clock",
+        "original_name": "Nächste Mitternacht",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "next_midnight",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-next_midnight",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": null,
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_next_noon",
+        "hidden_by": null,
+        "icon": null,
+        "id": "560ca465c6d87c5d7f0d38e6d4a2bd7f",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": "timestamp",
+        "original_icon": "mdi:sun-clock",
+        "original_name": "Nächsten Mittag",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "next_noon",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-next_noon",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": null,
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_next_rising",
+        "hidden_by": null,
+        "icon": null,
+        "id": "f3e07c523038aadc40738785dbf24294",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": "timestamp",
+        "original_icon": "mdi:sun-clock",
+        "original_name": "Nächster Sonnenaufgang",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "next_rising",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-next_rising",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": null,
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": null,
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_next_setting",
+        "hidden_by": null,
+        "icon": null,
+        "id": "fe5d65c999dfe6f471abd63112607ab3",
+        "has_entity_name": true,
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_device_class": "timestamp",
+        "original_icon": "mdi:sun-clock",
+        "original_name": "Nächster Sonnenuntergang",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "next_setting",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-next_setting",
+        "unit_of_measurement": null
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": {
+          "state_class": "measurement"
+        },
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": "integration",
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_solar_elevation",
+        "hidden_by": null,
+        "icon": null,
+        "id": "375fdc1e084b232e172191738f0833e2",
+        "has_entity_name": true,
+        "name": null,
+        "options": {},
+        "original_device_class": null,
+        "original_icon": "mdi:theme-light-dark",
+        "original_name": "Sonnenhöhe",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "solar_elevation",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-solar_elevation",
+        "unit_of_measurement": "°"
+      },
+      {
+        "aliases": [],
+        "area_id": null,
+        "capabilities": {
+          "state_class": "measurement"
+        },
+        "config_entry_id": "6d4b1a78cd50589fc2fdd3113437be9d",
+        "device_class": null,
+        "device_id": "2597bc884eff2c0b868d056a84738bb0",
+        "disabled_by": "integration",
+        "entity_category": "diagnostic",
+        "entity_id": "sensor.sun_solar_azimuth",
+        "hidden_by": null,
+        "icon": null,
+        "id": "71812c2d7a31ec1a366eb1ec1632ae2d",
+        "has_entity_name": true,
+        "name": null,
+        "options": {},
+        "original_device_class": null,
+        "original_icon": "mdi:sun-angle",
+        "original_name": "Azimut",
+        "platform": "sun",
+        "supported_features": 0,
+        "translation_key": "solar_azimuth",
+        "unique_id": "6d4b1a78cd50589fc2fdd3113437be9d-solar_azimuth",
+        "unit_of_measurement": "°"
+      }
+    ],
+    "deleted_entities": []
+  }
+}

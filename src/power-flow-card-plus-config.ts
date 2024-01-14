@@ -1,6 +1,11 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 import { ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, BaseConfigEntity } from "./type.js";
 
+export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
+
+export type IndividualModeConfig = {
+  mode: "sort_power";
+}
 interface mainConfigOptions {
   dashboard_link?: string;
   dashboard_link_label?: string;
@@ -18,12 +23,14 @@ interface mainConfigOptions {
   full_size?: boolean;
   style_ha_card?: any;
   style_card_content?: any;
+  individual_mode_config?: IndividualModeConfig;
   display_zero_lines?: {
-    mode?: string;
+    mode?: DisplayZeroLinesMode;
     transparency?: number;
     grey_color?: string | number[];
   };
 }
+
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
   entities: ConfigEntities;
 }
@@ -83,15 +90,15 @@ interface FossilFuelPercentage extends BaseConfigEntity {
   seconday_info: SecondaryInfoType;
 }
 
-export interface ConfigEntities {
+export type ConfigEntities = {
   battery?: Battery;
   grid?: Grid;
   solar?: Solar;
   home?: Home;
   fossil_fuel_percentage?: FossilFuelPercentage;
   individual?: IndividualField;
-  individual1?: IndividualDeviceType;
-  individual2?: IndividualDeviceType;
-}
+};
 
 export type ConfigEntity = Battery | Grid | Solar | Home | FossilFuelPercentage | IndividualDeviceType;
+
+export const MAX_INDIVIDUAL_ENTITIES = 4;

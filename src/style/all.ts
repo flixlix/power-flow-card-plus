@@ -1,11 +1,11 @@
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
+import { IndividualDeviceType } from "../type";
 import { convertColorListToHex } from "../utils/convertColor";
 import { computeColor } from "./colors";
 
 interface AllDynamicStyles {
-  individual1: IndividualObject;
-  individual2: IndividualObject;
+  individual: IndividualObject[];
   [key: string]: any;
 }
 
@@ -15,8 +15,7 @@ export const allDynamicStyles = (
     grid,
     solar,
     entities,
-    individual1,
-    individual2,
+    individual,
     battery,
     homeSources,
     homeLargestSource,
@@ -96,33 +95,12 @@ export const allDynamicStyles = (
     entities.solar?.secondary_info?.color_value ? "var(--energy-solar-color)" : "var(--primary-text-color)"
   );
 
-  // Individual 1
-  if (individual1.color !== undefined) {
-    main.style.setProperty("--individualone-color", individual1.color);
+  if (entities.solar?.color !== undefined) {
+    let solarColor = entities.solar?.color;
+    if (typeof solarColor === "object") solarColor = convertColorListToHex(solarColor);
+    main.style.setProperty("--energy-solar-color", solarColor || "#ff9800");
   }
-  main.style.setProperty("--icon-individualone-color", entities.individual1?.color_icon ? "var(--individualone-color)" : "var(--primary-text-color)");
-  main.style.setProperty(
-    "--text-individualone-color",
-    entities.individual1?.color_value ? "var(--individualone-color)" : "var(--primary-text-color)"
-  );
-  main.style.setProperty(
-    "--secondary-text-individualone-color",
-    entities.individual1?.secondary_info?.color_value ? "var(--individualone-color)" : "var(--primary-text-color)"
-  );
-
-  // Individual 2
-  if (individual2.color !== undefined) {
-    main.style.setProperty("--individualtwo-color", individual2.color);
-  }
-  main.style.setProperty("--icon-individualtwo-color", entities.individual2?.color_icon ? "var(--individualtwo-color)" : "var(--primary-text-color)");
-  main.style.setProperty(
-    "--text-individualtwo-color",
-    entities.individual2?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
-  );
-  main.style.setProperty(
-    "--secondary-text-individualtwo-color",
-    entities.individual2?.secondary_info?.color_value ? "var(--individualtwo-color)" : "var(--primary-text-color)"
-  );
+  main.style.setProperty("--icon-solar-color", entities.solar?.color_icon ? "var(--energy-solar-color)" : "var(--primary-text-color)");
 
   // Battery
   if (battery.color.fromBattery !== undefined) {
@@ -223,15 +201,69 @@ export const allDynamicStyles = (
   if (solar.has) {
     if (battery.has) {
       // has solar, battery and grid
-      main.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "106%" : "102%");
-      main.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-3%" : "-1%");
+      // main.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "106%" : "102%");
+      main.style.setProperty("--lines-svg-not-flat-line-height", "106%");
+      // main.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-3%" : "-1%");
+      main.style.setProperty("--lines-svg-not-flat-line-top", "-3%");
       main.style.setProperty("--lines-svg-flat-width", isCardWideEnough ? "calc(100% - 160px)" : "calc(100% - 160px)");
+      main.style.setProperty("--lines-svg-flat-left", "0");
+      main.style.setProperty("--lines-svg-not-flat-left", "0");
     } else {
       // has solar but no battery
-      main.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "104%" : "102%");
-      main.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-2%" : "-1%");
+      // main.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "104%" : "102%");
+      // main.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-2%" : "-1%");
+      main.style.setProperty("--lines-svg-not-flat-line-top", "-2%");
       main.style.setProperty("--lines-svg-flat-width", isCardWideEnough ? "calc(100% - 154px)" : "calc(100% - 157px)");
       main.style.setProperty("--lines-svg-not-flat-width", isCardWideEnough ? "calc(103% - 172px)" : "calc(103% - 169px)");
+      main.style.setProperty("--lines-svg-not-flat-left", "3px");
+      main.style.setProperty("--lines-svg-flat-left", "-3px");
     }
+  }
+
+  if (individual?.some((ind) => ind.has)) {
+    const getStylesForIndividual = (field: IndividualDeviceType, index: number) => {
+      const colors = ["#d0cc5b", "#964cb5", "#b54c9d", "#5bd0cc"];
+      const getFieldName = (index: number) => {
+        switch (index) {
+          case 0:
+            return "left-top";
+          case 1:
+            return "left-bottom";
+          case 2:
+            return "right-top";
+          case 3:
+            return "right-bottom";
+          default:
+            return "left-top";
+        }
+      };
+
+      const fieldName = getFieldName(index);
+
+      let individualColor = field?.color;
+      if (typeof individualColor === "object") individualColor = convertColorListToHex(individualColor);
+      main.style.setProperty(`--individual-${fieldName}-color`, individualColor || colors[index] || "#d0cc5b");
+
+      // Individual 1
+
+      if (individual?.[index] !== undefined) {
+        main.style.setProperty(
+          `--icon-individual-${fieldName}-color`,
+          field?.color_icon !== false ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
+        );
+        main.style.setProperty(
+          `--text-individual-${fieldName}-color`,
+          field?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
+        );
+        main.style.setProperty(
+          `--secondary-text-individual-${fieldName}-color`,
+          field?.secondary_info?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
+        );
+      }
+    };
+
+    individual.forEach((_, index) => {
+      getStylesForIndividual(entities.individual[index], index);
+    });
   }
 };

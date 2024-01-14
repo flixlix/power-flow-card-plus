@@ -7,7 +7,7 @@ import { onlyNegative, onlyPositive } from "../utils/negativePositive";
 import { getEntityStateWatts } from "../utils/getEntityStateWatts";
 
 export const getSecondaryState = (hass: HomeAssistant, config: PowerFlowCardPlusConfig, field: EntityType) => {
-  const entity = config.entities[field]?.secondary_info?.entity;
+  const entity = config.entities?.[field]?.secondary_info?.entity;
 
   if (typeof entity !== "string") return null;
 

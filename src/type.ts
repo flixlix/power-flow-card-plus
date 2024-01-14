@@ -61,8 +61,7 @@ export type TemplatesObj = {
   gridSecondary: string | undefined;
   solarSecondary: string | undefined;
   homeSecondary: string | undefined;
-  individual1Secondary: string | undefined;
-  individual2Secondary: string | undefined;
+  individual: (string | undefined)[];
   nonFossilFuelSecondary: string | undefined;
 };
 
@@ -92,8 +91,7 @@ export type NewDur = {
   solarToBattery: number;
   solarToGrid: number;
   solarToHome: number;
-  individual1: number;
-  individual2: number;
+  individual: number[];
   nonFossil: number;
 };
 
