@@ -1,3 +1,5 @@
+import { TemplateResult } from "lit";
+
 export type ComboEntity = {
   consumption: string;
   production: string;
@@ -15,7 +17,7 @@ export type SecondaryInfoType = {
   decimals?: number;
 };
 
-export interface baseConfigEntity {
+export interface BaseConfigEntity {
   entity: string | ComboEntity;
   name?: string;
   icon?: string;
@@ -38,7 +40,7 @@ export type GridPowerOutage = {
   entity_generator?: string;
 };
 
-export type IndividualDeviceType = baseConfigEntity & {
+export type IndividualDeviceType = BaseConfigEntity & {
   entity: string;
   color?: string;
   color_icon?: boolean;
@@ -53,4 +55,83 @@ export type IndividualDeviceType = baseConfigEntity & {
   show_direction?: boolean;
 };
 
-export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2";
+export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2" | "home" | "fossil_fuel_percentage";
+
+export type TemplatesObj = {
+  gridSecondary: string | undefined;
+  solarSecondary: string | undefined;
+  homeSecondary: string | undefined;
+  individual: (string | undefined)[];
+  nonFossilFuelSecondary: string | undefined;
+};
+
+export type HomeSources = {
+  battery: {
+    value: number;
+    color: string;
+  };
+  solar: {
+    value: number;
+    color: string;
+  };
+  grid: {
+    value: number;
+    color: string;
+  };
+  gridNonFossil: {
+    value: number;
+    color: string;
+  };
+};
+
+export type NewDur = {
+  batteryGrid: number;
+  batteryToHome: number;
+  gridToHome: number;
+  solarToBattery: number;
+  solarToGrid: number;
+  solarToHome: number;
+  individual: number[];
+  nonFossil: number;
+};
+
+export type GridObject = {
+  entity: string | ComboEntity | undefined;
+  has: boolean;
+  hasReturnToGrid: boolean;
+  state: {
+    fromGrid: number | null;
+    toGrid: number | null;
+    toBattery: number | null;
+    toHome: number | null;
+  };
+  powerOutage: {
+    has: boolean;
+    isOutage: boolean;
+    icon: string;
+    name: string | TemplateResult<1>;
+    entityGenerator?: string;
+  };
+  icon: string;
+  name: string;
+  mainEntity: string | undefined;
+  color: {
+    fromGrid?: string;
+    toGrid?: string;
+    icon_type?: boolean | "production" | "consumption";
+    circle_type?: boolean | "production" | "consumption";
+  };
+  secondary: {
+    entity?: string;
+    decimals?: number;
+    template?: string;
+    has: boolean;
+    state: string | number | null;
+    icon?: string;
+    unit?: string;
+    unit_white_space?: boolean;
+    color?: {
+      type?: boolean | "production" | "consumption";
+    };
+  };
+};

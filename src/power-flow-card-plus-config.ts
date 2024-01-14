@@ -1,6 +1,11 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, baseConfigEntity } from "./type.js";
+import { ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, BaseConfigEntity } from "./type.js";
 
+export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
+
+export type IndividualModeConfig = {
+  mode: "sort_power";
+}
 interface mainConfigOptions {
   dashboard_link?: string;
   dashboard_link_label?: string;
@@ -18,63 +23,82 @@ interface mainConfigOptions {
   full_size?: boolean;
   style_ha_card?: any;
   style_card_content?: any;
+  individual_mode_config?: IndividualModeConfig;
   display_zero_lines?: {
-    mode?: string;
+    mode?: DisplayZeroLinesMode;
     transparency?: number;
     grey_color?: string | number[];
   };
 }
+
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
-  entities: {
-    battery?: baseConfigEntity & {
-      state_of_charge?: string;
-      state_of_charge_unit?: string;
-      state_of_charge_unit_white_space?: boolean;
-      state_of_charge_decimals?: number;
-      color_state_of_charge_value?: boolean | "production" | "consumption";
-      color_circle: boolean | "production" | "consumption";
-      color_value?: boolean;
-      color?: ComboEntity;
-    };
-    grid?: baseConfigEntity & {
-      power_outage: GridPowerOutage;
-      secondary_info?: SecondaryInfoType;
-      color_circle: boolean | "production" | "consumption";
-      color_value?: boolean;
-      color?: ComboEntity;
-    };
-    solar?: baseConfigEntity & {
-      entity: string;
-      color?: any;
-      color_icon?: boolean;
-      color_value?: boolean;
-      color_label?: boolean;
-      secondary_info?: SecondaryInfoType;
-      display_zero_state?: boolean;
-    };
-    home?: baseConfigEntity & {
-      entity: string;
-      override_state?: boolean;
-      color_icon?: boolean | "solar" | "grid" | "battery";
-      color_value?: boolean | "solar" | "grid" | "battery";
-      subtract_individual?: boolean;
-      secondary_info?: SecondaryInfoType;
-    };
-    fossil_fuel_percentage?: baseConfigEntity & {
-      entity: string;
-      color?: string;
-      state_type?: "percentage" | "power";
-      color_icon?: boolean;
-      display_zero?: boolean;
-      display_zero_state?: boolean;
-      display_zero_tolerance?: number;
-      color_value?: boolean;
-      color_label?: boolean;
-      unit_white_space?: boolean;
-      calculate_flow_rate?: boolean | number;
-      seconday_info: SecondaryInfoType;
-    };
-    individual1?: IndividualDeviceType;
-    individual2?: IndividualDeviceType;
-  };
+  entities: ConfigEntities;
 }
+
+export type IndividualField = IndividualDeviceType[];
+
+interface Battery extends BaseConfigEntity {
+  state_of_charge?: string;
+  state_of_charge_unit?: string;
+  state_of_charge_unit_white_space?: boolean;
+  state_of_charge_decimals?: number;
+  color_state_of_charge_value?: boolean | "production" | "consumption";
+  color_circle: boolean | "production" | "consumption";
+  color_value?: boolean;
+  color?: ComboEntity;
+}
+
+interface Grid extends BaseConfigEntity {
+  power_outage: GridPowerOutage;
+  secondary_info?: SecondaryInfoType;
+  color_circle: boolean | "production" | "consumption";
+  color_value?: boolean;
+  color?: ComboEntity;
+}
+
+interface Solar extends BaseConfigEntity {
+  entity: string;
+  color?: any;
+  color_icon?: boolean;
+  color_value?: boolean;
+  color_label?: boolean;
+  secondary_info?: SecondaryInfoType;
+  display_zero_state?: boolean;
+}
+
+interface Home extends BaseConfigEntity {
+  entity: string;
+  override_state?: boolean;
+  color_icon?: boolean | "solar" | "grid" | "battery";
+  color_value?: boolean | "solar" | "grid" | "battery";
+  subtract_individual?: boolean;
+  secondary_info?: SecondaryInfoType;
+}
+
+interface FossilFuelPercentage extends BaseConfigEntity {
+  entity: string;
+  color?: string;
+  state_type?: "percentage" | "power";
+  color_icon?: boolean;
+  display_zero?: boolean;
+  display_zero_state?: boolean;
+  display_zero_tolerance?: number;
+  color_value?: boolean;
+  color_label?: boolean;
+  unit_white_space?: boolean;
+  calculate_flow_rate?: boolean | number;
+  seconday_info: SecondaryInfoType;
+}
+
+export type ConfigEntities = {
+  battery?: Battery;
+  grid?: Grid;
+  solar?: Solar;
+  home?: Home;
+  fossil_fuel_percentage?: FossilFuelPercentage;
+  individual?: IndividualField;
+};
+
+export type ConfigEntity = Battery | Grid | Solar | Home | FossilFuelPercentage | IndividualDeviceType;
+
+export const MAX_INDIVIDUAL_ENTITIES = 4;

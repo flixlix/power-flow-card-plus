@@ -1,31 +1,75 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable import/extensions */
-
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import { EntityConfig, fireEvent, HASSDomEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { assert } from "superstruct";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema-all";
 import localize from "../localize/localize";
 import { defaultValues } from "../utils/get-default-config";
-import { coerceNumber } from "../utils/utils";
+import { EditSubElementEvent, LovelaceRowConfig, OpenSubElementPage, SubElementEditorConfig } from "./types/entity-rows";
+import "./components/individual-devices-editor";
+import "./components/link-subpage";
+import "./components/subpage-header";
+import { loadHaForm } from "./utils/loadHAForm";
+import { processEditorEntities } from "./components/individual-devices-editor";
+import { gridSchema } from "./schema/grid";
+import { solarSchema } from "./schema/solar";
+import { batterySchema } from "./schema/battery";
+import { nonFossilSchema } from "./schema/fossil_fuel_percentage";
+import { homeSchema } from "./schema/home";
+import { ConfigPage } from "./types/config-page";
 
-export const loadHaForm = async () => {
-  if (customElements.get("ha-form")) return;
+const CONFIG_PAGES: {
+  page: ConfigPage;
+  icon?: string;
+  schema?: any;
+}[] = [
+  {
+    page: "grid",
+    icon: "mdi:transmission-tower",
+    schema: gridSchema,
+  },
+  {
+    page: "solar",
+    icon: "mdi:solar-power",
+    schema: solarSchema,
+  },
+  {
+    page: "battery",
+    icon: "mdi:battery-high",
+    schema: batterySchema,
+  },
+  {
+    page: "fossil_fuel_percentage",
+    icon: "mdi:leaf",
+    schema: nonFossilSchema,
+  },
+  {
+    page: "home",
+    icon: "mdi:home",
+    schema: homeSchema,
+  },
+  {
+    page: "individual",
+    icon: "mdi:dots-horizontal-circle-outline",
+  },
+  {
+    page: "advanced",
+    icon: "mdi:cog",
+    schema: advancedOptionsSchema,
+  },
+];
 
-  const helpers = await (window as any).loadCardHelpers?.();
-  if (!helpers) return;
-  const card = await helpers.createCardElement({ type: "entity" });
-  if (!card) return;
-  await card.getConfigElement();
-};
+type ConfigPages = typeof CONFIG_PAGES;
 
 @customElement("power-flow-card-plus-editor")
 export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: PowerFlowCardPlusConfig;
-  @state() private showOther = false;
+  @state() private _configEntities?: LovelaceRowConfig[] = [];
+  @state() private _currentConfigPage: ConfigPage = null;
 
   public async setConfig(config: PowerFlowCardPlusConfig): Promise<void> {
     assert(config, cardConfigStruct);
@@ -33,9 +77,16 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
   }
 
   connectedCallback(): void {
-    // eslint-disable-next-line wc/guard-super-call
     super.connectedCallback();
     loadHaForm();
+  }
+
+  private _editDetailElement(pageClicked: ConfigPage): void {
+    this._currentConfigPage = pageClicked;
+  }
+
+  private _goBack(): void {
+    this._currentConfigPage = null;
   }
 
   protected render() {
@@ -51,6 +102,55 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       },
     };
 
+    if (this._currentConfigPage !== null) {
+      if (this._currentConfigPage === "individual") {
+        return html`
+          <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
+          <individual-devices-editor .hass=${this.hass} .config=${this._config} @config-changed=${this._valueChanged}></individual-devices-editor>
+        `;
+      }
+
+      const currentPage = this._currentConfigPage;
+      const schema =
+        currentPage === "advanced"
+          ? advancedOptionsSchema(localize, this._config.display_zero_lines?.mode ?? defaultValues.displayZeroLines.mode)
+          : CONFIG_PAGES.find((page) => page.page === currentPage)?.schema;
+      const dataForForm = currentPage === "advanced" ? data : data.entities[currentPage];
+
+      return html`
+        <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
+        <ha-form
+          .hass=${this.hass}
+          .data=${dataForForm}
+          .schema=${schema}
+          .computeLabel=${this._computeLabelCallback}
+          @value-changed=${this._valueChanged}
+        ></ha-form>
+      `;
+    }
+
+    const renderLinkSubpage = (page: ConfigPage, fallbackIcon: string | undefined = "mdi:dots-horizontal-circle-outline") => {
+      if (page === null) return html``;
+      const getIconToUse = () => {
+        if (page === "individual" || page === "advanced") return fallbackIcon;
+        return this?._config?.entities[page]?.icon || fallbackIcon;
+      };
+      const icon = getIconToUse();
+      return html`
+        <link-subpage
+          path=${page}
+          header="${localize(`editor.${page}`)}"
+          @open-sub-element-editor=${() => this._editDetailElement(page)}
+          icon=${icon}
+        >
+        </link-subpage>
+      `;
+    };
+
+    const renderLinkSubPages = () => {
+      return CONFIG_PAGES.map((page) => renderLinkSubpage(page.page, page.icon));
+    };
+
     return html`
       <div class="card-config">
         <ha-form
@@ -59,32 +159,29 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
           .schema=${generalConfigSchema}
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
-        ></ha-form>
-        <div style="height: 24px"></div>
-        <ha-form
-          .hass=${this.hass}
-          .data=${data}
-          .schema=${entitiesSchema(localize)}
-          .computeLabel=${this._computeLabelCallback}
-          @value-changed=${this._valueChanged}
-          class="entities-section"
-        ></ha-form>
-        <div style="height: 24px"></div>
-        <ha-form
-          .hass=${this.hass}
-          .data=${data}
-          .schema=${advancedOptionsSchema(localize, data.display_zero_lines?.mode)}
-          .computeLabel=${this._computeLabelCallback}
-          @value-changed=${this._valueChanged}
-        ></ha-form>
+        ></ha-form
+        >${renderLinkSubPages()}
       </div>
     `;
   }
+
   private _valueChanged(ev: any): void {
-    const config = ev.detail.value || "";
+    let config = ev.detail.value || "";
+
     if (!this._config || !this.hass) {
       return;
     }
+
+    if (this._currentConfigPage !== null && this._currentConfigPage !== "advanced" && this._currentConfigPage !== "individual") {
+      config = {
+        ...this._config,
+        entities: {
+          ...this._config.entities,
+          [this._currentConfigPage]: config,
+        },
+      };
+    }
+
     fireEvent(this, "config-changed", { config });
   }
 
@@ -108,8 +205,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       .card-config {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
+        gap: 1.5rem;
         margin-bottom: 10px;
       }
 

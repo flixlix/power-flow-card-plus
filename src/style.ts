@@ -2,25 +2,28 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
+    --size-circle-entity: 79.99px;
     --mdc-icon-size: 24px;
     --clickable-cursor: pointer;
-    --individualone-color: #d0cc5b;
-    --individualtwo-color: #964cb5;
+    --individual-left-bottom-color: #d0cc5b;
+    --individual-left-top-color: #964cb5;
+    --individual-right-top-color: #b54c9d;
+    --individual-right-bottom-color: #5bd0cc;
     --non-fossil-color: var(--energy-non-fossil-color, #0f9d58);
     --icon-non-fossil-color: var(--non-fossil-color, #0f9d58);
     --icon-solar-color: var(--energy-solar-color, #ff9800);
-    --icon-individualone-color: var(--individualone-color, #d0cc5b);
-    --icon-individualtwo-color: var(--individualtwo-color, #964cb5);
+    --icon-individual-bottom-color: var(--individual-left-bottom-color, #d0cc5b);
+    --icon-individual-top-color: var(--individual-left-top-color, #964cb5);
     --icon-grid-color: var(--energy-grid-consumption-color, #488fc2);
     --icon-battery-color: var(--energy-battery-in-color, #f06292);
     --icon-home-color: var(--energy-grid-consumption-color, #488fc2);
     --text-solar-color: var(--primary-text-color);
     --text-non-fossil-color: var(--primary-text-color);
-    --text-individualone-color: var(--primary-text-color);
-    --text-individualtwo-color: var(--primary-text-color);
+    --text-individual-bottom-color: var(--primary-text-color);
+    --text-individual-top-color: var(--primary-text-color);
     --text-home-color: var(--primary-text-color);
-    --secondary-text-individualone-color: var(--primary-text-color);
-    --secondary-text-individualtwo-color: var(--primary-text-color);
+    --secondary-text-individual-bottom-color: var(--primary-text-color);
+    --secondary-text-individual-top-color: var(--primary-text-color);
     --text-battery-state-of-charge-color: var(--primary-text-color);
     --cirlce-grid-color: var(--energy-grid-consumption-color, #488fc2);
     --circle-battery-color: var(--energy-battery-in-color, #f06292);
@@ -30,15 +33,30 @@ export const styles = css`
     --secondary-text-home-color: var(--primary-text-color);
     --secondary-text-non-fossil-color: var(--primary-text-color);
     --lines-svg-not-flat-line-height: 106%;
-    --lines-svg-not-flat-line-top: -3%;
+    --lines-svg-not-flat-line-top: -2%;
     --lines-svg-flat-width: calc(100% - 160px);
     --lines-svg-not-flat-width: calc(103% - 165px);
+    --lines-svg-not-flat-multi-indiv-height: 104%;
+    --lines-svg-not-flat-multi-indiv-width: calc(103% - var(--size-circle-entity) * 3.7);
+    --lines-svg-not-flat-multi-indiv-width: calc(((106% - 165px) * 0.5));
+    --lines-svg-not-flat-multi-indiv-width: calc(((130% - 246px) * 0.5));
+    --lines-svg-not-flat-multi-indiv-right-indiv-width: calc(((130% - 210px) * 0.5));
+    --lines-svg-not-flat-multi-indiv-right-indiv-height: 103%;
+    --lines-svg-flat-multi-indiv-width: calc((129% - 242px) * 0.5);
+    --lines-svg-flat-left: 0;
+    --lines-svg-not-flat-left: 0;
+    --dot-size: 3.5px;
+
     --transparency: var(--transparency-unused-lines);
     --greyed-out--line-color: #bdbdbd;
     --text-grid-consumption-color: var(--energy-grid-consumption-color);
     --text-grid-return-color: var(--energy-grid-return-color);
     --text-battery-in-color: var(--energy-battery-in-color);
     --text-battery-out-color: var(--energy-battery-out-color);
+  }
+
+  ha-card {
+    overflow: hidden;
   }
 
   ha-card.full-size {
@@ -54,77 +72,6 @@ export const styles = css`
     margin: 0 auto;
   }
 
-  .card-content,
-  .row {
-    max-width: 470px;
-  }
-  .lines {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 146px;
-    display: flex;
-    justify-content: center;
-    padding: 0 16px 16px;
-    box-sizing: border-box;
-  }
-  .lines.individual1-individual2 {
-    bottom: 110px;
-  }
-  .lines.high {
-    bottom: 100px;
-    height: 156px;
-  }
-  .lines svg {
-    width: var(--lines-svg-flat-width);
-    height: 100%;
-    max-width: 340px;
-  }
-
-  .lines svg:not(.flat-line) {
-    width: var(--lines-svg-not-flat-width);
-    height: var(--lines-svg-not-flat-line-height);
-    top: var(--lines-svg-not-flat-line-top);
-    position: relative;
-  }
-
-  .row {
-    display: flex;
-    justify-content: space-between;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  .circle-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 2;
-  }
-  .circle-container.solar {
-    margin: 0 4px;
-    height: 130px;
-  }
-  .circle-container.individual2 {
-    margin-left: 4px;
-    height: 130px;
-  }
-  .circle-container.individual1 {
-    margin-left: 4px;
-    height: 130px;
-  }
-  .circle-container.individual1.bottom {
-    position: relative;
-    top: -20px;
-    margin-bottom: -20px;
-  }
-  .circle-container.battery {
-    height: 110px;
-    justify-content: flex-end;
-  }
-  .spacer {
-    width: 84px;
-  }
   .circle {
     width: 80px;
     height: 80px;
@@ -143,6 +90,103 @@ export const styles = css`
     color: var(--primary-text-color);
     // background-color: var(--card-background-color); /* hide overflowing lines behind background */
   }
+
+  .card-content,
+  .row {
+    max-width: 470px;
+  }
+  .lines {
+    position: absolute;
+    bottom: 0;
+    left: var(--size-circle-entity);
+    width: 100%;
+    height: 146px;
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 16px 16px;
+    box-sizing: border-box;
+  }
+
+  .lines:not(.multi-individual) svg.flat-line {
+    left: var(--lines-svg-flat-left);
+  }
+
+  .lines:not(.multi-individual) svg:not(.flat-line) {
+    left: var(--lines-svg-not-flat-left);
+  }
+
+  .lines:has(svg:not(.flat-line)) {
+    margin-left: -1%;
+  }
+  .lines.individual-bottom-individual-top {
+    bottom: 110px;
+  }
+  .lines.high {
+    bottom: 100px;
+    height: 156px;
+  }
+  .lines svg {
+    width: var(--lines-svg-flat-width);
+    height: 100%;
+    max-width: 340px;
+    position: relative;
+  }
+
+  .lines svg:not(.flat-line) {
+    width: var(--lines-svg-not-flat-width);
+    height: var(--lines-svg-not-flat-line-height);
+    top: var(--lines-svg-not-flat-line-top);
+  }
+
+  .multi-individual {
+    left: calc(var(--size-circle-entity) + 2%);
+    margin-left: -2.2% !important;
+  }
+
+  .multi-individual svg {
+    width: var(--lines-svg-flat-multi-indiv-width);
+  }
+
+  .multi-individual svg:not(.flat-line) {
+    width: var(--lines-svg-not-flat-multi-indiv-width);
+    margin-top: 1px;
+    height: var(--lines-svg-not-flat-multi-indiv-height);
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .circle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+  }
+  .circle-container.solar {
+    height: 130px;
+  }
+  .circle-container.individual-top {
+    height: 130px;
+  }
+  .circle-container.individual-bottom {
+    justify-content: flex-end;
+  }
+  .circle-container.individual-bottom.bottom {
+    position: relative;
+    top: -20px;
+    margin-bottom: -20px;
+  }
+  .circle-container.battery {
+    height: 110px;
+    justify-content: flex-end;
+  }
+  .spacer {
+    width: var(--size-circle-entity);
+  }
+
   .circle-container .circle {
     cursor: var(--clickable-cursor);
   }
@@ -195,40 +239,100 @@ export const styles = css`
     overflow: hidden;
   }
 
-  .individual2 path,
-  .individual2 circle {
-    stroke: var(--individualtwo-color);
+  .individual-top path,
+  .individual-top circle {
+    stroke: var(--icon-individual-left-top-color);
   }
 
-  #individual1-icon {
-    color: var(--icon-individualone-color);
+  #individual-left-bottom-icon {
+    color: var(--icon-individual-left-bottom-color);
   }
-  #individual2-icon {
-    color: var(--icon-individualtwo-color);
+  #individual-left-top-icon {
+    color: var(--icon-individual-left-top-color);
   }
+
+  #individual-right-bottom-icon {
+    color: var(--icon-individual-right-bottom-color);
+  }
+  #individual-right-top-icon {
+    color: var(--icon-individual-right-top-color);
+  }
+
   #solar-icon {
     color: var(--icon-solar-color);
   }
-  circle.individual2 {
+  circle.individual-top {
     stroke-width: 4;
-    fill: var(--individualtwo-color);
+    width: var(--dot-size);
+    fill: var(--individual-left-top-color);
   }
-  .individual2 .circle {
-    border-color: var(--individualtwo-color);
-  }
-  .individual1 path,
-  .individual1 circle {
-    stroke: var(--individualone-color);
-  }
-  circle.individual1 {
+  circle.individual-bottom {
     stroke-width: 4;
-    fill: var(--individualone-color);
+    width: var(--dot-size);
+    fill: var(--individual-left-bottom-color);
   }
-  .individual1 .circle {
-    border-color: var(--individualone-color);
+  .individual-top .circle {
+    border-color: var(--individual-left-top-color);
+  }
+  .individual-bottom path,
+  .individual-bottom circle {
+    stroke: var(--individual-left-bottom-color);
+  }
+  .individual-bottom .circle {
+    border-color: var(--individual-left-bottom-color);
+  }
+
+  .individual-right-top .circle {
+    border-color: var(--individual-right-top-color);
+  }
+
+  circle.individual-right-top .circle {
+    fill: var(--individual-right-top-color);
+  }
+
+  .individual-right-top path,
+  .individual-right-top circle {
+    stroke: var(--individual-right-top-color);
+  }
+  .individual-right-bottom .circle {
+    border-color: var(--individual-right-bottom-color);
+  }
+
+  circle.individual-right-bottom .circle {
+    fill: var(--individual-right-bottom-color);
+  }
+
+  .individual-right-bottom path,
+  .individual-right-bottom circle {
+    stroke: var(--individual-right-bottom-color);
+  }
+
+  .right-individual-flow-container {
+    position: absolute;
+    right: calc(var(--size-circle-entity) - 27% * 1.1 + 6px);
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    height: 156px;
+    bottom: 100px;
+    padding: 0 16px 16px;
+    margin-right: -1.2%;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .right-individual-flow-container > svg {
+    width: var(--lines-svg-not-flat-multi-indiv-right-indiv-width);
+  }
+
+  .right-individual-flow {
+    height: var(--lines-svg-not-flat-multi-indiv-right-indiv-height);
+    margin-top: 2px;
+    width: var(--lines-svg-not-flat-multi-indiv-width);
+    top: var(--lines-svg-not-flat-line-top);
+    max-width: 340px;
+    position: relative;
   }
   .circle-container.low-carbon {
-    margin-right: 4px;
     height: 130px;
   }
   .low-carbon path {
@@ -374,22 +478,49 @@ export const styles = css`
 
   #home-circle {
     color: var(--text-home-color);
+    z-index: 2;
   }
 
-  .individual1 .circle {
-    color: var(--text-individualone-color);
+  .individual-bottom .circle {
+    color: var(--text-individual-bottom-color);
   }
 
-  .individual2 .circle {
-    color: var(--text-individualtwo-color);
+  .individual-top .circle {
+    color: var(--text-individual-top-color);
   }
 
-  .individual1 span.secondary-info {
-    color: var(--secondary-text-individualone-color);
+  .individual-bottom span.secondary-info {
+    color: var(--secondary-text-individual-bottom-color);
   }
 
-  .individual2 span.secondary-info {
-    color: var(--secondary-text-individualtwo-color);
+  .individual-top span.secondary-info {
+    color: var(--secondary-text-individual-top-color);
+  }
+
+  span.secondary-info.left-top {
+    color: var(--secondary-text-individual-left-top-color);
+  }
+  span.individual-left-top {
+    color: var(--text-individual-left-top-color);
+  }
+  span.secondary-info.left-bottom {
+    color: var(--secondary-text-individual-left-bottom-color);
+  }
+  span.individual-left-bottom {
+    color: var(--text-individual-left-bottom-color);
+  }
+  span.secondary-info.right-top {
+    color: var(--secondary-text-individual-right-top-color);
+  }
+  span.individual-right-top {
+    color: var(--text-individual-right-top-color);
+  }
+
+  span.secondary-info.right-bottom {
+    color: var(--secondary-text-individual-right-bottom-color);
+  }
+  span.individual-right-bottom {
+    color: var(--text-individual-right-bottom-color);
   }
 
   .solar span.secondary-info {
