@@ -31,12 +31,7 @@ export const solarElement = (
       }}
     >
       ${generalSecondarySpan(main.hass, main, templatesObj, solar, "solar")}
-      <ha-icon
-        id="solar-icon"
-        .icon=${solar.icon}
-        style="${solar.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-      ${entities.solar?.display_zero_state !== false || (solar.state.total || 0) > 0 ? "padding-bottom: 2px;" : "padding-bottom: 0px;"}"
-      ></ha-icon>
+      <ha-icon id="solar-icon" .icon=${solar.icon}></ha-icon>
       ${entities.solar?.display_zero_state !== false || (solar.state.total || 0) > 0
         ? html` <span class="solar"> ${displayValue(main.hass, solar.state.total as number)}</span>`
         : ""}

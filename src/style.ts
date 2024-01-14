@@ -88,6 +88,7 @@ export const styles = css`
     position: relative;
     text-decoration: none;
     color: var(--primary-text-color);
+    gap: 2px;
     // background-color: var(--card-background-color); /* hide overflowing lines behind background */
   }
 
