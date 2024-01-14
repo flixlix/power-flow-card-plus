@@ -26,7 +26,7 @@ export const computeFlowRate = (config: PowerFlowCardPlusConfig, value: number, 
 };
 
 export const computeIndividualFlowRate = (entry?: boolean | number, value?: number): number => {
-  if (entry === true && value) {
+  if (entry !== false && value) {
     return value;
   }
   if (typeof entry === "number") {
