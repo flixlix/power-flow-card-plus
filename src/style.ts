@@ -333,7 +333,6 @@ export const styles = css`
     position: relative;
   }
   .circle-container.low-carbon {
-    margin-right: 4px;
     height: 130px;
   }
   .low-carbon path {
