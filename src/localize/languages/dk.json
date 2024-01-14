@@ -60,6 +60,7 @@
         "watt_threshold": "Watt til Kilowatt Grænse",
         "display_zero_lines": "Vis Nul Linjer",
         "clickable_entities": "Klikbar enheder",
+        "disable_dots": "Deaktiver prikker",
         "use_new_flow_rate_model": "Ny flowhastighedsmodel",
         "use_metadata": "Brug Metadata",
         "mode": "Tilstand",

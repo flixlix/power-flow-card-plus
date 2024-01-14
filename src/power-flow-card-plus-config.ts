@@ -24,6 +24,7 @@ interface mainConfigOptions {
   style_ha_card?: any;
   style_card_content?: any;
   individual_mode_config?: IndividualModeConfig;
+  disable_dots?: boolean;
   display_zero_lines?: {
     mode?: DisplayZeroLinesMode;
     transparency?: number;
