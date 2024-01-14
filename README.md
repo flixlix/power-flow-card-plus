@@ -86,154 +86,150 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 > ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
-<br/>
-
-> ⚠️ Version 0.1 introduced the UI Editor. This Editor is currently incompatible with Card Mod. I created a PR to fix this issue, but it hasn't been merged yet. Here is the [PR #277](https://github.com/thomasloven/lovelace-card-mod/pull/277). Since it hasn't been merged yet, I also released a fork with the changes from the PR. Installing this Version of Card Mod you can use this card in conjunction with Card Mod. [Here is my fork](https://github.com/flixlix/lovelace-card-mod)
-
-
 ### Options
 
 #### Card options
 
-| Name                | Type      |   Default    | Description                                                                                                                                                                  |
-|---------------------| --------- |:------------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| type                | `string`  | **required** | `custom:power-flow-card-plus`.                                                                                                                                               |
-| entities            | `object`  | **required** | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                          |
-| title               | `string`  |              | Shows a title at the top of the card.                                                                                                                                        |
-| dashboard_link      | `string`  |              | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. |
-| dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label  to go to a different dashboard. |
-| second_dashboard_link      | `string`  |              | Shows another link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. (Only available in the YAML Editor) |
-| second_dahsboard_link_label | `string` | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard. |
-| kw_decimals         | `number`  |      1       | Number of decimals rounded to when kilowatts are displayed.                                                                                                                  |
-| w_decimals          | `number`  |      1       | Number of decimals rounded to when watts are displayed.                                                                                                                      |
-| min_flow_rate       | `number`  |     .75      | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds. |
-| max_flow_rate       | `number`  |      6       | Represents how much time it takes for the slowest dot to travel from one end to the other in seconds. |
-| watt_threshold      | `number`  |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts. |
-| clickable_entities  | `boolean` |    false     | If true, clicking on the entity will open the entity's more info dialog. |
-| min_expected_power | `number`  |    0.01 | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
-| max_expected_power | `number`  | 2000 | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula). |
-| display_zero_lines | `object` | `{mode: "show"}` | Check [Display Zero Lines](#display-zero-lines) |
-| full_size | `boolean` | false | Warning: This option is experimental. To use this option, you must set your view to panel mode. If set to true, the card will take up the full height of the screen. And the Card should go to the center of the screen. |
-| style_ha_card | `css` |  | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the container of the card (border and background of the card). |
-| style_card_content | `css` |  | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the content of the card (all circles and lines of the card). |
-| use_new_flow_rate_model | `boolean` | false | If set to true, the card will use the [New Flow Formula](#new-flow-formula).
+| Name                        | Type      |                 Default                  | Description                                                                                                                                                                                                              |
+| --------------------------- | --------- | :--------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| type                        | `string`  |               **required**               | `custom:power-flow-card-plus`.                                                                                                                                                                                           |
+| entities                    | `object`  |               **required**               | One or more sensor entities, see [entities object](#entities-object) for additional entity options.                                                                                                                      |
+| title                       | `string`  |                                          | Shows a title at the top of the card.                                                                                                                                                                                    |
+| dashboard_link              | `string`  |                                          | Shows a link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example.                                             |
+| dahsboard_link_label        | `string`  | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label to go to a different dashboard.                                                                                                                                                 |
+| second_dashboard_link       | `string`  |                                          | Shows another link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. (Only available in the YAML Editor)   |
+| second_dahsboard_link_label | `string`  | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard.                                                                                                                                          |
+| kw_decimals                 | `number`  |                    1                     | Number of decimals rounded to when kilowatts are displayed.                                                                                                                                                              |
+| w_decimals                  | `number`  |                    1                     | Number of decimals rounded to when watts are displayed.                                                                                                                                                                  |
+| min_flow_rate               | `number`  |                   .75                    | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds.                                                                                                                   |
+| max_flow_rate               | `number`  |                    6                     | Represents how much time it takes for the slowest dot to travel from one end to the other in seconds.                                                                                                                    |
+| watt_threshold              | `number`  |                    0                     | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                                                             |
+| clickable_entities          | `boolean` |                  false                   | If true, clicking on the entity will open the entity's more info dialog.                                                                                                                                                 |
+| min_expected_power          | `number`  |                   0.01                   | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula).                                                         |
+| max_expected_power          | `number`  |                   2000                   | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula).                                                         |
+| display_zero_lines          | `object`  |             `{mode: "show"}`             | Check [Display Zero Lines](#display-zero-lines)                                                                                                                                                                          |
+| full_size                   | `boolean` |                  false                   | Warning: This option is experimental. To use this option, you must set your view to panel mode. If set to true, the card will take up the full height of the screen. And the Card should go to the center of the screen. |
+| style_ha_card               | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the container of the card (border and background of the card).                                                                               |
+| style_card_content          | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the content of the card (all circles and lines of the card).                                                                                 |
+| use_new_flow_rate_model     | `boolean` |                  false                   | If set to true, the card will use the [New Flow Formula](#new-flow-formula).                                                                                                                                             |
 
 #### Entities object
 
 At least one of _grid_, _battery_, or _solar_ is required. All entites (except _battery_charge_) should have a `unit_of_measurement` attribute of W(watts) or kW(kilowatts).
 
-| Name           | Type                | Description                                                                                                                                                                                                     |
-| -------------- | :------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| grid           | `object` | Check [Grid Configuration](#grid-configuration) for more information. |
-| solar          | `object` | Check [Solar Configuration](#solar-configuration) for more information. |
-| battery        | `object` | Check [Battery Configuration](#battery-configuration) for more information. |
-| individual1    | `object` | Check [Individual Devices](#individual-configuration) for more information. |
-| individual2    | `object` | Check [Individual Devices](#individual-configuration) for more information. |
-| home           | `object` | Check [Home Configuration](#home-configuration) for more information. |
+| Name                   | Type     | Description                                                                      |
+| ---------------------- | :------- | -------------------------------------------------------------------------------- |
+| grid                   | `object` | Check [Grid Configuration](#grid-configuration) for more information.            |
+| solar                  | `object` | Check [Solar Configuration](#solar-configuration) for more information.          |
+| battery                | `object` | Check [Battery Configuration](#battery-configuration) for more information.      |
+| individual             | `array`  | Check [Individual Devices](#individual-configuration) for more information.      |
+| home                   | `object` | Check [Home Configuration](#home-configuration) for more information.            |
 | fossil_fuel_percentage | `object` | Check [Fossil Fuel Percentage](#fossil-fuel-configuration) for more information. |
 
 #### Grid Configuration
 
-| Name        | Type    | Default  | Description                                                                                       |
-| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below. |
-| name  | `string` | `Grid` | If you don't populate this option, the label will continue to update based on the language selected. |
-| icon | `string` | `mdi:transmission-tower` | Icon path for the icon inside the Grid Circle. |
-| color | `object` |  | Check [Color Objects](#color-object) for more information. |
-| color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
-| display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
-| color_circle | `boolean` or "production" or "consumption" | `false` | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption. |
-| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
-| display_zero_tolerance | `number` | `0` | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid. |
-| power_outage | `object` | `undefined` | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info. |
-| color_value | `boolean` | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |
-| invert_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption. |
+| Name                   | Type                                        | Default                                                                                                      | Description                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity                 | `string` or `object`                        | `undefined` required                                                                                         | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below.                                                                                                                                                                               |
+| name                   | `string`                                    | `Grid`                                                                                                       | If you don't populate this option, the label will continue to update based on the language selected.                                                                                                                                                                                                                                                                                          |
+| icon                   | `string`                                    | `mdi:transmission-tower`                                                                                     | Icon path for the icon inside the Grid Circle.                                                                                                                                                                                                                                                                                                                                                |
+| color                  | `object`                                    |                                                                                                              | Check [Color Objects](#color-object) for more information.                                                                                                                                                                                                                                                                                                                                    |
+| color_icon             | `boolean` or "production" or "consumption"  | `false`                                                                                                      | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption.                                                                                                                                                                                                      |
+| display_state          | "two_way" or "one_way" or "one_way_no_zero" | `two_way`                                                                                                    | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+| color_circle           | `boolean` or "production" or "consumption"  | `false`                                                                                                      | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption.                                                                      |
+| secondary_info         | `object`                                    | `undefined`                                                                                                  | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                                                                                                  |
+| display_zero_tolerance | `number`                                    | `0`                                                                                                          | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid.                                                                                                                                                                         |
+| power_outage           | `object`                                    | `undefined`                                                                                                  | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.                                                                                                                                                                                                                                                                                             |
+| color_value            | `boolean`                                   | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |
+| invert_state           | `boolean`                                   | `false`                                                                                                      | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
 
 #### Solar Configuration
 
-| Name        | Type    | Default  | Description                                                                                       |
-| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` | `undefined` required | Entity ID providing a state with the value of solar production. |
-| name  | `string` | `Solar` | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected. |
-| icon | `string` | `mdi:solar-power` | Icon path for the icon inside the Solar Circle. |
-| color | `string` |  | HEX value of the color for circles labels and lines of solar production. |
-| color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
-| color_value | `boolean` | `false` | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.  |
-| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
-| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
-| invert_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0. |
+| Name               | Type      | Default              | Description                                                                                                                                                        |
+| ------------------ | --------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| entity             | `string`  | `undefined` required | Entity ID providing a state with the value of solar production.                                                                                                    |
+| name               | `string`  | `Solar`              | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected.                                   |
+| icon               | `string`  | `mdi:solar-power`    | Icon path for the icon inside the Solar Circle.                                                                                                                    |
+| color              | `string`  |                      | HEX value of the color for circles labels and lines of solar production.                                                                                           |
+| color_icon         | `boolean` | `false`              | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                             |
+| color_value        | `boolean` | `false`              | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.               |
+| secondary_info     | `object`  | `undefined`          | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                       |
+| display_zero_state | `boolean` | `true`               | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                             |
+| invert_state       | `boolean` | `false`              | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0. |
 
 #### Battery Configuration
 
-| Name        | Type    | Default  | Description                                                                                       |
-| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` or `object` | `undefined` required | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entities](#split-entities). Examples of both can be found below. |
-| state_of_charge | `string` | `undefined` required | Entity ID providing a state with the state of charge of the battery in percent (state of  `100` for a full battery). |
-| state_of_charge_unit | `string` | `%` | Unit of the state of charge. |
-| state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, the unit of the state of charge will not have a white space in front of it. |
-| state_of_charge_decimals | `number` | `0` | Number of decimals to show for the state of charge. |
-| name  | `string` | `Battery` | Label for the battery option. If you don't populate this option, the label will continue to update based on the language selected. |
-| icon | `string` | `mdi:battery` or dynamic based on state of the battery | Icon path for the icon inside the Battery Circle. |
-| color | `object` |  | Check [Color Objects](#color-object) for more information. |
-| color_icon | `boolean` or "production" or "consumption" | `false` | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption. |
-| display_state | "two_way" or "one_way" or "one_way_no_zero" | `two_way` | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
-| state_of_charge_unit_white_space | `boolean` | `true` | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge. |
-| color_state_of_charge_value | `boolean` or "production" or "consumption" | `false` | If set to `true`, state of charge text color will match the highest value. If set to `production`, state of charge text color will match the production. If set to `consumption`, state of charge text color will match the consumption. |
-| color_circle | `boolean` or "production" or "consumption" | `true` | If set to `true`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption. |
-| color_value | `boolean` | `true` | If set to `false`, the values of power will not be colored according to input and output. |
-| invert_state | `boolean` | `false` | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption. |
+| Name                             | Type                                        | Default                                                | Description                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------- | ------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity                           | `string` or `object`                        | `undefined` required                                   | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entities](#split-entities). Examples of both can be found below.                                                                                                                                                                              |
+| state_of_charge                  | `string`                                    | `undefined` required                                   | Entity ID providing a state with the state of charge of the battery in percent (state of `100` for a full battery).                                                                                                                                                                                                                                                                           |
+| state_of_charge_unit             | `string`                                    | `%`                                                    | Unit of the state of charge.                                                                                                                                                                                                                                                                                                                                                                  |
+| state_of_charge_unit_white_space | `boolean`                                   | `true`                                                 | If set to `false`, the unit of the state of charge will not have a white space in front of it.                                                                                                                                                                                                                                                                                                |
+| state_of_charge_decimals         | `number`                                    | `0`                                                    | Number of decimals to show for the state of charge.                                                                                                                                                                                                                                                                                                                                           |
+| name                             | `string`                                    | `Battery`                                              | Label for the battery option. If you don't populate this option, the label will continue to update based on the language selected.                                                                                                                                                                                                                                                            |
+| icon                             | `string`                                    | `mdi:battery` or dynamic based on state of the battery | Icon path for the icon inside the Battery Circle.                                                                                                                                                                                                                                                                                                                                             |
+| color                            | `object`                                    |                                                        | Check [Color Objects](#color-object) for more information.                                                                                                                                                                                                                                                                                                                                    |
+| color_icon                       | `boolean` or "production" or "consumption"  | `false`                                                | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption.                                                                                                                                                                                                      |
+| display_state                    | "two_way" or "one_way" or "one_way_no_zero" | `two_way`                                              | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+| state_of_charge_unit_white_space | `boolean`                                   | `true`                                                 | If set to `false`, there will be no white space between the state of charge and the unit of the state of charge.                                                                                                                                                                                                                                                                              |
+| color_state_of_charge_value      | `boolean` or "production" or "consumption"  | `false`                                                | If set to `true`, state of charge text color will match the highest value. If set to `production`, state of charge text color will match the production. If set to `consumption`, state of charge text color will match the consumption.                                                                                                                                                      |
+| color_circle                     | `boolean` or "production" or "consumption"  | `true`                                                 | If set to `true`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption.                                                                                                                                                                                           |
+| color_value                      | `boolean`                                   | `true`                                                 | If set to `false`, the values of power will not be colored according to input and output.                                                                                                                                                                                                                                                                                                     |
+| invert_state                     | `boolean`                                   | `false`                                                | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
 
 #### Individual Configuration
 
-| Name        | Type    | Default  | Description                                                                                       |
-| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` | `undefined` required | Entity ID providing a state with the value of an individual consumption. |
-| name  | `string` | `Car` or `Motorcycle` | Label for the individual device option. If you don't populate this option, the label will continue to update based on the language selected. |
-| icon | `string` | `mdi:car-electric` or `mdi:motorbike-electric` | Icon path for the icon inside the Individual Device Circle. |
-| color | `string` | `#d0cc5b` or `#964cb5` | HEX value of the color for circles labels and lines of the individual device. |
-| color_icon | `boolean` | `false` | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.  |
-| unit_of_measurement | `string` | `W`or `kW` (dynamic) | Sets the unit of measurement to show in the corresponding circle |
-| inverted_animation |`boolean` | `false` | If set to true, the small dots will flow in the opposite direction. |
-| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration). The `secondary_info` entity can provide a number or a string (eg: EV State `charging` and `discharging`). |
-| display_zero | `boolean` | `false` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
-| display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
-| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
-| color_value | `boolean` | `false` | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.  |
-| decimals | `number` | `0` | Number of decimals to show in the corresponding state. |
+The Individual fields must be an array of objects. Each object must follow the following structure:
+
+| Name                   | Type      | Default                                        | Description                                                                                                                                                                          |
+| ---------------------- | --------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| entity                 | `string`  | `undefined` required                           | Entity ID providing a state with the value of an individual consumption.                                                                                                             |
+| name                   | `string`  | `Car` or `Motorcycle`                          | Label for the individual device option. If you don't populate this option, the label will continue to update based on the language selected.                                         |
+| icon                   | `string`  | `mdi:car-electric` or `mdi:motorbike-electric` | Icon path for the icon inside the Individual Device Circle.                                                                                                                          |
+| color                  | `string`  | `#d0cc5b` or `#964cb5`                         | HEX value of the color for circles labels and lines of the individual device.                                                                                                        |
+| color_icon             | `boolean` | `false`                                        | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                                               |
+| unit_of_measurement    | `string`  | `W`or `kW` (dynamic)                           | Sets the unit of measurement to show in the corresponding circle                                                                                                                     |
+| inverted_animation     | `boolean` | `false`                                        | If set to true, the small dots will flow in the opposite direction.                                                                                                                  |
+| secondary_info         | `object`  | `undefined`                                    | Check [Secondary Info Object](#secondary-info-configuration). The `secondary_info` entity can provide a number or a string (eg: EV State `charging` and `discharging`).              |
+| display_zero           | `boolean` | `false`                                        | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden.                |
+| display_zero_tolerance | `number`  | `0`                                            | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
+| display_zero_state     | `boolean` | `true`                                         | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                                               |
+| color_value            | `boolean` | `false`                                        | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.                                                |
+| decimals               | `number`  | `0`                                            | Number of decimals to show in the corresponding state.                                                                                                                               |
 
 #### Home Configuration
 
-| Name        | Type    | Default  | Description                                                                                       |
-| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity | `string` | `undefined` required | Entity ID providing a state with the value of your home's consumption. Note that this entity will not be displayed and will only be used for the more info dialog when clicking the home section. |
-| name  | `string` | `Home` | Label for the home option. If you don't populate this option, the label will continue to update based on the language selected. |
-| icon | `string` | `mdi:home` | Icon path for the icon inside the Home Circle. |
-| color_icon | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, icon color will match the highest value. If set to `solar`, icon color will match the color of solar. If set to `grid`, icon color will match the color of the grid consumption. If set to `battery`, icon color will match the color of the battery consumption. |
-| color_value | `boolean` or "solar" or "grid" or "battery" | `false` | If set to `true`, state text color will match the highest value. If set to `solar`, state text color will match the color of solar. If set to `grid`, state text color will match the color of the grid consumption. If set to `battery`, state text color will match the color of the battery consumption. |
-| secondary_info | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration) |
-| subtract_individual | `boolean` | false | If set to `true`, the home consumption will be calculated by subtracting the sum of the individual devices from the home consumption. |
-| override_state | `boolean` | `false` | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is caluclated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses. |
+| Name                | Type                                        | Default              | Description                                                                                                                                                                                                                                                                                                 |
+| ------------------- | ------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity              | `string`                                    | `undefined` required | Entity ID providing a state with the value of your home's consumption. Note that this entity will not be displayed and will only be used for the more info dialog when clicking the home section.                                                                                                           |
+| name                | `string`                                    | `Home`               | Label for the home option. If you don't populate this option, the label will continue to update based on the language selected.                                                                                                                                                                             |
+| icon                | `string`                                    | `mdi:home`           | Icon path for the icon inside the Home Circle.                                                                                                                                                                                                                                                              |
+| color_icon          | `boolean` or "solar" or "grid" or "battery" | `false`              | If set to `true`, icon color will match the highest value. If set to `solar`, icon color will match the color of solar. If set to `grid`, icon color will match the color of the grid consumption. If set to `battery`, icon color will match the color of the battery consumption.                         |
+| color_value         | `boolean` or "solar" or "grid" or "battery" | `false`              | If set to `true`, state text color will match the highest value. If set to `solar`, state text color will match the color of solar. If set to `grid`, state text color will match the color of the grid consumption. If set to `battery`, state text color will match the color of the battery consumption. |
+| secondary_info      | `object`                                    | `undefined`          | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                |
+| subtract_individual | `boolean`                                   | false                | If set to `true`, the home consumption will be calculated by subtracting the sum of the individual devices from the home consumption.                                                                                                                                                                       |
+| override_state      | `boolean`                                   | `false`              | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is caluclated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses.                                                                |
 
 #### Fossil Fuel Configuration
 
-| Name        | Type    | Default  | Description                                                                                       |
-| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity           | `string` | `none` required | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be `100` when all the energy from the grid comes from high emission sources and `0` when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
-| name        | `string` | Low-carbon | Name to appear as a label on top of the circle. |
-| icon | `string`            | `mdi:leaf` | Icon path (eg: `mdi:home`) to display inside the circle of the device. |
-| color          | `string`        | `#0f9d58` |  HEX Value of a color to display as the stroke of the circle and line connecting to the grid. |
-| color_icon | `boolean` | `false` | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons. |
-| display_zero | `boolean` | `true` | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden. |
-| display_zero_state | `boolean` | `true` | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`. |
-| state_type | `string` | `power` | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon. |
-| unit_white_space | `boolean` | `true` | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
-| calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
+| Name                | Type                  | Default         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------- | --------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity              | `string`              | `none` required | Entity ID providing a state with the value of the percentage of fossil fuel consumption. The state should be `100` when all the energy from the grid comes from high emission sources and `0` when all the energy from the grid comes from low emission sources. It is recommended to use the CO2 Signal integration, which provides this sensor out of the box without any additional templating. This will also be the entity used in the more-info dialogs. |
+| name                | `string`              | Low-carbon      | Name to appear as a label on top of the circle.                                                                                                                                                                                                                                                                                                                                                                                                                |
+| icon                | `string`              | `mdi:leaf`      | Icon path (eg: `mdi:home`) to display inside the circle of the device.                                                                                                                                                                                                                                                                                                                                                                                         |
+| color               | `string`              | `#0f9d58`       | HEX Value of a color to display as the stroke of the circle and line connecting to the grid.                                                                                                                                                                                                                                                                                                                                                                   |
+| color_icon          | `boolean`             | `false`         | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons.                                                                                                                                                                                                                                                                                                                                           |
+| display_zero        | `boolean`             | `true`          | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden.                                                                                                                                                                                                                                                                                          |
+| display_zero_state  | `boolean`             | `true`          | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                                                                                                                                                                                                                                                                                                                         |
+| state_type          | `string`              | `power`         | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon.                                                                                                                                                                                      |
+| unit_white_space    | `boolean`             | `true`          | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added.                                                                                                                                                                                                                                                                                                                                                    |
+| calculate_flow_rate | `boolean` or `number` | `false`         | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds.                                                                                                                                                         |
 
 #### Color Object
 
-| Name        | Type    | Description                                                                                       |
-| ----------- | ------- | ------------------------------------------------------------------------------------------------- |
-| production | `string` | HEX value of the color for circles labels and lines of production. |
+| Name        | Type     | Description                                                         |
+| ----------- | -------- | ------------------------------------------------------------------- |
+| production  | `string` | HEX value of the color for circles labels and lines of production.  |
 | consumption | `string` | HEX value of the color for circles labels and lines of consumption. |
 
 #### Split entities
@@ -249,38 +245,39 @@ Can be use with either Grid or Battery configuration. The same `unit_of_measurem
 
 This Feature allows you to configure an additional small text for each Individual Device. Here you can put , for example, the state of charge of an electric car.
 
-| Name        | Type     | Description                                                                                       |
-| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity| `string` required | Entity ID providing a state value that is going to be displayed. |
-| unit_of_measurement | `string` | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes) |
-| icon | `string` | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed. |
-| unit_white_space | `boolean` |  Default is `true`. If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added. |
-| display_zero | `boolean` | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`. |
-| display_zero_tolerance | `number` | `0` | If set, the device will be displayed if the state is greater than the tolerance set. No need to set `display_zero` property to true. |
-| decimals | `number` | The number of decimal places to round the value to. |
-| template | `string` | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
+| Name                   | Type              | Description                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| entity                 | `string` required | Entity ID providing a state value that is going to be displayed.                                                                                                                                                                                                                                                                                                                                             |
+| unit_of_measurement    | `string`          | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes)                                                                                                                                                                                                                                                                                                     |
+| icon                   | `string`          | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed.                                                                                                                                                                                                                                                         |
+| unit_white_space       | `boolean`         | Default is `true`. If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added.                                                                                                                                                                                                                                                                               |
+| display_zero           | `boolean`         | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`.                                                                                                                                                                                                                                                                                            |
+| display_zero_tolerance | `number`          | `0`                                                                                                                                                                                                                                                                                                                                                                                                          | If set, the device will be displayed if the state is greater than the tolerance set. No need to set `display_zero` property to true. |
+| decimals               | `number`          | The number of decimal places to round the value to.                                                                                                                                                                                                                                                                                                                                                          |
+| template               | `string`          | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
+
 #### Power Outage
 
 This feature allows you to configure how the card handles a Grid Power Outage scenario.
 
-| Name        | Type     | Description                                                                                       |
-| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
-| entity| `string` required | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor. |
-| entity_generator | `string` | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power. |
-| state_alert | `string` | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage. |
-| icon_alert | `string` |  An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`. |
-| label_alert | `string` | A text that will be displayed below the icon when there is a power outage. |
-| calculate_flow_rate | `boolean` or `number` | `false` | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
+| Name                | Type                  | Description                                                                                                                                                                               |
+| ------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| entity              | `string` required     | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor.                                  |
+| entity_generator    | `string`              | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power. |
+| state_alert         | `string`              | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage.                    |
+| icon_alert          | `string`              | An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`.                                                                          |
+| label_alert         | `string`              | A text that will be displayed below the icon when there is a power outage.                                                                                                                |
+| calculate_flow_rate | `boolean` or `number` | `false`                                                                                                                                                                                   | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
 #### Display Zero Lines
 
 This object allows you to control the behavior of the flow lines that are inactive.
 
-| Name | Type | Description |
-| ----------- | -------- | ------------------------------------------------------------------------------------------------- |
-| mode | string | Valid Options are: `show`, `hide`, `transparency`, `grey_out`, `custom` |
-| transparency | number | A number between 0 and 100. 100 means the line doesn't show at all. 0 means the line shows in full opacity. Default is 50. Will be used when the mode is either `transparency` or `custom`. |
-| grey_color | `string` or `list of numbers` | Either a HEX Code or a List of three numbers between 0 and 255 in RGB order. Will be used when the mode is either `grey_out` or `custom`. |
+| Name         | Type                          | Description                                                                                                                                                                                 |
+| ------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| mode         | string                        | Valid Options are: `show`, `hide`, `transparency`, `grey_out`, `custom`                                                                                                                     |
+| transparency | number                        | A number between 0 and 100. 100 means the line doesn't show at all. 0 means the line shows in full opacity. Default is 50. Will be used when the mode is either `transparency` or `custom`. |
+| grey_color   | `string` or `list of numbers` | Either a HEX Code or a List of three numbers between 0 and 255 in RGB order. Will be used when the mode is either `grey_out` or `custom`.                                                   |
 
 ### Minimal Configuration
 
@@ -341,8 +338,8 @@ entities:
     entity: sensor.solar_production
   battery:
     entity:
-       consumption: sensor.battery_consumption
-       production: sensor.battery_production
+      consumption: sensor.battery_consumption
+      production: sensor.battery_production
     state_of_charge: sensor.battery_state_of_charge
     display_state: one_way
     color_circle: true
@@ -387,19 +384,18 @@ entities:
     entity:
       consumption: sensor.battery_consumption
       production: sensor.battery_production
-  individual1:
-    entity: sensor.car_power
-    icon: mdi:car-electric
-    color: '#80b8ff'
-    name: Denim Flash
-    color_icon: false
-  individual2:
-    entity: sensor.motorbike_power
-    name: Qivi
-    color_icon: true
-    display_zero: true
-    color: '#ff8080'
-    icon: mdi:motorbike-electric
+  individual:
+    - entity: sensor.car_power
+      icon: mdi:car-electric
+      color: "#80b8ff"
+      name: Denim Flash
+      color_icon: false
+    - entity: sensor.motorbike_power
+      name: Qivi
+      color_icon: true
+      display_zero: true
+      color: "#ff8080"
+      icon: mdi:motorbike-electric
 w_decimals: 0
 kw_decimals: 2
 min_flow_rate: 0.9
@@ -421,7 +417,6 @@ This should give you something like this:
 
 <img width="764" alt="Bildschirmfoto 2023-04-20 um 10 47 17" src="https://user-images.githubusercontent.com/61006057/233312195-ba23ea99-90eb-4b02-b9b2-643e7704accc.png">
 
-
 ### Flow Formula
 
 This formula is based on the official formula used by the Energy Distribution card.
@@ -442,8 +437,8 @@ In contrast to the old flow formula, this formula calculates the flow rate indep
 To get this new Flow Formula to work, simply set `use_new_flow_rate_model` in the main configuration to true. You may want to play around with the `max_expected_power`, `min_expected_power`, `max_flow_rate` and `min_flow_rate` to get the speeds that you wish
 
 ```js
-if(value > maxIn) return maxOut; // In case power exceeds maximum expected power, use the fastest speed and ignore the rest.
-return ((value  -  minIn) * (maxOut  -  minOut)) / (maxIn  -  minIn) +  minOut;
+if (value > maxIn) return maxOut; // In case power exceeds maximum expected power, use the fastest speed and ignore the rest.
+return ((value - minIn) * (maxOut - minOut)) / (maxIn - minIn) + minOut;
 
 // value = value of the current line to calculate (eg: grid to home)
 //
@@ -464,8 +459,7 @@ return ((value  -  minIn) * (maxOut  -  minOut)) / (maxIn  -  minIn) +  minOut;
 
 The following video aims to show the diffence between the two flow formulas:
 
-
-https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4
+<https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4>
 
 Notice that when the Power changes to only coming from the sun, the old formula accelerates to maintain a constant amount of dots/second.
 Using the new formula is more intuitive, since you can immediately see that the Solar Power is relatively low since the dots are flowing very slowly.
@@ -479,7 +473,7 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 
 - Change Tap Action Behavior to be compatible with Browser Mod
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
-- More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
+- [x] More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)
 - Display Connected/Disconnected status [#111](https://github.com/flixlix/power-flow-card-plus/issues/111)
 - Grid Feed In Circle [#119](https://github.com/flixlix/power-flow-card-plus/issues/119)
@@ -490,6 +484,3 @@ I am still just one person working on this project and obviously have other thin
 #### Credits
 
 - [power-flow-card](https://github.com/ulic75/power-flow-card) by [ulic75](https://github.com/ulic75)
-
-
-
