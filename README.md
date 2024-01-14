@@ -236,8 +236,6 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | production | `string` | HEX value of the color for circles labels and lines of production. |
 | consumption | `string` | HEX value of the color for circles labels and lines of consumption. |
 
-Can use an [online color picker](https://colors-picker.com/hex-color-picker/) as an easy way of picking the color you want
-
 #### Split entities
 
 Can be use with either Grid or Battery configuration. The same `unit_of_measurement` rule as above applies.
