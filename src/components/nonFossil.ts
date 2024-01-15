@@ -7,6 +7,7 @@ import { NewDur, TemplatesObj } from "../type";
 import { styleLine } from "../utils/styleLine";
 import { computeIndividualFlowRate } from "../utils/computeFlowRate";
 import { showLine } from "../utils/showLine";
+import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 
 interface NonFossil {
   newDur: NewDur;
@@ -59,7 +60,7 @@ export const nonFossilElement = (
           ? html`
               <svg width="80" height="30">
                 <path d="M40 -10 v40" class="low-carbon ${styleLine(nonFossil.state.power || 0, config)}" id="low-carbon" />
-                ${nonFossil.has
+                ${checkShouldShowDots(config) && nonFossil.has
                   ? svg`<circle
                 r="1.75"
                 class="low-carbon"

@@ -60,6 +60,7 @@
         "watt_threshold": "Watt to Kilowatt Threshold",
         "display_zero_lines": "Display Zero Lines",
         "clickable_entities": "Clickable Entities",
+        "disable_dots": "Disable Dots",
         "use_new_flow_rate_model": "New Flow Rate Model",
         "use_metadata": "Use Metadata",
         "mode": "Mode",
