@@ -38,14 +38,7 @@ export const individualLeftTopElement = (
       }}
     >
       ${individualSecondarySpan(main.hass, main, templatesObj, individualObj, 0, "left-top")}
-      <ha-icon
-        id="individual-left-top-icon"
-        .icon=${individualObj.icon}
-        style="${individualObj?.secondary?.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-      ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
-          ? "padding-bottom: 2px;"
-          : "padding-bottom: 0px;"}"
-      ></ha-icon>
+      <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon}></ha-icon>
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-top individual-left-top">
             ${individualObj?.showDirection

@@ -38,15 +38,7 @@ export const nonFossilElement = (
           }}
         >
           ${generalSecondarySpan(main.hass, main, templatesObj, nonFossil, "low-carbon")}
-          <ha-icon
-            .icon=${nonFossil.icon}
-            class="low-carbon"
-            style="${nonFossil.secondary.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-            ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
-            (nonFossil.state.power || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
-              ? "padding-bottom: 2px;"
-              : "padding-bottom: 0px;"}"
-          ></ha-icon>
+          <ha-icon .icon=${nonFossil.icon} class="low-carbon"></ha-icon>
           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
           (nonFossil.state.power || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
             ? html`

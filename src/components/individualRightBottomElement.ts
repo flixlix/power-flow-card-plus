@@ -46,14 +46,7 @@ export const individualRightBottomElement = (
       }}
     >
       ${individualSecondarySpan(main.hass, main, templatesObj, individualObj, 3, "right-bottom")}
-      <ha-icon
-        id="individual-right-bottom-icon"
-        .icon=${individualObj.icon}
-        style="${individualObj?.secondary?.has ? "padding-top: 2px;" : "padding-top: 0px;"}
-      ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
-          ? "padding-bottom: 2px;"
-          : "padding-bottom: 0px;"}"
-      ></ha-icon>
+      <ha-icon id="individual-right-bottom-icon" .icon=${individualObj.icon}></ha-icon>
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-bottom individual-right-bottom">
             ${individualObj?.showDirection

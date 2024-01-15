@@ -58,11 +58,6 @@ export const batteryElement = (
         : null}
       <ha-icon
         .icon=${battery.icon}
-        style=${entities.battery?.display_state === "two_way"
-          ? "padding-top: 0px; padding-bottom: 2px;"
-          : entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery === 0 && battery.state.fromBattery === 0
-          ? "padding-top: 2px; padding-bottom: 0px;"
-          : "padding-top: 2px; padding-bottom: 2px;"}
         @click=${(e: { stopPropagation: () => void }) => {
           main.openDetails(e, entities.battery?.state_of_charge!);
         }}
