@@ -4,13 +4,13 @@ import { showLine } from "../../utils/showLine";
 import { html, svg } from "lit";
 import { styleLine } from "../../utils/styleLine";
 import { type Flows } from "./index";
-import { checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
 
 export const flowSolarToGrid = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {
   return grid.hasReturnToGrid && solar.has && showLine(config, solar.state.toGrid || 0)
     ? html`<div
         class="lines ${classMap({
-          high: battery.has,
+          high: battery.has || checkHasBottomIndividual(config, individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
           "multi-individual": checkHasRightIndividual(config, individual),
         })}"

@@ -4,7 +4,7 @@ import { showLine } from "../../utils/showLine";
 import { html, svg } from "lit";
 import { styleLine } from "../../utils/styleLine";
 import { type Flows } from "./index";
-import { checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
 
 type FlowBatteryGridFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
 
@@ -12,7 +12,7 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
   return grid.has && battery.has && showLine(config, Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0))
     ? html`<div
         class="lines ${classMap({
-          high: battery.has,
+          high: battery.has || checkHasBottomIndividual(config, individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
           "multi-individual": checkHasRightIndividual(config, individual),
         })}"
