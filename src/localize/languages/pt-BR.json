@@ -60,6 +60,7 @@
         "watt_threshold": "Limiar de Watts para Quilowatts",
         "display_zero_lines": "Exibir Linhas Zero",
         "clickable_entities": "Entidades Clicáveis",
+        "disable_dots": "Desativar Pontos",
         "use_new_flow_rate_model": "Utilizar Novo Modelo de Velocidade",
         "use_metadata": "Utilizar Metadados",
         "mode": "Modo",

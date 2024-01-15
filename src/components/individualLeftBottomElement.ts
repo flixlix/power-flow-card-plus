@@ -8,6 +8,7 @@ import { styleLine } from "../utils/styleLine";
 import { individualSecondarySpan } from "./spans/individualSecondarySpan";
 import { HomeAssistant } from "custom-card-helpers";
 import { computeIndividualFlowRate } from "../utils/computeFlowRate";
+import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 
 interface IndividualBottom {
   newDur: NewDur;
@@ -30,7 +31,7 @@ export const individualLeftBottomElement = (
       ? html`
           <svg width="80" height="30">
             <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />
-            ${individualObj?.state
+            ${checkShouldShowDots(config) && individualObj?.state
               ? svg`<circle
                                 r="1.75"
                                 class="individual-bottom"

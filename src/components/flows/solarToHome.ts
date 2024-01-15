@@ -5,6 +5,7 @@ import { html, svg } from "lit";
 import { styleLine } from "../../utils/styleLine";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkShouldShowDots } from "../../utils/checkShouldShowDots";
 
 export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {
   return solar.has && showLine(config, solar.state.toHome || 0)
@@ -22,7 +23,7 @@ export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid
             d="M${battery.has ? 55 : 53},0 v${grid.has ? 15 : 17} c0,${battery.has ? "30 10,30 30,30" : "35 10,35 30,35"} h25"
             vector-effect="non-scaling-stroke"
           ></path>
-          ${solar.state.toHome
+          ${checkShouldShowDots(config) && solar.state.toHome
             ? svg`<circle
                         r="1"
                         class="solar"

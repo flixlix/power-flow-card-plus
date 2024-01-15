@@ -60,6 +60,7 @@
         "watt_threshold": "Seuil de watt vers kilowatt",
         "display_zero_lines": "Afficher les lignes zéro",
         "clickable_entities": "Entités cliquables",
+        "disable_dots": "Désactiver les points",
         "use_new_flow_rate_model": "Nouveau modèle de débit",
         "use_metadata": "Utiliser les métadonnées",
         "mode": "Mode",
