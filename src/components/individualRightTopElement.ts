@@ -8,6 +8,7 @@ import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { styleLine } from "../utils/styleLine";
 import { checkHasBottomIndividual } from "../utils/computeIndividualPosition";
+import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 
 interface TopIndividual {
   newDur: NewDur;
@@ -69,7 +70,7 @@ export const individualRightTopElement = (
                 d="M${hasBottomRow ? 45 : 47},0 v15 c0,${hasBottomRow ? "30 -10,30 -30,30" : "35 -10,35 -30,35"} h-20"
                 vector-effect="non-scaling-stroke"
               />
-              ${individualObj.state
+              ${checkShouldShowDots(config) && individualObj.state
                 ? svg`<circle
                     r="1"
                     class="individual-top"

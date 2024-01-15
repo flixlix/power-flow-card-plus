@@ -41,14 +41,13 @@ export const cardConfigStruct = assign(
     full_size: optional(boolean()),
     style_ha_card: optional(any()),
     style_card_content: optional(any()),
+    disable_dots: optional(boolean()),
     entities: object({
       battery: optional(any()),
       grid: optional(any()),
       solar: optional(any()),
       home: optional(any()),
       fossil_fuel_percentage: optional(any()),
-      individual1: optional(any()),
-      individual2: optional(any()),
       individual: optional(any()),
     }),
   })
@@ -183,6 +182,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "clickable_entities",
         label: "Clickable Entities",
+        selector: { boolean: {} },
+      },
+      {
+        name: "disable_dots",
+        label: "Disable Moving Dots",
         selector: { boolean: {} },
       },
       {

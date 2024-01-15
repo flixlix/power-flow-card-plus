@@ -7,6 +7,7 @@ import { showLine } from "../utils/showLine";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { styleLine } from "../utils/styleLine";
+import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 
 interface TopIndividual {
   newDur: NewDur;
@@ -50,7 +51,7 @@ export const individualLeftTopElement = (
       ? html`
           <svg width="80" height="30">
             <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />
-            ${individualObj.state
+            ${checkShouldShowDots(config) && individualObj.state
               ? svg`<circle
           r="1.75"
           class="individual-top"

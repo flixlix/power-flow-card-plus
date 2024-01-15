@@ -4,7 +4,8 @@ import { showLine } from "../../utils/showLine";
 import { html, svg } from "lit";
 import { styleLine } from "../../utils/styleLine";
 import { type Flows } from "./index";
-import { checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkShouldShowDots } from "../../utils/checkShouldShowDots";
 
 type FlowBatteryToHomeFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
 
@@ -12,7 +13,7 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
   return battery.has && showLine(config, battery.state.toHome)
     ? html`<div
         class="lines ${classMap({
-          high: battery.has,
+          high: battery.has || checkHasBottomIndividual(config, individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
           "multi-individual": checkHasRightIndividual(config, individual),
         })}"
@@ -24,7 +25,7 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
             d="M55,100 v-${grid.has ? 15 : 17} c0,-30 10,-30 30,-30 h20"
             vector-effect="non-scaling-stroke"
           ></path>
-          ${battery.state.toHome
+          ${checkShouldShowDots(config) && battery.state.toHome
             ? svg`<circle
             r="1"
             class="battery-home"

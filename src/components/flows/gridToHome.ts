@@ -4,13 +4,14 @@ import { showLine } from "../../utils/showLine";
 import { html, svg } from "lit";
 import { styleLine } from "../../utils/styleLine";
 import { type Flows } from "./index";
-import { checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
+import { checkShouldShowDots } from "../../utils/checkShouldShowDots";
 
 export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {
   return grid.has && showLine(config, grid.state.fromGrid)
     ? html`<div
         class="lines ${classMap({
-          high: battery.has,
+          high: battery.has || checkHasBottomIndividual(config, individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
           "multi-individual": checkHasRightIndividual(config, individual),
         })}"
@@ -22,7 +23,7 @@ export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid,
             d="M0,${battery.has ? 50 : solar.has ? 56 : 53} H100"
             vector-effect="non-scaling-stroke"
           ></path>
-          ${grid.state.toHome
+          ${checkShouldShowDots(config) && grid.state.toHome
             ? svg`<circle
           r="1"
           class="grid"
