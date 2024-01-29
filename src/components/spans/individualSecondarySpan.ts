@@ -6,12 +6,14 @@ import { displayValue } from "../../utils/displayValue";
 import { isNumberValue } from "../../utils/utils";
 import { baseSecondarySpan } from "./baseSecondarySpan";
 import { IndividualObject } from "../../states/raw/individual/getIndividualObject";
+import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 
 export type IndividualKey = `left-top` | `left-bottom` | `right-top` | `right-bottom`;
 
 export const individualSecondarySpan = (
   hass: HomeAssistant,
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   templatesObj: TemplatesObj,
   individual: IndividualObject,
   index: number,
@@ -20,13 +22,14 @@ export const individualSecondarySpan = (
   const templateResult: string | undefined = templatesObj.individual[index];
 
   const value = individual?.secondary?.has
-    ? displayValue(
+    ? displayValue({
         hass,
-        individual?.secondary?.state,
-        individual?.secondary?.unit || undefined,
-        individual?.secondary.unit_white_space,
-        individual?.secondary.decimals || 0
-      )
+        value: individual.secondary.state,
+        unit: individual.secondary?.unit ?? undefined,
+        unitWhiteSpace: individual.secondary.unit_white_space,
+        decimals: individual.secondary.decimals ?? undefined,
+        watt_threshold: config.watt_threshold,
+      })
     : undefined;
 
   const shouldShowSecondary = () => {

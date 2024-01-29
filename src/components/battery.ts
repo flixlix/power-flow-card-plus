@@ -1,10 +1,11 @@
 import { html } from "lit";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { displayValue } from "../utils/displayValue";
 
 export const batteryElement = (
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   {
     battery,
     entities,
@@ -47,13 +48,14 @@ export const batteryElement = (
             }}
             id="battery-state-of-charge-text"
           >
-            ${displayValue(
-              main.hass,
-              battery.state_of_charge.state,
-              battery.state_of_charge.unit,
-              battery.state_of_charge.unit_white_space,
-              battery.state_of_charge.decimals
-            )}
+            ${displayValue({
+              hass: main.hass,
+              value: battery.state_of_charge.state,
+              unit: battery.state_of_charge.unit,
+              unitWhiteSpace: battery.state_of_charge.unit_white_space,
+              decimals: battery.state_of_charge.decimals,
+              watt_threshold: config.watt_threshold,
+            })}
           </span>`
         : null}
       <ha-icon
@@ -87,7 +89,14 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
-            ${displayValue(main.hass, battery.state.toBattery)}</span
+            ${displayValue({
+              hass: main.hass,
+              value: battery.state.toBattery,
+              unit: battery.unit,
+              unitWhiteSpace: battery.unit_white_space,
+              decimals: battery.decimals,
+              watt_threshold: config.watt_threshold,
+            })}</span
           >`
         : ""}
       ${entities.battery?.display_state === "two_way" ||
@@ -110,7 +119,14 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
-            ${displayValue(main.hass, battery.state.fromBattery)}</span
+            ${displayValue({
+              hass: main.hass,
+              value: battery.state.fromBattery,
+              unit: battery.unit,
+              unitWhiteSpace: battery.unit_white_space,
+              decimals: battery.decimals,
+              watt_threshold: config.watt_threshold,
+            })}</span
           >`
         : ""}
     </div>
