@@ -1,6 +1,6 @@
 {
   "name": "power-flow-card-plus",
-  "version": "0.2-alpha",
+  "version": "0.2.0-beta",
   "description": "A power flow card for Home Assistant",
   "keywords": [
     "home-assistant",
