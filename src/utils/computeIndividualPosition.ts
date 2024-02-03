@@ -2,7 +2,7 @@ import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 
 const filterUnusedIndividualObjs = (individualObjs: IndividualObject[]): IndividualObject[] => {
-  const cloneIndividualObjs = structuredClone(individualObjs);
+  const cloneIndividualObjs = JSON.parse(JSON.stringify(individualObjs)) as IndividualObject[];
   const individualObjsWithHas = cloneIndividualObjs.filter((i) => i?.has);
   return individualObjsWithHas;
 };
