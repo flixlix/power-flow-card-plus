@@ -12,6 +12,7 @@ import * as ru from "./languages/ru.json";
 import * as fi from "./languages/fi.json";
 import * as pl from "./languages/pl.json";
 import * as sk from "./languages/sk.json";
+import * as sv from "./languages/sv.json";
 
 const languages: Record<string, unknown> = {
   cs,
@@ -28,6 +29,7 @@ const languages: Record<string, unknown> = {
   fi,
   pl,
   sk,
+  sv,
 };
 
 const defaultLang = "en";
