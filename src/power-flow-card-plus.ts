@@ -23,7 +23,7 @@ import { adjustZeroTolerance } from "./states/tolerance/base";
 import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
 import { getHomeSecondaryState } from "./states/raw/home";
 import { GridObject, HomeSources, NewDur, TemplatesObj } from "./type";
-import { displayValue } from "./utils/displayValue";
+import { displayValue, getDisplayValueOptions } from "./utils/displayValue";
 import { allDynamicStyles } from "./style/all";
 import { nonFossilElement } from "./components/nonFossil";
 import { solarElement } from "./components/solar";
@@ -386,14 +386,15 @@ export class PowerFlowCardPlus extends LitElement {
       circleCircumference *
       ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.toHome ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
 
+    const homeDisplayValueOptions = getDisplayValueOptions(this._config, entities.home);
     const homeUsageToDisplay =
       entities.home?.override_state && entities.home.entity
         ? entities.home?.subtract_individual
-          ? displayValue(this.hass, getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption)
-          : displayValue(this.hass, getEntityStateWatts(this.hass, entities.home!.entity))
+          ? displayValue(this.hass, getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption, homeDisplayValueOptions)
+          : displayValue(this.hass, getEntityStateWatts(this.hass, entities.home!.entity), homeDisplayValueOptions)
         : entities.home?.subtract_individual
-        ? displayValue(this.hass, totalHomeConsumption - totalIndividualConsumption || 0)
-        : displayValue(this.hass, totalHomeConsumption);
+        ? displayValue(this.hass, totalHomeConsumption - totalIndividualConsumption || 0, homeDisplayValueOptions)
+        : displayValue(this.hass, totalHomeConsumption, homeDisplayValueOptions);
 
     const totalLines =
       grid.state.toHome +
@@ -464,7 +465,7 @@ export class PowerFlowCardPlus extends LitElement {
     const getIndividualDisplayState = (field?: IndividualObject) => {
       if (!field) return "";
       if (field?.state === undefined) return "";
-      return displayValue(this.hass, field?.state, field?.unit, field?.unit_white_space, field?.decimals);
+      return displayValue(this.hass, field?.state, getDisplayValueOptions(this._config, field));
     };
 
     const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
@@ -520,7 +521,7 @@ export class PowerFlowCardPlus extends LitElement {
                   templatesObj,
                 })}
                 ${solar.has
-                  ? solarElement(this, {
+                  ? solarElement(this, this._config, {
                       entities,
                       solar,
                       templatesObj,
@@ -550,7 +551,7 @@ export class PowerFlowCardPlus extends LitElement {
             : html``}
           <div class="row">
             ${grid.has
-              ? gridElement(this, {
+              ? gridElement(this, this._config, {
                   entities,
                   grid,
                   templatesObj,
@@ -577,7 +578,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div class="row">
                 <div class="spacer"></div>
 
-                ${battery.has ? batteryElement(this, { battery, entities }) : html`<div class="spacer"></div>`}
+                ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individualFieldLeftBottom
                   ? individualLeftBottomElement(this, this.hass, this._config, {
                       displayState: getIndividualDisplayState(individualFieldLeftBottom),

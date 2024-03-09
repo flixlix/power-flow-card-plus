@@ -23,9 +23,11 @@ export const individualSecondarySpan = (
     ? displayValue(
         hass,
         individual?.secondary?.state,
-        individual?.secondary?.unit || undefined,
-        individual?.secondary.unit_white_space,
-        individual?.secondary.decimals || 0
+        {
+          unit: individual?.secondary?.unit || undefined,
+          unitWhiteSpace: individual?.secondary.unit_white_space,
+          decimals: individual?.secondary.decimals || 0,
+        }
       )
     : undefined;
 

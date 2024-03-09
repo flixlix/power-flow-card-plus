@@ -4,7 +4,7 @@ import { isEntityAvailable } from "../states/utils/existenceEntity";
 import { unavailableOrMisconfiguredError } from "./unavailableError";
 import { getEntityState } from "../states/utils/getEntityState";
 import { getEntityStateWatts } from "../states/utils/getEntityStateWatts";
-import { displayValue } from "./displayValue";
+import { displayValue, getDisplayValueOptions } from "./displayValue";
 
 export const displayNonFossilState = (
   hass: HomeAssistant,
@@ -36,7 +36,7 @@ export const displayNonFossilState = (
         nonFossilFuelWatts = 0;
       }
     }
-    result = displayValue(hass, nonFossilFuelWatts, undefined, unitWhiteSpace);
+    result = displayValue(hass, nonFossilFuelWatts, getDisplayValueOptions(config, config.entities.fossil_fuel_percentage));
   } else {
     let nonFossilFuelPercentage: number = 100 - (getEntityState(hass, entityFossil) ?? 0);
     if (displayZeroTolerance) {
@@ -44,7 +44,11 @@ export const displayNonFossilState = (
         nonFossilFuelPercentage = 0;
       }
     }
-    result = displayValue(hass, nonFossilFuelPercentage, unitOfMeasurement, unitWhiteSpace, 0);
+    result = displayValue(hass, nonFossilFuelPercentage, {
+      unit: unitOfMeasurement,
+      unitWhiteSpace,
+      decimals: 0
+    });
   }
   return result;
 };
