@@ -1,12 +1,13 @@
 import { html } from "lit";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { displayValue } from "../utils/displayValue";
+import { displayValue, getDisplayValueOptions } from "../utils/displayValue";
 import { generalSecondarySpan } from "./spans/generalSecondarySpan";
 import { TemplatesObj } from "../type";
-import { ConfigEntities } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 
 export const gridElement = (
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   { entities, grid, templatesObj }: { entities: ConfigEntities; grid: any; templatesObj: TemplatesObj }
 ) => {
   return html`<div class="circle-container grid">
@@ -57,7 +58,7 @@ export const gridElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-left"}></ha-icon>
-            ${displayValue(main.hass, grid.state.toGrid)}
+            ${displayValue(main.hass, grid.state.toGrid, getDisplayValueOptions(config, entities.grid))}
           </span>`
         : null}
       ${((entities.grid?.display_state === "two_way" ||
@@ -80,7 +81,7 @@ export const gridElement = (
               }
             }}
           >
-            <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${displayValue(main.hass, grid.state.fromGrid)}
+            <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${displayValue(main.hass, grid.state.fromGrid, getDisplayValueOptions(config, entities.grid))}
           </span>`
         : ""}
       ${grid.powerOutage?.isOutage && !grid.powerOutage?.entityGenerator ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>` : ""}

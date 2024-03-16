@@ -12,7 +12,11 @@ export const generalSecondarySpan = (hass: HomeAssistant, main: PowerFlowCardPlu
         className: key,
         entityId: field.secondary.entity,
         icon: field.secondary.icon,
-        value: displayValue(hass, field.secondary.state, field.secondary.unit, field.secondary.unit_white_space, field.secondary.decimals),
+        value: displayValue(hass, field.secondary.state, {
+          unit: field.secondary.unit,
+          unitWhiteSpace: field.secondary.unit_white_space,
+          decimals: field.secondary.decimals
+        }),
         template: templatesObj[`${key}Secondary`],
       })}`
     : ""}`;

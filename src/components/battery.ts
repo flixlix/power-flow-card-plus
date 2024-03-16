@@ -1,10 +1,11 @@
 import { html } from "lit";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities } from "../power-flow-card-plus-config";
-import { displayValue } from "../utils/displayValue";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { displayValue, getDisplayValueOptions } from "../utils/displayValue";
 
 export const batteryElement = (
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   {
     battery,
     entities,
@@ -50,9 +51,11 @@ export const batteryElement = (
             ${displayValue(
               main.hass,
               battery.state_of_charge.state,
-              battery.state_of_charge.unit,
-              battery.state_of_charge.unit_white_space,
-              battery.state_of_charge.decimals
+              {
+                unit: battery.state_of_charge.unit,
+                unitWhiteSpace: battery.state_of_charge.unit_white_space,
+                decimals: battery.state_of_charge.decimals,
+              }
             )}
           </span>`
         : null}
@@ -87,7 +90,7 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
-            ${displayValue(main.hass, battery.state.toBattery)}</span
+            ${displayValue(main.hass, battery.state.toBattery, getDisplayValueOptions(config, entities?.battery))}</span
           >`
         : ""}
       ${entities.battery?.display_state === "two_way" ||
@@ -110,7 +113,7 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
-            ${displayValue(main.hass, battery.state.fromBattery)}</span
+            ${displayValue(main.hass, battery.state.fromBattery, getDisplayValueOptions(config, entities?.battery))}</span
           >`
         : ""}
     </div>
