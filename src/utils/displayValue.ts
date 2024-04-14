@@ -6,7 +6,8 @@ export const displayValue = (
   value: number | string | null,
   unit?: string | undefined,
   unitWhiteSpace?: boolean | undefined,
-  decimals?: number | undefined
+  decimals?: number | undefined,
+  accept_negative?: boolean | undefined
 ): string => {
   if (value === null) return "0";
 
@@ -14,6 +15,9 @@ export const displayValue = (
 
   const valueInNumber = Number(value);
   const isKW = unit === undefined && valueInNumber >= 1000;
-  const v = formatNumber(isKW ? round(valueInNumber / 1000, decimals ?? 2) : round(valueInNumber, decimals ?? 0), hass.locale);
+
+  const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
+
+  const v = formatNumber(transformValue(isKW ? round(valueInNumber / 1000, decimals ?? 2) : round(valueInNumber, decimals ?? 0)), hass.locale);
   return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
 };
