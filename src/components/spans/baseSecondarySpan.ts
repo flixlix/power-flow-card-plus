@@ -1,6 +1,7 @@
 import { html } from "lit";
 import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 import { PowerFlowCardPlus } from "../../power-flow-card-plus";
+import { offlineStr } from "../../type";
 
 type BaseSecondarySpan = {
   main: PowerFlowCardPlus;
@@ -12,6 +13,7 @@ type BaseSecondarySpan = {
 };
 
 export const baseSecondarySpan = ({ main, className, template, value, entityId, icon }: BaseSecondarySpan) => {
+  if (value && offlineStr.includes(value)) return html``;
   if (value || template) {
     return html`<span
       class="secondary-info ${className}"

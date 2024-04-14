@@ -223,47 +223,33 @@ export const allDynamicStyles = (
   if (individual?.some((ind) => ind.has)) {
     const getStylesForIndividual = (field: IndividualDeviceType, index: number) => {
       const colors = ["#d0cc5b", "#964cb5", "#b54c9d", "#5bd0cc"];
-      const getFieldName = (index: number) => {
-        switch (index) {
-          case 0:
-            return "left-top";
-          case 1:
-            return "left-bottom";
-          case 2:
-            return "right-top";
-          case 3:
-            return "right-bottom";
-          default:
-            return "left-top";
-        }
-      };
+      const fieldNames: string[] = ["left-top", "left-bottom", "right-top", "right-bottom"];
 
-      const fieldName = getFieldName(index);
+      const fieldName = fieldNames?.[index] || "left-top";
 
       let individualColor = field?.color;
       if (typeof individualColor === "object") individualColor = convertColorListToHex(individualColor);
       main.style.setProperty(`--individual-${fieldName}-color`, individualColor || colors[index] || "#d0cc5b");
 
-      // Individual 1
-
-      if (individual?.[index] !== undefined) {
-        main.style.setProperty(
-          `--icon-individual-${fieldName}-color`,
-          field?.color_icon !== false ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
-        );
-        main.style.setProperty(
-          `--text-individual-${fieldName}-color`,
-          field?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
-        );
-        main.style.setProperty(
-          `--secondary-text-individual-${fieldName}-color`,
-          field?.secondary_info?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
-        );
-      }
+      main.style.setProperty(
+        `--icon-individual-${fieldName}-color`,
+        field?.color_icon !== false ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
+      );
+      main.style.setProperty(
+        `--text-individual-${fieldName}-color`,
+        field?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
+      );
+      main.style.setProperty(
+        `--secondary-text-individual-${fieldName}-color`,
+        field?.secondary_info?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
+      );
     };
 
+    let individualIndex = 0;
     individual.forEach((_, index) => {
-      getStylesForIndividual(entities.individual[index], index);
+      if (!individual[index].has) return;
+      getStylesForIndividual(entities.individual[index], individualIndex);
+      individualIndex++;
     });
   }
 };

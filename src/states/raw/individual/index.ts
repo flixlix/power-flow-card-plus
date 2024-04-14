@@ -20,7 +20,7 @@ export const getIndividualSecondaryState = (hass: HomeAssistant, field: Individu
   const entityObj = getEntityStateObj(hass, field?.secondary_info?.entity);
   const secondaryState = entityObj?.state;
 
-  if (isNumberValue(secondaryState)) return Math.abs(Number(secondaryState));
+  if (isNumberValue(secondaryState)) return Number(secondaryState);
 
   return secondaryState;
 };

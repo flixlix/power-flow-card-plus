@@ -27,4 +27,4 @@ _site/
 
 storybook-static
 custom-elements.json
-pnpm-lock.yaml
+# pnpm-lock.yaml
