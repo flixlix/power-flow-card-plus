@@ -36,15 +36,13 @@ export const displayNonFossilState = (
         nonFossilFuelWatts = 0;
       }
     }
-    result = displayValue(hass, nonFossilFuelWatts, undefined, unitWhiteSpace);
-  } else {
-    let nonFossilFuelPercentage: number = 100 - (getEntityState(hass, entityFossil) ?? 0);
-    if (displayZeroTolerance) {
-      if (nonFossilFuelPercentage < displayZeroTolerance) {
-        nonFossilFuelPercentage = 0;
-      }
-    }
-    result = displayValue(hass, nonFossilFuelPercentage, unitOfMeasurement, unitWhiteSpace, 0);
+    return displayValue(hass, nonFossilFuelWatts, undefined, unitWhiteSpace, 0, undefined, config.watt_threshold);
   }
-  return result;
+  let nonFossilFuelPercentage: number = 100 - (getEntityState(hass, entityFossil) ?? 0);
+  if (displayZeroTolerance) {
+    if (nonFossilFuelPercentage < displayZeroTolerance) {
+      nonFossilFuelPercentage = 0;
+    }
+  }
+  return displayValue(hass, nonFossilFuelPercentage, undefined, unitWhiteSpace, 0, undefined, config.watt_threshold);
 };

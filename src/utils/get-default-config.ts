@@ -16,7 +16,7 @@ export const defaultValues = {
     transparency: 50,
     grey_color: [189, 189, 189],
   },
-}
+};
 
 export function getDefaultConfig(hass: HomeAssistant): object {
   function checkStrings(entiyId: string, testStrings: string[]): boolean {

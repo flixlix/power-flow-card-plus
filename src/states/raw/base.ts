@@ -14,7 +14,7 @@ export const getSecondaryState = (hass: HomeAssistant, config: PowerFlowCardPlus
   const entityObj = hass.states[entity];
   const secondaryState = entityObj.state;
 
-  if (isNumberValue(secondaryState)) return Math.abs(Number(secondaryState));
+  if (isNumberValue(secondaryState)) return Number(secondaryState);
 
   return secondaryState;
 };

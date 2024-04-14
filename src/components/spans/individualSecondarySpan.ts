@@ -6,12 +6,14 @@ import { displayValue } from "../../utils/displayValue";
 import { isNumberValue } from "../../utils/utils";
 import { baseSecondarySpan } from "./baseSecondarySpan";
 import { IndividualObject } from "../../states/raw/individual/getIndividualObject";
+import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 
 export type IndividualKey = `left-top` | `left-bottom` | `right-top` | `right-bottom`;
 
 export const individualSecondarySpan = (
   hass: HomeAssistant,
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   templatesObj: TemplatesObj,
   individual: IndividualObject,
   index: number,
@@ -25,7 +27,9 @@ export const individualSecondarySpan = (
         individual?.secondary?.state,
         individual?.secondary?.unit || undefined,
         individual?.secondary.unit_white_space,
-        individual?.secondary.decimals || 0
+        individual?.secondary.decimals || 0,
+        individual?.secondary.accept_negative || false,
+        config.watt_threshold
       )
     : undefined;
 
@@ -36,7 +40,10 @@ export const individualSecondarySpan = (
     if (individual?.secondary?.displayZero === true) return true;
 
     const toleranceSet = individual?.secondary?.displayZeroTolerance ?? 0;
-    return Number(individual.secondary.state) >= toleranceSet;
+    return (
+      Number(individual.secondary.state) >= toleranceSet ||
+      (individual.secondary.accept_negative && typeof Number(+individual.secondary.state) === "number")
+    );
   };
 
   return html` ${shouldShowSecondary()

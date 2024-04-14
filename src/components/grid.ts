@@ -3,10 +3,11 @@ import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { displayValue } from "../utils/displayValue";
 import { generalSecondarySpan } from "./spans/generalSecondarySpan";
 import { TemplatesObj } from "../type";
-import { ConfigEntities } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 
 export const gridElement = (
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   { entities, grid, templatesObj }: { entities: ConfigEntities; grid: any; templatesObj: TemplatesObj }
 ) => {
   return html`<div class="circle-container grid">
@@ -35,7 +36,7 @@ export const gridElement = (
         }
       }}
     >
-      ${generalSecondarySpan(main.hass, main, templatesObj, grid, "grid")}
+      ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
       <ha-icon .icon=${grid.icon}></ha-icon>
       ${(entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
@@ -57,7 +58,8 @@ export const gridElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-left"}></ha-icon>
-            ${displayValue(main.hass, grid.state.toGrid)}
+
+            ${displayValue(main.hass, grid.state.toGrid, grid.unit, grid.unit_white_space, grid.decimals, undefined, config.watt_threshold)}
           </span>`
         : null}
       ${((entities.grid?.display_state === "two_way" ||
@@ -80,7 +82,8 @@ export const gridElement = (
               }
             }}
           >
-            <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>${displayValue(main.hass, grid.state.fromGrid)}
+            <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>
+            ${displayValue(main.hass, grid.state.fromGrid, grid.unit, grid.unit_white_space, grid.decimals, undefined, config.watt_threshold)}
           </span>`
         : ""}
       ${grid.powerOutage?.isOutage && !grid.powerOutage?.entityGenerator ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>` : ""}
