@@ -8,9 +8,6 @@
 
 ![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 
-
-
-
 ## Additional Features / Enhancements
 
 - UI Editor!!! 🥳
@@ -143,7 +140,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info         | `object`                                    | `undefined`                                                                                                  | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                                                                                                  |
 | display_zero_tolerance | `number`                                    | `0`                                                                                                          | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid.                                                                                                                                                                         |
 | power_outage           | `object`                                    | `undefined`                                                                                                  | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.                                                                                                                                                                                                                                                                                             |
-| color_value            | `boolean`                                   | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |
+| color_value            | `boolean`                                   | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |                                                                                                                                                                                                                                                                                                                                                                                               |
 | invert_state           | `boolean`                                   | `false`                                                                                                      | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
 
 #### Solar Configuration
@@ -289,7 +286,7 @@ This object allows you to control the behavior of the flow lines that are inacti
 The following configurations will allow you to achieve your results with the least amount of lines of code / complexity.
 In these examples I decided to use the Split entities option, but feel free to use the combined entity option. [More Info](#split-entities)
 
-##### Only Grid
+#### Only Grid
 
 ```yaml
 type: custom:power-flow-card-plus
@@ -416,11 +413,15 @@ This should give you something like this:
 ![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 ![recording_multi_indiv](https://github.com/flixlix/power-flow-card-plus/assets/61006057/337b921c-306c-4447-9c6f-1b4b72579731)
 ![demo](https://user-images.githubusercontent.com/61006057/232316110-eff64095-e147-4462-abfc-961c88d5ada8.gif)
-<img width="506" alt="Bildschirmfoto 2023-04-20 um 00 23 56" src="https://user-images.githubusercontent.com/61006057/233212881-89af5af0-4b25-4a7c-9da1-008801129130.png">
+![demo_grid_solar_bat](https://user-images.githubusercontent.com/61006057/233212881-89af5af0-4b25-4a7c-9da1-008801129130.png)
 
-### UI Editor (available in version 0.1beta)
+### UI Editor (available in version 0.2)
 
-<img width="764" alt="Bildschirmfoto 2023-04-20 um 10 47 17" src="https://user-images.githubusercontent.com/61006057/233312195-ba23ea99-90eb-4b02-b9b2-643e7704accc.png">
+> [!TIP]
+> I've made a lot of improvements in version 0.2 for the UI-Editor. Now each field has its own subpage, meaning there is now much less scrolling.
+> The biggest change in the editor is the fact that you can now add up to 4 individual devices, all through the UI! 🥳
+
+![ui-editor](https://github.com/flixlix/power-flow-card-plus/assets/61006057/a5d0cbb4-f430-4ba0-9c6f-8c93689206d7)
 
 ### Flow Formula
 
