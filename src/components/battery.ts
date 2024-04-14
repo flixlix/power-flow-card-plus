@@ -1,10 +1,11 @@
 import { html } from "lit";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities } from "../power-flow-card-plus-config";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { displayValue } from "../utils/displayValue";
 
 export const batteryElement = (
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   {
     battery,
     entities,
@@ -52,7 +53,9 @@ export const batteryElement = (
               battery.state_of_charge.state,
               battery.state_of_charge.unit,
               battery.state_of_charge.unit_white_space,
-              battery.state_of_charge.decimals
+              battery.state_of_charge.decimals,
+              undefined,
+              config.watt_threshold
             )}
           </span>`
         : null}
@@ -87,7 +90,15 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
-            ${displayValue(main.hass, battery.state.toBattery)}</span
+            ${displayValue(
+              main.hass,
+              battery.state.toBattery,
+              battery.unit,
+              battery.unit_white_space,
+              battery.decimals,
+              undefined,
+              config.watt_threshold
+            )}</span
           >`
         : ""}
       ${entities.battery?.display_state === "two_way" ||
@@ -110,7 +121,15 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
-            ${displayValue(main.hass, battery.state.fromBattery)}</span
+            ${displayValue(
+              main.hass,
+              battery.state.fromBattery,
+              battery.unit,
+              battery.unit_white_space,
+              battery.decimals,
+              undefined,
+              config.watt_threshold
+            )}</span
           >`
         : ""}
     </div>

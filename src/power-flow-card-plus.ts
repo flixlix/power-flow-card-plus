@@ -393,11 +393,43 @@ export class PowerFlowCardPlus extends LitElement {
     const homeUsageToDisplay =
       entities.home?.override_state && entities.home.entity
         ? entities.home?.subtract_individual
-          ? displayValue(this.hass, getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption)
-          : displayValue(this.hass, getEntityStateWatts(this.hass, entities.home!.entity))
+          ? displayValue(
+              this.hass,
+              getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption,
+              entities.home?.unit_of_measurement,
+              entities.home?.unit_white_space,
+              undefined,
+              undefined,
+              this._config.watt_threshold
+            )
+          : displayValue(
+              this.hass,
+              getEntityStateWatts(this.hass, entities.home.entity),
+              entities.home?.unit_of_measurement,
+              entities.home?.unit_white_space,
+              undefined,
+              undefined,
+              this._config.watt_threshold
+            )
         : entities.home?.subtract_individual
-        ? displayValue(this.hass, totalHomeConsumption - totalIndividualConsumption || 0)
-        : displayValue(this.hass, totalHomeConsumption);
+        ? displayValue(
+            this.hass,
+            totalHomeConsumption - totalIndividualConsumption || 0,
+            entities.home?.unit_of_measurement,
+            entities.home?.unit_white_space,
+            undefined,
+            undefined,
+            this._config.watt_threshold
+          )
+        : displayValue(
+            this.hass,
+            totalHomeConsumption,
+            entities.home?.unit_of_measurement,
+            entities.home?.unit_white_space,
+            undefined,
+            undefined,
+            this._config.watt_threshold
+          );
 
     const totalLines =
       grid.state.toHome +
@@ -468,7 +500,8 @@ export class PowerFlowCardPlus extends LitElement {
     const getIndividualDisplayState = (field?: IndividualObject) => {
       if (!field) return "";
       if (field?.state === undefined) return "";
-      return displayValue(this.hass, field?.state, field?.unit, field?.unit_white_space, field?.decimals);
+      // return displayValue(this.hass, field?.state, field?.unit, field?.unit_white_space, field?.decimals);
+      return displayValue(this.hass, field?.state, field?.unit, field?.unit_white_space, field?.decimals, undefined, this._config.watt_threshold);
     };
 
     const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
@@ -524,7 +557,7 @@ export class PowerFlowCardPlus extends LitElement {
                   templatesObj,
                 })}
                 ${solar.has
-                  ? solarElement(this, {
+                  ? solarElement(this, this._config, {
                       entities,
                       solar,
                       templatesObj,
@@ -554,7 +587,7 @@ export class PowerFlowCardPlus extends LitElement {
             : html``}
           <div class="row">
             ${grid.has
-              ? gridElement(this, {
+              ? gridElement(this, this._config, {
                   entities,
                   grid,
                   templatesObj,
@@ -581,7 +614,7 @@ export class PowerFlowCardPlus extends LitElement {
             ? html`<div class="row">
                 <div class="spacer"></div>
 
-                ${battery.has ? batteryElement(this, { battery, entities }) : html`<div class="spacer"></div>`}
+                ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individualFieldLeftBottom
                   ? individualLeftBottomElement(this, this.hass, this._config, {
                       displayState: getIndividualDisplayState(individualFieldLeftBottom),

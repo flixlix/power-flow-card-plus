@@ -4,10 +4,12 @@ import { HomeAssistant } from "custom-card-helpers";
 import { displayValue } from "../../utils/displayValue";
 import { PowerFlowCardPlus } from "../../power-flow-card-plus";
 import { TemplatesObj } from "../../type";
+import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 
 export const generalSecondarySpan = (
   hass: HomeAssistant,
   main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
   templatesObj: TemplatesObj,
   field: {
     secondary: {
@@ -36,7 +38,8 @@ export const generalSecondarySpan = (
           field.secondary.unit,
           field.secondary.unit_white_space,
           field.secondary.decimals,
-          field.secondary.accept_negative
+          field.secondary.accept_negative,
+          config.watt_threshold
         ),
         template: templatesObj[`${key}Secondary`],
       })}`

@@ -50,7 +50,7 @@ export const homeElement = (
       }
     }}
   >
-    ${generalSecondarySpan(main.hass, main, templatesObj, home, "home")}
+    ${generalSecondarySpan(main.hass, main, config, templatesObj, home, "home")}
     <ha-icon .icon=${home.icon}></ha-icon>
     ${homeUsageToDisplay}
     <svg class="home-circle-sections">
