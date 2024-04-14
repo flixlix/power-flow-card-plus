@@ -14,6 +14,7 @@ export const batteryElement = (
     entities: ConfigEntities;
   }
 ) => {
+  console.log("%csrc/components/battery.ts:17 battery", "color: white; background-color: #007acc;", battery, entities);
   return html`<div class="circle-container battery">
     <div
       class="circle"
@@ -51,9 +52,9 @@ export const batteryElement = (
             ${displayValue(
               main.hass,
               battery.state_of_charge.state,
-              battery.state_of_charge.unit,
-              battery.state_of_charge.unit_white_space,
-              battery.state_of_charge.decimals,
+              entities?.battery?.state_of_charge_unit ?? battery.unit ?? "%",
+              entities?.battery?.state_of_charge_unit_white_space,
+              entities?.battery?.state_of_charge_decimals,
               undefined,
               config.watt_threshold
             )}
