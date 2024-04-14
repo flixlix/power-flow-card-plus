@@ -5,7 +5,7 @@ export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide"
 
 export type IndividualModeConfig = {
   mode: "sort_power";
-}
+};
 interface mainConfigOptions {
   dashboard_link?: string;
   dashboard_link_label?: string;
