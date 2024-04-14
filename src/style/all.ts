@@ -225,9 +225,6 @@ export const allDynamicStyles = (
       const colors = ["#d0cc5b", "#964cb5", "#b54c9d", "#5bd0cc"];
       const fieldNames: string[] = ["left-top", "left-bottom", "right-top", "right-bottom"];
 
-      if (!fieldNames?.[index]) {
-        console.log("\x1b[41m%s\x1b[0m", "src/style/all.ts:230 field, index", field, index);
-      }
       const fieldName = fieldNames?.[index] || "left-top";
 
       let individualColor = field?.color;
