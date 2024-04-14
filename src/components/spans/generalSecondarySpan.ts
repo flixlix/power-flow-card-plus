@@ -38,7 +38,8 @@ export const generalSecondarySpan = (
           field.secondary.unit,
           field.secondary.unit_white_space,
           field.secondary.decimals,
-          field.secondary.accept_negative
+          field.secondary.accept_negative,
+          config.watt_threshold
         ),
         template: templatesObj[`${key}Secondary`],
       })}`

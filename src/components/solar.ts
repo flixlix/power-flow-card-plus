@@ -35,14 +35,15 @@ export const solarElement = (
       <ha-icon id="solar-icon" .icon=${solar.icon}></ha-icon>
       ${entities.solar?.display_zero_state !== false || (solar.state.total || 0) > 0
         ? html` <span class="solar">
-            ${displayValue({
-              hass: main.hass,
-              value: solar.state.total as number,
-              unit: solar.state.unit,
-              unitWhiteSpace: solar.state.unit_white_space,
-              decimals: solar.state.decimals,
-              watt_threshold: config.watt_threshold,
-            })}
+            ${displayValue(
+              main.hass,
+              solar.state.total as number,
+              solar.state.unit,
+              solar.state.unit_white_space,
+              solar.state.decimals,
+              undefined,
+              config.watt_threshold
+            )}
           </span>`
         : ""}
     </div>

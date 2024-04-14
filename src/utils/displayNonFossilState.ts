@@ -36,14 +36,7 @@ export const displayNonFossilState = (
         nonFossilFuelWatts = 0;
       }
     }
-    return displayValue({
-      hass,
-      value: nonFossilFuelWatts,
-      unit: undefined,
-      unitWhiteSpace,
-      decimals: 0,
-      watt_threshold: config.watt_threshold,
-    });
+    return displayValue(hass, nonFossilFuelWatts, undefined, unitWhiteSpace, 0, undefined, config.watt_threshold);
   }
   let nonFossilFuelPercentage: number = 100 - (getEntityState(hass, entityFossil) ?? 0);
   if (displayZeroTolerance) {
@@ -51,12 +44,5 @@ export const displayNonFossilState = (
       nonFossilFuelPercentage = 0;
     }
   }
-  return displayValue({
-    hass,
-    value: nonFossilFuelPercentage,
-    unit: undefined,
-    unitWhiteSpace,
-    decimals: 0,
-    watt_threshold: config.watt_threshold,
-  });
+  return displayValue(hass, nonFossilFuelPercentage, undefined, unitWhiteSpace, 0, undefined, config.watt_threshold);
 };

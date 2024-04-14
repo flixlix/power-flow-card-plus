@@ -7,7 +7,8 @@ export const displayValue = (
   unit?: string | undefined,
   unitWhiteSpace?: boolean | undefined,
   decimals?: number | undefined,
-  accept_negative?: boolean | undefined
+  accept_negative?: boolean | undefined,
+  watt_threshold: number | undefined = 1000
 ): string => {
   if (value === null) return "0";
 
@@ -15,7 +16,7 @@ export const displayValue = (
 
   const valueInNumber = Number(value);
 
-  const isKW = unit === undefined && valueInNumber >= 1000;
+  const isKW = unit === undefined && valueInNumber >= watt_threshold;
 
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
 

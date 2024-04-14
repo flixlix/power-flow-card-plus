@@ -28,7 +28,8 @@ export const individualSecondarySpan = (
         individual?.secondary?.unit || undefined,
         individual?.secondary.unit_white_space,
         individual?.secondary.decimals || 0,
-        individual?.secondary.accept_negative || false
+        individual?.secondary.accept_negative || false,
+        config.watt_threshold
       )
     : undefined;
 

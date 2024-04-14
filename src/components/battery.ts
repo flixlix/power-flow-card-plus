@@ -48,14 +48,15 @@ export const batteryElement = (
             }}
             id="battery-state-of-charge-text"
           >
-            ${displayValue({
-              hass: main.hass,
-              value: battery.state_of_charge.state,
-              unit: battery.state_of_charge.unit,
-              unitWhiteSpace: battery.state_of_charge.unit_white_space,
-              decimals: battery.state_of_charge.decimals,
-              watt_threshold: config.watt_threshold,
-            })}
+            ${displayValue(
+              main.hass,
+              battery.state_of_charge.state,
+              battery.state_of_charge.unit,
+              battery.state_of_charge.unit_white_space,
+              battery.state_of_charge.decimals,
+              undefined,
+              config.watt_threshold
+            )}
           </span>`
         : null}
       <ha-icon
@@ -89,14 +90,15 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
-            ${displayValue({
-              hass: main.hass,
-              value: battery.state.toBattery,
-              unit: battery.unit,
-              unitWhiteSpace: battery.unit_white_space,
-              decimals: battery.decimals,
-              watt_threshold: config.watt_threshold,
-            })}</span
+            ${displayValue(
+              main.hass,
+              battery.state.toBattery,
+              battery.unit,
+              battery.unit_white_space,
+              battery.decimals,
+              undefined,
+              config.watt_threshold
+            )}</span
           >`
         : ""}
       ${entities.battery?.display_state === "two_way" ||
@@ -119,14 +121,15 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
-            ${displayValue({
-              hass: main.hass,
-              value: battery.state.fromBattery,
-              unit: battery.unit,
-              unitWhiteSpace: battery.unit_white_space,
-              decimals: battery.decimals,
-              watt_threshold: config.watt_threshold,
-            })}</span
+            ${displayValue(
+              main.hass,
+              battery.state.fromBattery,
+              battery.unit,
+              battery.unit_white_space,
+              battery.decimals,
+              undefined,
+              config.watt_threshold
+            )}</span
           >`
         : ""}
     </div>
