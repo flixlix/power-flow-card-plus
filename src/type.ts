@@ -135,6 +135,5 @@ export type GridObject = {
     };
   };
 };
-
 export type OfflineStr = "unavailable" | "unknown";
 export const offlineStr = ["unavailable", "unknown"];
