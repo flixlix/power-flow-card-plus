@@ -6,7 +6,14 @@ import { PowerFlowCardPlus } from "../../power-flow-card-plus";
 import { TemplatesObj } from "../../type";
 import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 
-export const generalSecondarySpan = (hass: HomeAssistant, main: PowerFlowCardPlus, config: PowerFlowCardPlusConfig, templatesObj: TemplatesObj, field, key: string) => {
+export const generalSecondarySpan = (
+  hass: HomeAssistant,
+  main: PowerFlowCardPlus,
+  config: PowerFlowCardPlusConfig,
+  templatesObj: TemplatesObj,
+  field,
+  key: string
+) => {
   return html` ${field?.secondary?.has || field?.secondary?.template
     ? html` ${baseSecondarySpan({
         main,
