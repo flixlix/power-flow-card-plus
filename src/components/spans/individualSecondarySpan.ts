@@ -25,7 +25,8 @@ export const individualSecondarySpan = (
         individual?.secondary?.state,
         individual?.secondary?.unit || undefined,
         individual?.secondary.unit_white_space,
-        individual?.secondary.decimals || 0
+        individual?.secondary.decimals || 0,
+        individual?.secondary.accept_negative || false
       )
     : undefined;
 
@@ -36,7 +37,10 @@ export const individualSecondarySpan = (
     if (individual?.secondary?.displayZero === true) return true;
 
     const toleranceSet = individual?.secondary?.displayZeroTolerance ?? 0;
-    return Number(individual.secondary.state) >= toleranceSet;
+    return (
+      Number(individual.secondary.state) >= toleranceSet ||
+      (individual.secondary.accept_negative && typeof Number(+individual.secondary.state) === "number")
+    );
   };
 
   return html` ${shouldShowSecondary()
