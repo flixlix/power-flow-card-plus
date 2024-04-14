@@ -84,7 +84,8 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 ## Usage
 
-> ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
+> [!WARNING]  
+> This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
 ### Options
 
@@ -486,7 +487,3 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 - Improve performance [#144](https://github.com/flixlix/power-flow-card-plus/issues/144)
 
 I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
-
-#### Credits
-
-- [power-flow-card](https://github.com/ulic75/power-flow-card) by [ulic75](https://github.com/ulic75)
