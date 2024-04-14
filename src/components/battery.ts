@@ -14,7 +14,6 @@ export const batteryElement = (
     entities: ConfigEntities;
   }
 ) => {
-  console.log("%csrc/components/battery.ts:17 battery", "color: white; background-color: #007acc;", battery, entities);
   return html`<div class="circle-container battery">
     <div
       class="circle"
