@@ -1,8 +1,5 @@
 /* eslint-disable no-redeclare */
-export const round = (value: number, decimalPlaces: number): number =>
-  Number(
-    `${Math.round(Number(`${value}e${decimalPlaces}`))}e-${decimalPlaces}`
-  );
+export const round = (value: number, decimalPlaces: number): number => Number(`${Math.round(Number(`${value}e${decimalPlaces}`))}e-${decimalPlaces}`);
 
 /**
  * @license
@@ -25,16 +22,11 @@ export function coerceNumber(value: any, fallbackValue = 0) {
   return isNumberValue(value) ? Number(value) : fallbackValue;
 }
 
-export function coerceStringArray(
-  value: any,
-  separator: string | RegExp = /\s+/
-): string[] {
+export function coerceStringArray(value: any, separator: string | RegExp = /\s+/): string[] {
   const result: string[] = [];
 
   if (value != null) {
-    const sourceValues = Array.isArray(value)
-      ? value
-      : `${value}`.split(separator);
+    const sourceValues = Array.isArray(value) ? value : `${value}`.split(separator);
     for (const sourceValue of sourceValues) {
       const trimmedString = `${sourceValue}`.trim();
       if (trimmedString) {

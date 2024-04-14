@@ -1,8 +1,5 @@
 import Sortable from "sortablejs";
-import SortableCore, {
-  OnSpill,
-  AutoScroll,
-} from "sortablejs/modular/sortable.core.esm";
+import SortableCore, { OnSpill, AutoScroll } from "sortablejs/modular/sortable.core.esm";
 
 SortableCore.mount(OnSpill, new AutoScroll());
 
