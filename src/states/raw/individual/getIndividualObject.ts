@@ -28,6 +28,7 @@ const fallbackIndividualObject: IndividualObject = {
     unit: null,
     unit_white_space: false,
     displayZero: false,
+    accept_negative: false,
     displayZeroTolerance: 0,
     decimals: null,
   },
@@ -57,6 +58,7 @@ export type IndividualObject = {
     unit: string | null;
     unit_white_space: boolean;
     displayZero: boolean;
+    accept_negative: boolean;
     displayZeroTolerance: number;
     decimals: number | null;
   };
@@ -94,6 +96,7 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
       template: field?.secondary_info?.template || null,
       has: field?.secondary_info?.entity !== undefined,
       state: getIndividualSecondaryState(hass, field) || null,
+      accept_negative: field?.secondary_info?.accept_negative || false,
       icon: field?.secondary_info?.icon || null,
       unit: field?.secondary_info?.unit_of_measurement || null,
       unit_white_space: field?.secondary_info?.unit_white_space || false,

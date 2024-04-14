@@ -22,14 +22,14 @@ export const individualSecondarySpan = (
   const templateResult: string | undefined = templatesObj.individual[index];
 
   const value = individual?.secondary?.has
-    ? displayValue({
+    ? displayValue(
         hass,
-        value: individual.secondary.state,
-        unit: individual.secondary?.unit ?? undefined,
-        unitWhiteSpace: individual.secondary.unit_white_space,
-        decimals: individual.secondary.decimals ?? undefined,
-        watt_threshold: config.watt_threshold,
-      })
+        individual?.secondary?.state,
+        individual?.secondary?.unit || undefined,
+        individual?.secondary.unit_white_space,
+        individual?.secondary.decimals || 0,
+        individual?.secondary.accept_negative || false
+      )
     : undefined;
 
   const shouldShowSecondary = () => {
@@ -39,7 +39,10 @@ export const individualSecondarySpan = (
     if (individual?.secondary?.displayZero === true) return true;
 
     const toleranceSet = individual?.secondary?.displayZeroTolerance ?? 0;
-    return Number(individual.secondary.state) >= toleranceSet;
+    return (
+      Number(individual.secondary.state) >= toleranceSet ||
+      (individual.secondary.accept_negative && typeof Number(+individual.secondary.state) === "number")
+    );
   };
 
   return html` ${shouldShowSecondary()

@@ -11,7 +11,19 @@ export const generalSecondarySpan = (
   main: PowerFlowCardPlus,
   config: PowerFlowCardPlusConfig,
   templatesObj: TemplatesObj,
-  field,
+  field: {
+    secondary: {
+      has: any;
+      template: any;
+      entity: any;
+      icon: any;
+      state: string | number | null;
+      unit: string | undefined;
+      unit_white_space: boolean | undefined;
+      decimals: number | undefined;
+      accept_negative: boolean | undefined;
+    };
+  },
   key: string
 ) => {
   return html` ${field?.secondary?.has || field?.secondary?.template
@@ -20,14 +32,14 @@ export const generalSecondarySpan = (
         className: key,
         entityId: field.secondary.entity,
         icon: field.secondary.icon,
-        value: displayValue({
+        value: displayValue(
           hass,
-          value: field.secondary.state,
-          unit: field.secondary.unit,
-          unitWhiteSpace: field.secondary.unit_white_space,
-          decimals: field.secondary.decimals,
-          watt_threshold: config.watt_threshold,
-        }),
+          field.secondary.state,
+          field.secondary.unit,
+          field.secondary.unit_white_space,
+          field.secondary.decimals,
+          field.secondary.accept_negative
+        ),
         template: templatesObj[`${key}Secondary`],
       })}`
     : ""}`;

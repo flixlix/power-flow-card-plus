@@ -28,7 +28,8 @@
     "watch": "rollup -c --watch",
     "typecheck": "tsc --noEmit",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache"
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "precommit": "pnpm typecheck && pnpm format:write"
   },
   "dependencies": {
     "@material/mwc-ripple": "^0.19.1",
