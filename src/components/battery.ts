@@ -36,7 +36,7 @@ export const batteryElement = (
         }
       }}
     >
-      ${battery.state_of_charge.state !== null
+      ${battery.state_of_charge.state !== null && entities.battery?.show_state_of_charge !== false
         ? html` <span
             @click=${(e: { stopPropagation: () => void }) => {
               main.openDetails(e, entities.battery?.state_of_charge!);

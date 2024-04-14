@@ -52,6 +52,11 @@ const stateOfChargeSchema = [
         selector: { number: { mode: "box", min: 0, max: 4, step: 1 } },
       },
       {
+        name:"show_state_of_charge",
+        label: "Show State of Charge",
+        selector: { boolean: {} },
+      },
+      {
         name: "color_state_of_charge_value",
         label: "Color of Value",
         selector: {

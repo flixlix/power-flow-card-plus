@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Eenheid",
         "state_of_charge_decimals": "Decimalen",
         "state_of_charge_icon": "Pictogram",
+        "show_state_of_charge": "Laadstatus Weergeven",
         "state_type": "Type Toestand",
         "subtract_individual": "Individueel Aftrekken",
         "override_state": "Toestand Overschrijven",

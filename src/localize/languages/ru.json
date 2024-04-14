@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Единица измерения",
         "state_of_charge_decimals": "Десятичные",
         "state_of_charge_icon": "Иконка",
+        "show_state_of_charge": "Показать уровень заряда",
         "state_type": "Тип состояния",
         "subtract_individual": "Вычесть индивидуально",
         "override_state": "Переопределить состояние",
