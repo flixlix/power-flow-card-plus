@@ -49,7 +49,7 @@ export const batteryElement = (
             id="battery-state-of-charge-text"
           >
             ${displayValue(main.hass, config, battery.state_of_charge.state, {
-              unit: battery.state_of_charge.unit,
+              unit: battery.state_of_charge.unit ?? "%",
               unitWhiteSpace: battery.state_of_charge.unit_white_space,
               decimals: battery.state_of_charge.decimals,
               accept_negative: undefined,
