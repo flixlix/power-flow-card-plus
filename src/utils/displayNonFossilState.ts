@@ -27,7 +27,7 @@ export const displayNonFossilState = (
   }
 
   /* based on choice, change output from watts to % */
-  let result: string | number;
+
   const displayZeroTolerance = config.entities.fossil_fuel_percentage?.display_zero_tolerance ?? 0;
   if (unitOfMeasurement === "W") {
     let nonFossilFuelWatts = gridConsumption * nonFossilFuelDecimal;
@@ -36,7 +36,10 @@ export const displayNonFossilState = (
         nonFossilFuelWatts = 0;
       }
     }
-    return displayValue(hass, nonFossilFuelWatts, undefined, unitWhiteSpace, 0, undefined, config.watt_threshold);
+    return displayValue(hass, config, nonFossilFuelWatts, {
+      unitWhiteSpace,
+      watt_threshold: config.watt_threshold,
+    });
   }
   let nonFossilFuelPercentage: number = 100 - (getEntityState(hass, entityFossil) ?? 0);
   if (displayZeroTolerance) {
@@ -44,5 +47,10 @@ export const displayNonFossilState = (
       nonFossilFuelPercentage = 0;
     }
   }
-  return displayValue(hass, nonFossilFuelPercentage, undefined, unitWhiteSpace, 0, undefined, config.watt_threshold);
+  return displayValue(hass, config, nonFossilFuelPercentage, {
+    unit: "%",
+    unitWhiteSpace,
+    decimals: 0,
+    watt_threshold: config.watt_threshold,
+  });
 };

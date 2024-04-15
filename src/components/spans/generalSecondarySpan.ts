@@ -32,15 +32,13 @@ export const generalSecondarySpan = (
         className: key,
         entityId: field.secondary.entity,
         icon: field.secondary.icon,
-        value: displayValue(
-          hass,
-          field.secondary.state,
-          field.secondary.unit,
-          field.secondary.unit_white_space,
-          field.secondary.decimals,
-          field.secondary.accept_negative,
-          config.watt_threshold
-        ),
+        value: displayValue(hass, config, field.secondary.state, {
+          unit: field.secondary.unit,
+          unitWhiteSpace: field.secondary.unit_white_space,
+          decimals: field.secondary.decimals,
+          accept_negative: field.secondary.accept_negative,
+          watt_threshold: config.watt_threshold,
+        }),
         template: templatesObj[`${key}Secondary`],
       })}`
     : ""}`;
