@@ -51,7 +51,7 @@ export const individualLeftTopElement = (
       ? html`
           <svg width="80" height="30">
             <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />
-            ${checkShouldShowDots(config) && individualObj.state
+            ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
               ? svg`<circle
           r="1.75"
           class="individual-top"

@@ -31,7 +31,7 @@ export const individualLeftBottomElement = (
       ? html`
           <svg width="80" height="30">
             <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />
-            ${checkShouldShowDots(config) && individualObj?.state
+            ${checkShouldShowDots(config) && individualObj?.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
               ? svg`<circle
                                 r="1.75"
                                 class="individual-bottom"
