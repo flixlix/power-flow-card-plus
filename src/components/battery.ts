@@ -36,7 +36,7 @@ export const batteryElement = (
         }
       }}
     >
-      ${battery.state_of_charge.state !== null
+      ${battery.state_of_charge.state !== null && entities.battery?.show_state_of_charge !== false
         ? html` <span
             @click=${(e: { stopPropagation: () => void }) => {
               main.openDetails(e, entities.battery?.state_of_charge!);
@@ -48,15 +48,13 @@ export const batteryElement = (
             }}
             id="battery-state-of-charge-text"
           >
-            ${displayValue(
-              main.hass,
-              battery.state_of_charge.state,
-              entities?.battery?.state_of_charge_unit ?? battery.unit ?? "%",
-              entities?.battery?.state_of_charge_unit_white_space,
-              entities?.battery?.state_of_charge_decimals,
-              undefined,
-              config.watt_threshold
-            )}
+            ${displayValue(main.hass, config, battery.state_of_charge.state, {
+              unit: battery.state_of_charge.unit ?? "%",
+              unitWhiteSpace: battery.state_of_charge.unit_white_space,
+              decimals: battery.state_of_charge.decimals,
+              accept_negative: undefined,
+              watt_threshold: config.watt_threshold,
+            })}
           </span>`
         : null}
       <ha-icon
@@ -90,15 +88,12 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
-            ${displayValue(
-              main.hass,
-              battery.state.toBattery,
-              battery.unit,
-              battery.unit_white_space,
-              battery.decimals,
-              undefined,
-              config.watt_threshold
-            )}</span
+            ${displayValue(main.hass, config, battery.state.toBattery, {
+              unit: battery.unit,
+              unitWhiteSpace: battery.unit_white_space,
+              decimals: battery.decimals,
+              watt_threshold: config.watt_threshold,
+            })}</span
           >`
         : ""}
       ${entities.battery?.display_state === "two_way" ||
@@ -121,15 +116,12 @@ export const batteryElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-up"}></ha-icon>
-            ${displayValue(
-              main.hass,
-              battery.state.fromBattery,
-              battery.unit,
-              battery.unit_white_space,
-              battery.decimals,
-              undefined,
-              config.watt_threshold
-            )}</span
+            ${displayValue(main.hass, config, battery.state.fromBattery, {
+              unit: battery.unit,
+              unitWhiteSpace: battery.unit_white_space,
+              decimals: battery.decimals,
+              watt_threshold: config.watt_threshold,
+            })}</span
           >`
         : ""}
     </div>

@@ -66,7 +66,7 @@ export const individualRightBottomElement = (
                 d="M45,100 v-15 c0,-30 -10,-30 -30,-30 h-20"
                 vector-effect="non-scaling-stroke"
               />
-              ${checkShouldShowDots(config) && individualObj.state
+              ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
                 ? svg`<circle
                     r="1"
                     class="individual-bottom"

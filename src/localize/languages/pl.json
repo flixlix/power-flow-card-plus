@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Jednostka",
         "state_of_charge_decimals": "Miejsca po przecinku",
         "state_of_charge_icon": "Ikona",
+        "show_state_of_charge": "Pokaż stan naładowania",
         "state_type": "Typ stanu",
         "subtract_individual": "Odjęcie indywidualne",
         "override_state": "Nadpisanie stanu",
