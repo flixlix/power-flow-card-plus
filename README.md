@@ -8,8 +8,8 @@
 
 ![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 
-
-
+> [!TIP]  
+> Version 0.2.0 is out now! ✨ Check out the [new features](https://github.com/flixlix/power-flow-card-plus/releases/tag/v0.2.0)!
 
 ## Additional Features / Enhancements
 
@@ -87,7 +87,8 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 ## Usage
 
-> ⚠️ This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
+> [!WARNING]  
+> This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
 
 ### Options
 
@@ -143,7 +144,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info         | `object`                                    | `undefined`                                                                                                  | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                                                                                                  |
 | display_zero_tolerance | `number`                                    | `0`                                                                                                          | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid.                                                                                                                                                                         |
 | power_outage           | `object`                                    | `undefined`                                                                                                  | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.                                                                                                                                                                                                                                                                                             |
-| color_value            | `boolean`                                   | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |
+| color_value            | `boolean`                                   | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |                                                                                                                                                                                                                                                                                                                                                                                               |
 | invert_state           | `boolean`                                   | `false`                                                                                                      | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
 
 #### Solar Configuration
@@ -249,15 +250,16 @@ Can be use with either Grid or Battery configuration. The same `unit_of_measurem
 This Feature allows you to configure an additional small text for each Individual Device. Here you can put , for example, the state of charge of an electric car.
 
 | Name                   | Type              | Description                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ---------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| ---------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | entity                 | `string` required | Entity ID providing a state value that is going to be displayed.                                                                                                                                                                                                                                                                                                                                             |
 | unit_of_measurement    | `string`          | A string to be used as the unit of measurement. (Important: don't forget surrounding string with quotes)                                                                                                                                                                                                                                                                                                     |
 | icon                   | `string`          | An icon path to be displayed next to the state of the individual device. This is optional, meaning if you don't use this, no icon will be displayed.                                                                                                                                                                                                                                                         |
 | unit_white_space       | `boolean`         | Default is `true`. If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added.                                                                                                                                                                                                                                                                               |
 | display_zero           | `boolean`         | Default is `false`. If set to `true` info will still be displayed if state of the entity is `0` or `unavailable`.                                                                                                                                                                                                                                                                                            |
-| display_zero_tolerance | `number`          | `0`                                                                                                                                                                                                                                                                                                                                                                                                          | If set, the device will be displayed if the state is greater than the tolerance set. No need to set `display_zero` property to true. |
+| display_zero_tolerance | `number`          | If set, the device will be displayed if the state is greater than the tolerance set. No need to set `display_zero` property to true.                                                                                                                                                                                                                                                                         |
 | decimals               | `number`          | The number of decimal places to round the value to.                                                                                                                                                                                                                                                                                                                                                          |
 | template               | `string`          | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
+| accept_negative        | `boolean`         | Default is `false`. If set to `true`, negative values will be displayed as negative, otherwise they will be transformed to positive                                                                                                                                                                                                                                                                          |
 
 #### Power Outage
 
@@ -289,7 +291,7 @@ This object allows you to control the behavior of the flow lines that are inacti
 The following configurations will allow you to achieve your results with the least amount of lines of code / complexity.
 In these examples I decided to use the Split entities option, but feel free to use the combined entity option. [More Info](#split-entities)
 
-##### Only Grid
+#### Only Grid
 
 ```yaml
 type: custom:power-flow-card-plus
@@ -416,11 +418,15 @@ This should give you something like this:
 ![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 ![recording_multi_indiv](https://github.com/flixlix/power-flow-card-plus/assets/61006057/337b921c-306c-4447-9c6f-1b4b72579731)
 ![demo](https://user-images.githubusercontent.com/61006057/232316110-eff64095-e147-4462-abfc-961c88d5ada8.gif)
-<img width="506" alt="Bildschirmfoto 2023-04-20 um 00 23 56" src="https://user-images.githubusercontent.com/61006057/233212881-89af5af0-4b25-4a7c-9da1-008801129130.png">
+![demo_grid_solar_bat](https://user-images.githubusercontent.com/61006057/233212881-89af5af0-4b25-4a7c-9da1-008801129130.png)
 
-### UI Editor (available in version 0.1beta)
+### UI Editor (available in version 0.2)
 
-<img width="764" alt="Bildschirmfoto 2023-04-20 um 10 47 17" src="https://user-images.githubusercontent.com/61006057/233312195-ba23ea99-90eb-4b02-b9b2-643e7704accc.png">
+> [!TIP]
+> I've made a lot of improvements in version 0.2 for the UI-Editor. Now each field has its own subpage, meaning there is now much less scrolling.
+> The biggest change in the editor is the fact that you can now add up to 4 individual devices, all through the UI! 🥳
+
+![ui-editor](https://github.com/flixlix/power-flow-card-plus/assets/61006057/a5d0cbb4-f430-4ba0-9c6f-8c93689206d7)
 
 ### Flow Formula
 
@@ -485,7 +491,3 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 - Improve performance [#144](https://github.com/flixlix/power-flow-card-plus/issues/144)
 
 I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
-
-#### Credits
-
-- [power-flow-card](https://github.com/ulic75/power-flow-card) by [ulic75](https://github.com/ulic75)
