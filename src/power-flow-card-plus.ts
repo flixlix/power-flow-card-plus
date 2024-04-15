@@ -72,6 +72,9 @@ export class PowerFlowCardPlus extends LitElement {
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
   setConfig(config: PowerFlowCardPlusConfig): void {
+    if ((config.entities as any).individual1 || (config.entities as any).individual2) {
+      throw new Error("You are using an outdated configuration. Please update your configuration to the latest version.");
+    }
     if (!config.entities || (!config.entities?.battery?.entity && !config.entities?.grid?.entity && !config.entities?.solar?.entity)) {
       throw new Error("At least one entity for battery, grid or solar must be defined");
     }
