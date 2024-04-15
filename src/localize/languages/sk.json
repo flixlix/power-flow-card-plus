@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Jednotky",
         "state_of_charge_decimals": "Desatinné",
         "state_of_charge_icon": "Ikona",
+        "show_state_of_charge": "Zobraziť stav nabitia",
         "state_type": "Typ stavu",
         "subtract_individual": "Odčítať individuálne",
         "override_state": "Prepísať stav",
