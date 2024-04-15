@@ -37,6 +37,8 @@ export const homeElement = (
     individual,
   }: Home
 ) => {
+  const showHomeLabel = individual.filter((i) => i.has).length <= 1;
+
   return html`<div class="circle-container home">
   <div
     class="circle"
@@ -108,11 +110,7 @@ export const homeElement = (
       />
     </svg>
   </div>
-  ${
-    individual?.length > 1 && showLine(config, individual?.[1]?.state || 0)
-      ? html`<span class="label"></span>`
-      : html`<span class="label">${home.name}</span>`
-  }
+  ${!showHomeLabel ? html`<span class="label"></span>` : html`<span class="label">${home.name}</span>`}
 </div>
 </div>`;
 };

@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Yksikkö",
         "state_of_charge_decimals": "Desimaalit",
         "state_of_charge_icon": "Kuvake",
+        "show_state_of_charge": "Näytä varauksen tila",
         "state_type": "Tilan tyyppi",
         "subtract_individual": "Vähennä yksittäinen",
         "override_state": "Korvaa tila",

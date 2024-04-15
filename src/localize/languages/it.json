@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Unità",
         "state_of_charge_decimals": "Decimali",
         "state_of_charge_icon": "Icona",
+        "show_state_of_charge": "Mostra Stato di Carica",
         "state_type": "Tipo di Stato",
         "subtract_individual": "Sottrai Individualmente",
         "override_state": "Sovrascrivi Stato",
