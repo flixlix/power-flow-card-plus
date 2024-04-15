@@ -59,7 +59,12 @@ export const gridElement = (
           >
             <ha-icon class="small" .icon=${"mdi:arrow-left"}></ha-icon>
 
-            ${displayValue(main.hass, grid.state.toGrid, grid.unit, grid.unit_white_space, grid.decimals, undefined, config.watt_threshold)}
+            ${displayValue(main.hass, config, grid.state.toGrid, {
+              unit: grid.unit,
+              unitWhiteSpace: grid.unit_white_space,
+              decimals: grid.decimals,
+              watt_threshold: config.watt_threshold,
+            })}
           </span>`
         : null}
       ${((entities.grid?.display_state === "two_way" ||
@@ -83,7 +88,12 @@ export const gridElement = (
             }}
           >
             <ha-icon class="small" .icon=${"mdi:arrow-right"}></ha-icon>
-            ${displayValue(main.hass, grid.state.fromGrid, grid.unit, grid.unit_white_space, grid.decimals, undefined, config.watt_threshold)}
+            ${displayValue(main.hass, config, grid.state.fromGrid, {
+              unit: grid.unit,
+              unitWhiteSpace: grid.unit_white_space,
+              decimals: grid.decimals,
+              watt_threshold: config.watt_threshold,
+            })}
           </span>`
         : ""}
       ${grid.powerOutage?.isOutage && !grid.powerOutage?.entityGenerator ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>` : ""}

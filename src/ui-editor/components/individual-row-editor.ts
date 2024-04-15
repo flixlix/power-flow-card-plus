@@ -151,9 +151,12 @@ export class IndividualRowEditor extends LitElement {
       return;
     }
 
-    const individualConfig = this.config.entities.individual; // this is an array
+    if (!Array.isArray(this.config.entities.individual)) {
+      this.config.entities.individual = [];
+    }
+    const individualConfig = [...this.config.entities.individual];
     if (!individualConfig) return;
-    // inject the new config into the array into the correct index
+
     individualConfig[this._indexBeingEdited] = newRowConfig;
 
     const config = {

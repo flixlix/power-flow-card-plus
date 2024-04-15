@@ -5,6 +5,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "lib": ["es2017", "dom", "dom.iterable"],
+    "allowSyntheticDefaultImports": true,
     "noEmit": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -15,7 +16,7 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

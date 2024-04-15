@@ -43,6 +43,7 @@
         "state_of_charge_unit": "Enhed",
         "state_of_charge_decimals": "Decimal",
         "state_of_charge_icon": "Ikon",
+        "show_state_of_charge": "Vis ladningstilstand",
         "state_type": "Tilstande",
         "subtract_individual": "Subtract Individual",
         "override_state": "Overskriv Tilstand",
