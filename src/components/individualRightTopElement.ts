@@ -47,7 +47,7 @@ export const individualRightTopElement = (
       }}
     >
       ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "right-top")}
-      <ha-icon id="individual-right-top-icon" .icon=${individualObj.icon}></ha-icon>
+      ${individualObj.icon !== " " ? html` <ha-icon id="individual-right-top-icon" .icon=${individualObj.icon} />` : null}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-top individual-right-top">
             ${individualObj?.showDirection
