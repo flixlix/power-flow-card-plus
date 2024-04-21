@@ -53,7 +53,7 @@ export const homeElement = (
     }}
   >
     ${generalSecondarySpan(main.hass, main, config, templatesObj, home, "home")}
-    <ha-icon .icon=${home.icon}></ha-icon>
+    ${home.icon !== " " ? html`<ha-icon id="home-icon" .icon=${home.icon} />` : null}
     ${homeUsageToDisplay}
     <svg class="home-circle-sections">
       ${

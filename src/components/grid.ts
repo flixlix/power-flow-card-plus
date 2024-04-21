@@ -37,7 +37,7 @@ export const gridElement = (
       }}
     >
       ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
-      <ha-icon .icon=${grid.icon}></ha-icon>
+      ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : null}
       ${(entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
         (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||
