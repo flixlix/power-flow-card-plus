@@ -473,7 +473,7 @@ export const styles = css`
     color: var(--text-non-fossil-color);
   }
 
-  span.nonFossilFuel.secondary-info {
+  span.low-carbon.secondary-info {
     color: var(--secondary-text-non-fossil-color);
   }
 
