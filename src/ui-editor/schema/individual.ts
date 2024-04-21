@@ -57,6 +57,11 @@ const mainSchema = {
       selector: { boolean: {} },
     },
     {
+      name: "unit_white_space",
+      label: "Unit White Space",
+      selector: { boolean: {} },
+    },
+    {
       name: "use_metadata",
       label: "Use Metadata",
       selector: { boolean: {} },
