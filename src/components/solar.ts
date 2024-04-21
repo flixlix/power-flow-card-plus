@@ -32,7 +32,7 @@ export const solarElement = (
       }}
     >
       ${generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar")}
-      <ha-icon id="solar-icon" .icon=${solar.icon}></ha-icon>
+          ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : null}
       ${entities.solar?.display_zero_state !== false || (solar.state.total || 0) > 0
         ? html` <span class="solar">
             ${displayValue(main.hass, config, solar.state.total, {
