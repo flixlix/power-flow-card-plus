@@ -33,9 +33,9 @@ export const individualSecondarySpan = (
 
   const shouldShowSecondary = () => {
     if (!!templateResult) return true;
+    if (individual?.secondary?.displayZero === true) return true;
     if (!individual?.secondary?.state) return false;
     if (!isNumberValue(individual?.secondary?.state)) return true;
-    if (individual?.secondary?.displayZero === true) return true;
 
     const toleranceSet = individual?.secondary?.displayZeroTolerance ?? 0;
     return (
