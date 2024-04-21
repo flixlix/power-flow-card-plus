@@ -242,7 +242,7 @@ export const styles = css`
 
   .individual-top path,
   .individual-top circle {
-    stroke: var(--icon-individual-left-top-color);
+    stroke: var(--individual-left-top-color);
   }
 
   #individual-left-bottom-icon {

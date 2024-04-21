@@ -481,14 +481,13 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    /* return source object with largest value property */
     const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
 
     const getIndividualDisplayState = (field?: IndividualObject) => {
       if (!field) return "";
       if (field?.state === undefined) return "";
-      // return displayValue(this.hass, field?.state, field?.unit, field?.unit_white_space, field?.decimals);
       return displayValue(this.hass, this._config, field?.state, {
+        decimals: field?.decimals,
         unit: field?.unit,
         unitWhiteSpace: field?.unit_white_space,
         watt_threshold: this._config.watt_threshold,

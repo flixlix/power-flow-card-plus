@@ -62,7 +62,7 @@ export const individualLeftBottomElement = (
         }
       }}
     >
-      ${individualSecondarySpan(hass, main, config, templatesObj, individualObj, 1, "left-bottom")}
+      ${individualSecondarySpan(hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-bottom")}
       ${individualObj?.icon !== " " ? html` <ha-icon id="individual-left-bottom-icon" .icon=${individualObj?.icon} />` : null}
       ${individualObj?.field?.display_zero_state !== false || (individualObj?.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-bottom individual-left-bottom"
