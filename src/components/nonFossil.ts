@@ -52,7 +52,7 @@ export const nonFossilElement = (
           ? html`
               <svg width="80" height="30">
                 <path d="M40 -10 v40" class="low-carbon ${styleLine(nonFossil.state.power || 0, config)}" id="low-carbon" />
-                ${checkShouldShowDots(config) && nonFossil.has
+                ${checkShouldShowDots(config) && nonFossil.has && nonFossil.state.power > 0
                   ? svg`<circle
                 r="1.75"
                 class="low-carbon"
