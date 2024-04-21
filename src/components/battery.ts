@@ -57,17 +57,20 @@ export const batteryElement = (
             })}
           </span>`
         : null}
-      <ha-icon
-        .icon=${battery.icon}
-        @click=${(e: { stopPropagation: () => void }) => {
-          main.openDetails(e, entities.battery?.state_of_charge!);
-        }}
-        @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
-          if (e.key === "Enter") {
-            main.openDetails(e, entities.battery?.state_of_charge!);
-          }
-        }}
-      ></ha-icon>
+      ${battery.icon !== " "
+        ? html` <ha-icon
+            id="battery-icon"
+            .icon=${battery.icon}
+            @click=${(e: { stopPropagation: () => void }) => {
+              main.openDetails(e, entities.battery?.state_of_charge!);
+            }}
+            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+              if (e.key === "Enter") {
+                main.openDetails(e, entities.battery?.state_of_charge!);
+              }
+            }}
+          />`
+        : null}
       ${entities.battery?.display_state === "two_way" ||
       entities.battery?.display_state === undefined ||
       (entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery > 0) ||
