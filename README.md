@@ -49,6 +49,13 @@ The Goal of this card is to provide an easy to understand and visualize way of d
 This card **does not** aim to display Energy Values (Meaning accumulated power over 1 day, for example).
 If this is your goal, check out the [Energy Flow Card Plus](https://github.com/flixlix/energy-flow-card-plus).
 
+## Guides
+
+In case you want to watch a tutorial instead of reading through this very long readme 😅, I recommend the following videos:
+
+- [Power Flow Card Plus in Home Assistant - Jetzt noch besser? Anleitung from Smartzeug](https://youtu.be/PUOU5qdhMro) - _in german_, up to date with version 0.2.2
+- [Power Flow Card Plus for Home Assistant from Speak to the Geek](https://youtu.be/C4Zh35E9wJE?si=REuWZxmfF91G0Ht7) - _changes in indvidual configuration_
+
 ## Installation
 
 ### HACS (recommended)
