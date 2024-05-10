@@ -232,8 +232,8 @@ export class PowerFlowCardPlus extends LitElement {
       icon: computeFieldIcon(this.hass, entities.battery, "mdi:battery-high"),
       state_of_charge: {
         state: getBatteryStateOfCharge(this.hass, this._config),
-        unit: entities?.battery?.state_of_charge_unit || "%",
-        unit_white_space: entities?.battery?.state_of_charge_unit_white_space || true,
+        unit: entities?.battery?.state_of_charge_unit ?? "%",
+        unit_white_space: entities?.battery?.state_of_charge_unit_white_space ?? true,
         decimals: entities?.battery?.state_of_charge_decimals || 0,
       },
       state: {
