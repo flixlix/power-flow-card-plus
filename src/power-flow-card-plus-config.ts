@@ -89,7 +89,7 @@ interface FossilFuelPercentage extends BaseConfigEntity {
   color_label?: boolean;
   unit_white_space?: boolean;
   calculate_flow_rate?: boolean | number;
-  seconday_info: SecondaryInfoType;
+  secondary_info: SecondaryInfoType;
 }
 
 export type ConfigEntities = {
