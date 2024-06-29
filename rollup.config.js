@@ -26,7 +26,7 @@ export default [
       {
         dir: "dist",
         format: "es",
-        inlineDynamicImports: true,
+        inlineDynamicImports: false,
       },
     ],
     plugins: [
@@ -41,10 +41,11 @@ export default [
       }),
       commonjs(),
       babel({
-        exclude: /node_modules\/(?!superstruct)\/.*/,
+        exclude: "node_modules/**",
         babelHelpers: "bundled",
       }),
       ...(dev ? [serve(serveOptions)] : [terser()]),
+      ...(dev ? [serve(serveOptions)] : []),
     ],
     moduleContext: (id) => {
       const thisAsWindowForModules = [
