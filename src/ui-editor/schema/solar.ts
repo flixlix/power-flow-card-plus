@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import { secondaryInfoSchema, getBaseMainConfigSchema } from "./_schema-base";
+import { secondaryInfoSchema, getBaseMainConfigSchema, tapActionSchema } from "./_schema-base";
 import localize from "../../localize/localize";
 
 const mainSchema = {
@@ -49,6 +49,12 @@ export const solarSchema = [
     name: "color",
     label: "Color",
     selector: { color_rgb: {} },
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "tap_action",
+    type: "expandable",
+    schema: tapActionSchema,
   },
   {
     title: localize("editor.secondary_info"),

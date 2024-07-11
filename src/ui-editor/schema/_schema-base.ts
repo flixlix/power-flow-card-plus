@@ -57,6 +57,25 @@ export const customColorsSchema = {
   ],
 } as const;
 
+export const tapActionSchema = [
+  {
+    name: "action",
+    selector: {
+      select: {
+        options: [
+          { value: false, label: "None" },
+          { value: "more-info", label: "More Info" },
+          { value: "navigate", label: "Navigate" },
+        ],
+      },
+    },
+  },
+  {
+    name: "navigation_path",
+    selector: { text: {} }
+  }
+] as const;
+
 export const secondaryInfoSchema = [
   {
     name: "entity",

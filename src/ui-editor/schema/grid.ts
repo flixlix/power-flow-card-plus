@@ -4,7 +4,7 @@ import {
   getEntitySeparatedSelectionSchema,
   secondaryInfoSchema,
   getBaseMainConfigSchema,
-  customColorsSchema,
+  customColorsSchema, tapActionSchema,
 } from "./_schema-base";
 import localize from "../../localize/localize";
 
@@ -49,6 +49,12 @@ export const gridSchema = [
   getEntitySeparatedSelectionSchema(),
   mainSchema,
   customColorsSchema,
+  {
+    title: localize("editor.tap_action"),
+    name: "tap_action",
+    type: "expandable",
+    schema: tapActionSchema,
+  },
   {
     title: localize("editor.secondary_info"),
     name: "secondary_info",

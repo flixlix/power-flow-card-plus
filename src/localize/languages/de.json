@@ -71,6 +71,8 @@
         "custom": "Benutzerdefiniert",
         "grey_out": "Ausgrauen",
         "transparency": "Transparenz",
-        "grey_color": "Graue Farbe"
+        "grey_color": "Graue Farbe",
+        "tap_action": "Aktion beim Antippen",
+        "navigation_path": "Navigationspfad"
     }
 }

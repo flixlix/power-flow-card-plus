@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import { getBaseMainConfigSchema, secondaryInfoSchema } from "./_schema-base";
+import { getBaseMainConfigSchema, secondaryInfoSchema, tapActionSchema } from "./_schema-base";
 import localize from "../../localize/localize";
 
 const mainSchema = {
@@ -62,6 +62,12 @@ export const homeSchema = [
     selector: { entity: {} },
   },
   mainSchema,
+  {
+    title: localize("editor.tap_action"),
+    name: "tap_action",
+    type: "expandable",
+    schema: tapActionSchema,
+  },
   {
     title: localize("editor.secondary_info"),
     name: "secondary_info",

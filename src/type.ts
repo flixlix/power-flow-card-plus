@@ -1,4 +1,5 @@
 import { TemplateResult } from "lit";
+import { MoreInfoActionConfig, NavigateActionConfig } from "custom-card-helpers";
 
 export type ComboEntity = {
   consumption: string;
@@ -31,6 +32,7 @@ export interface BaseConfigEntity {
   use_metadata?: boolean;
   secondary_info?: SecondaryInfoType;
   invert_state?: boolean;
+  tap_action?: NavigateActionConfig|MoreInfoActionConfig;
 }
 
 export type GridPowerOutage = {
@@ -122,6 +124,7 @@ export type GridObject = {
     icon_type?: boolean | "production" | "consumption";
     circle_type?: boolean | "production" | "consumption";
   };
+  tap_action?: NavigateActionConfig|MoreInfoActionConfig;
   secondary: {
     entity?: string;
     decimals?: number;

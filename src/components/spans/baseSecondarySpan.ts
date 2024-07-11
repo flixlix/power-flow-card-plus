@@ -18,11 +18,11 @@ export const baseSecondarySpan = ({ main, className, template, value, entityId, 
     return html`<span
       class="secondary-info ${className}"
       @click=${(e: { stopPropagation: () => void }) => {
-        main.openDetails(e, entityId);
+        main.openDetails(e, undefined, entityId);
       }}
       @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, entityId);
+          main.openDetails(e, undefined, entityId);
         }
       }}
     >

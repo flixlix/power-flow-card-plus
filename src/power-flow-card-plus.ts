@@ -1,7 +1,12 @@
 /* eslint-disable wc/guard-super-call */
 /* eslint-disable import/extensions */
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import {
+  handleAction,
+  HomeAssistant,
+  LovelaceCardEditor, MoreInfoActionConfig,
+  NavigateActionConfig,
+} from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
@@ -127,16 +132,29 @@ export class PowerFlowCardPlus extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
-  public openDetails(event: { stopPropagation: any; key?: string }, entityId?: string | undefined): void {
+  public openDetails(event: { stopPropagation: any; key?: string, target: HTMLElement }, config?: NavigateActionConfig|MoreInfoActionConfig, entityId?: string | undefined): void {
     event.stopPropagation();
-    if (!entityId || !this._config.clickable_entities) return;
-    /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
-    if (!doesEntityExist(this.hass, entityId)) return;
-    const e = new CustomEvent("hass-more-info", {
-      composed: true,
-      detail: { entityId },
-    });
-    this.dispatchEvent(e);
+
+    if (config) {
+      handleAction(
+        event.target,
+        this.hass,
+        {
+          entity: entityId,
+          tap_action: config
+        },
+        'tap'
+      )
+    } else {
+      if (!entityId || !this._config.clickable_entities) return;
+      /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
+      if (!doesEntityExist(this.hass, entityId)) return;
+      const e = new CustomEvent("hass-more-info", {
+        composed: true,
+        detail: { entityId },
+      });
+      this.dispatchEvent(e);
+      }
   }
 
   protected render(): TemplateResult {
@@ -178,6 +196,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
         circle_type: entities.grid?.color_circle,
       },
+      tap_action: entities.grid?.tap_action,
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
         decimals: entities.grid?.secondary_info?.decimals,
@@ -205,6 +224,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
       name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
+      tap_action: entities.solar?.tap_action,
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
         decimals: entities.solar?.secondary_info?.decimals,
@@ -242,6 +262,7 @@ export class PowerFlowCardPlus extends LitElement {
         toGrid: 0,
         toHome: 0,
       },
+      tap_action: entities.battery?.tap_action,
       color: {
         fromBattery: entities.battery?.color?.consumption,
         toBattery: entities.battery?.color?.production,
@@ -256,6 +277,7 @@ export class PowerFlowCardPlus extends LitElement {
       state: initialNumericState,
       icon: computeFieldIcon(this.hass, entities?.home, "mdi:home"),
       name: computeFieldName(this.hass, entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
+      tap_action: entities.home?.tap_action,
       secondary: {
         entity: entities.home?.secondary_info?.entity,
         template: entities.home?.secondary_info?.template,
@@ -283,6 +305,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       color: entities.fossil_fuel_percentage?.color,
       color_value: entities.fossil_fuel_percentage?.color_value,
+      tap_action: entities.fossil_fuel_percentage?.tap_action,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
         decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
