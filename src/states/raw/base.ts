@@ -5,13 +5,15 @@ import { isNumberValue } from "../../utils/utils";
 import { isEntityInverted } from "../utils/isEntityInverted";
 import { onlyNegative, onlyPositive } from "../utils/negativePositive";
 import { getEntityStateWatts } from "../utils/getEntityStateWatts";
+import { getEntityNames } from "../utils/mutliEntity";
 
 export const getSecondaryState = (hass: HomeAssistant, config: PowerFlowCardPlusConfig, field: EntityType) => {
   const entity = config.entities?.[field]?.secondary_info?.entity;
 
   if (typeof entity !== "string") return null;
 
-  const entityObj = hass.states[entity];
+  const ids = getEntityNames(entity);
+  const entityObj = hass.states[ids[0]];
   const secondaryState = entityObj.state;
 
   if (isNumberValue(secondaryState)) return Number(secondaryState);
