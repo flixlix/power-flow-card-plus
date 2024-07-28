@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 import { HomeAssistant } from "custom-card-helpers";
 import { DisplayZeroLinesMode } from "../power-flow-card-plus-config";
+import { getFirstEntityName } from "../states/utils/mutliEntity";
 
 export const defaultValues = {
   maxFlowRate: 6,
@@ -20,11 +21,12 @@ export const defaultValues = {
 
 export function getDefaultConfig(hass: HomeAssistant): object {
   function checkStrings(entiyId: string, testStrings: string[]): boolean {
-    const friendlyName = hass.states[entiyId].attributes.friendly_name;
-    return testStrings.some((str) => entiyId.includes(str) || friendlyName?.includes(str));
+    const firstId = getFirstEntityName(entiyId)
+    const friendlyName = hass.states[firstId].attributes.friendly_name;
+    return testStrings.some((str) => firstId.includes(str) || friendlyName?.includes(str));
   }
   const powerEntities = Object.keys(hass.states).filter((entityId) => {
-    const stateObj = hass.states[entityId];
+    const stateObj = hass.states[getFirstEntityName(entityId)];
     const isAvailable =
       (stateObj.state && stateObj.attributes && stateObj.attributes.device_class === "power") || stateObj.entity_id.includes("power");
     return isAvailable;
