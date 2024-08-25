@@ -212,6 +212,7 @@ export class PowerFlowCardPlus extends LitElement {
         color: {
           type: entities.grid?.secondary_info?.color_value,
         },
+        tap_action: entities.grid?.secondary_info?.tap_action
       },
     };
 
@@ -237,6 +238,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.solar?.secondary_info?.icon,
         unit: entities.solar?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.solar?.secondary_info?.unit_white_space,
+        tap_action: entities.solar?.secondary_info?.tap_action,
       },
     };
 
@@ -290,6 +292,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit_white_space: entities.home?.secondary_info?.unit_white_space,
         icon: entities.home?.secondary_info?.icon,
         decimals: entities.home?.secondary_info?.decimals,
+        tap_action: entities.home?.secondary_info?.tap_action,
       },
     };
 
@@ -319,6 +322,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
         color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
+        tap_action: entities.fossil_fuel_percentage?.secondary_info?.tap_action,
       },
     };
 

@@ -1,7 +1,7 @@
 import { html } from "lit";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 import { PowerFlowCardPlus } from "../../power-flow-card-plus";
 import { offlineStr } from "../../type";
+import { ActionConfig } from "custom-card-helpers";
 
 type BaseSecondarySpan = {
   main: PowerFlowCardPlus;
@@ -10,19 +10,20 @@ type BaseSecondarySpan = {
   value?: string;
   entityId?: string;
   icon?: string;
+  tap_action?: ActionConfig;
 };
 
-export const baseSecondarySpan = ({ main, className, template, value, entityId, icon }: BaseSecondarySpan) => {
+export const baseSecondarySpan = ({ main, className, template, value, entityId, icon, tap_action }: BaseSecondarySpan) => {
   if (value && offlineStr.includes(value)) return html``;
   if (value || template) {
     return html`<span
       class="secondary-info ${className}"
       @click=${(e: { stopPropagation: () => void; key?: string | undefined; target: HTMLElement }) => {
-        main.openDetails(e, undefined, entityId);
+        main.openDetails(e, tap_action, entityId);
       }}
       @keyDown=${(e: { stopPropagation: () => void; key?: string | undefined; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, undefined, entityId);
+          main.openDetails(e, tap_action, entityId);
         }
       }}
     >

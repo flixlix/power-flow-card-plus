@@ -51,12 +51,6 @@ export const gridSchema = [
   mainSchema,
   customColorsSchema,
   {
-    title: localize("editor.tap_action"),
-    name: "",
-    type: "expandable",
-    schema: tapActionSchema,
-  },
-  {
     title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
@@ -67,5 +61,11 @@ export const gridSchema = [
     name: "power_outage",
     type: "expandable",
     schema: powerOutageGridSchema,
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
   },
 ] as const;

@@ -52,6 +52,7 @@ export const individualSecondarySpan = (
         icon: individual?.secondary?.icon || undefined,
         value,
         template: templatesObj.individual[index] || undefined,
+        tap_action: individual?.secondary?.tap_action || undefined,
       })}`
     : ""}`;
 };

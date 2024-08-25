@@ -17,6 +17,7 @@ export type SecondaryInfoType = {
   template?: string;
   accept_negative?: boolean;
   decimals?: number;
+  tap_action?: ActionConfig;
 };
 
 export interface BaseConfigEntity {
@@ -135,6 +136,7 @@ export type GridObject = {
     unit?: string;
     unit_white_space?: boolean;
     accept_negative?: boolean;
+    tap_action?: ActionConfig;
     color?: {
       type?: boolean | "production" | "consumption";
     };

@@ -63,15 +63,15 @@ export const homeSchema = [
   },
   mainSchema,
   {
-    title: localize("editor.tap_action"),
-    name: "",
-    type: "expandable",
-    schema: tapActionSchema,
-  },
-  {
     title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
     schema: secondaryInfoSchema,
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
   },
 ] as const;

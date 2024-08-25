@@ -91,11 +91,11 @@ export const batterySchema = [
     schema: stateOfChargeSchema,
   },
   mainSchema,
+  customColorsSchema,
   {
     title: localize("editor.tap_action"),
     name: "",
     type: "expandable",
     schema: tapActionSchema,
   },
-  customColorsSchema,
 ] as const;

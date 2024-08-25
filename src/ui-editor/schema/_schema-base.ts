@@ -90,6 +90,12 @@ export const secondaryInfoSchema = [
       { name: "display_zero_tolerance", label: "Display Zero Tolerance", selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } } },
     ],
   },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
+  },
 ] as const;
 
 const batteryOrGridMainConfigSchema = [
