@@ -1,12 +1,7 @@
 /* eslint-disable wc/guard-super-call */
 /* eslint-disable import/extensions */
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import {
-  handleAction,
-  HomeAssistant,
-  LovelaceCardEditor, MoreInfoActionConfig,
-  NavigateActionConfig,
-} from "custom-card-helpers";
+import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
@@ -50,6 +45,8 @@ import {
 } from "./utils/computeIndividualPosition";
 import { individualRightTopElement } from "./components/individualRightTopElement";
 import { individualRightBottomElement } from "./components/individualRightBottomElement";
+import { fireEvent } from "./ui-editor/utils/fire_event";
+import { handleAction } from "./ha/panels/lovelace/common/handle-action";
 
 const circleCircumference = 238.76104;
 
@@ -132,20 +129,14 @@ export class PowerFlowCardPlus extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
-  public openDetails(event: { stopPropagation: any; key?: string, target: HTMLElement }, config?: NavigateActionConfig|MoreInfoActionConfig, entityId?: string | undefined): void {
+  public openDetails(
+    event: { stopPropagation: () => void; key?: string; target: HTMLElement },
+    config?: ActionConfig,
+    entityId?: string | undefined
+  ): void {
     event.stopPropagation();
 
-    if (config) {
-      handleAction(
-        event.target,
-        this.hass,
-        {
-          entity: entityId,
-          tap_action: config
-        },
-        'tap'
-      )
-    } else {
+    if (!config) {
       if (!entityId || !this._config.clickable_entities) return;
       /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
       if (!doesEntityExist(this.hass, entityId)) return;
@@ -154,7 +145,18 @@ export class PowerFlowCardPlus extends LitElement {
         detail: { entityId },
       });
       this.dispatchEvent(e);
-      }
+      return;
+    }
+
+    handleAction(
+      event.target,
+      this.hass!,
+      {
+        entity: entityId,
+        tap_action: config,
+      },
+      "tap"
+    );
   }
 
   protected render(): TemplateResult {

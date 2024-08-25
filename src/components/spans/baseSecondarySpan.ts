@@ -17,10 +17,10 @@ export const baseSecondarySpan = ({ main, className, template, value, entityId, 
   if (value || template) {
     return html`<span
       class="secondary-info ${className}"
-      @click=${(e: { stopPropagation: () => void }) => {
+      @click=${(e: { stopPropagation: () => void; key?: string | undefined; target: HTMLElement }) => {
         main.openDetails(e, undefined, entityId);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { stopPropagation: () => void; key?: string | undefined; target: HTMLElement }) => {
         if (e.key === "Enter") {
           main.openDetails(e, undefined, entityId);
         }

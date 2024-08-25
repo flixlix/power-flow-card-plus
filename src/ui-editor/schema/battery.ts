@@ -93,7 +93,7 @@ export const batterySchema = [
   mainSchema,
   {
     title: localize("editor.tap_action"),
-    name: "tap_action",
+    name: "",
     type: "expandable",
     schema: tapActionSchema,
   },

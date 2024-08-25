@@ -82,7 +82,7 @@ export const individualSchema = [
   },
   {
     title: localize("editor.tap_action"),
-    name: "tap_action",
+    name: "",
     type: "expandable",
     schema: tapActionSchema,
   },

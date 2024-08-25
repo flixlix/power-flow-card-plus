@@ -28,10 +28,10 @@ export const individualLeftTopElement = (
     <span class="label">${individualObj.name}</span>
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void, target: HTMLElement }) => {
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
         main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void, target: HTMLElement }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
           main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
         }
