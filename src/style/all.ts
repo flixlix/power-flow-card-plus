@@ -1,4 +1,5 @@
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
+import { ConfigEntities } from "../power-flow-card-plus-config";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 import { IndividualDeviceType } from "../type";
 import { convertColorListToHex } from "../utils/convertColor";
@@ -6,6 +7,7 @@ import { computeColor } from "./colors";
 
 interface AllDynamicStyles {
   individual: IndividualObject[];
+  entities: ConfigEntities;
   [key: string]: any;
 }
 
@@ -183,6 +185,9 @@ export const allDynamicStyles = (
   main.style.setProperty("--icon-home-color", computeColor(entities.home?.color_icon, homeSources, homeLargestSource));
   main.style.setProperty("--text-home-color", computeColor(entities.home?.color_value, homeSources, homeLargestSource));
 
+  // --home-circle-animation
+  if (entities.home?.circle_animation === false) main.style.setProperty("--home-circle-animation", "none");
+
   //   Battery-Grid line
   main.style.setProperty(
     "--battery-grid-line",
@@ -248,7 +253,7 @@ export const allDynamicStyles = (
     let individualIndex = 0;
     individual.forEach((_, index) => {
       if (!individual[index].has) return;
-      getStylesForIndividual(entities.individual[index], individualIndex);
+      getStylesForIndividual(entities!.individual![index], individualIndex);
       individualIndex++;
     });
   }

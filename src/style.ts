@@ -53,6 +53,7 @@ export const styles = css`
     --text-grid-return-color: var(--energy-grid-return-color);
     --text-battery-in-color: var(--energy-battery-in-color);
     --text-battery-out-color: var(--energy-battery-out-color);
+    --home-circle-animation: rotate-in 0.6s ease-in;
   }
 
   ha-card {
@@ -461,7 +462,7 @@ export const styles = css`
     color: var(--icon-home-color);
   }
   .circle svg circle {
-    animation: rotate-in 0.6s ease-in;
+    animation: var(--home-circle-animation);
     transition: stroke-dashoffset 0.4s, stroke-dasharray 0.4s;
     fill: none;
   }

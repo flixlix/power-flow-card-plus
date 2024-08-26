@@ -75,7 +75,7 @@ export const secondaryInfoSchema = [
       { name: "unit_of_measurement", label: "Unit of Measurement", selector: { text: {} } },
       { name: "decimals", label: "Decimals", selector: { number: { mode: "box", min: 0, max: 10, step: 1 } } },
       { name: "color_value", label: "Color Value", selector: { boolean: {} } },
-      { name: "unit_white_space", label: "Unit White Space", selector: { boolean: {} } },
+      { name: "unit_white_space", label: "Unit White Space", default: true, selector: { boolean: {} } },
       { name: "display_zero", label: "Display Zero", selector: { boolean: {} } },
       { name: "accept_negative", label: "Accept Negative", selector: { boolean: {} } },
       { name: "display_zero_tolerance", label: "Display Zero Tolerance", selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } } },
