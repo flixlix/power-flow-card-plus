@@ -59,6 +59,7 @@ const mainSchema = {
     {
       name: "unit_white_space",
       label: "Unit White Space",
+      default: true,
       selector: { boolean: {} },
     },
     {
