@@ -165,7 +165,6 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    z-index: 2;
   }
   .circle-container.solar {
     height: 130px;
@@ -480,7 +479,6 @@ export const styles = css`
 
   #home-circle {
     color: var(--text-home-color);
-    z-index: 2;
   }
 
   .individual-bottom .circle {
