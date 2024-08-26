@@ -72,6 +72,8 @@
     "custom": "Mukautettu",
     "grey_out": "Harmaa",
     "transparency": "Läpinäkyvyys",
-    "grey_color": "Harmaa väri"
+    "grey_color": "Harmaa väri",
+    "tap_action": "Napauta toimintoa",
+    "navigation_path": "Navigointipolku"
   }
 }

@@ -57,6 +57,15 @@ export const customColorsSchema = {
   ],
 } as const;
 
+export const tapActionSchema = [
+  {
+    name: "tap_action",
+    selector: {
+      ui_action: {},
+    },
+  },
+] as const;
+
 export const secondaryInfoSchema = [
   {
     name: "entity",
@@ -80,6 +89,12 @@ export const secondaryInfoSchema = [
       { name: "accept_negative", label: "Accept Negative", selector: { boolean: {} } },
       { name: "display_zero_tolerance", label: "Display Zero Tolerance", selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } } },
     ],
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
   },
 ] as const;
 

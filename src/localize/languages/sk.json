@@ -72,6 +72,8 @@
     "custom": "Voliteľné",
     "grey_out": "Grey Out",
     "transparency": "Transparentnosť",
-    "grey_color": "Šedá farba"
+    "grey_color": "Šedá farba",
+    "tap_action": "Akcia po klepnutí",
+    "navigation_path": "Navigačná cesta"
   }
 }

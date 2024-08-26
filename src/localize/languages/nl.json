@@ -72,6 +72,8 @@
     "custom": "Aangepast",
     "grey_out": "Grijstint",
     "transparency": "Transparantie",
-    "grey_color": "Grijstint"
+    "grey_color": "Grijstint",
+    "tap_action": "Tik Actie",
+    "navigation_path": "Navigatiepad"
   }
 }

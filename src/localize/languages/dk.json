@@ -72,6 +72,8 @@
     "custom": "Brugerdefinerede",
     "grey_out": "Grået ud",
     "transparency": "Transparens",
-    "grey_color": "Grå farve"
+    "grey_color": "Grå farve",
+    "tap_action": "Tap Handling",
+    "navigation_path": "Navigationssti"
   }
 }

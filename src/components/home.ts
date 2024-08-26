@@ -43,12 +43,12 @@ export const homeElement = (
   <div
     class="circle"
     id="home-circle"
-    @click=${(e: { stopPropagation: () => void }) => {
-      main.openDetails(e, entities.home?.entity);
+    @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+      main.openDetails(e, entities.home?.tap_action, entities.home?.entity);
     }}
-    @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+    @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
       if (e.key === "Enter") {
-        main.openDetails(e, entities.home?.entity);
+        main.openDetails(e, entities.home?.tap_action, entities.home?.entity);
       }
     }}
   >

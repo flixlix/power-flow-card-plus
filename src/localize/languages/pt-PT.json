@@ -72,6 +72,8 @@
     "custom": "Personalizado",
     "grey_out": "Cinzento",
     "transparency": "Transparência",
-    "grey_color": "Cor Cinzenta"
+    "grey_color": "Cor Cinzenta",
+    "tap_action": "Ação de Toque",
+    "navigation_path": "Caminho de Navegação"
   }
 }

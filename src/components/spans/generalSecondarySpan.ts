@@ -1,6 +1,6 @@
 import { html } from "lit";
 import { baseSecondarySpan } from "./baseSecondarySpan";
-import { HomeAssistant } from "custom-card-helpers";
+import { ActionConfig, HomeAssistant } from "custom-card-helpers";
 import { displayValue } from "../../utils/displayValue";
 import { PowerFlowCardPlus } from "../../power-flow-card-plus";
 import { TemplatesObj } from "../../type";
@@ -22,6 +22,7 @@ export const generalSecondarySpan = (
       unit_white_space: boolean | undefined;
       decimals: number | undefined;
       accept_negative: boolean | undefined;
+      tap_action?: ActionConfig | undefined;
     };
   },
   key: string
@@ -39,6 +40,7 @@ export const generalSecondarySpan = (
           accept_negative: field.secondary.accept_negative,
           watt_threshold: config.watt_threshold,
         }),
+        tap_action: field.secondary.tap_action,
         template: templatesObj[`${key}Secondary`],
       })}`
     : ""}`;

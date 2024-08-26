@@ -72,6 +72,8 @@
     "custom": "Personalizado",
     "grey_out": "Gris",
     "transparency": "Transparencia",
-    "grey_color": "Color Gris"
+    "grey_color": "Color Gris",
+    "tap_action": "Acción de Toque",
+    "navigation_path": "Ruta de Navegación"
   }
 }

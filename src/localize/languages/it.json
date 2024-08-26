@@ -72,6 +72,8 @@
     "custom": "Personalizzato",
     "grey_out": "Sfuma",
     "transparency": "Trasparenza",
-    "grey_color": "Colore Sfumato"
+    "grey_color": "Colore Sfumato",
+    "tap_action": "Azione al tocco",
+    "navigation_path": "Percorso di navigazione"
   }
 }

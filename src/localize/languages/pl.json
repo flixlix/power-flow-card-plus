@@ -72,6 +72,8 @@
     "custom": "Niestandardowy",
     "grey_out": "Szary",
     "transparency": "Przezroczystość",
-    "grey_color": "Kolor szary"
+    "grey_color": "Kolor szary",
+    "tap_action": "Akcja dotknięcia",
+    "navigation_path": "Ścieżka nawigacji"
   }
 }

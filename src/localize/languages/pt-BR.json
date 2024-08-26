@@ -72,6 +72,8 @@
     "custom": "Personalizado",
     "grey_out": "Cinza",
     "transparency": "Transparência",
-    "grey_color": "Cor do Cinza"
+    "grey_color": "Cor do Cinza",
+    "tap_action": "Ação de Toque",
+    "navigation_path": "Caminho de Navegação"
   }
 }

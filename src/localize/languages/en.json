@@ -72,6 +72,8 @@
     "custom": "Custom",
     "grey_out": "Grey Out",
     "transparency": "Transparency",
-    "grey_color": "Grey Color"
+    "grey_color": "Grey Color",
+    "tap_action": "Tap Action",
+    "navigation_path": "Navigation Path"
   }
 }

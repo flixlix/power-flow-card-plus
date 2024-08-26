@@ -72,6 +72,8 @@
     "custom": "Пользовательский",
     "grey_out": "Серый",
     "transparency": "Прозрачность",
-    "grey_color": "Серый цвет"
+    "grey_color": "Серый цвет",
+    "tap_action": "действие касания",
+    "navigation_path": "путь навигации"
   }
 }
