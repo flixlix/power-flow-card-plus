@@ -212,7 +212,7 @@ export class PowerFlowCardPlus extends LitElement {
         color: {
           type: entities.grid?.secondary_info?.color_value,
         },
-        tap_action: entities.grid?.secondary_info?.tap_action
+        tap_action: entities.grid?.secondary_info?.tap_action,
       },
     };
 
