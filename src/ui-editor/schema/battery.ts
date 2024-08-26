@@ -44,6 +44,7 @@ const stateOfChargeSchema = [
       {
         name: "state_of_charge_unit_white_space",
         label: "Unit White Space",
+        default: true,
         selector: { boolean: {} },
       },
       {

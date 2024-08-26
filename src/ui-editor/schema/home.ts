@@ -39,6 +39,12 @@ const mainSchema = {
       },
     },
     {
+      name: "circle_animation",
+      label: "Circle Animation",
+      default: true,
+      selector: { boolean: {} },
+    },
+    {
       name: "subtract_individual",
       label: "Subtract Individual",
       selector: { boolean: {} },
