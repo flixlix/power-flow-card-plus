@@ -75,6 +75,7 @@ interface Home extends BaseConfigEntity {
   color_value?: boolean | "solar" | "grid" | "battery";
   subtract_individual?: boolean;
   secondary_info?: SecondaryInfoType;
+  circle_animation?: boolean;
 }
 
 interface FossilFuelPercentage extends BaseConfigEntity {
@@ -89,7 +90,7 @@ interface FossilFuelPercentage extends BaseConfigEntity {
   color_label?: boolean;
   unit_white_space?: boolean;
   calculate_flow_rate?: boolean | number;
-  seconday_info: SecondaryInfoType;
+  secondary_info: SecondaryInfoType;
 }
 
 export type ConfigEntities = {

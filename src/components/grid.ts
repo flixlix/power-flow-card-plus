@@ -13,7 +13,7 @@ export const gridElement = (
   return html`<div class="circle-container grid">
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void }) => {
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
         const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
         const target =
           grid.powerOutage?.isOutage && outageTarget
@@ -21,9 +21,9 @@ export const gridElement = (
             : typeof entities.grid!.entity === "string"
             ? entities.grid!.entity
             : entities.grid!.entity.consumption!;
-        main.openDetails(e, target);
+        main.openDetails(e, entities.grid?.tap_action, target);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
           const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
           const target =
@@ -32,7 +32,7 @@ export const gridElement = (
               : typeof entities.grid!.entity === "string"
               ? entities.grid!.entity
               : entities.grid!.entity.consumption!;
-          main.openDetails(e, target);
+          main.openDetails(e, entities.grid?.tap_action, target);
         }
       }}
     >
@@ -46,14 +46,14 @@ export const gridElement = (
       !grid.powerOutage.isOutage
         ? html`<span
             class="return"
-            @click=${(e: { stopPropagation: () => void }) => {
+            @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-              main.openDetails(e, target);
+              main.openDetails(e, entities.grid?.tap_action, target);
             }}
-            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+            @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
                 const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-                main.openDetails(e, target);
+                main.openDetails(e, entities.grid?.tap_action, target);
               }
             }}
           >
@@ -76,14 +76,14 @@ export const gridElement = (
       (grid.powerOutage.isOutage && !!grid.powerOutage.entityGenerator)
         ? html` <span
             class="consumption"
-            @click=${(e: { stopPropagation: () => void }) => {
+            @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-              main.openDetails(e, target);
+              main.openDetails(e, entities.grid?.tap_action, target);
             }}
-            @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+            @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
                 const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-                main.openDetails(e, target);
+                main.openDetails(e, entities.grid?.tap_action, target);
               }
             }}
           >

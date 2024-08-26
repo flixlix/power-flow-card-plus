@@ -28,12 +28,12 @@ export const nonFossilElement = (
         <span class="label">${nonFossil.name}</span>
         <div
           class="circle"
-          @click=${(e: { stopPropagation: () => void }) => {
-            main.openDetails(e, entities.fossil_fuel_percentage?.entity);
+          @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+            main.openDetails(e, entities.fossil_fuel_percentage?.tap_action, entities.fossil_fuel_percentage?.entity);
           }}
-          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+          @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
             if (e.key === "Enter") {
-              main.openDetails(e, entities.fossil_fuel_percentage?.entity);
+              main.openDetails(e, entities.fossil_fuel_percentage?.tap_action, entities.fossil_fuel_percentage?.entity);
             }
           }}
         >

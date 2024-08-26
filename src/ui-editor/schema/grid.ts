@@ -5,6 +5,7 @@ import {
   secondaryInfoSchema,
   getBaseMainConfigSchema,
   customColorsSchema,
+  tapActionSchema,
 } from "./_schema-base";
 import localize from "../../localize/localize";
 
@@ -60,5 +61,11 @@ export const gridSchema = [
     name: "power_outage",
     type: "expandable",
     schema: powerOutageGridSchema,
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
   },
 ] as const;

@@ -1,5 +1,11 @@
 // eslint-disable-next-line import/extensions
-import { getEntitySeparatedSelectionSchema, getBaseMainConfigSchema, customColorsSchema, getEntityCombinedSelectionSchema } from "./_schema-base";
+import {
+  getEntitySeparatedSelectionSchema,
+  getBaseMainConfigSchema,
+  customColorsSchema,
+  getEntityCombinedSelectionSchema,
+  tapActionSchema,
+} from "./_schema-base";
 import localize from "../../localize/localize";
 
 const mainSchema = {
@@ -44,6 +50,7 @@ const stateOfChargeSchema = [
       {
         name: "state_of_charge_unit_white_space",
         label: "Unit White Space",
+        default: true,
         selector: { boolean: {} },
       },
       {
@@ -86,4 +93,10 @@ export const batterySchema = [
   },
   mainSchema,
   customColorsSchema,
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
+  },
 ] as const;

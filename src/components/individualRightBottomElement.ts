@@ -36,12 +36,12 @@ export const individualRightBottomElement = (
   return html`<div class="circle-container individual-bottom individual-right individual-right-bottom">
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void }) => {
-        main.openDetails(e, individualObj?.entity);
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+        main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, individualObj?.entity);
+          main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
         }
       }}
     >

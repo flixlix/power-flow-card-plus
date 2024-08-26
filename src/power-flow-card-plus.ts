@@ -1,7 +1,7 @@
 /* eslint-disable wc/guard-super-call */
 /* eslint-disable import/extensions */
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
@@ -45,6 +45,8 @@ import {
 } from "./utils/computeIndividualPosition";
 import { individualRightTopElement } from "./components/individualRightTopElement";
 import { individualRightBottomElement } from "./components/individualRightBottomElement";
+import { fireEvent } from "./ui-editor/utils/fire_event";
+import { handleAction } from "./ha/panels/lovelace/common/handle-action";
 
 const circleCircumference = 238.76104;
 
@@ -127,16 +129,34 @@ export class PowerFlowCardPlus extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
-  public openDetails(event: { stopPropagation: any; key?: string }, entityId?: string | undefined): void {
+  public openDetails(
+    event: { stopPropagation: () => void; key?: string; target: HTMLElement },
+    config?: ActionConfig,
+    entityId?: string | undefined
+  ): void {
     event.stopPropagation();
-    if (!entityId || !this._config.clickable_entities) return;
-    /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
-    if (!doesEntityExist(this.hass, entityId)) return;
-    const e = new CustomEvent("hass-more-info", {
-      composed: true,
-      detail: { entityId },
-    });
-    this.dispatchEvent(e);
+
+    if (!config) {
+      if (!entityId || !this._config.clickable_entities) return;
+      /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
+      if (!doesEntityExist(this.hass, entityId)) return;
+      const e = new CustomEvent("hass-more-info", {
+        composed: true,
+        detail: { entityId },
+      });
+      this.dispatchEvent(e);
+      return;
+    }
+
+    handleAction(
+      event.target,
+      this.hass!,
+      {
+        entity: entityId,
+        tap_action: config,
+      },
+      "tap"
+    );
   }
 
   protected render(): TemplateResult {
@@ -178,6 +198,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
         circle_type: entities.grid?.color_circle,
       },
+      tap_action: entities.grid?.tap_action,
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
         decimals: entities.grid?.secondary_info?.decimals,
@@ -191,6 +212,7 @@ export class PowerFlowCardPlus extends LitElement {
         color: {
           type: entities.grid?.secondary_info?.color_value,
         },
+        tap_action: entities.grid?.secondary_info?.tap_action,
       },
     };
 
@@ -205,6 +227,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
       name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
+      tap_action: entities.solar?.tap_action,
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
         decimals: entities.solar?.secondary_info?.decimals,
@@ -215,6 +238,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.solar?.secondary_info?.icon,
         unit: entities.solar?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.solar?.secondary_info?.unit_white_space,
+        tap_action: entities.solar?.secondary_info?.tap_action,
       },
     };
 
@@ -232,8 +256,8 @@ export class PowerFlowCardPlus extends LitElement {
       icon: computeFieldIcon(this.hass, entities.battery, "mdi:battery-high"),
       state_of_charge: {
         state: getBatteryStateOfCharge(this.hass, this._config),
-        unit: entities?.battery?.state_of_charge_unit || "%",
-        unit_white_space: entities?.battery?.state_of_charge_unit_white_space || true,
+        unit: entities?.battery?.state_of_charge_unit ?? "%",
+        unit_white_space: entities?.battery?.state_of_charge_unit_white_space ?? true,
         decimals: entities?.battery?.state_of_charge_decimals || 0,
       },
       state: {
@@ -242,6 +266,7 @@ export class PowerFlowCardPlus extends LitElement {
         toGrid: 0,
         toHome: 0,
       },
+      tap_action: entities.battery?.tap_action,
       color: {
         fromBattery: entities.battery?.color?.consumption,
         toBattery: entities.battery?.color?.production,
@@ -256,6 +281,7 @@ export class PowerFlowCardPlus extends LitElement {
       state: initialNumericState,
       icon: computeFieldIcon(this.hass, entities?.home, "mdi:home"),
       name: computeFieldName(this.hass, entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
+      tap_action: entities.home?.tap_action,
       secondary: {
         entity: entities.home?.secondary_info?.entity,
         template: entities.home?.secondary_info?.template,
@@ -266,6 +292,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit_white_space: entities.home?.secondary_info?.unit_white_space,
         icon: entities.home?.secondary_info?.icon,
         decimals: entities.home?.secondary_info?.decimals,
+        tap_action: entities.home?.secondary_info?.tap_action,
       },
     };
 
@@ -283,6 +310,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       color: entities.fossil_fuel_percentage?.color,
       color_value: entities.fossil_fuel_percentage?.color_value,
+      tap_action: entities.fossil_fuel_percentage?.tap_action,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
         decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
@@ -294,6 +322,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
         color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
+        tap_action: entities.fossil_fuel_percentage?.secondary_info?.tap_action,
       },
     };
 
