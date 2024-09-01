@@ -479,6 +479,7 @@ export const styles = css`
 
   #home-circle {
     color: var(--text-home-color);
+    z-index: 2;
   }
 
   .individual-bottom .circle {

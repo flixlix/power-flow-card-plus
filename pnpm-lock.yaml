@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@material/mwc-ripple':
-        specifier: ^0.19.1
-        version: 0.19.1
       '@mdi/js':
         specifier: ^7.2.96
         version: 7.4.47
@@ -50,7 +47,7 @@ importers:
         version: 7.24.1(@babel/core@7.24.3)(eslint@8.57.0)
       '@babel/eslint-plugin':
         specifier: ^7.17.7
-        version: 7.23.5(@babel/eslint-parser@7.24.1)(eslint@8.57.0)
+        version: 7.23.5(@babel/eslint-parser@7.24.1(@babel/core@7.24.3)(eslint@8.57.0))(eslint@8.57.0)
       '@babel/preset-env':
         specifier: ^7.24.4
         version: 7.24.4(@babel/core@7.24.3)
@@ -62,10 +59,10 @@ importers:
         version: 29.7.0
       '@open-wc/eslint-config':
         specifier: ^7.0.0
-        version: 7.0.0(@babel/eslint-plugin@7.23.5)(eslint-plugin-html@6.2.0)(eslint-plugin-import@2.29.1)(eslint-plugin-lit-a11y@2.4.1)(eslint-plugin-lit@1.11.0)(eslint-plugin-no-only-tests@2.6.0)(eslint-plugin-wc@1.5.0)
+        version: 7.0.0(@babel/eslint-plugin@7.23.5(@babel/eslint-parser@7.24.1(@babel/core@7.24.3)(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-html@6.2.0)(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0))(eslint-plugin-lit-a11y@2.4.1(eslint@8.57.0))(eslint-plugin-lit@1.11.0(eslint@8.57.0))(eslint-plugin-no-only-tests@2.6.0)(eslint-plugin-wc@1.5.0(eslint@8.57.0))
       '@rollup/plugin-babel':
         specifier: ^5.3.1
-        version: 5.3.1(@babel/core@7.24.3)(rollup@2.79.1)
+        version: 5.3.1(@babel/core@7.24.3)(@types/babel__core@7.20.5)(rollup@2.79.1)
       '@rollup/plugin-commonjs':
         specifier: ^21.1.0
         version: 21.1.0(rollup@2.79.1)
@@ -83,16 +80,16 @@ importers:
         version: 8.5.0(rollup@2.79.1)(tslib@2.6.2)(typescript@4.9.5)
       '@semantic-release/changelog':
         specifier: ^6.0.1
-        version: 6.0.3(semantic-release@20.1.3)
+        version: 6.0.3(semantic-release@20.1.3(typescript@4.9.5))
       '@semantic-release/git':
         specifier: ^10.0.1
-        version: 10.0.1(semantic-release@20.1.3)
+        version: 10.0.1(semantic-release@20.1.3(typescript@4.9.5))
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.7
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.20.0
-        version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.57.0)(typescript@4.9.5)
+        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0)(typescript@4.9.5)
       '@typescript-eslint/parser':
         specifier: ^5.20.0
         version: 5.62.0(eslint@8.57.0)(typescript@4.9.5)
@@ -110,7 +107,7 @@ importers:
         version: 1.5.0(eslint@8.57.0)
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+        version: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       prettier:
         specifier: 2.8.8
         version: 2.8.8
@@ -128,7 +125,7 @@ importers:
         version: 20.1.3(typescript@4.9.5)
       semantic-release-replace-plugin:
         specifier: ^1.2.7
-        version: 1.2.7(semantic-release@20.1.3)
+        version: 1.2.7(semantic-release@20.1.3(typescript@4.9.5))
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.12.7)(typescript@4.9.5)
@@ -945,30 +942,6 @@ packages:
 
   '@lit/reactive-element@1.6.3':
     resolution: {integrity: sha512-QuTgnG52Poic7uM1AN5yJ09QMe0O28e10XzSvWDz02TJiiKee4stsiownEIadWm8nYzyDAyT+gKzUoZmiWQtsQ==}
-
-  '@material/animation@8.0.0-canary.774dcfc8e.0':
-    resolution: {integrity: sha512-h8pGWQy5mZ7yNveKGSwxP1pRV9wGs6hjXiOR5nS0NePjfIgRsqUBnSwNKW5TcP/ThPtnATbq0FfARs+ugHdFqA==}
-
-  '@material/base@8.0.0-canary.774dcfc8e.0':
-    resolution: {integrity: sha512-638e0T0WUlsAW21hgFhMNN/MnCErKmuovzJjA/vwrhPRHKtxrIuTIkmX2G1yQ7LlNQWhKG7W32g9KNd06+PNGA==}
-
-  '@material/dom@8.0.0-canary.774dcfc8e.0':
-    resolution: {integrity: sha512-SHrc5zNOoWR2b9nShcv/A2D2C67beBdCS/KDPzezCpi0UfJYZVcjf9EmYDpNhZHh9jil3BiDvldknHazLGkqWA==}
-
-  '@material/feature-targeting@8.0.0-canary.774dcfc8e.0':
-    resolution: {integrity: sha512-XcCJOCZbk2kg41dTIvWd1iEJzl4rtGJ6ZK4o/FWQbczDJUcKN35je0+d/a/DvEh22t2Tj9M96n8HmTkS447Rhw==}
-
-  '@material/mwc-base@0.19.1':
-    resolution: {integrity: sha512-tYih18Fd99nURPN8ulzibIUeCUo/Wv1ScQIWYZtDkXwOiEvDJDYm0jDO96bOMRZK8aIvW/URspbUoa/RkK2yYw==}
-
-  '@material/mwc-ripple@0.19.1':
-    resolution: {integrity: sha512-nrT7tNMsDV2Qx0dyYfFAQy5Rwogtip4UCX2CpHL4A5o9Ba1XHiEqy/CRZmijjxTK6FO1l+20efKPYE4jNlZk6w==}
-
-  '@material/ripple@8.0.0-canary.774dcfc8e.0':
-    resolution: {integrity: sha512-mxfa+aNQuCJ6wQbjfs2k7hxHuCcISfGU9hJixTTykJqKeE1h3N045TxTyVSeroXf38SyWA4T2303/W7nkPbJpg==}
-
-  '@material/theme@8.0.0-canary.774dcfc8e.0':
-    resolution: {integrity: sha512-dGQHZ5nHVdgdmG/PtD6A/oJifWdou1Kx3JAu0D8JtopdyUrNFKHU24qj6SIto7LLm+pa05RPnfxSHWsBvDyLTA==}
 
   '@mdi/js@7.4.47':
     resolution: {integrity: sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==}
@@ -4058,7 +4031,7 @@ snapshots:
       eslint-visitor-keys: 2.1.0
       semver: 6.3.1
 
-  '@babel/eslint-plugin@7.23.5(@babel/eslint-parser@7.24.1)(eslint@8.57.0)':
+  '@babel/eslint-plugin@7.23.5(@babel/eslint-parser@7.24.1(@babel/core@7.24.3)(eslint@8.57.0))(eslint@8.57.0)':
     dependencies:
       '@babel/eslint-parser': 7.24.1(@babel/core@7.24.3)(eslint@8.57.0)
       eslint: 8.57.0
@@ -4893,7 +4866,7 @@ snapshots:
       jest-util: 29.7.0
       slash: 3.0.0
 
-  '@jest/core@29.7.0(ts-node@10.9.2)':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
@@ -4907,7 +4880,7 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+      jest-config: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -5079,50 +5052,6 @@ snapshots:
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.2.0
 
-  '@material/animation@8.0.0-canary.774dcfc8e.0':
-    dependencies:
-      tslib: 1.14.1
-
-  '@material/base@8.0.0-canary.774dcfc8e.0':
-    dependencies:
-      tslib: 1.14.1
-
-  '@material/dom@8.0.0-canary.774dcfc8e.0':
-    dependencies:
-      '@material/feature-targeting': 8.0.0-canary.774dcfc8e.0
-      tslib: 1.14.1
-
-  '@material/feature-targeting@8.0.0-canary.774dcfc8e.0': {}
-
-  '@material/mwc-base@0.19.1':
-    dependencies:
-      '@material/base': 8.0.0-canary.774dcfc8e.0
-      '@material/dom': 8.0.0-canary.774dcfc8e.0
-      lit-element: 2.5.1
-      tslib: 1.14.1
-
-  '@material/mwc-ripple@0.19.1':
-    dependencies:
-      '@material/dom': 8.0.0-canary.774dcfc8e.0
-      '@material/mwc-base': 0.19.1
-      '@material/ripple': 8.0.0-canary.774dcfc8e.0
-      lit-element: 2.5.1
-      lit-html: 1.4.1
-      tslib: 1.14.1
-
-  '@material/ripple@8.0.0-canary.774dcfc8e.0':
-    dependencies:
-      '@material/animation': 8.0.0-canary.774dcfc8e.0
-      '@material/base': 8.0.0-canary.774dcfc8e.0
-      '@material/dom': 8.0.0-canary.774dcfc8e.0
-      '@material/feature-targeting': 8.0.0-canary.774dcfc8e.0
-      '@material/theme': 8.0.0-canary.774dcfc8e.0
-      tslib: 1.14.1
-
-  '@material/theme@8.0.0-canary.774dcfc8e.0':
-    dependencies:
-      '@material/feature-targeting': 8.0.0-canary.774dcfc8e.0
-
   '@mdi/js@7.4.47': {}
 
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
@@ -5212,13 +5141,13 @@ snapshots:
     dependencies:
       '@octokit/openapi-types': 18.1.1
 
-  '@open-wc/eslint-config@7.0.0(@babel/eslint-plugin@7.23.5)(eslint-plugin-html@6.2.0)(eslint-plugin-import@2.29.1)(eslint-plugin-lit-a11y@2.4.1)(eslint-plugin-lit@1.11.0)(eslint-plugin-no-only-tests@2.6.0)(eslint-plugin-wc@1.5.0)':
+  '@open-wc/eslint-config@7.0.0(@babel/eslint-plugin@7.23.5(@babel/eslint-parser@7.24.1(@babel/core@7.24.3)(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-html@6.2.0)(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0))(eslint-plugin-lit-a11y@2.4.1(eslint@8.57.0))(eslint-plugin-lit@1.11.0(eslint@8.57.0))(eslint-plugin-no-only-tests@2.6.0)(eslint-plugin-wc@1.5.0(eslint@8.57.0))':
     dependencies:
-      '@babel/eslint-plugin': 7.23.5(@babel/eslint-parser@7.24.1)(eslint@8.57.0)
+      '@babel/eslint-plugin': 7.23.5(@babel/eslint-parser@7.24.1(@babel/core@7.24.3)(eslint@8.57.0))(eslint@8.57.0)
       eslint: 7.32.0
-      eslint-config-airbnb-base: 14.2.1(eslint-plugin-import@2.29.1)(eslint@7.32.0)
+      eslint-config-airbnb-base: 14.2.1(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0))(eslint@7.32.0)
       eslint-plugin-html: 6.2.0
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0)
       eslint-plugin-lit: 1.11.0(eslint@8.57.0)
       eslint-plugin-lit-a11y: 2.4.1(eslint@8.57.0)
       eslint-plugin-no-only-tests: 2.6.0
@@ -5238,12 +5167,14 @@ snapshots:
       '@pnpm/network.ca-file': 1.0.2
       config-chain: 1.1.13
 
-  '@rollup/plugin-babel@5.3.1(@babel/core@7.24.3)(rollup@2.79.1)':
+  '@rollup/plugin-babel@5.3.1(@babel/core@7.24.3)(@types/babel__core@7.20.5)(rollup@2.79.1)':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-module-imports': 7.24.3
       '@rollup/pluginutils': 3.1.0(rollup@2.79.1)
       rollup: 2.79.1
+    optionalDependencies:
+      '@types/babel__core': 7.20.5
 
   '@rollup/plugin-commonjs@21.1.0(rollup@2.79.1)':
     dependencies:
@@ -5273,18 +5204,20 @@ snapshots:
 
   '@rollup/plugin-terser@0.4.4(rollup@2.79.1)':
     dependencies:
-      rollup: 2.79.1
       serialize-javascript: 6.0.2
       smob: 1.5.0
       terser: 5.29.2
+    optionalDependencies:
+      rollup: 2.79.1
 
   '@rollup/plugin-typescript@8.5.0(rollup@2.79.1)(tslib@2.6.2)(typescript@4.9.5)':
     dependencies:
       '@rollup/pluginutils': 3.1.0(rollup@2.79.1)
       resolve: 1.22.8
       rollup: 2.79.1
-      tslib: 2.6.2
       typescript: 4.9.5
+    optionalDependencies:
+      tslib: 2.6.2
 
   '@rollup/pluginutils@3.1.0(rollup@2.79.1)':
     dependencies:
@@ -5293,7 +5226,7 @@ snapshots:
       picomatch: 2.3.1
       rollup: 2.79.1
 
-  '@semantic-release/changelog@6.0.3(semantic-release@20.1.3)':
+  '@semantic-release/changelog@6.0.3(semantic-release@20.1.3(typescript@4.9.5))':
     dependencies:
       '@semantic-release/error': 3.0.0
       aggregate-error: 3.1.0
@@ -5301,7 +5234,7 @@ snapshots:
       lodash: 4.17.21
       semantic-release: 20.1.3(typescript@4.9.5)
 
-  '@semantic-release/commit-analyzer@9.0.2(semantic-release@20.1.3)':
+  '@semantic-release/commit-analyzer@9.0.2(semantic-release@20.1.3(typescript@4.9.5))':
     dependencies:
       conventional-changelog-angular: 5.0.13
       conventional-commits-filter: 2.0.7
@@ -5316,7 +5249,7 @@ snapshots:
 
   '@semantic-release/error@3.0.0': {}
 
-  '@semantic-release/git@10.0.1(semantic-release@20.1.3)':
+  '@semantic-release/git@10.0.1(semantic-release@20.1.3(typescript@4.9.5))':
     dependencies:
       '@semantic-release/error': 3.0.0
       aggregate-error: 3.1.0
@@ -5330,7 +5263,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@semantic-release/github@8.1.0(semantic-release@20.1.3)':
+  '@semantic-release/github@8.1.0(semantic-release@20.1.3(typescript@4.9.5))':
     dependencies:
       '@octokit/core': 4.2.4
       '@octokit/plugin-paginate-rest': 6.1.2(@octokit/core@4.2.4)
@@ -5354,7 +5287,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@semantic-release/npm@9.0.2(semantic-release@20.1.3)':
+  '@semantic-release/npm@9.0.2(semantic-release@20.1.3(typescript@4.9.5))':
     dependencies:
       '@semantic-release/error': 3.0.0
       aggregate-error: 3.1.0
@@ -5371,7 +5304,7 @@ snapshots:
       semver: 7.6.0
       tempy: 1.0.1
 
-  '@semantic-release/release-notes-generator@10.0.3(semantic-release@20.1.3)':
+  '@semantic-release/release-notes-generator@10.0.3(semantic-release@20.1.3(typescript@4.9.5))':
     dependencies:
       conventional-changelog-angular: 5.0.13
       conventional-changelog-writer: 5.0.1
@@ -5493,7 +5426,7 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.57.0)(typescript@4.9.5)':
+  '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0)(typescript@4.9.5)':
     dependencies:
       '@eslint-community/regexpp': 4.10.0
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
@@ -5507,6 +5440,7 @@ snapshots:
       natural-compare-lite: 1.4.0
       semver: 7.6.0
       tsutils: 3.21.0(typescript@4.9.5)
+    optionalDependencies:
       typescript: 4.9.5
     transitivePeerDependencies:
       - supports-color
@@ -5518,6 +5452,7 @@ snapshots:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@4.9.5)
       debug: 4.3.4
       eslint: 8.57.0
+    optionalDependencies:
       typescript: 4.9.5
     transitivePeerDependencies:
       - supports-color
@@ -5534,6 +5469,7 @@ snapshots:
       debug: 4.3.4
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@4.9.5)
+    optionalDependencies:
       typescript: 4.9.5
     transitivePeerDependencies:
       - supports-color
@@ -5549,6 +5485,7 @@ snapshots:
       is-glob: 4.0.3
       semver: 7.6.0
       tsutils: 3.21.0(typescript@4.9.5)
+    optionalDependencies:
       typescript: 4.9.5
     transitivePeerDependencies:
       - supports-color
@@ -5999,15 +5936,16 @@ snapshots:
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
+    optionalDependencies:
       typescript: 4.9.5
 
-  create-jest@29.7.0(@types/node@20.12.7)(ts-node@10.9.2):
+  create-jest@29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+      jest-config: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -6271,11 +6209,11 @@ snapshots:
 
   escape-string-regexp@5.0.0: {}
 
-  eslint-config-airbnb-base@14.2.1(eslint-plugin-import@2.29.1)(eslint@7.32.0):
+  eslint-config-airbnb-base@14.2.1(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0))(eslint@7.32.0):
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0)
       object.assign: 4.1.5
       object.entries: 1.1.8
 
@@ -6291,10 +6229,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-node@0.3.9)(eslint@8.57.0):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint-import-resolver-node@0.3.9)(eslint@8.57.0):
     dependencies:
-      '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
       debug: 3.2.7
+    optionalDependencies:
+      '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
@@ -6304,9 +6243,8 @@ snapshots:
     dependencies:
       htmlparser2: 7.2.0
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0)(eslint@8.57.0):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint@8.57.0):
     dependencies:
-      '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5
       array.prototype.flat: 1.3.2
@@ -6315,7 +6253,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-node@0.3.9)(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.9.5))(eslint-import-resolver-node@0.3.9)(eslint@8.57.0)
       hasown: 2.0.2
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -6325,6 +6263,8 @@ snapshots:
       object.values: 1.2.0
       semver: 6.3.1
       tsconfig-paths: 3.15.0
+    optionalDependencies:
+      '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -7077,16 +7017,16 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.7.0(@types/node@20.12.7)(ts-node@10.9.2):
+  jest-cli@29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2)
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+      create-jest: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+      jest-config: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -7096,12 +7036,11 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-config@29.7.0(@types/node@20.12.7)(ts-node@10.9.2):
+  jest-config@29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.7
       babel-jest: 29.7.0(@babel/core@7.24.3)
       chalk: 4.1.2
       ci-info: 3.9.0
@@ -7121,6 +7060,8 @@ snapshots:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 20.12.7
       ts-node: 10.9.2(@types/node@20.12.7)(typescript@4.9.5)
     transitivePeerDependencies:
       - babel-plugin-macros
@@ -7203,7 +7144,7 @@ snapshots:
       jest-util: 29.7.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@29.7.0):
-    dependencies:
+    optionalDependencies:
       jest-resolve: 29.7.0
 
   jest-regex-util@29.6.3: {}
@@ -7341,12 +7282,12 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@29.7.0(@types/node@20.12.7)(ts-node@10.9.2):
+  jest@29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2)
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+      jest-cli: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2(@types/node@20.12.7)(typescript@4.9.5))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -8041,7 +7982,7 @@ snapshots:
       es-errors: 1.3.0
       is-regex: 1.1.4
 
-  semantic-release-replace-plugin@1.2.7(semantic-release@20.1.3):
+  semantic-release-replace-plugin@1.2.7(semantic-release@20.1.3(typescript@4.9.5)):
     dependencies:
       jest-diff: 29.7.0
       lodash-es: 4.17.21
@@ -8050,11 +7991,11 @@ snapshots:
 
   semantic-release@20.1.3(typescript@4.9.5):
     dependencies:
-      '@semantic-release/commit-analyzer': 9.0.2(semantic-release@20.1.3)
+      '@semantic-release/commit-analyzer': 9.0.2(semantic-release@20.1.3(typescript@4.9.5))
       '@semantic-release/error': 3.0.0
-      '@semantic-release/github': 8.1.0(semantic-release@20.1.3)
-      '@semantic-release/npm': 9.0.2(semantic-release@20.1.3)
-      '@semantic-release/release-notes-generator': 10.0.3(semantic-release@20.1.3)
+      '@semantic-release/github': 8.1.0(semantic-release@20.1.3(typescript@4.9.5))
+      '@semantic-release/npm': 9.0.2(semantic-release@20.1.3(typescript@4.9.5))
+      '@semantic-release/release-notes-generator': 10.0.3(semantic-release@20.1.3(typescript@4.9.5))
       aggregate-error: 4.0.1
       cosmiconfig: 8.3.6(typescript@4.9.5)
       debug: 4.3.4
