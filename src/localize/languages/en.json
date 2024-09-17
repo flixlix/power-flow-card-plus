@@ -74,6 +74,7 @@
     "transparency": "Transparency",
     "grey_color": "Grey Color",
     "tap_action": "Tap Action",
-    "navigation_path": "Navigation Path"
+    "navigation_path": "Navigation Path",
+    "sort_individual_devices": "Sort individual devices"
   }
 }

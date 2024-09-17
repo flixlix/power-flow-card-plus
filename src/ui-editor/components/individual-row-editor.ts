@@ -1,17 +1,17 @@
 import { mdiClose, mdiDrag, mdiPencil } from "@mdi/js";
-import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
+import { HomeAssistant } from "custom-card-helpers";
+import { css, CSSResultGroup, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import type { SortableEvent } from "sortablejs";
-import { EditSubElementEvent, EntityConfig, LovelaceRowConfig } from "../types/entity-rows";
-import { HomeAssistant } from "custom-card-helpers";
-import { loadSortable, SortableInstance } from "../utils/sortable.ondemand";
-import { fireEvent } from "../utils/fire_event";
-import { sortableStyles } from "../utils/sortable_styles";
-import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { loadHaForm } from "../utils/loadHAForm";
-import { individualSchema } from "../schema/individual";
 import localize from "../../localize/localize";
+import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { individualSchema } from "../schema/individual";
+import { EditSubElementEvent, EntityConfig, LovelaceRowConfig } from "../types/entity-rows";
+import { fireEvent } from "../utils/fire_event";
+import { loadHaForm } from "../utils/loadHAForm";
+import { loadSortable, SortableInstance } from "../utils/sortable.ondemand";
+import { sortableStyles } from "../utils/sortable_styles";
 
 declare global {
   interface HASSDomEvents {
@@ -137,10 +137,7 @@ export class IndividualRowEditor extends LitElement {
           `
         )}
       </div>
-
-      ${this.entities.length >= MAX_INDIVIDUAL_ENTITIES
-        ? nothing
-        : html` <ha-entity-picker class="add-entity" .hass=${this.hass} @value-changed=${this._addEntity}></ha-entity-picker>`}
+      <ha-entity-picker class="add-entity" .hass=${this.hass} @value-changed=${this._addEntity}></ha-entity-picker>
     `;
   }
 

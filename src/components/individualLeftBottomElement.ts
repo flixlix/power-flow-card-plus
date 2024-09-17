@@ -1,14 +1,13 @@
 import { html, svg } from "lit";
-import { showLine } from "../utils/showLine";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { NewDur, TemplatesObj } from "../type";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
+import { NewDur, TemplatesObj } from "../type";
+import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { computeIndividualFlowRate } from "../utils/computeFlowRate";
+import { showLine } from "../utils/showLine";
 import { styleLine } from "../utils/styleLine";
 import { individualSecondarySpan } from "./spans/individualSecondarySpan";
-import { HomeAssistant } from "custom-card-helpers";
-import { computeIndividualFlowRate } from "../utils/computeFlowRate";
-import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 
 interface IndividualBottom {
   newDur: NewDur;
@@ -19,7 +18,6 @@ interface IndividualBottom {
 
 export const individualLeftBottomElement = (
   main: PowerFlowCardPlus,
-  hass: HomeAssistant,
   config: PowerFlowCardPlusConfig,
   { individualObj, templatesObj, displayState, newDur }: IndividualBottom
 ) => {
@@ -62,7 +60,7 @@ export const individualLeftBottomElement = (
         }
       }}
     >
-      ${individualSecondarySpan(hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-bottom")}
+      ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-bottom")}
       ${individualObj?.icon !== " " ? html` <ha-icon id="individual-left-bottom-icon" .icon=${individualObj?.icon} />` : null}
       ${individualObj?.field?.display_zero_state !== false || (individualObj?.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-bottom individual-left-bottom"

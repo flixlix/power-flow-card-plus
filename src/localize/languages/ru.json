@@ -74,6 +74,7 @@
     "transparency": "Прозрачность",
     "grey_color": "Серый цвет",
     "tap_action": "действие касания",
-    "navigation_path": "путь навигации"
+    "navigation_path": "путь навигации",
+    "sort_individual_devices": "Сортировка отдельных устройств"
   }
 }
