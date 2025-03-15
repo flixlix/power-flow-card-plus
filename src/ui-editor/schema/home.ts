@@ -1,6 +1,5 @@
-/* eslint-disable import/extensions */
 import { getBaseMainConfigSchema, secondaryInfoSchema, tapActionSchema } from "./_schema-base";
-import localize from "../../localize/localize";
+import localize from "@/localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema(),
@@ -57,6 +56,11 @@ const mainSchema = {
     {
       name: "use_metadata",
       label: "Use Metadata",
+      selector: { boolean: {} },
+    },
+    {
+      name: "hide",
+      label: "Hide Home",
       selector: { boolean: {} },
     },
   ],

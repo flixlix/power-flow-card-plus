@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/extensions
 import {
   getEntitySeparatedSelectionSchema,
   getBaseMainConfigSchema,
@@ -6,7 +5,7 @@ import {
   getEntityCombinedSelectionSchema,
   tapActionSchema,
 } from "./_schema-base";
-import localize from "../../localize/localize";
+import localize from "@/localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("battery"),

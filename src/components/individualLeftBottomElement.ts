@@ -27,7 +27,7 @@ export const individualLeftBottomElement = (
   const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity) || 0;
   const duration = newDur.individual[indexOfIndividual] || 0;
   return html`<div class="circle-container individual-bottom bottom">
-    ${showLine(config, individualObj?.state || 0)
+    ${showLine(config, individualObj?.state || 0) && !config.entities.home?.hide
       ? html`
           <svg width="80" height="30">
             <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />

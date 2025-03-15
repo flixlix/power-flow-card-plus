@@ -1,12 +1,9 @@
-import { mdiArrowLeft, mdiCodeBraces, mdiListBoxOutline } from "@mdi/js";
-import { ActionConfig, EntityConfig, HASSDomEvent, HomeAssistant, fireEvent } from "custom-card-helpers";
+import { mdiArrowLeft } from "@mdi/js";
+import { HomeAssistant, fireEvent } from "custom-card-helpers";
 import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, query, state } from "lit-element";
-import { EditSubElementEvent, LovelaceRowConfig, OpenSubElementPage, SubElementEditorConfig } from "../types/entity-rows";
-import { cardConfigStruct, entitiesSchema, individualDevicesSchema } from "../schema/_schema-all";
-import localize from "../../localize/localize";
-import { IndividualDeviceType } from "../../type";
-import { ConfigEntities, IndividualField, PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { customElement, property } from "lit-element";
+import localize from "@/localize/localize";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { ConfigPage } from "../types/config-page";
 
 declare global {

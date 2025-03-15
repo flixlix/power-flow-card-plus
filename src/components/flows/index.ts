@@ -1,11 +1,7 @@
-import { html, svg } from "lit";
-import { PowerFlowCardPlus } from "../../power-flow-card-plus";
-import { classMap } from "lit/directives/class-map.js";
-import { NewDur } from "../../type";
-import { styleLine } from "../../utils/styleLine";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { showLine } from "../../utils/showLine";
-import { IndividualObject } from "../../states/raw/individual/getIndividualObject";
+import { html } from "lit";
+import { NewDur } from "@/type";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { IndividualObject } from "@/states/raw/individual/getIndividualObject";
 import { flowSolarToHome } from "./solarToHome";
 import { flowSolarToGrid } from "./solarToGrid";
 import { flowSolarToBattery } from "./solarToBattery";
