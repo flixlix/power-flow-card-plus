@@ -74,6 +74,7 @@
     "transparency": "Transparens",
     "grey_color": "Grå färg",
     "tap_action": "Tryckåtgärd",
-    "navigation_path": "Navigationsväg"
+    "navigation_path": "Navigationsväg",
+    "sort_individual_devices": "Sortera enskilda enheter"
   }
 }

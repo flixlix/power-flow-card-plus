@@ -74,6 +74,7 @@
     "transparency": "Transparenz",
     "grey_color": "Graue Farbe",
     "tap_action": "Aktion beim Antippen",
-    "navigation_path": "Navigationspfad"
+    "navigation_path": "Navigationspfad",
+    "sort_individual_devices": "Individuelle Geräte sortieren"
   }
 }

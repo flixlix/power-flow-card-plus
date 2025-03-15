@@ -12,52 +12,24 @@ const getIndividualObjSortPowerMode = (individualObjs: IndividualObject[], index
   return filteredIndividualObjs?.[index] ?? undefined;
 };
 
-export const getTopLeftIndividual = (config: PowerFlowCardPlusConfig, individualObjs: IndividualObject[]): IndividualObject | undefined => {
-  const mode = config.individual_mode_config?.mode;
-  switch (mode) {
-    case "sort_power": {
-      return getIndividualObjSortPowerMode(individualObjs, 0);
-    }
-    default:
-      return undefined;
-  }
+export const getTopLeftIndividual = (individualObjs: IndividualObject[]): IndividualObject | undefined => {
+  return getIndividualObjSortPowerMode(individualObjs, 0);
 };
 
-export const getBottomLeftIndividual = (config: PowerFlowCardPlusConfig, individualObjs: IndividualObject[]): IndividualObject | undefined => {
-  const mode = config.individual_mode_config?.mode;
-  switch (mode) {
-    case "sort_power": {
-      return getIndividualObjSortPowerMode(individualObjs, 1);
-    }
-    default:
-      return undefined;
-  }
+export const getBottomLeftIndividual = (individualObjs: IndividualObject[]): IndividualObject | undefined => {
+  return getIndividualObjSortPowerMode(individualObjs, 1);
 };
 
-export const getTopRightIndividual = (config: PowerFlowCardPlusConfig, individualObjs: IndividualObject[]): IndividualObject | undefined => {
-  const mode = config.individual_mode_config?.mode;
-  switch (mode) {
-    case "sort_power": {
-      return getIndividualObjSortPowerMode(individualObjs, 2);
-    }
-    default:
-      return undefined;
-  }
+export const getTopRightIndividual = (individualObjs: IndividualObject[]): IndividualObject | undefined => {
+  return getIndividualObjSortPowerMode(individualObjs, 2);
 };
 
-export const getBottomRightIndividual = (config: PowerFlowCardPlusConfig, individualObjs: IndividualObject[]): IndividualObject | undefined => {
-  const mode = config.individual_mode_config?.mode;
-  switch (mode) {
-    case "sort_power": {
-      return getIndividualObjSortPowerMode(individualObjs, 3);
-    }
-    default:
-      return undefined;
-  }
+export const getBottomRightIndividual = (individualObjs: IndividualObject[]): IndividualObject | undefined => {
+  return getIndividualObjSortPowerMode(individualObjs, 3);
 };
 
-export const checkHasRightIndividual = (config: PowerFlowCardPlusConfig, individualObjs: IndividualObject[]): boolean =>
-  !!getTopRightIndividual(config, individualObjs) || !!getBottomRightIndividual(config, individualObjs);
+export const checkHasRightIndividual = (individualObjs: IndividualObject[]): boolean =>
+  !!getTopRightIndividual(individualObjs) || !!getBottomRightIndividual(individualObjs);
 
-export const checkHasBottomIndividual = (config: PowerFlowCardPlusConfig, individualObjs: IndividualObject[]): boolean =>
-  !!getBottomLeftIndividual(config, individualObjs) || !!getBottomRightIndividual(config, individualObjs);
+export const checkHasBottomIndividual = (individualObjs: IndividualObject[]): boolean =>
+  !!getBottomLeftIndividual(individualObjs) || !!getBottomRightIndividual(individualObjs);

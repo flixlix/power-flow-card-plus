@@ -74,6 +74,7 @@
     "transparency": "Przezroczystość",
     "grey_color": "Kolor szary",
     "tap_action": "Akcja dotknięcia",
-    "navigation_path": "Ścieżka nawigacji"
+    "navigation_path": "Ścieżka nawigacji",
+    "sort_individual_devices": "Sortuj poszczególne urządzenia"
   }
 }

@@ -1,18 +1,17 @@
 /* eslint-disable no-use-before-define */
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { EntityConfig, fireEvent, HASSDomEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { assert } from "superstruct";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { cardConfigStruct, generalConfigSchema, entitiesSchema, advancedOptionsSchema } from "./schema/_schema-all";
+import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { cardConfigStruct, generalConfigSchema, advancedOptionsSchema } from "./schema/_schema-all";
 import localize from "../localize/localize";
 import { defaultValues } from "../utils/get-default-config";
-import { EditSubElementEvent, LovelaceRowConfig, OpenSubElementPage, SubElementEditorConfig } from "./types/entity-rows";
+import { LovelaceRowConfig } from "./types/entity-rows";
 import "./components/individual-devices-editor";
 import "./components/link-subpage";
 import "./components/subpage-header";
 import { loadHaForm } from "./utils/loadHAForm";
-import { processEditorEntities } from "./components/individual-devices-editor";
 import { gridSchema } from "./schema/grid";
 import { solarSchema } from "./schema/solar";
 import { batterySchema } from "./schema/battery";
@@ -158,8 +157,8 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
           .schema=${generalConfigSchema}
           .computeLabel=${this._computeLabelCallback}
           @value-changed=${this._valueChanged}
-        ></ha-form
-        >${renderLinkSubPages()}
+        ></ha-form>
+        ${renderLinkSubPages()}
       </div>
     `;
   }

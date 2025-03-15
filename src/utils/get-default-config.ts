@@ -66,5 +66,6 @@ export function getDefaultConfig(hass: HomeAssistant): object {
     min_expected_power: defaultValues.minExpectedPower,
     watt_threshold: defaultValues.wattThreshold,
     transparency_zero_lines: defaultValues.transparencyZeroLines,
+    sort_individual_devices: false,
   };
 }

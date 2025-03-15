@@ -74,6 +74,7 @@
     "transparency": "Transparantie",
     "grey_color": "Grijstint",
     "tap_action": "Tik Actie",
-    "navigation_path": "Navigatiepad"
+    "navigation_path": "Navigatiepad",
+    "sort_individual_devices": "Sorteer individuele apparaten"
   }
 }

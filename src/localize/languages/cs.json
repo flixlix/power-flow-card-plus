@@ -74,6 +74,7 @@
     "transparency": "Průhlednost",
     "grey_color": "Šedá barva",
     "tap_action": "Akce po klepnutí",
-    "navigation_path": "Navigační cesta"
+    "navigation_path": "Navigační cesta",
+    "sort_individual_devices": "Seřaďte individuálně"
   }
 }

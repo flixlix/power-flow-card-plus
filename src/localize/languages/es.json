@@ -74,6 +74,7 @@
     "transparency": "Transparencia",
     "grey_color": "Color Gris",
     "tap_action": "Acción de Toque",
-    "navigation_path": "Ruta de Navegación"
+    "navigation_path": "Ruta de Navegación",
+    "sort_individual_devices": "Ordenar dispositivos individuales"
   }
 }

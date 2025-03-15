@@ -1,11 +1,8 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, BaseConfigEntity } from "./type.js";
+import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType } from "./type.js";
 
 export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
 
-export type IndividualModeConfig = {
-  mode: "sort_power";
-};
 interface mainConfigOptions {
   dashboard_link?: string;
   dashboard_link_label?: string;
@@ -23,13 +20,13 @@ interface mainConfigOptions {
   full_size?: boolean;
   style_ha_card?: any;
   style_card_content?: any;
-  individual_mode_config?: IndividualModeConfig;
   disable_dots?: boolean;
   display_zero_lines?: {
     mode?: DisplayZeroLinesMode;
     transparency?: number;
     grey_color?: string | number[];
   };
+  sort_individual_devices?: boolean;
 }
 
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
@@ -104,5 +101,3 @@ export type ConfigEntities = {
 };
 
 export type ConfigEntity = Battery | Grid | Solar | Home | FossilFuelPercentage | IndividualDeviceType;
-
-export const MAX_INDIVIDUAL_ENTITIES = 4;

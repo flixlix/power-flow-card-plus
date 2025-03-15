@@ -11,9 +11,9 @@ export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid,
   return grid.has && showLine(config, grid.state.fromGrid) && !config.entities.home?.hide
     ? html`<div
         class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(config, individual),
+          high: battery.has || checkHasBottomIndividual(individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(config, individual),
+          "multi-individual": checkHasRightIndividual(individual),
         })}"
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow" class="flat-line">
