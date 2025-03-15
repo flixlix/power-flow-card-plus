@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/extensions */
 import { mdiBatteryHigh, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny } from "@mdi/js";
+import { any, assign, boolean, integer, number, object, optional, string } from "superstruct";
 import memoizeOne from "memoize-one";
 import { any, assign, boolean, integer, number, object, optional, string } from "superstruct";
 import { batterySchema } from "./battery";

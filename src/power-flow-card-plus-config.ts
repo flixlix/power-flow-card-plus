@@ -73,6 +73,7 @@ interface Home extends BaseConfigEntity {
   subtract_individual?: boolean;
   secondary_info?: SecondaryInfoType;
   circle_animation?: boolean;
+  hide?: boolean;
 }
 
 interface FossilFuelPercentage extends BaseConfigEntity {

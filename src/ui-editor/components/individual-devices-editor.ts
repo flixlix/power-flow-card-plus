@@ -3,9 +3,9 @@ import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, state } from "lit-element";
 import { EditSubElementEvent, LovelaceRowConfig, SubElementEditorConfig } from "../types/entity-rows";
 import { individualDevicesSchema } from "../schema/_schema-all";
-import localize from "../../localize/localize";
-import { IndividualDeviceType } from "../../type";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import localize from "@/localize/localize";
+import { IndividualDeviceType } from "@/type";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import "./individual-row-editor";
 
 export interface GUIModeChangedEvent {

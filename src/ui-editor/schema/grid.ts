@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import {
   getEntityCombinedSelectionSchema,
   getEntitySeparatedSelectionSchema,
@@ -7,7 +6,7 @@ import {
   customColorsSchema,
   tapActionSchema,
 } from "./_schema-base";
-import localize from "../../localize/localize";
+import localize from "@/localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("grid"),

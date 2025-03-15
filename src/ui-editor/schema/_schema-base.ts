@@ -1,4 +1,4 @@
-import localize from "../../localize/localize";
+import localize from "@/localize/localize";
 
 export function getEntityCombinedSelectionSchema() {
   return {

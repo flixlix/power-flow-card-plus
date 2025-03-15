@@ -9,9 +9,11 @@ import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
 import { individualSchema } from "../schema/individual";
 import { EditSubElementEvent, EntityConfig, LovelaceRowConfig } from "../types/entity-rows";
 import { fireEvent } from "../utils/fire_event";
-import { loadHaForm } from "../utils/loadHAForm";
-import { loadSortable, SortableInstance } from "../utils/sortable.ondemand";
 import { sortableStyles } from "../utils/sortable_styles";
+import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { loadHaForm } from "@/ui-editor/utils/loadHAForm";
+import { individualSchema } from "@/ui-editor/schema/individual";
+import localize from "@/localize/localize";
 
 declare global {
   interface HASSDomEvents {

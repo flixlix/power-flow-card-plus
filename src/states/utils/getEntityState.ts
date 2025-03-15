@@ -1,7 +1,7 @@
 import { HomeAssistant } from "custom-card-helpers";
 import { isEntityAvailable } from "./existenceEntity";
-import { unavailableOrMisconfiguredError } from "../../utils/unavailableError";
-import { coerceNumber } from "../../utils/utils";
+import { unavailableOrMisconfiguredError } from "@/utils/unavailableError";
+import { coerceNumber } from "@/utils/utils";
 import { getEntityNames } from "./mutliEntity";
 
 export const getEntityState = (hass: HomeAssistant, entity: string | undefined): number | null => {
