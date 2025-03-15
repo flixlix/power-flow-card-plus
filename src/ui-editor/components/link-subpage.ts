@@ -1,17 +1,7 @@
 import { mdiChevronRight } from "@mdi/js";
-import { css, CSSResultGroup, html, LitElement, PropertyValues, TemplateResult } from "lit";
-import { customElement, property, query, state } from "lit-element";
+import { css, CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { customElement, property, query } from "lit-element";
 import { fireEvent } from "custom-card-helpers";
-import { IndividualField } from "../../power-flow-card-plus-config";
-
-const afterNextRender = (cb: (value: unknown) => void): void => {
-  requestAnimationFrame(() => setTimeout(cb, 0));
-};
-
-const nextRender = () =>
-  new Promise((resolve) => {
-    afterNextRender(resolve);
-  });
 
 @customElement("link-subpage")
 export class LinkSubpage extends LitElement {

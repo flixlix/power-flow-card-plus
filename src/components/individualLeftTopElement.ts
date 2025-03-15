@@ -47,7 +47,7 @@ export const individualLeftTopElement = (
           </span>`
         : ""}
     </div>
-    ${showLine(config, individualObj.state || 0)
+    ${showLine(config, individualObj.state || 0) && !config.entities.home?.hide
       ? html`
           <svg width="80" height="30">
             <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />

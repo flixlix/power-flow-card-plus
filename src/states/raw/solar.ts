@@ -1,6 +1,5 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { isNumberValue } from "../../utils/utils";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { isEntityInverted } from "../utils/isEntityInverted";
 import { getEntityStateWatts } from "../utils/getEntityStateWatts";
 import { onlyNegative, onlyPositive } from "../utils/negativePositive";

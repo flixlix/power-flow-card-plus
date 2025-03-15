@@ -4,7 +4,11 @@
     "target": "es2017",
     "module": "esnext",
     "moduleResolution": "node",
-    "lib": ["es2017", "dom", "dom.iterable"],
+    "lib": [
+      "es2017",
+      "dom",
+      "dom.iterable"
+    ],
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
     "noUnusedParameters": true,
@@ -17,7 +21,17 @@
     "experimentalDecorators": true,
     "outDir": "dist",
     "rootDir": ".",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

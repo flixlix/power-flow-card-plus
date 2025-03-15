@@ -1,8 +1,5 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { getEntityStateWatts } from "../utils/getEntityStateWatts";
-import { isEntityInverted } from "../utils/isEntityInverted";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { onlyNegative, onlyPositive } from "../utils/negativePositive";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { getFieldInState, getFieldOutState, getSecondaryState } from "./base";
 
 export const getGridConsumptionState = (hass: HomeAssistant, config: PowerFlowCardPlusConfig) => getFieldOutState(hass, config, "grid");

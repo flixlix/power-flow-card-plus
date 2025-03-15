@@ -1,7 +1,6 @@
 import { ActionConfig, HomeAssistant } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../../../power-flow-card-plus-config";
-import { IndividualDeviceType } from "../../../type";
-import { computeFieldIcon, computeFieldName } from "../../../utils/computeFieldAttributes";
+import { IndividualDeviceType } from "@/type";
+import { computeFieldIcon, computeFieldName } from "@/utils/computeFieldAttributes";
 import { getIndividualSecondaryState, getIndividualState } from ".";
 import { hasIndividualObject } from "./hasIndividualObject";
 

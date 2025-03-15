@@ -1,5 +1,5 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { isNumberValue } from "../../utils/utils";
+import { isNumberValue } from "@/utils/utils";
 import { getEntityNames } from "./mutliEntity";
 
 export const isEntityAvailable = (hass: HomeAssistant, entityId: string): boolean => {

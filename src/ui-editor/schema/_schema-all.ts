@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/extensions */
 import { any, assign, boolean, integer, number, object, optional, string } from "superstruct";
 import memoizeOne from "memoize-one";
 import { gridSchema } from "./grid";

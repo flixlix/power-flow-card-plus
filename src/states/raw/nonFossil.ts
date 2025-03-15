@@ -1,7 +1,7 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { getGridConsumptionState } from "./grid";
-import { getEntityState } from "../utils/getEntityState";
+import { getEntityState } from "@/states/utils/getEntityState";
 import { getSecondaryState } from "./base";
 
 export const getNonFossilHas = (hass: HomeAssistant, config: PowerFlowCardPlusConfig) => {

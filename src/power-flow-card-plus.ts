@@ -1,5 +1,4 @@
 /* eslint-disable wc/guard-super-call */
-/* eslint-disable import/extensions */
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
@@ -613,20 +612,22 @@ export class PowerFlowCardPlus extends LitElement {
                 })
               : html`<div class="spacer"></div>`}
             <div class="spacer"></div>
-            ${homeElement(this, this._config, {
-              circleCircumference,
-              entities,
-              grid,
-              home,
-              homeBatteryCircumference,
-              homeGridCircumference,
-              homeNonFossilCircumference,
-              homeSolarCircumference,
-              newDur,
-              templatesObj,
-              homeUsageToDisplay,
-              individual: individualObjs,
-            })}
+            ${!entities.home?.hide
+              ? homeElement(this, this._config, {
+                  circleCircumference,
+                  entities,
+                  grid,
+                  home,
+                  homeBatteryCircumference,
+                  homeGridCircumference,
+                  homeNonFossilCircumference,
+                  homeSolarCircumference,
+                  newDur,
+                  templatesObj,
+                  homeUsageToDisplay,
+                  individual: individualObjs,
+                })
+              : html`<div class="spacer"></div>`}
             ${checkHasRightIndividual(this._config, individualObjs) ? html` <div class="spacer"></div>` : html``}
           </div>
           ${battery.has || checkHasBottomIndividual(this._config, individualObjs)
