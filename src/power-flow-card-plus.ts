@@ -1,6 +1,4 @@
 /* eslint-disable wc/guard-super-call */
-/* eslint-disable import/extensions */
-import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { html, LitElement, PropertyValues, TemplateResult } from "lit";
@@ -624,7 +622,7 @@ export class PowerFlowCardPlus extends LitElement {
                   individual: individualObjs,
                 })
               : html`<div class="spacer"></div>`}
-            ${checkHasRightIndividual(this._config, individualObjs) ? html` <div class="spacer"></div>` : html``}
+            ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : html``}
           </div>
           ${battery.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
