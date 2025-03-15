@@ -41,7 +41,7 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
           </animateMotion>
         </circle>`
             : ""}
-          ${battery.state.toGrid
+          ${checkShouldShowDots(config) && battery.state.toGrid
             ? svg`<circle
               r="1"
               class="battery-to-grid"
