@@ -3,9 +3,6 @@ import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, S
 
 export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
 
-export type IndividualModeConfig = {
-  mode: "sort_power";
-};
 interface mainConfigOptions {
   dashboard_link?: string;
   dashboard_link_label?: string;
@@ -23,7 +20,6 @@ interface mainConfigOptions {
   full_size?: boolean;
   style_ha_card?: any;
   style_card_content?: any;
-  individual_mode_config?: IndividualModeConfig;
   disable_dots?: boolean;
   display_zero_lines?: {
     mode?: DisplayZeroLinesMode;

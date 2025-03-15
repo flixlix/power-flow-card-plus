@@ -92,9 +92,6 @@ export class PowerFlowCardPlus extends LitElement {
         transparency: coerceNumber(config.display_zero_lines?.transparency, defaultValues.displayZeroLines.transparency),
         grey_color: config.display_zero_lines?.grey_color ?? defaultValues.displayZeroLines.grey_color,
       },
-      individual_mode_config: {
-        mode: "sort_power",
-      },
     };
   }
 
@@ -547,10 +544,10 @@ export class PowerFlowCardPlus extends LitElement {
 
     const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
 
-    const individualFieldLeftTop = getTopLeftIndividual(this._config, sortedIndividualObjects);
-    const individualFieldLeftBottom = getBottomLeftIndividual(this._config, sortedIndividualObjects);
-    const individualFieldRightTop = getTopRightIndividual(this._config, sortedIndividualObjects);
-    const individualFieldRightBottom = getBottomRightIndividual(this._config, sortedIndividualObjects);
+    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
+    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
+    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
+    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
 
     return html`
       <ha-card
@@ -589,7 +586,7 @@ export class PowerFlowCardPlus extends LitElement {
                       templatesObj,
                     })
                   : html`<div class="spacer"></div>`}
-                ${checkHasRightIndividual(this._config, individualObjs)
+                ${checkHasRightIndividual(individualObjs)
                   ? individualRightTopElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldRightTop),
                       individualObj: individualFieldRightTop,
@@ -624,12 +621,11 @@ export class PowerFlowCardPlus extends LitElement {
               homeUsageToDisplay,
               individual: individualObjs,
             })}
-            ${checkHasRightIndividual(this._config, individualObjs) ? html` <div class="spacer"></div>` : html``}
+            ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : html``}
           </div>
-          ${battery.has || checkHasBottomIndividual(this._config, individualObjs)
+          ${battery.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
                 <div class="spacer"></div>
-
                 ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individualFieldLeftBottom
                   ? individualLeftBottomElement(this, this._config, {
@@ -639,7 +635,7 @@ export class PowerFlowCardPlus extends LitElement {
                       templatesObj,
                     })
                   : html`<div class="spacer"></div>`}
-                ${checkHasRightIndividual(this._config, individualObjs)
+                ${checkHasRightIndividual(individualObjs)
                   ? individualRightBottomElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldRightBottom),
                       individualObj: individualFieldRightBottom,

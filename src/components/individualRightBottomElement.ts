@@ -31,7 +31,7 @@ export const individualRightBottomElement = (
 
   const duration = newDur.individual[indexOfIndividual] || 1.66;
 
-  const hasBottomRow = !!battery?.has || checkHasBottomIndividual(config, individualObjs);
+  const hasBottomRow = !!battery?.has || checkHasBottomIndividual(individualObjs);
 
   return html`<div class="circle-container individual-bottom individual-right individual-right-bottom">
     <div

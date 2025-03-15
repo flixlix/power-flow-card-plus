@@ -13,9 +13,9 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
   return grid.has && battery.has && showLine(config, Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0))
     ? html`<div
         class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(config, individual),
+          high: battery.has || checkHasBottomIndividual(individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(config, individual),
+          "multi-individual": checkHasRightIndividual(individual),
         })}"
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-grid-flow">
