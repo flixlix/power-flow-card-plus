@@ -60,6 +60,7 @@ interface Grid extends BaseConfigEntity {
 
 interface Solar extends BaseConfigEntity {
   entity: string;
+  entity2: string;
   color?: any;
   color_icon?: boolean;
   color_value?: boolean;

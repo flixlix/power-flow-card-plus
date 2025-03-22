@@ -46,6 +46,10 @@ export const solarSchema = [
   },
   mainSchema,
   {
+    name: "entity2",
+    selector: { entity: {} },
+  },
+  {
     name: "color",
     label: "Color",
     selector: { color_rgb: {} },

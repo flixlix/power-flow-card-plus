@@ -15,8 +15,7 @@ import { getEntityState } from "./states/utils/getEntityState";
 import { doesEntityExist } from "./states/utils/existenceEntity";
 import { computeFlowRate } from "./utils/computeFlowRate";
 import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
-import { getSolarSecondaryState } from "./states/raw/solar";
-import { getSolarState } from "./states/raw/solar";
+import { getSolar1State, getSolar2State, getSolarSecondaryState, getTotalSolarState } from "./states/raw/solar";
 import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
 import { computeFieldIcon, computeFieldName } from "./utils/computeFieldAttributes";
 import { adjustZeroTolerance } from "./states/tolerance/base";
@@ -45,6 +44,7 @@ import {
 } from "./utils/computeIndividualPosition";
 import { individualRightTopElement } from "./components/individualRightTopElement";
 import { individualRightBottomElement } from "./components/individualRightBottomElement";
+import { Solar, subSolarElement } from "./components/subSolar";
 
 const circleCircumference = 238.76104;
 
@@ -196,9 +196,12 @@ export class PowerFlowCardPlus extends LitElement {
 
     const solar = {
       entity: entities.solar?.entity as string | undefined,
+      entity2: entities.solar?.entity2 as string | undefined,
       has: entities.solar?.entity !== undefined,
       state: {
-        total: getSolarState(this.hass, this._config),
+        total: getTotalSolarState(this.hass, this._config),
+        solar1: getSolar1State(this.hass, this._config),
+        solar2: getSolar2State(this.hass, this._config),
         toHome: initialNumericState,
         toGrid: initialNumericState,
         toBattery: initialNumericState,
@@ -538,6 +541,7 @@ export class PowerFlowCardPlus extends LitElement {
           id="power-flow-card-plus"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >
+          ${subSolarElement(this, this._config, solar as Solar, individualObjs.length > 2)}
           ${solar.has || individualObjs?.some((individual) => individual?.has) || nonFossil.hasPercentage
             ? html`<div class="row">
                 ${nonFossilElement(this, this._config, {
