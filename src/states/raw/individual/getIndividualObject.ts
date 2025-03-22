@@ -1,7 +1,6 @@
-import { HomeAssistant } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../../../power-flow-card-plus-config";
-import { IndividualDeviceType } from "../../../type";
-import { computeFieldIcon, computeFieldName } from "../../../utils/computeFieldAttributes";
+import { ActionConfig, HomeAssistant } from "custom-card-helpers";
+import { IndividualDeviceType } from "@/type";
+import { computeFieldIcon, computeFieldName } from "@/utils/computeFieldAttributes";
 import { getIndividualSecondaryState, getIndividualState } from ".";
 import { hasIndividualObject } from "./hasIndividualObject";
 
@@ -61,6 +60,7 @@ export type IndividualObject = {
     accept_negative: boolean;
     displayZeroTolerance: number;
     decimals: number | null;
+    tap_action?: ActionConfig;
   };
 };
 
@@ -103,6 +103,7 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
       displayZero: field?.secondary_info?.display_zero || false,
       displayZeroTolerance: field?.secondary_info?.display_zero_tolerance || 0,
       decimals: field?.secondary_info?.decimals || null,
+      tap_action: field?.secondary_info?.tap_action,
     },
   };
 };

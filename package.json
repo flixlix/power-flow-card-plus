@@ -1,6 +1,6 @@
 {
   "name": "power-flow-card-plus",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "description": "A power flow card for Home Assistant",
   "keywords": [
     "home-assistant",
@@ -33,7 +33,6 @@
     "precommit": "pnpm typecheck && pnpm format:write && pnpm test"
   },
   "dependencies": {
-    "@material/mwc-ripple": "^0.19.1",
     "@mdi/js": "^7.2.96",
     "custom-card-helpers": "^1.9.0",
     "home-assistant-js-websocket": "^8.0.1",
@@ -77,5 +76,6 @@
     "semantic-release-replace-plugin": "^1.2.7",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5"
-  }
+  },
+  "packageManager": "pnpm@10.6.3+sha512.bb45e34d50a9a76e858a95837301bfb6bd6d35aea2c5d52094fa497a467c43f5c440103ce2511e9e0a2f89c3d6071baac3358fc68ac6fb75e2ceb3d2736065e6"
 }

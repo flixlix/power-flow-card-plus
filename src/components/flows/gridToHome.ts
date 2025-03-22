@@ -1,19 +1,19 @@
 import { classMap } from "lit/directives/class-map.js";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { showLine } from "../../utils/showLine";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { showLine } from "@/utils/showLine";
 import { html, svg } from "lit";
-import { styleLine } from "../../utils/styleLine";
+import { styleLine } from "@/utils/styleLine";
 import { type Flows } from "./index";
-import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
-import { checkShouldShowDots } from "../../utils/checkShouldShowDots";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
+import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
 
 export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {
-  return grid.has && showLine(config, grid.state.fromGrid)
+  return grid.has && showLine(config, grid.state.fromGrid) && !config.entities.home?.hide
     ? html`<div
         class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(config, individual),
+          high: battery.has || checkHasBottomIndividual(individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(config, individual),
+          "multi-individual": checkHasRightIndividual(individual),
         })}"
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow" class="flat-line">

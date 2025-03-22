@@ -28,17 +28,17 @@ export const individualLeftTopElement = (
     <span class="label">${individualObj.name}</span>
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void }) => {
-        main.openDetails(e, individualObj?.entity);
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+        main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, individualObj?.entity);
+          main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
         }
       }}
     >
-      ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, 0, "left-top")}
-      <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon}></ha-icon>
+      ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-top")}
+      ${individualObj.icon !== " " ? html` <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon} />` : null}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-top individual-left-top">
             ${individualObj?.showDirection
@@ -47,7 +47,7 @@ export const individualLeftTopElement = (
           </span>`
         : ""}
     </div>
-    ${showLine(config, individualObj.state || 0)
+    ${showLine(config, individualObj.state || 0) && !config.entities.home?.hide
       ? html`
           <svg width="80" height="30">
             <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />

@@ -1,12 +1,12 @@
-/* eslint-disable import/extensions */
 import {
   getEntityCombinedSelectionSchema,
   getEntitySeparatedSelectionSchema,
   secondaryInfoSchema,
   getBaseMainConfigSchema,
   customColorsSchema,
+  tapActionSchema,
 } from "./_schema-base";
-import localize from "../../localize/localize";
+import localize from "@/localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema("grid"),
@@ -60,5 +60,11 @@ export const gridSchema = [
     name: "power_outage",
     type: "expandable",
     schema: powerOutageGridSchema,
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
   },
 ] as const;

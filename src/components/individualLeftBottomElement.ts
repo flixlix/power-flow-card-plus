@@ -1,14 +1,13 @@
 import { html, svg } from "lit";
-import { showLine } from "../utils/showLine";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { NewDur, TemplatesObj } from "../type";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
+import { NewDur, TemplatesObj } from "../type";
+import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { computeIndividualFlowRate } from "../utils/computeFlowRate";
+import { showLine } from "../utils/showLine";
 import { styleLine } from "../utils/styleLine";
 import { individualSecondarySpan } from "./spans/individualSecondarySpan";
-import { HomeAssistant } from "custom-card-helpers";
-import { computeIndividualFlowRate } from "../utils/computeFlowRate";
-import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 
 interface IndividualBottom {
   newDur: NewDur;
@@ -19,7 +18,6 @@ interface IndividualBottom {
 
 export const individualLeftBottomElement = (
   main: PowerFlowCardPlus,
-  hass: HomeAssistant,
   config: PowerFlowCardPlusConfig,
   { individualObj, templatesObj, displayState, newDur }: IndividualBottom
 ) => {
@@ -27,7 +25,7 @@ export const individualLeftBottomElement = (
   const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity) || 0;
   const duration = newDur.individual[indexOfIndividual] || 0;
   return html`<div class="circle-container individual-bottom bottom">
-    ${showLine(config, individualObj?.state || 0)
+    ${showLine(config, individualObj?.state || 0) && !config.entities.home?.hide
       ? html`
           <svg width="80" height="30">
             <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />
@@ -53,17 +51,17 @@ export const individualLeftBottomElement = (
       : html` <svg width="80" height="30"></svg> `}
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void }) => {
-        main.openDetails(e, individualObj?.entity);
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+        main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, individualObj?.entity);
+          main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
         }
       }}
     >
-      ${individualSecondarySpan(hass, main, config, templatesObj, individualObj, 1, "left-bottom")}
-      <ha-icon id="individual-left-bottom-icon" .icon=${individualObj?.icon}></ha-icon>
+      ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-bottom")}
+      ${individualObj?.icon !== " " ? html` <ha-icon id="individual-left-bottom-icon" .icon=${individualObj?.icon} />` : null}
       ${individualObj?.field?.display_zero_state !== false || (individualObj?.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-bottom individual-left-bottom"
             >${individualObj?.showDirection

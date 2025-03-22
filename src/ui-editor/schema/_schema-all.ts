@@ -1,15 +1,13 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/extensions */
+import { mdiBatteryHigh, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny } from "@mdi/js";
 import { any, assign, boolean, integer, number, object, optional, string } from "superstruct";
 import memoizeOne from "memoize-one";
-import { gridSchema } from "./grid";
 import { batterySchema } from "./battery";
-import { solarSchema } from "./solar";
-import { individualSchema } from "./individual";
-import { nonFossilSchema } from "./fossil_fuel_percentage";
-import { homeSchema } from "./home";
 import { displayZeroLinesSchema } from "./display_zero_lines";
-import { mdiBattery90, mdiBatteryHigh, mdiCog, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny } from "@mdi/js";
+import { nonFossilSchema } from "./fossil_fuel_percentage";
+import { gridSchema } from "./grid";
+import { homeSchema } from "./home";
+import { individualSchema } from "./individual";
+import { solarSchema } from "./solar";
 
 const baseLovelaceCardConfig = object({
   type: string(),
@@ -50,6 +48,7 @@ export const cardConfigStruct = assign(
       fossil_fuel_percentage: optional(any()),
       individual: optional(any()),
     }),
+    sort_individual_devices: optional(boolean()),
   })
 );
 
@@ -192,6 +191,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "use_new_flow_rate_model",
         label: "New Flow Model?",
+        selector: { boolean: {} },
+      },
+      {
+        name: "sort_individual_devices",
+        label: "Sort individual devices by usage",
         selector: { boolean: {} },
       },
     ],

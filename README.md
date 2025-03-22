@@ -49,6 +49,13 @@ The Goal of this card is to provide an easy to understand and visualize way of d
 This card **does not** aim to display Energy Values (Meaning accumulated power over 1 day, for example).
 If this is your goal, check out the [Energy Flow Card Plus](https://github.com/flixlix/energy-flow-card-plus).
 
+## Guides
+
+In case you want to watch a tutorial instead of reading through this very long readme 😅, I recommend the following videos:
+
+- [Power Flow Card Plus in Home Assistant - Jetzt noch besser? Anleitung from Smartzeug](https://youtu.be/PUOU5qdhMro) - _in german_, up to date with version 0.2.2
+- [Power Flow Card Plus for Home Assistant from Speak to the Geek](https://youtu.be/C4Zh35E9wJE?si=REuWZxmfF91G0Ht7) - _changes in indvidual configuration_
+
 ## Installation
 
 ### HACS (recommended)
@@ -266,13 +273,14 @@ This Feature allows you to configure an additional small text for each Individua
 This feature allows you to configure how the card handles a Grid Power Outage scenario.
 
 | Name                | Type                  | Description                                                                                                                                                                               |
-| ------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 
 | entity              | `string` required     | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor.                                  |
 | entity_generator    | `string`              | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power. |
 | state_alert         | `string`              | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage.                    |
 | icon_alert          | `string`              | An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`.                                                                          |
 | label_alert         | `string`              | A text that will be displayed below the icon when there is a power outage.                                                                                                                |
-| calculate_flow_rate | `boolean` or `number` | `false`                                                                                                                                                                                   | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
+| calculate_flow_rate | `boolean` or `number` | `false`                                                                                                                                                                                   | 
+|                     |                       | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
 #### Display Zero Lines
 
@@ -482,7 +490,7 @@ At the end of the day these are two options and depending on what you're interes
 
 Here is my to-do list containing a few enhancements I am planning in adding. The ones at the top are bigger priorities, so they’ll probably be available before the ones at the bottom.
 
-- Change Tap Action Behavior to be compatible with Browser Mod
+- [x] Change Tap Action Behavior to be compatible with Browser Mod
 - Fill the circles [#89](https://github.com/flixlix/power-flow-card-plus/issues/89)
 - [x] More than two Individual Devices [#54](https://github.com/flixlix/power-flow-card-plus/issues/54)
 - More than one solar source [#23](https://github.com/flixlix/power-flow-card-plus/issues/23)

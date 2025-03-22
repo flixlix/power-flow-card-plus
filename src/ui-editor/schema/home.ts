@@ -1,6 +1,5 @@
-/* eslint-disable import/extensions */
-import { getBaseMainConfigSchema, secondaryInfoSchema } from "./_schema-base";
-import localize from "../../localize/localize";
+import { getBaseMainConfigSchema, secondaryInfoSchema, tapActionSchema } from "./_schema-base";
+import localize from "@/localize/localize";
 
 const mainSchema = {
   ...getBaseMainConfigSchema(),
@@ -39,6 +38,12 @@ const mainSchema = {
       },
     },
     {
+      name: "circle_animation",
+      label: "Circle Animation",
+      default: true,
+      selector: { boolean: {} },
+    },
+    {
       name: "subtract_individual",
       label: "Subtract Individual",
       selector: { boolean: {} },
@@ -51,6 +56,11 @@ const mainSchema = {
     {
       name: "use_metadata",
       label: "Use Metadata",
+      selector: { boolean: {} },
+    },
+    {
+      name: "hide",
+      label: "Hide Home",
       selector: { boolean: {} },
     },
   ],
@@ -67,5 +77,11 @@ export const homeSchema = [
     name: "secondary_info",
     type: "expandable",
     schema: secondaryInfoSchema,
+  },
+  {
+    title: localize("editor.tap_action"),
+    name: "",
+    type: "expandable",
+    schema: tapActionSchema,
   },
 ] as const;

@@ -1,5 +1,5 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { getFieldInState, getFieldOutState } from "./base";
 import { getEntityState } from "../utils/getEntityState";
 

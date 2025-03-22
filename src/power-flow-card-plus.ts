@@ -1,39 +1,37 @@
 /* eslint-disable wc/guard-super-call */
-/* eslint-disable import/extensions */
+import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
-import { html, LitElement, PropertyValues, svg, TemplateResult } from "lit";
+import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
-import { MAX_INDIVIDUAL_ENTITIES, PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
-import { coerceNumber } from "./utils/utils";
-import { registerCustomCard } from "./utils/register-custom-card";
-import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
-import { styles } from "./style";
-import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
-import { getEntityStateWatts } from "./states/utils/getEntityStateWatts";
-import { getEntityState } from "./states/utils/getEntityState";
-import { doesEntityExist } from "./states/utils/existenceEntity";
-import { computeFlowRate } from "./utils/computeFlowRate";
-import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
-import { getSolar1State, getSolar2State, getSolarSecondaryState, getTotalSolarState } from "./states/raw/solar";
-import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
-import { computeFieldIcon, computeFieldName } from "./utils/computeFieldAttributes";
-import { adjustZeroTolerance } from "./states/tolerance/base";
-import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
-import { getHomeSecondaryState } from "./states/raw/home";
-import { GridObject, HomeSources, NewDur, TemplatesObj } from "./type";
-import { displayValue } from "./utils/displayValue";
-import { allDynamicStyles } from "./style/all";
-import { nonFossilElement } from "./components/nonFossil";
-import { solarElement } from "./components/solar";
-import { gridElement } from "./components/grid";
-import { homeElement } from "./components/home";
 import { batteryElement } from "./components/battery";
 import { flowElement } from "./components/flows";
-import { dashboardLinkElement } from "./components/misc/dashboard_link";
-import { IndividualObject, getIndividualObject } from "./states/raw/individual/getIndividualObject";
-import { individualLeftTopElement } from "./components/individualLeftTopElement";
+import { gridElement } from "./components/grid";
+import { homeElement } from "./components/home";
 import { individualLeftBottomElement } from "./components/individualLeftBottomElement";
+import { individualLeftTopElement } from "./components/individualLeftTopElement";
+import { individualRightBottomElement } from "./components/individualRightBottomElement";
+import { individualRightTopElement } from "./components/individualRightTopElement";
+import { dashboardLinkElement } from "./components/misc/dashboard_link";
+import { nonFossilElement } from "./components/nonFossil";
+import { solarElement } from "./components/solar";
+import { handleAction } from "./ha/panels/lovelace/common/handle-action";
+import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
+import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
+import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
+import { getHomeSecondaryState } from "./states/raw/home";
+import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
+import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
+import { getSolarSecondaryState, getSolarState } from "./states/raw/solar";
+import { adjustZeroTolerance } from "./states/tolerance/base";
+import { doesEntityExist } from "./states/utils/existenceEntity";
+import { getEntityState } from "./states/utils/getEntityState";
+import { getEntityStateWatts } from "./states/utils/getEntityStateWatts";
+import { styles } from "./style";
+import { allDynamicStyles } from "./style/all";
+import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
+import { GridObject, HomeSources, NewDur, TemplatesObj } from "./type";
+import { computeFieldIcon, computeFieldName } from "./utils/computeFieldAttributes";
+import { computeFlowRate } from "./utils/computeFlowRate";
 import {
   checkHasBottomIndividual,
   checkHasRightIndividual,
@@ -42,9 +40,10 @@ import {
   getTopLeftIndividual,
   getTopRightIndividual,
 } from "./utils/computeIndividualPosition";
-import { individualRightTopElement } from "./components/individualRightTopElement";
-import { individualRightBottomElement } from "./components/individualRightBottomElement";
-import { Solar, subSolarElement } from "./components/subSolar";
+import { displayValue } from "./utils/displayValue";
+import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
+import { registerCustomCard } from "./utils/register-custom-card";
+import { coerceNumber } from "./utils/utils";
 
 const circleCircumference = 238.76104;
 
@@ -92,13 +91,7 @@ export class PowerFlowCardPlus extends LitElement {
         transparency: coerceNumber(config.display_zero_lines?.transparency, defaultValues.displayZeroLines.transparency),
         grey_color: config.display_zero_lines?.grey_color ?? defaultValues.displayZeroLines.grey_color,
       },
-      individual_mode_config: {
-        mode: "sort_power",
-      },
     };
-
-    if (this._config.entities?.individual && this._config.entities.individual.length > MAX_INDIVIDUAL_ENTITIES)
-      throw new Error(`Only ${MAX_INDIVIDUAL_ENTITIES} individual entities are supported`);
   }
 
   public connectedCallback() {
@@ -127,16 +120,34 @@ export class PowerFlowCardPlus extends LitElement {
 
   private previousDur: { [name: string]: number } = {};
 
-  public openDetails(event: { stopPropagation: any; key?: string }, entityId?: string | undefined): void {
+  public openDetails(
+    event: { stopPropagation: () => void; key?: string; target: HTMLElement },
+    config?: ActionConfig,
+    entityId?: string | undefined
+  ): void {
     event.stopPropagation();
-    if (!entityId || !this._config.clickable_entities) return;
-    /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
-    if (!doesEntityExist(this.hass, entityId)) return;
-    const e = new CustomEvent("hass-more-info", {
-      composed: true,
-      detail: { entityId },
-    });
-    this.dispatchEvent(e);
+
+    if (!config) {
+      if (!entityId || !this._config.clickable_entities) return;
+      /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
+      if (!doesEntityExist(this.hass, entityId)) return;
+      const e = new CustomEvent("hass-more-info", {
+        composed: true,
+        detail: { entityId },
+      });
+      this.dispatchEvent(e);
+      return;
+    }
+
+    handleAction(
+      event.target,
+      this.hass!,
+      {
+        entity: entityId,
+        tap_action: config,
+      },
+      "tap"
+    );
   }
 
   protected render(): TemplateResult {
@@ -178,6 +189,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
         circle_type: entities.grid?.color_circle,
       },
+      tap_action: entities.grid?.tap_action,
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
         decimals: entities.grid?.secondary_info?.decimals,
@@ -191,6 +203,7 @@ export class PowerFlowCardPlus extends LitElement {
         color: {
           type: entities.grid?.secondary_info?.color_value,
         },
+        tap_action: entities.grid?.secondary_info?.tap_action,
       },
     };
 
@@ -208,6 +221,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
       name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
+      tap_action: entities.solar?.tap_action,
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
         decimals: entities.solar?.secondary_info?.decimals,
@@ -218,6 +232,7 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.solar?.secondary_info?.icon,
         unit: entities.solar?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.solar?.secondary_info?.unit_white_space,
+        tap_action: entities.solar?.secondary_info?.tap_action,
       },
     };
 
@@ -235,8 +250,8 @@ export class PowerFlowCardPlus extends LitElement {
       icon: computeFieldIcon(this.hass, entities.battery, "mdi:battery-high"),
       state_of_charge: {
         state: getBatteryStateOfCharge(this.hass, this._config),
-        unit: entities?.battery?.state_of_charge_unit || "%",
-        unit_white_space: entities?.battery?.state_of_charge_unit_white_space || true,
+        unit: entities?.battery?.state_of_charge_unit ?? "%",
+        unit_white_space: entities?.battery?.state_of_charge_unit_white_space ?? true,
         decimals: entities?.battery?.state_of_charge_decimals || 0,
       },
       state: {
@@ -245,6 +260,7 @@ export class PowerFlowCardPlus extends LitElement {
         toGrid: 0,
         toHome: 0,
       },
+      tap_action: entities.battery?.tap_action,
       color: {
         fromBattery: entities.battery?.color?.consumption,
         toBattery: entities.battery?.color?.production,
@@ -259,6 +275,7 @@ export class PowerFlowCardPlus extends LitElement {
       state: initialNumericState,
       icon: computeFieldIcon(this.hass, entities?.home, "mdi:home"),
       name: computeFieldName(this.hass, entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
+      tap_action: entities.home?.tap_action,
       secondary: {
         entity: entities.home?.secondary_info?.entity,
         template: entities.home?.secondary_info?.template,
@@ -269,6 +286,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit_white_space: entities.home?.secondary_info?.unit_white_space,
         icon: entities.home?.secondary_info?.icon,
         decimals: entities.home?.secondary_info?.decimals,
+        tap_action: entities.home?.secondary_info?.tap_action,
       },
     };
 
@@ -286,6 +304,7 @@ export class PowerFlowCardPlus extends LitElement {
       },
       color: entities.fossil_fuel_percentage?.color,
       color_value: entities.fossil_fuel_percentage?.color_value,
+      tap_action: entities.fossil_fuel_percentage?.tap_action,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
         decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
@@ -297,6 +316,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
         color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
+        tap_action: entities.fossil_fuel_percentage?.secondary_info?.tap_action,
       },
     };
 
@@ -337,8 +357,10 @@ export class PowerFlowCardPlus extends LitElement {
         }
       }
       solar.state.toHome = 0;
-    } else {
+    } else if (solar.state.toHome !== null && solar.state.toHome > 0) {
       grid.state.toBattery = 0;
+    } else if (battery.state.toBattery && battery.state.toBattery > 0) {
+      grid.state.toBattery = battery.state.toBattery;
     }
     grid.state.toBattery = (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
 
@@ -484,14 +506,13 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    /* return source object with largest value property */
     const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
 
     const getIndividualDisplayState = (field?: IndividualObject) => {
       if (!field) return "";
       if (field?.state === undefined) return "";
-      // return displayValue(this.hass, field?.state, field?.unit, field?.unit_white_space, field?.decimals);
       return displayValue(this.hass, this._config, field?.state, {
+        decimals: field?.decimals,
         unit: field?.unit,
         unitWhiteSpace: field?.unit_white_space,
         watt_threshold: this._config.watt_threshold,
@@ -525,10 +546,12 @@ export class PowerFlowCardPlus extends LitElement {
       isCardWideEnough,
     });
 
-    const individualFieldLeftTop = getTopLeftIndividual(this._config, individualObjs);
-    const individualFieldLeftBottom = getBottomLeftIndividual(this._config, individualObjs);
-    const individualFieldRightTop = getTopRightIndividual(this._config, individualObjs);
-    const individualFieldRightBottom = getBottomRightIndividual(this._config, individualObjs);
+    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
+
+    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
+    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
+    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
+    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
 
     return html`
       <ha-card
@@ -568,7 +591,7 @@ export class PowerFlowCardPlus extends LitElement {
                       templatesObj,
                     })
                   : html`<div class="spacer"></div>`}
-                ${checkHasRightIndividual(this._config, individualObjs)
+                ${checkHasRightIndividual(individualObjs)
                   ? individualRightTopElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldRightTop),
                       individualObj: individualFieldRightTop,
@@ -589,36 +612,37 @@ export class PowerFlowCardPlus extends LitElement {
                 })
               : html`<div class="spacer"></div>`}
             <div class="spacer"></div>
-            ${homeElement(this, this._config, {
-              circleCircumference,
-              entities,
-              grid,
-              home,
-              homeBatteryCircumference,
-              homeGridCircumference,
-              homeNonFossilCircumference,
-              homeSolarCircumference,
-              newDur,
-              templatesObj,
-              homeUsageToDisplay,
-              individual: individualObjs,
-            })}
-            ${checkHasRightIndividual(this._config, individualObjs) ? html` <div class="spacer"></div>` : html``}
+            ${!entities.home?.hide
+              ? homeElement(this, this._config, {
+                  circleCircumference,
+                  entities,
+                  grid,
+                  home,
+                  homeBatteryCircumference,
+                  homeGridCircumference,
+                  homeNonFossilCircumference,
+                  homeSolarCircumference,
+                  newDur,
+                  templatesObj,
+                  homeUsageToDisplay,
+                  individual: individualObjs,
+                })
+              : html`<div class="spacer"></div>`}
+            ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : html``}
           </div>
-          ${battery.has || checkHasBottomIndividual(this._config, individualObjs)
+          ${battery.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
                 <div class="spacer"></div>
-
                 ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individualFieldLeftBottom
-                  ? individualLeftBottomElement(this, this.hass, this._config, {
+                  ? individualLeftBottomElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldLeftBottom),
                       individualObj: individualFieldLeftBottom,
                       newDur,
                       templatesObj,
                     })
                   : html`<div class="spacer"></div>`}
-                ${checkHasRightIndividual(this._config, individualObjs)
+                ${checkHasRightIndividual(individualObjs)
                   ? individualRightBottomElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldRightBottom),
                       individualObj: individualFieldRightBottom,
@@ -751,4 +775,14 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   static styles = styles;
+}
+
+function sortIndividualObjects(individualObjs: IndividualObject[]) {
+  const sorted = [...individualObjs];
+  sorted
+    .sort((a, b) => {
+      return (a.state || 0) - (b.state || 0);
+    })
+    .reverse();
+  return sorted;
 }

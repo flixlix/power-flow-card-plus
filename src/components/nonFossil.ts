@@ -28,17 +28,17 @@ export const nonFossilElement = (
         <span class="label">${nonFossil.name}</span>
         <div
           class="circle"
-          @click=${(e: { stopPropagation: () => void }) => {
-            main.openDetails(e, entities.fossil_fuel_percentage?.entity);
+          @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+            main.openDetails(e, entities.fossil_fuel_percentage?.tap_action, entities.fossil_fuel_percentage?.entity);
           }}
-          @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+          @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
             if (e.key === "Enter") {
-              main.openDetails(e, entities.fossil_fuel_percentage?.entity);
+              main.openDetails(e, entities.fossil_fuel_percentage?.tap_action, entities.fossil_fuel_percentage?.entity);
             }
           }}
         >
           ${generalSecondarySpan(main.hass, main, config, templatesObj, nonFossil, "low-carbon")}
-          <ha-icon .icon=${nonFossil.icon} class="low-carbon"></ha-icon>
+          ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon} />` : null}
           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
           (nonFossil.state.power || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
             ? html`
@@ -52,7 +52,7 @@ export const nonFossilElement = (
           ? html`
               <svg width="80" height="30">
                 <path d="M40 -10 v40" class="low-carbon ${styleLine(nonFossil.state.power || 0, config)}" id="low-carbon" />
-                ${checkShouldShowDots(config) && nonFossil.has
+                ${checkShouldShowDots(config) && nonFossil.has && nonFossil.state.power > 0
                   ? svg`<circle
                 r="1.75"
                 class="low-carbon"

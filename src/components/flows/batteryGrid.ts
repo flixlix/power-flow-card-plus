@@ -1,11 +1,11 @@
 import { classMap } from "lit/directives/class-map.js";
-import { PowerFlowCardPlusConfig } from "../../power-flow-card-plus-config";
-import { showLine } from "../../utils/showLine";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { showLine } from "@/utils/showLine";
 import { html, svg } from "lit";
-import { styleLine } from "../../utils/styleLine";
+import { styleLine } from "@/utils/styleLine";
 import { type Flows } from "./index";
-import { checkHasBottomIndividual, checkHasRightIndividual } from "../../utils/computeIndividualPosition";
-import { checkShouldShowDots } from "../../utils/checkShouldShowDots";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
+import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
 
 type FlowBatteryGridFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
 
@@ -13,9 +13,9 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
   return grid.has && battery.has && showLine(config, Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0))
     ? html`<div
         class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(config, individual),
+          high: battery.has || checkHasBottomIndividual(individual),
           "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(config, individual),
+          "multi-individual": checkHasRightIndividual(individual),
         })}"
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-grid-flow">
@@ -41,7 +41,7 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
           </animateMotion>
         </circle>`
             : ""}
-          ${battery.state.toGrid
+          ${checkShouldShowDots(config) && battery.state.toGrid
             ? svg`<circle
               r="1"
               class="battery-to-grid"

@@ -31,23 +31,23 @@ export const individualRightTopElement = (
 
   const duration = newDur.individual[indexOfIndividual] || 1.66;
 
-  const hasBottomRow = !!battery?.has || checkHasBottomIndividual(config, individualObjs);
+  const hasBottomRow = !!battery?.has || checkHasBottomIndividual(individualObjs);
 
   return html`<div class="circle-container individual-top individual-right individual-right-top">
     <span class="label">${individualObj.name}</span>
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void }) => {
-        main.openDetails(e, individualObj?.entity);
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+        main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, individualObj?.entity);
+          main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
         }
       }}
     >
-      ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, 2, "right-top")}
-      <ha-icon id="individual-right-top-icon" .icon=${individualObj.icon}></ha-icon>
+      ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "right-top")}
+      ${individualObj.icon !== " " ? html` <ha-icon id="individual-right-top-icon" .icon=${individualObj.icon} />` : null}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-top individual-right-top">
             ${individualObj?.showDirection
@@ -56,7 +56,7 @@ export const individualRightTopElement = (
           </span>`
         : ""}
     </div>
-    ${showLine(config, individualObj.state || 0)
+    ${showLine(config, individualObj.state || 0) && !config.entities.home?.hide
       ? html`
           <div class="right-individual-flow-container">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" class="right-individual-flow">

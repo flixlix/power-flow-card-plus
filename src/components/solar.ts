@@ -22,17 +22,17 @@ export const solarElement = (
     <span class="label">${solar.name}</span>
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void }) => {
-        main.openDetails(e, solar.entity);
+      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+        main.openDetails(e, solar.tap_action, solar.entity);
       }}
-      @keyDown=${(e: { key: string; stopPropagation: () => void }) => {
+      @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, solar.entity);
+          main.openDetails(e, solar.tap_action, solar.entity);
         }
       }}
     >
       ${generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar")}
-      <ha-icon id="solar-icon" .icon=${solar.icon}></ha-icon>
+      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : null}
       ${entities.solar?.display_zero_state !== false || (solar.state.total || 0) > 0
         ? html` <span class="solar">
             ${displayValue(main.hass, config, solar.state.total, {
