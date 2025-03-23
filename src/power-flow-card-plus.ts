@@ -21,7 +21,7 @@ import { getGridConsumptionState, getGridProductionState, getGridSecondaryState 
 import { getHomeSecondaryState } from "./states/raw/home";
 import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
 import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
-import { getSolarSecondaryState, getSolarState } from "./states/raw/solar";
+import { getSolar1State, getSolar2State, getSolarSecondaryState, getTotalSolarState } from "./states/raw/solar";
 import { adjustZeroTolerance } from "./states/tolerance/base";
 import { doesEntityExist } from "./states/utils/existenceEntity";
 import { getEntityState } from "./states/utils/getEntityState";
@@ -44,6 +44,7 @@ import { displayValue } from "./utils/displayValue";
 import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
 import { registerCustomCard } from "./utils/register-custom-card";
 import { coerceNumber } from "./utils/utils";
+import { Solar, subSolarElement } from "@/components/subSolar";
 
 const circleCircumference = 238.76104;
 
