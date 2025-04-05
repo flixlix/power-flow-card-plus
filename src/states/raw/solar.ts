@@ -23,7 +23,7 @@ export const getSolar1State = (hass: HomeAssistant, config: PowerFlowCardPlusCon
 };
 
 export const getSolar2State = (hass: HomeAssistant, config: PowerFlowCardPlusConfig) => {
-  return getState(hass,config,config.entities.solar?.entity2)
+  return getState(hass,config,config.entities.solar?.solar_second_entity)
 };
 
 export const getTotalSolarState = (hass: HomeAssistant, config: PowerFlowCardPlusConfig)=> {

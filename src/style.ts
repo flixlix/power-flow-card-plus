@@ -588,7 +588,11 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    //min-width: 50px;
+  }
+
+  .subSolarContainer .subSolarValueContainer .subSolarColumnContainer > .name {
+    cursor: pointer;
+    z-index: 100;
   }
 
   .halfFlexBox {

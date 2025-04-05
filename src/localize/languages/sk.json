@@ -75,6 +75,9 @@
     "grey_color": "Šedá farba",
     "tap_action": "Akcia po klepnutí",
     "navigation_path": "Navigačná cesta",
-    "sort_individual_devices": "Zoraďte jednotlivé zariadenia"
+    "sort_individual_devices": "Zoraďte jednotlivé zariadenia",
+    "solar_second_entity": "Druhá entita",
+    "name_solar_first_entity": "Názov prvej entity",
+    "name_solar_second_entity": "Názov druhej entity"
   }
 }

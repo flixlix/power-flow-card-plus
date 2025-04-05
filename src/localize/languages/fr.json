@@ -75,6 +75,9 @@
     "grey_color": "Couleur grise",
     "tap_action": "Action de tap",
     "navigation_path": "Chemin de navigation",
-    "sort_individual_devices": "Trier les appareils individuels"
+    "sort_individual_devices": "Trier les appareils individuels",
+    "solar_second_entity": "Deuxième entité",
+    "name_solar_first_entity": "Nom de la première entité",
+    "name_solar_second_entity": "Nom de la deuxième entité"
   }
 }

@@ -210,7 +210,7 @@ export class PowerFlowCardPlus extends LitElement {
 
     const solar = {
       entity: entities.solar?.entity as string | undefined,
-      entity2: entities.solar?.entity2 as string | undefined,
+      solar_second_entity: entities.solar?.solar_second_entity as string | undefined,
       has: entities.solar?.entity !== undefined,
       state: {
         total: getTotalSolarState(this.hass, this._config),
@@ -222,6 +222,8 @@ export class PowerFlowCardPlus extends LitElement {
       },
       icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
       name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
+      name_first_entity: entities.solar?.name_solar_first_entity ? entities.solar?.name_solar_first_entity : 'PV 1',
+      name_second_entity: entities.solar?.name_solar_second_entity ? entities.solar.name_solar_second_entity : 'PV 2',
       tap_action: entities.solar?.tap_action,
       secondary: {
         entity: entities.solar?.secondary_info?.entity,

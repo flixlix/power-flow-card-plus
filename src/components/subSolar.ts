@@ -7,8 +7,11 @@ import { checkShouldShowDots } from "../utils/checkShouldShowDots";
 import { computeFlowRate } from "../utils/computeFlowRate";
 
 export interface Solar {
-  entity: string | undefined
-  entity2: string | undefined
+  entity: string | undefined,
+  name: string,
+  name_first_entity: string,
+  solar_second_entity: string | undefined,
+  name_second_entity: string,
   state: {
     total: number,
     solar1: number,
@@ -22,7 +25,7 @@ export const subSolarElement = (
   solar: Solar,
   multipleIndividuals: boolean
 ) => {
-  return html`${solar.entity && solar.entity2 ? html`
+  return html`${solar.entity && solar.solar_second_entity ? html`
     <div class="subSolarContainer">
       <div class="row">
         ${renderSubSolarRow(main, config, solar, multipleIndividuals)}
@@ -50,7 +53,19 @@ const renderSubSolarRow = (
     <div class="halfFlexBox"></div>
     <div class="subSolarValueContainer fullFlexBox">
       <div class="subSolarColumnContainer">
-        <span>PV 1</span>
+        <span
+          class="name"
+          @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+            main.openDetails(e, undefined, solar.entity);
+          }}
+          @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
+            if (e.key === "Enter") {
+              main.openDetails(e, undefined, solar.entity);
+            }
+          }}
+        >
+          ${solar.name_first_entity}
+        </span>
         <span>
           ${displayValue(main.hass, config, solar.state.solar1, {
             unit: solar.state['unit'],
@@ -61,7 +76,19 @@ const renderSubSolarRow = (
         </span>
       </div>
       <div class="subSolarColumnContainer">
-        <span>PV 2</span>
+        <span
+          class="name"
+          @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+            main.openDetails(e, undefined, solar.solar_second_entity);
+          }}
+          @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
+            if (e.key === "Enter") {
+              main.openDetails(e, undefined, solar.solar_second_entity);
+            }
+          }}
+        >
+          ${solar.name_second_entity}
+        </span>
         <span>
           ${displayValue(main.hass, config, solar.state.solar2, {
             unit: solar.state['unit'],
@@ -92,7 +119,7 @@ const renderFlowContainer = (
           vector-effect="non-scaling-stroke"
         />
         <path
-          id="subSolarEntity2"
+          id="subSolarsolar_second_entity"
           class="solar ${styleLine(solar.state || 0, config)}"
           d="${multipleIndividuals ? "M88,40 v10 c0,50 -44,0 -44,50" : "M90,40 v10 c0,50 -38,0 -38,50"}"
           vector-effect="non-scaling-stroke"
@@ -114,7 +141,7 @@ const renderFlowContainer = (
                   repeatCount="indefinite"
                   calcMode="linear"
                 >
-                  <mpath xlink:href="#subSolarEntity2" />
+                  <mpath xlink:href="#subSolarsolar_second_entity" />
                 </animateMotion>
               </circle>
              `

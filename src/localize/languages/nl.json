@@ -75,6 +75,9 @@
     "grey_color": "Grijstint",
     "tap_action": "Tik Actie",
     "navigation_path": "Navigatiepad",
-    "sort_individual_devices": "Sorteer individuele apparaten"
+    "sort_individual_devices": "Sorteer individuele apparaten",
+    "solar_second_entity": "Tweede entiteit",
+    "name_solar_first_entity": "Naam van de eerste entiteit",
+    "name_solar_second_entity": "Naam van de tweede entiteit"
   }
 }

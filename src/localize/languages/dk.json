@@ -75,6 +75,9 @@
     "grey_color": "Grå farve",
     "tap_action": "Tap Handling",
     "navigation_path": "Navigationssti",
-    "sort_individual_devices": "Sorter individuelle enheder"
+    "sort_individual_devices": "Sorter individuelle enheder",
+    "solar_second_entity": "Anden enhed",
+    "name_solar_first_entity": "Navn på første enhed",
+    "name_solar_second_entity": "Navn på anden enhed"
   }
 }
