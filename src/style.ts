@@ -592,7 +592,7 @@ export const styles = css`
 
   .subSolarContainer .subSolarValueContainer .subSolarColumnContainer > .name {
     cursor: pointer;
-    z-index: 100;
+    z-index: 1;
   }
 
   .halfFlexBox {
