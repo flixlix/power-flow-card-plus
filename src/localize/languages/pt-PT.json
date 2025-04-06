@@ -75,6 +75,9 @@
     "grey_color": "Cor Cinzenta",
     "tap_action": "Ação de Toque",
     "navigation_path": "Caminho de Navegação",
-    "sort_individual_devices": "Classifique dispositivos individuais"
+    "sort_individual_devices": "Classifique dispositivos individuais",
+    "solar_second_entity": "Segunda entidade",
+    "name_solar_first_entity": "Nome da primeira entidade",
+    "name_solar_second_entity": "Nome da segunda entidade"
   }
 }
