@@ -516,6 +516,13 @@ export class PowerFlowCardPlus extends LitElement {
       });
     };
 
+    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
+
+    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
+    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
+    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
+    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
+
     const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
     // Templates
     const templatesObj: TemplatesObj = {
@@ -538,17 +545,10 @@ export class PowerFlowCardPlus extends LitElement {
       entities,
       homeLargestSource,
       homeSources,
-      individual: individualObjs,
+      individual: sortedIndividualObjects,
       nonFossil,
       isCardWideEnough,
     });
-
-    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
-
-    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
-    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
-    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
-    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
 
     return html`
       <ha-card
