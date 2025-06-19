@@ -9,6 +9,8 @@ import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { styleLine } from "../utils/styleLine";
 import { checkHasBottomIndividual } from "../utils/computeIndividualPosition";
 import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "@/utils/checkFlowDotsCount";
+
 
 interface TopIndividual {
   newDur: NewDur;
@@ -67,7 +69,13 @@ export const individualRightBottomElement = (
                 vector-effect="non-scaling-stroke"
               />
               ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-                ? svg`<circle
+                ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                const offset = (i / (checkFlowDotsCount(config) ?? 1)) * computeIndividualFlowRate(
+                  individualObj.field?.calculate_flow_rate !== false,
+                  duration
+                );
+                return svg`
+                <circle
                     r="1"
                     class="individual-bottom"
                     vector-effect="non-scaling-stroke"
@@ -75,6 +83,7 @@ export const individualRightBottomElement = (
 
                     <animateMotion
                     dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
+                    begin="${offset}s"
                     repeatCount="indefinite"
                     calcMode="linear"
                     keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
@@ -83,6 +92,7 @@ export const individualRightBottomElement = (
                     <mpath xlink:href="#individual-bottom-right-home" />
                     </animateMotion>
                     </circle>`
+                    })}`
                 : ""}
             </svg>
           </div>

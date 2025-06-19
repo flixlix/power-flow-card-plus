@@ -31,6 +31,7 @@ export const cardConfigStruct = assign(
     min_expected_power: optional(number()),
     max_expected_power: optional(number()),
     watt_threshold: optional(number()),
+    flow_dots_count: optional(number()),
     clickable_entities: optional(boolean()),
     transparency_zero_lines: optional(number()),
     greyout_zero_lines: optional(boolean()),
@@ -171,6 +172,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
         name: "min_expected_power",
         label: "Min Expected Power (in Watts)",
         selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.01 } },
+      },
+      {
+        name: "flow_dots_count",
+        label: "Number of Dots",
+        selector: { number: { mode: "box", min: 1, max: 20, step: 1 } },
       },
       {
         name: "watt_threshold",
