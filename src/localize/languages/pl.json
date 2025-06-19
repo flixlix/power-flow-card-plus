@@ -60,6 +60,7 @@
     "min_flow_rate": "Minimalna szybkość przepływu",
     "max_expected_power": "Maksymalna oczekiwana moc",
     "min_expected_power": "Minimalna oczekiwana moc",
+    "flow_dots_count": "Liczba kropek",
     "watt_threshold": "Próg watów na kilowaty",
     "display_zero_lines": "Wyświetl linie zera",
     "clickable_entities": "Klikalne jednostki",

@@ -60,6 +60,7 @@
     "min_flow_rate": "Min Flow Rate",
     "max_expected_power": "Max Forventede Strøm",
     "min_expected_power": "Min Forventede Power",
+    "flow_dots_count": "Antal prikker",
     "watt_threshold": "Watt til Kilowatt Grænse",
     "display_zero_lines": "Vis Nul Linjer",
     "clickable_entities": "Klikbar enheder",
