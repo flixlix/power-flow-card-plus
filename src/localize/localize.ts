@@ -13,6 +13,7 @@ import * as fi from "./languages/fi.json";
 import * as pl from "./languages/pl.json";
 import * as sk from "./languages/sk.json";
 import * as sv from "./languages/sv.json";
+import * as hi from "./languages/hi-IN.json";
 
 const languages: Record<string, unknown> = {
   cs,
@@ -30,6 +31,7 @@ const languages: Record<string, unknown> = {
   pl,
   sk,
   sv,
+  hi,
 };
 
 const defaultLang = "en";
