@@ -29,7 +29,7 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
           ></path>
           ${checkShouldShowDots(config) && battery.state.toHome
             ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
-                                        const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.gridToHome;
+                                        const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.batteryToHome;
                                         return svg`
             
             
