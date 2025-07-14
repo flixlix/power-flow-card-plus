@@ -355,7 +355,14 @@ export class PowerFlowCardPlus extends LitElement {
       }
       solar.state.toHome = 0;
     } else if (battery.state.toBattery !== null && battery.state.toBattery > 0) {
-      grid.state.toBattery = battery.state.toBattery;
+      // Battery is being charged, but by what (grid or solar) and by how much?
+      // Solar is charging battery with any power left over after powering the
+      // home and sending to grid
+      solar.state.toBattery = solar.state.total - (solar.state.toHome || 0) - (grid.state.toGrid || 0);
+
+      // Grid is providing any left over battery charging power after
+      // compensating for the solar charging
+      grid.state.toBattery = battery.state.toBattery - solar.state.toBattery;
     } else {
       grid.state.toBattery = 0;
     }
