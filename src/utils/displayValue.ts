@@ -34,16 +34,30 @@ export const displayValue = (
 
   const valueInNumber = Number(value);
 
-  const isKW = unit === undefined && valueInNumber >= watt_threshold;
-
-  const decimalsToRound = decimals ?? (isKW ? config.kw_decimals : config.w_decimals);
+  if (valueInNumber >= 1000000000) {
+    displayUnit = "GW";
+    displayValue = valueInNumber / 1000000000;
+    displayRound = 1;
+  } else if (valueInNumber >= 1000000) {
+    displayUnit = "MW";
+    displayValue = valueInNumber / 1000000;
+    displayRound = 1;
+  } else if (valueInNumber >= watt_threshold) {
+    displayUnit = "kW";
+    displayValue = valueInNumber / 1000;
+    displayRound = config.kw_decimals ?? 2;
+  } else {
+    displayUnit = "W";
+    displayValue = valueInNumber;
+    displayRound = config.w_decimals ?? 0;
+  }
 
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
 
   const v = formatNumber(
-    transformValue(isKW ? round(valueInNumber / 1000, decimalsToRound ?? 2) : round(valueInNumber, decimalsToRound ?? 0)),
+    transformValue(round(displayValue, displayRound)),
     hass.locale
   );
 
-  return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
+  return `${v}${unitWhiteSpace === false ? "" : " "}${unit || displayUnit}`;
 };
