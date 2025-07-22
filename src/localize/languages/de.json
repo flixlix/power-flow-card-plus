@@ -56,6 +56,8 @@
     "dashboard_link_label": "Name des Dashboard-Links",
     "w_decimals": "Watt-Dezimalstellen",
     "kw_decimals": "Kilowatt-Dezimalstellen",
+    "mw_decimals": "Megawatt-Dezimalstellen",
+    "gw_decimals": "Gigawatt-Dezimalstellen",
     "max_flow_rate": "Maximale Flussrate",
     "min_flow_rate": "Minimale Flussrate",
     "max_expected_power": "Maximale erwartete Leistung",
