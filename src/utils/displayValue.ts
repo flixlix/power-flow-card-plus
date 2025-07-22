@@ -35,27 +35,27 @@ export const displayValue = (
   const valueInNumber = Number(value);
 
   if (valueInNumber >= 1000000000) {
-    displayUnit = "GW";
-    displayValue = valueInNumber / 1000000000;
-    displayRound = config.gw_decimals ?? 2;
+    const displayUnit = "GW";
+    const dv = valueInNumber / 1000000000;
+    const displayRound = config.gw_decimals ?? 2;
   } else if (valueInNumber >= 1000000) {
-    displayUnit = "MW";
-    displayValue = valueInNumber / 1000000;
-    displayRound = config.mw_decimals ?? 2;
+    const displayUnit = "MW";
+    const dv = valueInNumber / 1000000;
+    const displayRound = config.mw_decimals ?? 2;
   } else if (valueInNumber >= watt_threshold) {
-    displayUnit = "kW";
-    displayValue = valueInNumber / 1000;
-    displayRound = config.kw_decimals ?? 2;
+    const displayUnit = "kW";
+    const dv = valueInNumber / 1000;
+    const displayRound = config.kw_decimals ?? 2;
   } else {
-    displayUnit = "W";
-    displayValue = valueInNumber;
-    displayRound = config.w_decimals ?? 0;
+    const displayUnit = "W";
+    const dv = valueInNumber;
+    const displayRound = config.w_decimals ?? 0;
   }
 
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
 
   const v = formatNumber(
-    transformValue(round(displayValue, displayRound)),
+    transformValue(round(dv, displayRound)),
     hass.locale
   );
 
