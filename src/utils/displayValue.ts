@@ -58,10 +58,7 @@ export const displayValue = (
 
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
 
-  const v = formatNumber(
-    transformValue(round(displayNumber, decimals ?? displayRound)),
-    hass.locale
-  );
+  const v = formatNumber(transformValue(round(displayNumber, decimals ?? displayRound)), hass.locale);
 
   return `${v}${unitWhiteSpace === false ? "" : " "}${unit || displayUnit}`;
 };
