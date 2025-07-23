@@ -59,7 +59,7 @@ export const displayValue = (
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
 
   const v = formatNumber(
-    transformValue(round(displayNumber, displayRound)),
+    transformValue(round(displayNumber, decimals ?? displayRound)),
     hass.locale
   );
 
