@@ -56,6 +56,8 @@
     "dashboard_link_label": "Naam van Dashboard Link",
     "w_decimals": "Watt Decimalen",
     "kw_decimals": "Kilowatt Decimalen",
+    "mw_decimals": "Megawatt Decimalen",
+    "gw_decimals": "Gigawatt Decimalen",
     "max_flow_rate": "Maximale Stroomsnelheid",
     "min_flow_rate": "Minimale Stroomsnelheid",
     "max_expected_power": "Maximaal Verwacht Vermogen",

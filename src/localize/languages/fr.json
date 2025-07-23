@@ -56,6 +56,8 @@
     "dashboard_link_label": "Nom du lien du tableau de bord",
     "w_decimals": "Décimales de watt",
     "kw_decimals": "Décimales de kilowatt",
+    "mw_decimals": "Décimales de megawatt",
+    "gw_decimals": "Décimales de gigawatt",
     "max_flow_rate": "Débit maximal",
     "min_flow_rate": "Débit minimal",
     "max_expected_power": "Puissance maximale attendue",

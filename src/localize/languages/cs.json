@@ -56,6 +56,8 @@
     "dashboard_link_label": "Název odkazu na informační panel",
     "w_decimals": "Desetinná místa pro Watty",
     "kw_decimals": "Desetinná místa pro kilowatty",
+    "mw_decimals": "Desetinná místa pro megawatty",
+    "gw_decimals": "Desetinná místa pro gigawatty",
     "max_flow_rate": "Maximální průtok",
     "min_flow_rate": "Minimální průtok",
     "max_expected_power": "Maximální očekávaný výkon",

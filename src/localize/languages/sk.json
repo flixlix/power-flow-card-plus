@@ -56,6 +56,8 @@
     "dashboard_link_label": "Názov odkazu na informačný panel",
     "w_decimals": "Wattové desatinné miesta",
     "kw_decimals": "Kilowattové desatinné miesta",
+    "mw_decimals": "Megawattové desatinné miesta",
+    "gw_decimals": "Gigawattové desatinné miesta",
     "max_flow_rate": "Max prietok",
     "min_flow_rate": "Min prietok",
     "max_expected_power": "Max očakávaný výkon",

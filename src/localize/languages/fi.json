@@ -56,6 +56,8 @@
     "dashboard_link_label": "Ohjauspaneelin linkin nimi",
     "w_decimals": "Wattien desimaalit",
     "kw_decimals": "Kilowattien desimaalit",
+    "mw_decimals": "Megawattien desimaalit",
+    "gw_decimals": "Gigawattien desimaalit",
     "max_flow_rate": "Maksimivirtausnopeus",
     "min_flow_rate": "Minimivirtausnopeus",
     "max_expected_power": "Ennustettu maksimiteho",

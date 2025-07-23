@@ -56,6 +56,8 @@
     "dashboard_link_label": "Nazwa linku do panelu",
     "w_decimals": "Miejsca po przecinku dla watów",
     "kw_decimals": "Miejsca po przecinku dla kilowatów",
+    "mw_decimals": "Miejsca po przecinku dla megawatów",
+    "gw_decimals": "Miejsca po przecinku dla gigawatów",
     "max_flow_rate": "Maksymalna szybkość przepływu",
     "min_flow_rate": "Minimalna szybkość przepływu",
     "max_expected_power": "Maksymalna oczekiwana moc",
