@@ -56,6 +56,8 @@
     "dashboard_link_label": "Nome do Link do Painel de Controlo",
     "w_decimals": "Casas Decimais de Watt",
     "kw_decimals": "Casas Decimais de Quilowatt",
+    "mw_decimals": "Casas Decimais de Megawatt",
+    "gw_decimals": "Casas Decimais de Gigawatt",
     "max_flow_rate": "Taxa de Fluxo Máxima",
     "min_flow_rate": "Taxa de Fluxo Mínima",
     "max_expected_power": "Potência Máxima Esperada",

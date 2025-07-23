@@ -56,6 +56,8 @@
     "dashboard_link_label": "Название ссылки на панель управления",
     "w_decimals": "Десятичные ватт",
     "kw_decimals": "Десятичные киловатт",
+    "mw_decimals": "Megawatt Decimals",
+    "gw_decimals": "Gigawatt Decimals",
     "max_flow_rate": "Максимальная скорость потока",
     "min_flow_rate": "Минимальная скорость потока",
     "max_expected_power": "Максимальная ожидаемая мощность",

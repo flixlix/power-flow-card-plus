@@ -56,6 +56,8 @@
     "dashboard_link_label": "Länknamn till kontrollpanel",
     "w_decimals": "Decimaler watt",
     "kw_decimals": "Decimaler kilowatt",
+    "mw_decimals": "Decimaler megawatt",
+    "gw_decimals": "Decimaler gigawatt",
     "max_flow_rate": "Maximalt flöde",
     "min_flow_rate": "Minimalt flöde",
     "max_expected_power": "Maximal förväntad effekt",

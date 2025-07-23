@@ -56,6 +56,8 @@
     "dashboard_link_label": "Nome Collegamento Dashboard",
     "w_decimals": "Decimali Watt",
     "kw_decimals": "Decimali Kilowatt",
+    "mw_decimals": "Decimali Megawatt",
+    "gw_decimals": "Decimali Gigawatt",
     "max_flow_rate": "Tasso di Flusso Massimo",
     "min_flow_rate": "Tasso di Flusso Minimo",
     "max_expected_power": "Potenza Massima Prevista",

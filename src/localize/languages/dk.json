@@ -56,6 +56,8 @@
     "dashboard_link_label": "Dashboard Link Navn",
     "w_decimals": "Watt Decimal",
     "kw_decimals": "Kilowatt Decimal",
+    "mw_decimals": "Megawatt Decimal",
+    "gw_decimals": "Gigawatt Decimal",
     "max_flow_rate": "Max Flow Rate",
     "min_flow_rate": "Min Flow Rate",
     "max_expected_power": "Max Forventede Strøm",

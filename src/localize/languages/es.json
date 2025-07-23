@@ -56,6 +56,8 @@
     "dashboard_link_label": "Nombre del Enlace del Tablero",
     "w_decimals": "Decimales de Vatio",
     "kw_decimals": "Decimales de Kilovatio",
+    "mw_decimals": "Decimales de Megavatio",
+    "gw_decimals": "Decimales de Gigavatio",
     "max_flow_rate": "Tasa de Flujo Máxima",
     "min_flow_rate": "Tasa de Flujo Mínima",
     "max_expected_power": "Potencia Máxima Esperada",
