@@ -33,6 +33,9 @@ export const cardConfigStruct = assign(
     min_expected_power: optional(number()),
     max_expected_power: optional(number()),
     watt_threshold: optional(number()),
+    kilowatt_threshold: optional(number()),
+    megawatt_threshold: optional(number()),
+    gigawatt_threshold: optional(number()),
     clickable_entities: optional(boolean()),
     transparency_zero_lines: optional(number()),
     greyout_zero_lines: optional(boolean()),
@@ -187,6 +190,21 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "watt_threshold",
         label: "Watt to Kilowatt Threshold",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
+      },
+      {
+        name: "kilowatt_threshold",
+        label: "Kilowatt to Megawatt Threshold",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
+      },
+      {
+        name: "megawatt_threshold",
+        label: "Megawatt to Gigawatt Threshold",
+        selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
+      },
+      {
+        name: "gigawatt_threshold",
+        label: "Gigawatt to Terawatt Threshold",
         selector: { number: { mode: "box", min: 0, max: 1000000, step: 1 } },
       },
 
