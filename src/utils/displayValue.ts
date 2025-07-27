@@ -40,12 +40,16 @@ export const displayValue = (
 
   const valueInNumber = Number(value);
 
-  const displayData : { unit: string, divisor: number, decimals: number } =
-                      (valueInNumber >= gigawatt_threshold) ? { unit: "TW", decimals: config.tw_decimals ?? 2, divisor: 1000000000000 } :
-                      (valueInNumber >= megawatt_threshold) ? { unit: "GW", decimals: config.gw_decimals ?? 2, divisor: 1000000000 } :
-                      (valueInNumber >= kilowatt_threshold) ? { unit: "MW", decimals: config.mw_decimals ?? 2, divisor: 1000000 } :
-                      (valueInNumber >= watt_threshold) ?     { unit: "kW", decimals: config.kw_decimals ?? 2, divisor: 1000 } :
-                                                              { unit: "W",  decimals: config.w_decimals ?? 0,  divisor: 1 }
+  const displayData: { unit: string; divisor: number; decimals: number } =
+    valueInNumber >= gigawatt_threshold
+      ? { unit: "TW", decimals: config.tw_decimals ?? 2, divisor: 1000000000000 }
+      : valueInNumber >= megawatt_threshold
+      ? { unit: "GW", decimals: config.gw_decimals ?? 2, divisor: 1000000000 }
+      : valueInNumber >= kilowatt_threshold
+      ? { unit: "MW", decimals: config.mw_decimals ?? 2, divisor: 1000000 }
+      : valueInNumber >= watt_threshold
+      ? { unit: "kW", decimals: config.kw_decimals ?? 2, divisor: 1000 }
+      : { unit: "W", decimals: config.w_decimals ?? 0, divisor: 1 };
 
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
 
