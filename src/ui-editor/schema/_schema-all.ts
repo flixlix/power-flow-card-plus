@@ -28,6 +28,7 @@ export const cardConfigStruct = assign(
     kw_decimals: optional(integer()),
     mw_decimals: optional(integer()),
     gw_decimals: optional(integer()),
+    tw_decimals: optional(integer()),
     min_flow_rate: optional(number()),
     max_flow_rate: optional(number()),
     min_expected_power: optional(number()),
@@ -165,6 +166,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "gw_decimals",
         label: "GW Decimals",
+        selector: { number: { mode: "box", min: 0, max: 5, step: 1 } },
+      },
+      {
+        name: "tw_decimals",
+        label: "TW Decimals",
         selector: { number: { mode: "box", min: 0, max: 5, step: 1 } },
       },
       {
