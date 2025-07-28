@@ -9,10 +9,16 @@ interface mainConfigOptions {
   second_dashboard_link?: string;
   second_dashboard_link_label?: string;
   kw_decimals: number;
+  mw_decimals: number;
+  gw_decimals: number;
+  tw_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;
   w_decimals: number;
   watt_threshold: number;
+  kolowatt_threshold: number;
+  megawatt_threshold: number;
+  gigawatt_threshold: number;
   clickable_entities: boolean;
   max_expected_power: number;
   min_expected_power: number;

@@ -80,10 +80,16 @@ export class PowerFlowCardPlus extends LitElement {
     this._config = {
       ...config,
       kw_decimals: coerceNumber(config.kw_decimals, defaultValues.kilowattDecimals),
+      mw_decimals: coerceNumber(config.mw_decimals, defaultValues.megawattDecimals),
+      gw_decimals: coerceNumber(config.gw_decimals, defaultValues.gigawattDecimals),
+      tw_decimals: coerceNumber(config.tw_decimals, defaultValues.terawattDecimals),
       min_flow_rate: coerceNumber(config.min_flow_rate, defaultValues.minFlowRate),
       max_flow_rate: coerceNumber(config.max_flow_rate, defaultValues.maxFlowRate),
       w_decimals: coerceNumber(config.w_decimals, defaultValues.wattDecimals),
       watt_threshold: coerceNumber(config.watt_threshold, defaultValues.wattThreshold),
+      kilowatt_threshold: coerceNumber(config.kilowatt_threshold, defaultValues.kilowattThreshold),
+      megawatt_threshold: coerceNumber(config.megawatt_threshold, defaultValues.megawattThreshold),
+      gigawatt_threshold: coerceNumber(config.gigawatt_threshold, defaultValues.gigawattThreshold),
       max_expected_power: coerceNumber(config.max_expected_power, defaultValues.maxExpectedPower),
       min_expected_power: coerceNumber(config.min_expected_power, defaultValues.minExpectedPower),
       display_zero_lines: {
