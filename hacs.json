@@ -1,5 +1,5 @@
 {
   "name": "Power Flow Card Plus",
-  "render_readme": true,
+  "content_in_root": true,
   "homeassistant": "2023.12.3"
 }
