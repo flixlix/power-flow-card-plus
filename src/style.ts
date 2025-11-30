@@ -195,6 +195,7 @@ export const styles = css`
     stroke: var(--battery-grid-line);
   }
   ha-icon {
+    display: inline;
     padding-bottom: 2px;
   }
   ha-icon.small {
