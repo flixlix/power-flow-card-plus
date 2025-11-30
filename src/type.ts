@@ -145,3 +145,111 @@ export type GridObject = {
 
 export type OfflineStr = "unavailable" | "unknown";
 export const offlineStr = ["unavailable", "unknown"];
+
+export interface LovelaceCardConfig {
+  index?: number;
+  view_index?: number;
+  view_layout?: any;
+  /** @deprecated Use `grid_options` instead */
+  layout_options?: LovelaceLayoutOptions;
+  grid_options?: LovelaceGridOptions;
+  type: string;
+  [key: string]: any;
+  visibility?: Condition[];
+  disabled?: boolean;
+}
+
+type Condition =
+  | LocationCondition
+  | NumericStateCondition
+  | StateCondition
+  | ScreenCondition
+  | TimeCondition
+  | UserCondition
+  | OrCondition
+  | AndCondition
+  | NotCondition;
+
+// Legacy conditional card condition
+interface LegacyCondition {
+  entity?: string;
+  state?: string | string[];
+  state_not?: string | string[];
+}
+
+interface BaseCondition {
+  condition: string;
+}
+
+interface LocationCondition extends BaseCondition {
+  condition: "location";
+  locations?: string[];
+}
+
+interface NumericStateCondition extends BaseCondition {
+  condition: "numeric_state";
+  entity?: string;
+  below?: string | number;
+  above?: string | number;
+}
+
+interface StateCondition extends BaseCondition {
+  condition: "state";
+  entity?: string;
+  state?: string | string[];
+  state_not?: string | string[];
+}
+
+interface ScreenCondition extends BaseCondition {
+  condition: "screen";
+  media_query?: string;
+}
+
+type WeekdayShort = "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+
+interface TimeCondition extends BaseCondition {
+  condition: "time";
+  after?: string;
+  before?: string;
+  weekdays?: WeekdayShort[];
+}
+
+interface UserCondition extends BaseCondition {
+  condition: "user";
+  users?: string[];
+}
+
+interface OrCondition extends BaseCondition {
+  condition: "or";
+  conditions?: Condition[];
+}
+
+interface AndCondition extends BaseCondition {
+  condition: "and";
+  conditions?: Condition[];
+}
+
+interface NotCondition extends BaseCondition {
+  condition: "not";
+  conditions?: Condition[];
+}
+
+interface LovelaceLayoutOptions {
+  grid_columns?: number | "full";
+  grid_rows?: number | "auto";
+  grid_max_columns?: number;
+  grid_min_columns?: number;
+  grid_min_rows?: number;
+  grid_max_rows?: number;
+}
+
+interface LovelaceGridOptions {
+  columns?: number | "full";
+  rows?: number | "auto";
+  max_columns?: number;
+  min_columns?: number;
+  min_rows?: number;
+  max_rows?: number;
+  fixed_rows?: boolean;
+  fixed_columns?: boolean;
+}
