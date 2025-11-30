@@ -109,6 +109,10 @@ export const styles = css`
     box-sizing: border-box;
   }
 
+  :dir(rtl) .lines {
+    justify-content: flex-end;
+  }
+
   .lines:not(.multi-individual) svg.flat-line {
     left: var(--lines-svg-flat-left);
   }
