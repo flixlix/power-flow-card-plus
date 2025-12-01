@@ -24,7 +24,7 @@ export const individualSecondarySpan = (
   const value = individual?.secondary?.has
     ? displayValue(hass, config, individual?.secondary?.state, {
         unit: individual?.secondary?.unit || undefined,
-        unitWhiteSpace: individual?.secondary?.unit_white_space,
+        unitWhiteSpace: individual.secondary.unit_white_space,
         decimals: individual?.secondary?.decimals || 0,
         accept_negative: individual?.secondary?.accept_negative || false,
         watt_threshold: config.watt_threshold,
