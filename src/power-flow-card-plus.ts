@@ -460,6 +460,15 @@ export class PowerFlowCardPlus extends LitElement {
       battery.icon = "mdi:battery-outline";
     }
     if (entities.battery?.icon !== undefined) battery.icon = entities.battery?.icon;
+    
+    // override icon of battery entity if use_metadata is true
+    const batteryUseMetadataIcon = entities.battery?.use_metadata;
+    if (batteryUseMetadataIcon) {
+      const metadataIcon = computeFieldIcon(this.hass, entities.battery, "NO_ICON_METADATA");
+      if (metadataIcon !== "NO_ICON_METADATA") {
+        battery.icon = metadataIcon;
+      }
+    }
 
     // Compute durations
     const newDur: NewDur = {
