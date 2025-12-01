@@ -6,6 +6,8 @@ import { styleLine } from "@/utils/styleLine";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
 import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "@/utils/checkFlowDotsCount";
+
 
 type FlowBatteryToHomeFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
 
@@ -26,19 +28,26 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && battery.state.toHome
-            ? svg`<circle
+            ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                                        const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.gridToHome;
+                                        return svg`
+            
+            
+            <circle
             r="1"
             class="battery-home"
             vector-effect="non-scaling-stroke"
           >
             <animateMotion
               dur="${newDur.batteryToHome}s"
+              begin="${offset}s"
               repeatCount="indefinite"
               calcMode="linear"
             >
               <mpath xlink:href="#battery-home" />
             </animateMotion>
           </circle>`
+          })}`
             : ""}
         </svg>
       </div>`

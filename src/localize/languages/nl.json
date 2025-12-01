@@ -60,6 +60,7 @@
     "min_flow_rate": "Minimale Stroomsnelheid",
     "max_expected_power": "Maximaal Verwacht Vermogen",
     "min_expected_power": "Minimaal Verwacht Vermogen",
+    "flow_dots_count": "Aantal stippen",
     "watt_threshold": "Watt naar Kilowatt Drempelwaarde",
     "display_zero_lines": "Nullijnen Weergeven",
     "clickable_entities": "Klikbare Entiteiten",

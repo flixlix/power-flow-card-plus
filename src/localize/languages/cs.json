@@ -60,6 +60,7 @@
     "min_flow_rate": "Minimální průtok",
     "max_expected_power": "Maximální očekávaný výkon",
     "min_expected_power": "Minimální očekávaný výkon",
+    "flow_dots_count": "Počet teček",
     "watt_threshold": "Práh wattů na kilowatty",
     "display_zero_lines": "Zobrazit nulové řádky",
     "clickable_entities": "Entity, na které se dá kliknout",
