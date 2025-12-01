@@ -537,7 +537,6 @@ export class PowerFlowCardPlus extends LitElement {
       });
     };
 
-    const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
     // Templates
     const templatesObj: TemplatesObj = {
       gridSecondary: this._templateResults.gridSecondary?.result,
@@ -545,7 +544,7 @@ export class PowerFlowCardPlus extends LitElement {
       homeSecondary: this._templateResults.homeSecondary?.result,
 
       nonFossilFuelSecondary: this._templateResults.nonFossilFuelSecondary?.result,
-      individual: individualObjs?.map((_, index) => this._templateResults[`${individualKeys[index]}Secondary`]?.result) || [],
+      individual: individualObjs?.map((_, index) => this._templateResults[`individual${index}Secondary`]?.result) || [],
     };
 
     // Styles
@@ -710,9 +709,8 @@ export class PowerFlowCardPlus extends LitElement {
     for (const [key, value] of Object.entries(templatesObj)) {
       if (value) {
         if (Array.isArray(value)) {
-          const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
           value.forEach((template, index) => {
-            if (template) this._tryConnect(template, `${individualKeys[index]}Secondary`);
+            if (template) this._tryConnect(template, `individual${index}Secondary`);
           });
         } else {
           this._tryConnect(value, key);
