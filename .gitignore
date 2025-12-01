@@ -28,3 +28,6 @@ _site/
 storybook-static
 custom-elements.json
 # pnpm-lock.yaml
+
+# asdf
+.tool-versions

@@ -75,12 +75,13 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
   const userConfiguredInvertAnimation = field?.inverted_animation || false;
   const invertAnimation = isStateNegative ? !userConfiguredInvertAnimation : userConfiguredInvertAnimation;
   const color = field?.color && typeof field?.color === "string" ? field?.color : null;
+  const absState = state && state < 0 ? -state : state;
 
   return {
     field,
     entity,
     has,
-    state,
+    state: absState,
     displayZero,
     displayZeroTolerance,
     icon: computeFieldIcon(hass, field, "mdi:flash"),
