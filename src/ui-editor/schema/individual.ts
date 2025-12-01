@@ -66,6 +66,11 @@ const mainSchema = {
       label: "Use Metadata",
       selector: { boolean: {} },
     },
+    {
+      name: "accept_negative",
+      label: "Accept Negative Values",
+      selector: { boolean: {} },
+    },
   ],
 };
 

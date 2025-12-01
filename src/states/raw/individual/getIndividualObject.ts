@@ -18,6 +18,7 @@ const fallbackIndividualObject: IndividualObject = {
   unit_white_space: false,
   invertAnimation: false,
   showDirection: false,
+  acceptNegative: false,
   secondary: {
     entity: null,
     template: null,
@@ -48,6 +49,7 @@ export type IndividualObject = {
   decimals?: number;
   invertAnimation: boolean;
   showDirection: boolean;
+  acceptNegative: boolean;
   secondary: {
     entity: string | null;
     template: string | null;
@@ -75,6 +77,7 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
   const userConfiguredInvertAnimation = field?.inverted_animation || false;
   const invertAnimation = isStateNegative ? !userConfiguredInvertAnimation : userConfiguredInvertAnimation;
   const color = field?.color && typeof field?.color === "string" ? field?.color : null;
+  const acceptNegative = field?.accept_negative || false;
 
   return {
     field,
@@ -91,6 +94,7 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
     decimals: field?.decimals,
     invertAnimation,
     showDirection: field?.show_direction || false,
+    acceptNegative,
     secondary: {
       entity: field?.secondary_info?.entity || null,
       template: field?.secondary_info?.template || null,

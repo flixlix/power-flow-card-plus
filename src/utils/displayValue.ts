@@ -34,14 +34,15 @@ export const displayValue = (
 
   const valueInNumber = Number(value);
 
-  const isKW = unit === undefined && valueInNumber >= watt_threshold;
-
-  const decimalsToRound = decimals ?? (isKW ? config.kw_decimals : config.w_decimals);
-
   const transformValue = (v: number) => (!accept_negative ? Math.abs(v) : v);
+  const transformedValue = transformValue(valueInNumber);
+
+  const isKW = unit === undefined && Math.abs(transformedValue) >= watt_threshold;
+
+  const decimalsToRound = typeof decimals === 'number' ? decimals : (isKW ? config.kw_decimals : config.w_decimals);
 
   const v = formatNumber(
-    transformValue(isKW ? round(valueInNumber / 1000, decimalsToRound ?? 2) : round(valueInNumber, decimalsToRound ?? 0)),
+    isKW ? round(transformedValue / 1000, decimalsToRound ?? 2) : round(transformedValue, decimalsToRound ?? 0),
     hass.locale
   );
 

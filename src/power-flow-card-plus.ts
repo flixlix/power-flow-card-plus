@@ -534,6 +534,7 @@ export class PowerFlowCardPlus extends LitElement {
         unit: field?.unit,
         unitWhiteSpace: field?.unit_white_space,
         watt_threshold: this._config.watt_threshold,
+        accept_negative: field?.acceptNegative,
       });
     };
 
