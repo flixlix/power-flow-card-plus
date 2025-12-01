@@ -354,11 +354,29 @@ export class PowerFlowCardPlus extends LitElement {
         }
       }
       solar.state.toHome = 0;
-    } else if (solar.state.toHome !== null && solar.state.toHome > 0) {
-      grid.state.toBattery = 0;
+
     } else if (battery.state.toBattery && battery.state.toBattery > 0) {
-      grid.state.toBattery = battery.state.toBattery;
+      // Allocate PV to the battery first; only the remainder can be Grid → Battery.
+      const pvTotal    = Math.max(solar.state.total ?? 0, 0);
+      const battCharge = Math.max(battery.state.toBattery ?? 0, 0);
+      const gridExport = Math.max(grid.state.toGrid ?? 0, 0); // 0 if you don't have export
+
+      // PV → Battery portion (capped by battery charge)
+      const pvToBattery = Math.min(pvTotal, battCharge);
+
+      // Residual charge must come from the grid
+      grid.state.toBattery = Math.max(battCharge - pvToBattery, 0);
+
+      // PV left for Home after reserving PV→Battery (and any export)
+      solar.state.toHome = Math.max(pvTotal - pvToBattery - gridExport, 0);
+
+      // Explicit PV→Battery for rendering
+      solar.state.toBattery = pvToBattery;
     }
+    grid.state.toBattery =
+      (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
+
+
     grid.state.toBattery = (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
 
     if (battery.has) {
