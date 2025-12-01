@@ -41,7 +41,7 @@ export const gridElement = (
       ${(entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
         (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||
-        (entities.grid?.display_state === "one_way" && (grid.state.fromGrid === null || grid.state.fromGrid === 0) && grid.state.toGrid !== 0)) &&
+        (entities.grid?.display_state === "one_way" && ((grid.state.fromGrid ?? 0) == 0))) &&
       grid.state.toGrid !== null &&
       !grid.powerOutage.isOutage
         ? html`<span
@@ -70,7 +70,7 @@ export const gridElement = (
       ${((entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
         (entities.grid?.display_state === "one_way_no_zero" && grid.state.fromGrid > 0) ||
-        (entities.grid?.display_state === "one_way" && (grid.state.toGrid === null || grid.state.toGrid === 0))) &&
+        (entities.grid?.display_state === "one_way" && (grid.state.toGrid ?? 0) == 0 && grid.state.fromGrid > 0)) &&
         grid.state.fromGrid !== null &&
         !grid.powerOutage.isOutage) ||
       (grid.powerOutage.isOutage && !!grid.powerOutage.entityGenerator)
