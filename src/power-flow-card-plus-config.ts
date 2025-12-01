@@ -1,5 +1,4 @@
-import { LovelaceCardConfig } from "custom-card-helpers";
-import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType } from "./type.js";
+import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, type LovelaceCardConfig } from "./type.js";
 
 export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
 
