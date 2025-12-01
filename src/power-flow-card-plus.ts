@@ -207,9 +207,13 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
+    const hasSolarEntity = entities.solar?.entity !== undefined;
+    const isProducingSolar = getSolarState(this.hass, this._config) ?? 0 > 0;
+    const displayZero = entities.solar?.display_zero !== false || isProducingSolar;
+
     const solar = {
       entity: entities.solar?.entity as string | undefined,
-      has: entities.solar?.entity !== undefined,
+      has: hasSolarEntity && displayZero,
       state: {
         total: getSolarState(this.hass, this._config),
         toHome: initialNumericState,
