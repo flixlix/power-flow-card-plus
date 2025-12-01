@@ -468,6 +468,15 @@ export class PowerFlowCardPlus extends LitElement {
     }
     if (entities.battery?.icon !== undefined) battery.icon = entities.battery?.icon;
 
+    // override icon of battery entity if use_metadata is true
+    const batteryUseMetadataIcon = entities.battery?.use_metadata;
+    if (batteryUseMetadataIcon) {
+      const metadataIcon = computeFieldIcon(this.hass, entities.battery, "NO_ICON_METADATA");
+      if (metadataIcon !== "NO_ICON_METADATA") {
+        battery.icon = metadataIcon;
+      }
+    }
+
     // Compute durations
     const newDur: NewDur = {
       batteryGrid: computeFlowRate(this._config, grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
