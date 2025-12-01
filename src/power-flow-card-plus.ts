@@ -413,9 +413,10 @@ export class PowerFlowCardPlus extends LitElement {
       nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
     }
 
-    // Calculate Total Consumptions
-    const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.state || 0), 0) || 0;
+    // Calculate Individual Consumption, ignore not shown objects
+    const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.has ? b.state || 0 : 0), 0) || 0;
 
+    // Calculate Total Consumptions
     const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
 
     // Calculate Circumferences
