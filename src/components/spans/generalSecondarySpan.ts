@@ -27,6 +27,7 @@ export const generalSecondarySpan = (
   },
   key: string
 ) => {
+  const templateKey = key === "low-carbon" ? "nonFossilFuel" : key;
   return html` ${field?.secondary?.has || field?.secondary?.template
     ? html` ${baseSecondarySpan({
         main,
@@ -41,7 +42,7 @@ export const generalSecondarySpan = (
           watt_threshold: config.watt_threshold,
         }),
         tap_action: field.secondary.tap_action,
-        template: templatesObj[`${key}Secondary`],
+        template: templatesObj[`${templateKey}Secondary`],
       })}`
     : ""}`;
 };
