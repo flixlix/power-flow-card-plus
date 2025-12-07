@@ -3,6 +3,7 @@ import { IndividualDeviceType } from "@/type";
 import { computeFieldIcon, computeFieldName } from "@/utils/computeFieldAttributes";
 import { getIndividualSecondaryState, getIndividualState } from ".";
 import { hasIndividualObject } from "./hasIndividualObject";
+import {convertColorListToHex} from "../../../utils/convertColor";
 
 const fallbackIndividualObject: IndividualObject = {
   field: undefined,
@@ -74,7 +75,14 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
   const isStateNegative = state && state < 0;
   const userConfiguredInvertAnimation = field?.inverted_animation || false;
   const invertAnimation = isStateNegative ? !userConfiguredInvertAnimation : userConfiguredInvertAnimation;
-  const color = field?.color && typeof field?.color === "string" ? field?.color : null;
+  let colorConv;
+  if (field?.color && typeof field?.color === "string") {
+    colorConv = field.color;
+  }
+  else if (field?.color && typeof field?.color === "object") {
+      colorConv = convertColorListToHex(field.color);
+  }
+  const color = colorConv ? colorConv : null;
 
   return {
     field,
