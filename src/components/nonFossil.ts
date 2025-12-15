@@ -22,7 +22,7 @@ export const nonFossilElement = (
   config: PowerFlowCardPlusConfig,
   { nonFossil, entities, templatesObj, grid, newDur }: NonFossil
 ) => {
-  return html`${!nonFossil.hasPercentage
+  return html`${!nonFossil.has
     ? html`<div class="spacer"></div>`
     : html`<div class="circle-container low-carbon">
         <span class="label">${nonFossil.name}</span>
