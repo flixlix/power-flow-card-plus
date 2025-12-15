@@ -19,6 +19,11 @@ const mainSchema = {
       },
     },
     {
+      name: "invert_state",
+      label: "Invert State",
+      selector: { boolean: {} },
+    },
+    {
       name: "color_value",
       label: "Color Value",
       selector: { boolean: {} },
