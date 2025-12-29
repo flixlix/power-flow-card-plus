@@ -60,6 +60,7 @@
     "min_flow_rate": "Minimivirtausnopeus",
     "max_expected_power": "Ennustettu maksimiteho",
     "min_expected_power": "Ennustettu minimiteho",
+    "flow_dots_count": "Pisteiden määrä",
     "watt_threshold": "Wattin ja kilowatin kynnysarvo",
     "display_zero_lines": "Näytä nolla-viivat",
     "clickable_entities": "Napautettavat kohteet",

@@ -60,6 +60,7 @@
     "min_flow_rate": "Débit minimal",
     "max_expected_power": "Puissance maximale attendue",
     "min_expected_power": "Puissance minimale attendue",
+    "flow_dots_count": "Nombre de points",
     "watt_threshold": "Seuil de watt vers kilowatt",
     "display_zero_lines": "Afficher les lignes zéro",
     "clickable_entities": "Entités cliquables",
