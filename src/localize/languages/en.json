@@ -60,6 +60,7 @@
     "min_flow_rate": "Min Flow Rate",
     "max_expected_power": "Max Expected Power",
     "min_expected_power": "Min Expected Power",
+    "flow_dots_count": "Flow Dots Count",
     "watt_threshold": "Watt to Kilowatt Threshold",
     "display_zero_lines": "Display Zero Lines",
     "clickable_entities": "Clickable Entities",

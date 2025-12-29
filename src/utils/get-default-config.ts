@@ -11,6 +11,7 @@ export const defaultValues = {
   maxExpectedPower: 2000,
   wattThreshold: 1000,
   transparencyZeroLines: 0,
+  flowDotsCount: 1,
   displayZeroLines: {
     mode: "show" as DisplayZeroLinesMode,
     transparency: 50,
@@ -64,6 +65,7 @@ export function getDefaultConfig(hass: HomeAssistant): object {
     max_flow_rate: defaultValues.maxFlowRate,
     max_expected_power: defaultValues.maxExpectedPower,
     min_expected_power: defaultValues.minExpectedPower,
+    flow_dots_count: defaultValues.flowDotsCount,
     watt_threshold: defaultValues.wattThreshold,
     transparency_zero_lines: defaultValues.transparencyZeroLines,
     sort_individual_devices: false,
