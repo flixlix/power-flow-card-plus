@@ -27,7 +27,7 @@ export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid
           ></path>
           ${checkShouldShowDots(config) && solar.state.toHome
             ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
-                            const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.gridToHome;
+                            const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.solarToHome;
                             return svg`
                      <circle
                         r="1"
