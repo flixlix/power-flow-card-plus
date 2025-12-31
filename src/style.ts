@@ -565,4 +565,46 @@ export const styles = css`
   .home-circle-sections {
     pointer-events: none;
   }
+
+  .subSolarContainer {
+    position: relative;
+    height: 90px;
+  }
+
+  .subSolarContainer > div {
+    height: 90px;
+  }
+
+  .subSolarContainer > .subSolarFlowContainer {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .subSolarContainer .subSolarValueContainer {
+    display: flex;
+    width: 100px;
+    justify-content: space-between;
+  }
+
+  .subSolarContainer .subSolarValueContainer .subSolarColumnContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subSolarContainer .subSolarValueContainer .subSolarColumnContainer > .name {
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .halfFlexBox {
+    flex: 0.5;
+  }
+
+  .fullFlexBox {
+    flex: 1;
+  }
 `;
