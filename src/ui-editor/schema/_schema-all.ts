@@ -12,6 +12,10 @@ import { solarSchema } from "./solar";
 const baseLovelaceCardConfig = object({
   type: string(),
   view_layout: any(),
+  layout_options: any(),
+  grid_options: any(),
+  visibility: any(),
+  disabled: optional(boolean()),
 });
 
 export const cardConfigStruct = assign(

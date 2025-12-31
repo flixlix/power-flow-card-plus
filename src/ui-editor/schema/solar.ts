@@ -16,6 +16,12 @@ const mainSchema = {
       selector: { boolean: {} },
     },
     {
+      name: "display_zero",
+      label: "Display Zero",
+      default: true,
+      selector: { boolean: {} },
+    },
+    {
       name: "display_zero_state",
       label: "Display State When Zero?",
       selector: { boolean: {} },

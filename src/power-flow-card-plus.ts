@@ -208,10 +208,14 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
+    const hasSolarEntity = entities.solar?.entity !== undefined;
+    const isProducingSolar = getTotalSolarState(this.hass, this._config) ?? 0 > 0;
+    const displayZero = entities.solar?.display_zero !== false || isProducingSolar;
+
     const solar = {
       entity: entities.solar?.entity as string | undefined,
       solar_second_entity: entities.solar?.solar_second_entity as string | undefined,
-      has: entities.solar?.entity !== undefined,
+      has: hasSolarEntity && displayZero,
       state: {
         total: getTotalSolarState(this.hass, this._config),
         solar1: getSolar1State(this.hass, this._config),
@@ -360,10 +364,17 @@ export class PowerFlowCardPlus extends LitElement {
         }
       }
       solar.state.toHome = 0;
-    } else if (solar.state.toHome !== null && solar.state.toHome > 0) {
+    } else if (battery.state.toBattery !== null && battery.state.toBattery > 0) {
+      // Battery is being charged, but by what (grid or solar) and by how much?
+      // Solar is charging battery with any power left over after powering the
+      // home and sending to grid
+      solar.state.toBattery = solar.state.total - (solar.state.toHome || 0) - (grid.state.toGrid || 0);
+
+      // Grid is providing any left over battery charging power after
+      // compensating for the solar charging
+      grid.state.toBattery = battery.state.toBattery - solar.state.toBattery;
+    } else {
       grid.state.toBattery = 0;
-    } else if (battery.state.toBattery && battery.state.toBattery > 0) {
-      grid.state.toBattery = battery.state.toBattery;
     }
     grid.state.toBattery = (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
 
@@ -408,9 +419,10 @@ export class PowerFlowCardPlus extends LitElement {
       nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
     }
 
-    // Calculate Total Consumptions
-    const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.state || 0), 0) || 0;
+    // Calculate Individual Consumption, ignore not shown objects
+    const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.has ? b.state || 0 : 0), 0) || 0;
 
+    // Calculate Total Consumptions
     const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
 
     // Calculate Circumferences
@@ -466,6 +478,15 @@ export class PowerFlowCardPlus extends LitElement {
       battery.icon = "mdi:battery-outline";
     }
     if (entities.battery?.icon !== undefined) battery.icon = entities.battery?.icon;
+
+    // override icon of battery entity if use_metadata is true
+    const batteryUseMetadataIcon = entities.battery?.use_metadata;
+    if (batteryUseMetadataIcon) {
+      const metadataIcon = computeFieldIcon(this.hass, entities.battery, "NO_ICON_METADATA");
+      if (metadataIcon !== "NO_ICON_METADATA") {
+        battery.icon = metadataIcon;
+      }
+    }
 
     // Compute durations
     const newDur: NewDur = {

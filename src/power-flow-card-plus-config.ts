@@ -1,5 +1,4 @@
-import { LovelaceCardConfig } from "custom-card-helpers";
-import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType } from "./type.js";
+import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, type LovelaceCardConfig } from "./type.js";
 
 export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
 
@@ -63,6 +62,7 @@ interface Solar extends BaseConfigEntity {
   color_value?: boolean;
   color_label?: boolean;
   secondary_info?: SecondaryInfoType;
+  display_zero?: boolean;
   display_zero_state?: boolean;
   name_solar_first_entity?: string;
   name_solar_second_entity?: string;
