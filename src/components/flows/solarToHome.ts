@@ -27,7 +27,9 @@ export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid
           ></path>
           ${checkShouldShowDots(config) && solar.state.toHome
             ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
-                            const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.solarToHome;
+                            const n = checkFlowDotsCount(config) ?? 1;
+                            const start = i / n;
+                            const end = (i + 1) / n;
                             return svg`
                      <circle
                         r="1"
@@ -35,8 +37,9 @@ export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid
                         vector-effect="non-scaling-stroke"
                       >
                         <animateMotion
-                          dur="${newDur.solarToHome}s"
-                          begin="${offset}s"
+                          dur="${newDur.solarToHome / n}s"
+                          keyTimes="0;1;1"
+                          keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}"
                           repeatCount="indefinite"
                           calcMode="linear"
                         >

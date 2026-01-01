@@ -28,25 +28,34 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && grid.state.toBattery
-            ? svg`<circle
+            ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                              const n = checkFlowDotsCount(config) ?? 1;
+                              const start = i / n;
+                              const end = (i + 1) / n;
+                            return svg`
+          
+            <circle
           r="1"
           class="battery-from-grid"
           vector-effect="non-scaling-stroke"
         >
           <animateMotion
-            dur="${newDur.batteryGrid}s"
+            dur="${newDur.batteryGrid / n}s"
+            keyTimes="0;1;1"
+            keyPoints="${(i + 1) / n} ; ${i / n} ; ${(i + 1) / n}"
             repeatCount="indefinite"
-            keyPoints="1;0" keyTimes="0;1"
             calcMode="linear"
           >
             <mpath xlink:href="#battery-grid" />
           </animateMotion>
-        </circle>`
+        </circle>`})}`
             : ""}
           ${checkShouldShowDots(config) && battery.state.toGrid
             ? svg`
             ${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
-                            const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.batteryGrid;
+                            const n = checkFlowDotsCount(config) ?? 1;
+                            const start = i / n;
+                            const end = (i + 1) / n;
                             return svg`
             
             <circle
@@ -55,8 +64,9 @@ export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid
               vector-effect="non-scaling-stroke"
             >
               <animateMotion
-                dur="${newDur.batteryGrid}s"
-                begin="${offset}s"
+                dur="${newDur.batteryGrid / n}s"
+                keyTimes="0;1;1"
+                keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}"
                 repeatCount="indefinite"
                 calcMode="linear"
               >

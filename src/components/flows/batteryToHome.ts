@@ -29,7 +29,9 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
           ></path>
           ${checkShouldShowDots(config) && battery.state.toHome
             ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
-                                        const offset = (i / (checkFlowDotsCount(config) ?? 1)) * newDur.batteryToHome;
+                                        const n = checkFlowDotsCount(config) ?? 1;
+                                        const start = i / n;
+                                        const end = (i + 1) / n;
                                         return svg`
             
             
@@ -39,8 +41,9 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
             vector-effect="non-scaling-stroke"
           >
             <animateMotion
-              dur="${newDur.batteryToHome}s"
-              begin="${offset}s"
+              dur="${newDur.batteryToHome / n}s"
+              keyTimes="0;1;1"
+              keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}"
               repeatCount="indefinite"
               calcMode="linear"
             >
