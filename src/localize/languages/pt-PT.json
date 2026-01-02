@@ -60,6 +60,7 @@
     "min_flow_rate": "Taxa de Fluxo Mínima",
     "max_expected_power": "Potência Máxima Esperada",
     "min_expected_power": "Potência Mínima Esperada",
+    "flow_dots_count": "Número de pontos",
     "watt_threshold": "Limiar de Watt para Quilowatt",
     "display_zero_lines": "Mostrar Linhas Zero",
     "clickable_entities": "Entidades Clicáveis",

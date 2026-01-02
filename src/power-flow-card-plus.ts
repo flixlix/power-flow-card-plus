@@ -86,6 +86,7 @@ export class PowerFlowCardPlus extends LitElement {
       watt_threshold: coerceNumber(config.watt_threshold, defaultValues.wattThreshold),
       max_expected_power: coerceNumber(config.max_expected_power, defaultValues.maxExpectedPower),
       min_expected_power: coerceNumber(config.min_expected_power, defaultValues.minExpectedPower),
+      flow_dots_count: coerceNumber(config.flow_dots_count, defaultValues.flowDotsCount),
       display_zero_lines: {
         mode: config.display_zero_lines?.mode ?? defaultValues.displayZeroLines.mode,
         transparency: coerceNumber(config.display_zero_lines?.transparency, defaultValues.displayZeroLines.transparency),

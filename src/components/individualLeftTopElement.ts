@@ -8,6 +8,8 @@ import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 import { PowerFlowCardPlus } from "../power-flow-card-plus";
 import { styleLine } from "../utils/styleLine";
 import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "@/utils/checkFlowDotsCount";
+
 
 interface TopIndividual {
   newDur: NewDur;
@@ -52,21 +54,28 @@ export const individualLeftTopElement = (
           <svg width="80" height="30">
             <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />
             ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-              ? svg`<circle
+              ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                              const n = checkFlowDotsCount(config) ?? 1;
+                              const start = i / n;
+                              const end = (i + 1) / n;  
+                              return svg`
+              
+              <circle
           r="1.75"
           class="individual-top"
           vector-effect="non-scaling-stroke"
         >
           <animateMotion
-            dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
+            dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration) / n}s"
             repeatCount="indefinite"
             calcMode="linear"
-            keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
-            keyTimes="0;1"
+            keyPoints=${individualObj.invertAnimation ? `${start} ; ${end}; ${start}` : `${end} ; ${start}; ${end}`}
+            keyTimes="0;1;1"
           >
             <mpath xlink:href="#individual-top" />
           </animateMotion>
         </circle>`
+        })}`
               : ""}
           </svg>
         `
