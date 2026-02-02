@@ -46,6 +46,7 @@
     "show_state_of_charge": "Ladezustand anzeigen",
     "state_type": "Typ des Zustands",
     "subtract_individual": "Individuell abziehen",
+    "subtract_from": "Abziehen von",
     "override_state": "Zustand überschreiben",
     "calculate_flow_rate": "Flussrate berechnen",
     "inverted_animation": "Animation umkehren",

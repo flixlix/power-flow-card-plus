@@ -46,6 +46,7 @@
     "show_state_of_charge": "Показувати рівень заряду",
     "state_type": "Тип стану",
     "subtract_individual": "Віднімати індивідуальні значення",
+    "subtract_from": "Відняти від",
     "override_state": "Перевизначити стан",
     "calculate_flow_rate": "Розраховувати швидкість потоку",
     "inverted_animation": "Інвертована анімація",

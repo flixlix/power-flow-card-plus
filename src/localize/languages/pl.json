@@ -46,6 +46,7 @@
     "show_state_of_charge": "Pokaż stan naładowania",
     "state_type": "Typ stanu",
     "subtract_individual": "Odjęcie indywidualne",
+    "subtract_from": "Odejmij od",
     "override_state": "Nadpisanie stanu",
     "calculate_flow_rate": "Oblicz wskaźnik przepływu",
     "inverted_animation": "Odwróć animację",

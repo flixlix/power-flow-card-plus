@@ -46,6 +46,7 @@
     "show_state_of_charge": "Laadstatus Weergeven",
     "state_type": "Type Toestand",
     "subtract_individual": "Individueel Aftrekken",
+    "subtract_from": "Aftrekken van",
     "override_state": "Toestand Overschrijven",
     "calculate_flow_rate": "Stroomsnelheid Berekenen",
     "inverted_animation": "Animatie Omkeren",

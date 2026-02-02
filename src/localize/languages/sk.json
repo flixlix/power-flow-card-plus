@@ -46,6 +46,7 @@
     "show_state_of_charge": "Zobraziť stav nabitia",
     "state_type": "Typ stavu",
     "subtract_individual": "Odčítať individuálne",
+    "subtract_from": "Odčítať od",
     "override_state": "Prepísať stav",
     "calculate_flow_rate": "Počítať prietok",
     "inverted_animation": "Invertovať animáciu",

@@ -46,6 +46,7 @@
     "show_state_of_charge": "Afficher l'état de charge",
     "state_type": "Type d'état",
     "subtract_individual": "Soustraire l'individuel",
+    "subtract_from": "Soustraire de",
     "override_state": "Remplacer l'état",
     "calculate_flow_rate": "Calculer le débit",
     "inverted_animation": "Animation inversée",
