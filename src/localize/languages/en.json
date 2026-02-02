@@ -46,6 +46,7 @@
     "show_state_of_charge": "Show State of Charge",
     "state_type": "Type of State",
     "subtract_individual": "Subtract Individual",
+    "subtract_from": "Subtract From",
     "override_state": "Override State",
     "calculate_flow_rate": "Calculate Flow Rate",
     "inverted_animation": "Invert Animation",

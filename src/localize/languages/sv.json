@@ -46,6 +46,7 @@
     "show_state_of_charge": "Visa laddningsnivå",
     "state_type": "Statustyp",
     "subtract_individual": "Individuell avräkning",
+    "subtract_from": "Subtrahera från",
     "override_state": "Använd entitetsvärde",
     "calculate_flow_rate": "Beräkna flöde",
     "inverted_animation": "Reversera animation",
