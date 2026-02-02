@@ -321,12 +321,28 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
+    const subtractAllFromHome = entities.home?.subtract_individual === true;
+
+    // Calculate Individual Consumption for Grid subtraction
+    // If the legacy subtract_individual is enabled on home, do not subtract from grid.
+    const totalIndividualConsumptionForGrid = subtractAllFromHome
+      ? 0
+      : individualObjs?.reduce(
+          (a, b) => a + (b.has && (b.subtractFrom === "grid" || b.subtractFrom === "both") ? b.state || 0 : 0),
+          0
+        ) || 0;
+
     // Reset Values below Display Zero Tolerance
     grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);
     grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, entities.grid?.display_zero_tolerance);
     solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
     battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
     battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);
+
+    if (totalIndividualConsumptionForGrid > 0 && grid.state.fromGrid !== null) {
+      grid.state.fromGrid = Math.max(grid.state.fromGrid - totalIndividualConsumptionForGrid, 0);
+    }
+
     if (grid.state.fromGrid === 0) {
       grid.state.toHome = 0;
       grid.state.toBattery = 0;
@@ -413,8 +429,17 @@ export class PowerFlowCardPlus extends LitElement {
       nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
     }
 
-    // Calculate Individual Consumption, ignore not shown objects
     const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.has ? b.state || 0 : 0), 0) || 0;
+
+    // Calculate Individual Consumption for Home subtraction.
+    // If legacy subtract_individual is enabled on home, all devices are subtracted from home.
+    // This ensures backwards compatibility with older setups that have subtract_individual on home.
+    const totalIndividualConsumptionForHome = subtractAllFromHome
+      ? totalIndividualConsumption
+      : individualObjs?.reduce(
+          (a, b) => a + (b.has && (b.subtractFrom === "home" || b.subtractFrom === "both") ? b.state || 0 : 0),
+          0
+        ) || 0;
 
     // Calculate Total Consumptions
     const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
@@ -427,30 +452,15 @@ export class PowerFlowCardPlus extends LitElement {
       circleCircumference *
       ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.toHome ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
 
-    const homeUsageToDisplay =
+    const homeUsageRaw =
       entities.home?.override_state && entities.home.entity
-        ? entities.home?.subtract_individual
-          ? displayValue(this.hass, this._config, getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption, {
-              unit: entities.home?.unit_of_measurement,
-              unitWhiteSpace: entities.home?.unit_white_space,
-              watt_threshold: this._config.watt_threshold,
-            })
-          : displayValue(this.hass, this._config, getEntityStateWatts(this.hass, entities.home.entity), {
-              unit: entities.home?.unit_of_measurement,
-              unitWhiteSpace: entities.home?.unit_white_space,
-              watt_threshold: this._config.watt_threshold,
-            })
-        : entities.home?.subtract_individual
-        ? displayValue(this.hass, this._config, totalHomeConsumption - totalIndividualConsumption || 0, {
-            unit: entities.home?.unit_of_measurement,
-            unitWhiteSpace: entities.home?.unit_white_space,
-            watt_threshold: this._config.watt_threshold,
-          })
-        : displayValue(this.hass, this._config, totalHomeConsumption, {
-            unit: entities.home?.unit_of_measurement,
-            unitWhiteSpace: entities.home?.unit_white_space,
-            watt_threshold: this._config.watt_threshold,
-          });
+        ? getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumptionForHome
+        : totalHomeConsumption - totalIndividualConsumptionForHome;
+    const homeUsageToDisplay = displayValue(this.hass, this._config, Math.max(homeUsageRaw, 0), {
+      unit: entities.home?.unit_of_measurement,
+      unitWhiteSpace: entities.home?.unit_white_space,
+      watt_threshold: this._config.watt_threshold,
+    });
 
     const totalLines =
       grid.state.toHome +

@@ -66,6 +66,21 @@ const mainSchema = {
       label: "Use Metadata",
       selector: { boolean: {} },
     },
+    {
+      name: "subtract_from",
+      label: "Subtract From",
+      selector: {
+        select: {
+          mode: "dropdown",
+          options: [
+            { value: "none", label: "None" },
+            { value: "home", label: "Home" },
+            { value: "grid", label: "Grid" },
+            { value: "both", label: "Both" },
+          ],
+        },
+      },
+    },
   ],
 };
 
