@@ -63,11 +63,12 @@ Plans:
   2. Animated monodirectional flow lines from grid_house and grid_main to heatpump appear when their respective sensor entities report non-zero power
   3. Heatpump flow lines hide (or grey out) when their sensor reads 0W, respecting the card's `display_zero_lines` configuration
   4. Heatpump consumption does not appear in the home node total -- the home energy balance remains correct
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Type foundation + state resolvers + heatpump node element + CSS
+- [ ] 03-02-PLAN.md — Curved flow files (gridHouseToHeatpump + gridMainToHeatpump) + flows/index extension
+- [ ] 03-03-PLAN.md — Wire heatpump into render(): object construction, bottom row, newDur, flowElement
 
 ### Phase 4: Visual Editor
 **Goal**: Every new config field is editable through the Lovelace visual editor with no YAML-only fields
@@ -107,6 +108,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Type Foundation and Config Migration | 3/3 | Complete   | 2026-03-02 |
 | 2. Grid Main Node and Energy Balance | 3/3 | Complete   | 2026-03-02 |
-| 3. Heatpump Node and Flow Lines | 0/? | Not started | - |
+| 3. Heatpump Node and Flow Lines | 0/3 | Not started | - |
 | 4. Visual Editor | 0/? | Not started | - |
 | 5. Polish and Regression Verification | 0/? | Not started | - |
