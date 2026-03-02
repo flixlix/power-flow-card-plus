@@ -56,16 +56,20 @@ interface Grid extends BaseConfigEntity {
 }
 
 interface GridEntities {
-  house?: Grid; // entire existing Grid interface reused as-is
-  main?: Grid; // same Grid interface for the main meter
+  house?: Grid;
+  main?: Grid;
 }
 
-interface HeatpumpEntity {
-  entity?: string; // string only — heatpumps are consume-only, NOT ComboEntity
-  cop?: string; // COP sensor entity (follows battery.state_of_charge naming convention)
-  flow_from_grid_house?: string; // entity for house meter → heatpump animated flow
-  flow_from_grid_main?: string; // entity for main meter → heatpump animated flow
+export interface IntermediateEntity {
+  entity?: string;
+  name?: string;
+  icon?: string;
+  color?: { consumption?: string; production?: string };
+  color_circle?: string;
   tap_action?: ActionConfig;
+  secondary_info?: SecondaryInfoType;
+  flowFromGridHouse?: string;
+  flowFromGridMain?: string;
 }
 
 interface Solar extends BaseConfigEntity {
@@ -112,7 +116,7 @@ export type ConfigEntities = {
   home?: Home;
   fossil_fuel_percentage?: FossilFuelPercentage;
   individual?: IndividualField;
-  heatpump?: HeatpumpEntity;
+  intermediate?: IntermediateEntity[];
 };
 
-export type ConfigEntity = Battery | Grid | Solar | Home | FossilFuelPercentage | IndividualDeviceType | HeatpumpEntity;
+export type ConfigEntity = Battery | Grid | Solar | Home | FossilFuelPercentage | IndividualDeviceType | IntermediateEntity;
