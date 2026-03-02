@@ -16,10 +16,10 @@
 ### Grid Main Node
 
 - [ ] **GRID-01**: `grid_main` node renders to the left of `grid_house` in the card layout
-- [ ] **GRID-02**: `grid_main` displays power value from its configured HA entity
+- [x] **GRID-02**: `grid_main` displays power value from its configured HA entity
 - [ ] **GRID-03**: `non_fossil` percentage bubble attaches to `grid_main` (not `grid_house`)
-- [ ] **GRID-04**: `grid_main` supports power outage detection (independently configurable)
-- [ ] **GRID-05**: When `entities.grid.main` is absent, card renders identically to current behavior (zero visual regression for non-MK8 users)
+- [x] **GRID-04**: `grid_main` supports power outage detection (independently configurable)
+- [x] **GRID-05**: When `entities.grid.main` is absent, card renders identically to current behavior (zero visual regression for non-MK8 users)
 
 ### Meter-to-Meter Connection
 
@@ -38,7 +38,7 @@
 
 ### Energy Balance
 
-- [ ] **BAL-01**: Home consumption calculation uses `grid_house` (not `grid_main`) to preserve existing solar/battery/home balance
+- [x] **BAL-01**: Home consumption calculation uses `grid_house` (not `grid_main`) to preserve existing solar/battery/home balance
 - [ ] **BAL-02**: Heatpump consumption does not double-count in home node total
 
 ### Visual Editor
@@ -78,10 +78,10 @@
 | CONF-04 | Phase 1 | Complete |
 | CONF-05 | Phase 1 | Complete |
 | GRID-01 | Phase 2 | Pending |
-| GRID-02 | Phase 2 | Pending |
+| GRID-02 | Phase 2 | Complete |
 | GRID-03 | Phase 2 | Pending |
-| GRID-04 | Phase 2 | Pending |
-| GRID-05 | Phase 2 | Pending |
+| GRID-04 | Phase 2 | Complete |
+| GRID-05 | Phase 2 | Complete |
 | CONN-01 | Phase 2 | Pending |
 | CONN-02 | Phase 2 | Pending |
 | HP-01 | Phase 3 | Pending |
@@ -91,7 +91,7 @@
 | HP-05 | Phase 3 | Pending |
 | HP-06 | Phase 3 | Pending |
 | HP-07 | Phase 3 | Pending |
-| BAL-01 | Phase 2 | Pending |
+| BAL-01 | Phase 2 | Complete |
 | BAL-02 | Phase 3 | Pending |
 | ED-01 | Phase 4 | Pending |
 | ED-02 | Phase 4 | Pending |

@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v0.2
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-02T13:06:37.747Z"
+status: in_progress
+last_updated: "2026-03-02T14:22:42Z"
 progress:
-  total_phases: 1
+  total_phases: 5
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 13
+  completed_plans: 4
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** All existing card functionality and visual editor support must remain fully intact -- this is a targeted extension, not a rewrite.
-**Current focus:** Phase 1 complete. Ready for Phase 2: Grid Main Integration
+**Current focus:** Phase 2 in progress: Grid Main Node and Energy Balance (1 of 3 plans complete)
 
 ## Current Position
 
-Phase: 1 of 5 (Type Foundation and Config Migration)
-Plan: 3 of 3 in current phase (COMPLETE)
-Status: Phase 1 complete
-Last activity: 2026-03-02 -- Completed 01-03 superstruct wiring plan (Phase 1 done)
+Phase: 2 of 5 (Grid Main Node and Energy Balance)
+Plan: 1 of 3 in current phase (02-01 complete)
+Status: Phase 2 in progress
+Last activity: 2026-03-02 -- Completed 02-01 grid_main state resolvers and NewDur extension
 
-Progress: [***·······] 20%
+Progress: [****······] 30%
 
 ## Performance Metrics
 
@@ -41,10 +41,11 @@ Progress: [***·······] 20%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-type-foundation-and-config-migration | 3 | 9 min | 3 min |
+| 02-grid-main-node-and-energy-balance | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4 min), 01-02 (2 min), 01-03 (3 min)
-- Trend: -
+- Last 5 plans: 01-01 (4 min), 01-02 (2 min), 01-03 (3 min), 02-01 (2 min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [01-03]: Both setConfig() signatures changed to unknown — raw input accepted before migration/validation
 - [01-03]: Entity guard in card setConfig updated from grid?.entity to (grid as any)?.house?.entity to match GridEntities nested shape
 - [01-03]: heatpump added to cardConfigStruct with all four optional string fields (entity, cop, flow_from_grid_house, flow_from_grid_main)
+- [02-01]: isEntityInverted removed from grid.ts — confirmed always returns undefined for field='grid'; grid_house and grid_main resolvers now read invert_state directly from sub-config
+- [02-01]: gridMainToGridHouse initialized to 0 in newDur placeholder in power-flow-card-plus.ts — Plan 02-03 will assign real computed value
 
 ### Pending Todos
 
@@ -78,10 +81,9 @@ None yet.
 - [Research]: SVG path coordinates for new flow lines are MEDIUM confidence -- expect visual iteration in Phase 3
 - [Research]: `mdiHeatPump` icon constant name unverified in @mdi/js 7.x -- check at Phase 3 start
 - [Research]: `isCardWideEnough` threshold (420px) may need adjustment with grid_main added -- Phase 5 concern
-- [01-01]: `isEntityInverted` still uses `config.entities[field]?.invert_state` for field="grid" — returns undefined since GridEntities has no invert_state. Phase 2 should address.
 
 ## Session Continuity
 
-Last session: 2026-03-02T13:04:00Z
-Stopped at: Completed 01-03-PLAN.md (superstruct wiring + migration integration — Phase 1 complete)
+Last session: 2026-03-02T14:22:42Z
+Stopped at: Completed 02-01-PLAN.md (grid_main state resolvers + NewDur extension + invert_state bug fix)
 Resume file: None
