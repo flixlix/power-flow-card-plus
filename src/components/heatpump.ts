@@ -39,12 +39,7 @@ export const heatpumpElement = (
             }}
           >
             COP
-            ${displayValue(main.hass, config, heatpump.cop.state, {
-              unit: "",
-              unitWhiteSpace: false,
-              decimals: 1,
-              watt_threshold: config.watt_threshold,
-            })}
+            ${Number(heatpump.cop.state).toFixed(1)}
           </span>`
         : null}
       <ha-icon id="heatpump-icon" .icon=${heatpump.icon} />
