@@ -6,6 +6,7 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { batteryElement } from "./components/battery";
 import { flowElement } from "./components/flows";
 import { gridElement } from "./components/grid";
+import { heatpumpElement } from "./components/heatpump";
 import { homeElement } from "./components/home";
 import { individualLeftBottomElement } from "./components/individualLeftBottomElement";
 import { individualLeftTopElement } from "./components/individualLeftTopElement";
@@ -18,6 +19,7 @@ import { handleAction } from "./ha/panels/lovelace/common/handle-action";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
 import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
 import { getGridConsumptionState, getGridProductionState, getGridSecondaryState, getGridMainConsumptionState, getGridMainProductionState, getGridMainSecondaryState } from "./states/raw/grid";
+import { getHeatpumpState, getHeatpumpCopState, getHeatpumpFlowFromGridHouseState, getHeatpumpFlowFromGridMainState } from "./states/raw/heatpump";
 import { gridMainElement } from "./components/gridMain";
 import { getHomeSecondaryState } from "./states/raw/home";
 import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
@@ -261,6 +263,21 @@ export class PowerFlowCardPlus extends LitElement {
         },
         tap_action: gridMainConfig?.secondary_info?.tap_action,
       },
+    };
+
+    const heatpumpConfig = entities.heatpump;
+    const heatpump = {
+      entity: heatpumpConfig?.entity,
+      has: heatpumpConfig?.entity !== undefined,
+      state: getHeatpumpState(this.hass, this._config),
+      cop: {
+        state: getHeatpumpCopState(this.hass, this._config),
+      },
+      flowFromGridHouse: getHeatpumpFlowFromGridHouseState(this.hass, this._config),
+      flowFromGridMain: getHeatpumpFlowFromGridMainState(this.hass, this._config),
+      icon: computeFieldIcon(this.hass, heatpumpConfig, "mdi:heat-pump"),
+      name: computeFieldName(this.hass, heatpumpConfig, "Heat Pump"),
+      tap_action: heatpumpConfig?.tap_action,
     };
 
     const hasSolarEntity = entities.solar?.entity !== undefined;
@@ -553,8 +570,8 @@ export class PowerFlowCardPlus extends LitElement {
         Math.max(gridMain.state.fromGridMain ?? 0, gridMain.state.toGridMain ?? 0),
         totalLines
       ),
-      heatpumpFromGridHouse: 0,
-      heatpumpFromGridMain: 0,
+      heatpumpFromGridHouse: computeFlowRate(this._config, heatpump.flowFromGridHouse ?? 0, totalLines),
+      heatpumpFromGridMain: computeFlowRate(this._config, heatpump.flowFromGridMain ?? 0, totalLines),
     };
 
     // Smooth duration changes
@@ -713,9 +730,10 @@ export class PowerFlowCardPlus extends LitElement {
               : html`<div class="spacer"></div>`}
             ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : html``}
           </div>
-          ${battery.has || checkHasBottomIndividual(individualObjs)
+          ${battery.has || heatpump.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
                 <div class="spacer"></div>
+                ${heatpump.has ? heatpumpElement(this, this._config, { heatpump, entities }) : html`<div class="spacer"></div>`}
                 ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individualFieldLeftBottom
                   ? individualLeftBottomElement(this, this._config, {
@@ -741,6 +759,7 @@ export class PowerFlowCardPlus extends LitElement {
             battery,
             grid,
             gridMain,
+            heatpump,
             individual: individualObjs,
             newDur,
             solar,
