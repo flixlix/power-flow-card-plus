@@ -50,13 +50,13 @@ import { coerceNumber } from "./utils/utils";
 const circleCircumference = 238.76104;
 
 registerCustomCard({
-  type: "power-flow-card-plus",
-  name: "Power Flow Card Plus",
+  type: "power-flow-card-cascade",
+  name: "Power Flow Card Cascade",
   description:
     "An extended version of the power flow card with richer options, advanced features and a few small UI enhancements. Inspired by the Energy Dashboard.",
 });
 
-@customElement("power-flow-card-plus")
+@customElement("power-flow-card-cascade")
 export class PowerFlowCardPlus extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config = {} as PowerFlowCardPlusConfig;
@@ -109,7 +109,7 @@ export class PowerFlowCardPlus extends LitElement {
   // do not use ui editor for now, as it is not working
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
-    return document.createElement("power-flow-card-plus-editor");
+    return document.createElement("power-flow-card-cascade-editor");
   }
 
   public static getStubConfig(hass: HomeAssistant): object {
@@ -553,6 +553,8 @@ export class PowerFlowCardPlus extends LitElement {
         Math.max(gridMain.state.fromGridMain ?? 0, gridMain.state.toGridMain ?? 0),
         totalLines
       ),
+      heatpumpFromGridHouse: 0,
+      heatpumpFromGridMain: 0,
     };
 
     // Smooth duration changes
@@ -640,7 +642,7 @@ export class PowerFlowCardPlus extends LitElement {
       >
         <div
           class="card-content ${this._config.full_size ? "full-size" : ""}"
-          id="power-flow-card-plus"
+          id="power-flow-card-cascade"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >
           ${solar.has || individualObjs?.some((individual) => individual?.has) || nonFossil.hasPercentage
@@ -755,7 +757,7 @@ export class PowerFlowCardPlus extends LitElement {
       return;
     }
 
-    const elem = this?.shadowRoot?.querySelector("#power-flow-card-plus");
+    const elem = this?.shadowRoot?.querySelector("#power-flow-card-cascade");
     const widthStr = elem ? getComputedStyle(elem).getPropertyValue("width") : "0px";
     this._width = parseInt(widthStr.replace("px", ""), 10);
 

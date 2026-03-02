@@ -98,6 +98,8 @@ export type NewDur = {
   individual: number[];
   nonFossil: number;
   gridMainToGridHouse: number;
+  heatpumpFromGridHouse: number;
+  heatpumpFromGridMain: number;
 };
 
 export type GridObject = {
