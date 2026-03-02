@@ -23,7 +23,7 @@ export const flowGridMainToHeatpump = (config: PowerFlowCardPlusConfig, { batter
           <path
             id="grid-main-heatpump"
             class="heatpump ${styleLine(heatpump.flowFromGridMain || 0, config)}"
-            d="M20,50 v15 c0,20 20,20 35,20 h5"
+            d="M20,50 v50"
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && heatpump.flowFromGridMain

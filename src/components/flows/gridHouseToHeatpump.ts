@@ -23,7 +23,7 @@ export const flowGridHouseToHeatpump = (config: PowerFlowCardPlusConfig, { batte
           <path
             id="grid-house-heatpump"
             class="heatpump ${styleLine(heatpump.flowFromGridHouse || 0, config)}"
-            d="M80,50 v15 c0,20 -20,20 -35,20 h-5"
+            d="M80,50 v8 c0,42 -60,42 -60,42"
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && heatpump.flowFromGridHouse
