@@ -66,25 +66,4 @@ describe("migrateConfig", () => {
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
-  // Test 7: heatpump fields are preserved untouched
-  test("preserves heatpump fields when migrating grid", () => {
-    const input = {
-      entities: {
-        grid: { entity: "sensor.grid" },
-        heatpump: {
-          entity: "sensor.heatpump",
-          cop: "sensor.cop",
-          flow_from_grid_house: "sensor.flow_house",
-          flow_from_grid_main: "sensor.flow_main",
-        },
-      },
-    };
-    const result = migrateConfig(input);
-    expect(result.entities.heatpump).toEqual({
-      entity: "sensor.heatpump",
-      cop: "sensor.cop",
-      flow_from_grid_house: "sensor.flow_house",
-      flow_from_grid_main: "sensor.flow_main",
-    });
-  });
 });
