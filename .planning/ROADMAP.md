@@ -30,11 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A YAML config with `entities.heatpump` is accepted by `setConfig()` without error and the key is not stripped by superstruct validation
   4. Passing an already-migrated config through migration again produces an identical result (idempotency)
   5. `pnpm typecheck && pnpm test` passes with all new and existing tests green
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md -- TypeScript type definitions (GridEntities, HeatpumpEntity) + grid state accessor fix
+- [ ] 01-02-PLAN.md -- migrateConfig pure function + full test suite (TDD)
+- [ ] 01-03-PLAN.md -- superstruct update + wire migrateConfig into both setConfig() calls
 
 ### Phase 2: Grid Main Node and Energy Balance
 **Goal**: Users with Messkonzept 8 see a grid_main node with animated bidirectional flow to grid_house, and the home consumption balance is correct
@@ -103,7 +104,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Type Foundation and Config Migration | 0/? | Not started | - |
+| 1. Type Foundation and Config Migration | 0/3 | Not started | - |
 | 2. Grid Main Node and Energy Balance | 0/? | Not started | - |
 | 3. Heatpump Node and Flow Lines | 0/? | Not started | - |
 | 4. Visual Editor | 0/? | Not started | - |
