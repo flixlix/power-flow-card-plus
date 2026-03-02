@@ -439,6 +439,15 @@ export const styles = css`
   .grid-main .circle {
     border-color: var(--circle-grid-color);
   }
+  .circle-container.heatpump {
+  }
+  .heatpump .circle {
+    border-color: var(--energy-grid-consumption-color, #ff9800);
+  }
+  .heatpump ha-icon:not(.small) {
+    padding-bottom: 0;
+    position: relative;
+  }
   .consumption {
     color: var(--energy-grid-consumption-color);
   }

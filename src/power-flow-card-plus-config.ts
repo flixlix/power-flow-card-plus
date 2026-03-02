@@ -1,3 +1,4 @@
+import { ActionConfig } from "custom-card-helpers";
 import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, type LovelaceCardConfig } from "./type.js";
 
 export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
@@ -64,6 +65,7 @@ interface HeatpumpEntity {
   cop?: string; // COP sensor entity (follows battery.state_of_charge naming convention)
   flow_from_grid_house?: string; // entity for house meter → heatpump animated flow
   flow_from_grid_main?: string; // entity for main meter → heatpump animated flow
+  tap_action?: ActionConfig;
 }
 
 interface Solar extends BaseConfigEntity {
