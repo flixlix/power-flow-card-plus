@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v0.2
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-02T14:27:50.048Z"
+last_updated: "2026-03-02T14:31:30Z"
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** All existing card functionality and visual editor support must remain fully intact -- this is a targeted extension, not a rewrite.
-**Current focus:** Phase 2 in progress: Grid Main Node and Energy Balance (2 of 3 plans complete)
+**Current focus:** Phase 2 complete: Grid Main Node and Energy Balance (3 of 3 plans complete)
 
 ## Current Position
 
 Phase: 2 of 5 (Grid Main Node and Energy Balance)
-Plan: 2 of 3 in current phase (02-02 complete)
-Status: Phase 2 in progress
-Last activity: 2026-03-02 -- Completed 02-02 gridMainElement component + gridMainToGridHouse flow + CSS
+Plan: 3 of 3 in current phase (02-03 complete — phase done)
+Status: Phase 2 complete
+Last activity: 2026-03-02 -- Completed 02-03 wire render() integration (grid_main node + energy balance)
 
-Progress: [*****·····] 40%
+Progress: [**********] 100% (Phase 2 complete)
 
 ## Performance Metrics
 
@@ -41,10 +41,10 @@ Progress: [*****·····] 40%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-type-foundation-and-config-migration | 3 | 9 min | 3 min |
-| 02-grid-main-node-and-energy-balance | 2 | 4 min | 2 min |
+| 02-grid-main-node-and-energy-balance | 3 | 6 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4 min), 01-02 (2 min), 01-03 (3 min), 02-01 (2 min), 02-02 (2 min)
+- Last 5 plans: 01-02 (2 min), 01-03 (3 min), 02-01 (2 min), 02-02 (2 min), 02-03 (2 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -74,6 +74,11 @@ Recent decisions affecting current work:
 - [Phase 02-02]: gridMain?: any added as optional field to Flows interface to avoid breaking existing flowElement callers until Plan 02-03 wires it in
 - [Phase 02-02]: FlowsWithGridMain intersection type (Flows & { gridMain: any }) used locally in gridMainToGridHouse.ts for type safety without polluting the shared Flows interface
 - [Phase 02-02]: flowGridMainToGridHouse guarded with 'gridMain ?' in flowElement — safe no-op when gridMain is not yet passed
+- [02-03]: grid object in render() changed from gridConfig (flat) to gridHouseConfig (.house sub-key) — completes Phase 1 cast pattern resolution
+- [02-03]: gridElement in grid.ts fixed to read from (entities.grid as any)?.house — components must resolve sub-keys directly
+- [02-03]: nonFossilElement call unchanged — flex layout handles non-fossil bubble positioning automatically
+- [02-03]: totalHomeConsumption formula unchanged (grid.state.toHome + solar + battery) — gridMain state is display-only (BAL-01)
+- [02-03]: gridMainToGridHouse uses Math.max(fromGridMain, toGridMain) — bidirectional meter, animate at dominant flow rate
 
 ### Pending Todos
 
@@ -87,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-02T14:26:47Z
-Stopped at: Completed 02-02-PLAN.md (gridMainElement component + gridMainToGridHouse flow + CSS)
+Last session: 2026-03-02T14:31:30Z
+Stopped at: Completed 02-03-PLAN.md (wire render() integration — Phase 2 complete)
 Resume file: None

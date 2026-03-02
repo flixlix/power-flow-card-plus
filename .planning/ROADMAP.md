@@ -13,7 +13,7 @@ This roadmap extends the power-flow-card-plus card to support Messkonzept 8 -- a
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Type Foundation and Config Migration** - Extend types, add config migration, update superstruct validation (zero visual changes) (completed 2026-03-02)
-- [ ] **Phase 2: Grid Main Node and Energy Balance** - Render grid_main node, bidirectional meter connection, corrected energy balance
+- [x] **Phase 2: Grid Main Node and Energy Balance** - Render grid_main node, bidirectional meter connection, corrected energy balance (completed 2026-03-02)
 - [ ] **Phase 3: Heatpump Node and Flow Lines** - Render heatpump node with COP display and flow lines from both meters
 - [ ] **Phase 4: Visual Editor** - Editor pages for grid_house, grid_main, and heatpump with migration prompt
 - [ ] **Phase 5: Polish and Regression Verification** - Responsive layout, RTL, edge cases, zero-regression confirmation
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Type Foundation and Config Migration | 3/3 | Complete   | 2026-03-02 |
-| 2. Grid Main Node and Energy Balance | 2/3 | In Progress|  |
+| 2. Grid Main Node and Energy Balance | 3/3 | Complete   | 2026-03-02 |
 | 3. Heatpump Node and Flow Lines | 0/? | Not started | - |
 | 4. Visual Editor | 0/? | Not started | - |
 | 5. Polish and Regression Verification | 0/? | Not started | - |
