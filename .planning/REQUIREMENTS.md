@@ -15,16 +15,16 @@
 
 ### Grid Main Node
 
-- [ ] **GRID-01**: `grid_main` node renders to the left of `grid_house` in the card layout
+- [x] **GRID-01**: `grid_main` node renders to the left of `grid_house` in the card layout
 - [x] **GRID-02**: `grid_main` displays power value from its configured HA entity
-- [ ] **GRID-03**: `non_fossil` percentage bubble attaches to `grid_main` (not `grid_house`)
+- [x] **GRID-03**: `non_fossil` percentage bubble attaches to `grid_main` (not `grid_house`)
 - [x] **GRID-04**: `grid_main` supports power outage detection (independently configurable)
 - [x] **GRID-05**: When `entities.grid.main` is absent, card renders identically to current behavior (zero visual regression for non-MK8 users)
 
 ### Meter-to-Meter Connection
 
-- [ ] **CONN-01**: Two animated flow lines connect `grid_main` and `grid_house`. Each direction configurable as either: (a) a `ComboEntity` with `consumption`/`production` sub-keys, OR (b) a single entity where positive = import (main→house) and negative = export (house→main) — same pattern as existing grid entity config
-- [ ] **CONN-02**: Each line's animation direction and speed reflects actual power from its configured entity/value
+- [x] **CONN-01**: Two animated flow lines connect `grid_main` and `grid_house`. Each direction configurable as either: (a) a `ComboEntity` with `consumption`/`production` sub-keys, OR (b) a single entity where positive = import (main→house) and negative = export (house→main) — same pattern as existing grid entity config
+- [x] **CONN-02**: Each line's animation direction and speed reflects actual power from its configured entity/value
 
 ### Heatpump Node
 
@@ -77,13 +77,13 @@
 | CONF-03 | Phase 1 | Complete |
 | CONF-04 | Phase 1 | Complete |
 | CONF-05 | Phase 1 | Complete |
-| GRID-01 | Phase 2 | Pending |
+| GRID-01 | Phase 2 | Complete |
 | GRID-02 | Phase 2 | Complete |
-| GRID-03 | Phase 2 | Pending |
+| GRID-03 | Phase 2 | Complete |
 | GRID-04 | Phase 2 | Complete |
 | GRID-05 | Phase 2 | Complete |
-| CONN-01 | Phase 2 | Pending |
-| CONN-02 | Phase 2 | Pending |
+| CONN-01 | Phase 2 | Complete |
+| CONN-02 | Phase 2 | Complete |
 | HP-01 | Phase 3 | Pending |
 | HP-02 | Phase 3 | Pending |
 | HP-03 | Phase 3 | Pending |
