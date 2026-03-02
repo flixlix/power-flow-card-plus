@@ -59,7 +59,7 @@ export type IndividualDeviceType = BaseConfigEntity & {
   show_direction?: boolean;
 };
 
-export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2" | "home" | "fossil_fuel_percentage" | "heatpump";
+export type EntityType = "battery" | "grid" | "solar" | "individual1" | "individual2" | "home" | "fossil_fuel_percentage" | "intermediate";
 
 export type TemplatesObj = {
   gridSecondary: string | undefined;
@@ -98,8 +98,8 @@ export type NewDur = {
   individual: number[];
   nonFossil: number;
   gridMainToGridHouse: number;
-  heatpumpFromGridHouse: number;
-  heatpumpFromGridMain: number;
+  intermediateFromGridHouse: number[];
+  intermediateFromGridMain: number[];
 };
 
 export type GridObject = {
