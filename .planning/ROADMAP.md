@@ -47,11 +47,12 @@ Plans:
   3. The non-fossil percentage bubble appears on grid_main (not grid_house) when both meters are configured
   4. When `entities.grid.main` is absent, the card renders identically to v0.2.6 (zero visual regression for non-MK8 users)
   5. Home consumption total uses grid_house power (not grid_main), so the solar/battery/home energy balance remains correct
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Type/state foundation: add gridMainToGridHouse to NewDur, add grid_main state resolvers, fix grid_house invert_state bug
+- [ ] 02-02-PLAN.md — gridMainElement component, gridMainToGridHouse flow line, flows/index.ts update, grid-main CSS
+- [ ] 02-03-PLAN.md — Wire gridMain into render(): object construction, middle row slot, newDur, flowElement integration
 
 ### Phase 3: Heatpump Node and Flow Lines
 **Goal**: Users see a heatpump consumption node with COP display and animated flow lines from both meters, without double-counting in home consumption
@@ -105,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Type Foundation and Config Migration | 3/3 | Complete   | 2026-03-02 |
-| 2. Grid Main Node and Energy Balance | 0/? | Not started | - |
+| 2. Grid Main Node and Energy Balance | 0/3 | Not started | - |
 | 3. Heatpump Node and Flow Lines | 0/? | Not started | - |
 | 4. Visual Editor | 0/? | Not started | - |
 | 5. Polish and Regression Verification | 0/? | Not started | - |
