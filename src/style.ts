@@ -95,7 +95,7 @@ export const styles = css`
 
   .card-content,
   .row {
-    max-width: 470px;
+    max-width: 640px;
   }
   .lines {
     position: absolute;
@@ -162,7 +162,7 @@ export const styles = css`
   .row {
     display: flex;
     justify-content: space-between;
-    max-width: 500px;
+    max-width: 640px;
     margin: 0 auto;
   }
   .circle-container {
@@ -439,16 +439,23 @@ export const styles = css`
   .grid-main .circle {
     border-color: var(--circle-grid-color);
   }
-  .circle-container.heatpump {
+  .circle-container.intermediate-bottom {
     height: 110px;
     justify-content: flex-end;
   }
-  .heatpump .circle {
-    border-color: var(--energy-grid-consumption-color, #ff9800);
+  .circle-container.intermediate-top {
+    height: 130px;
   }
-  .heatpump ha-icon:not(.small) {
+  .intermediate .circle {
+    border-color: var(--energy-grid-consumption-color, #488fc2);
+  }
+  .intermediate ha-icon:not(.small) {
     padding-bottom: 0;
     position: relative;
+  }
+  circle.intermediate,
+  path.intermediate {
+    stroke: var(--energy-grid-consumption-color);
   }
   .consumption {
     color: var(--energy-grid-consumption-color);
