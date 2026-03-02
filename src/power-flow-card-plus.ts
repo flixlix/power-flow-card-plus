@@ -43,6 +43,7 @@ import {
 import { displayValue } from "./utils/displayValue";
 import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
 import { registerCustomCard } from "./utils/register-custom-card";
+import { migrateConfig } from "./utils/migrate-config";
 import { coerceNumber } from "./utils/utils";
 
 const circleCircumference = 238.76104;
@@ -70,11 +71,12 @@ export class PowerFlowCardPlus extends LitElement {
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
 
-  setConfig(config: PowerFlowCardPlusConfig): void {
+  setConfig(rawConfig: unknown): void {
+    const config = migrateConfig(rawConfig);
     if ((config.entities as any).individual1 || (config.entities as any).individual2) {
       throw new Error("You are using an outdated configuration. Please update your configuration to the latest version.");
     }
-    if (!config.entities || (!config.entities?.battery?.entity && !(config.entities?.grid as any)?.entity && !config.entities?.solar?.entity)) {
+    if (!config.entities || (!config.entities?.battery?.entity && !(config.entities?.grid as any)?.house?.entity && !config.entities?.solar?.entity)) {
       throw new Error("At least one entity for battery, grid or solar must be defined");
     }
     this._config = {
