@@ -131,7 +131,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       if (page === null) return html``;
       const getIconToUse = () => {
         if (page === "individual" || page === "advanced") return fallbackIcon;
-        return this?._config?.entities[page]?.icon || fallbackIcon;
+        return (this?._config?.entities[page] as any)?.icon || fallbackIcon;
       };
       const icon = getIconToUse();
       return html`

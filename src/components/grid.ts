@@ -10,50 +10,53 @@ export const gridElement = (
   config: PowerFlowCardPlusConfig,
   { entities, grid, templatesObj }: { entities: ConfigEntities; grid: any; templatesObj: TemplatesObj }
 ) => {
+  // Phase 1: entities.grid is now GridEntities (house/main). Cast to any so
+  // existing flat-field accessors still compile. Phase 2 resolves sub-keys properly.
+  const gridConfig = entities.grid as any;
   return html`<div class="circle-container grid">
     <div
       class="circle"
       @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
-        const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
+        const outageTarget = grid.powerOutage?.entityGenerator ?? gridConfig?.power_outage?.entity;
         const target =
           grid.powerOutage?.isOutage && outageTarget
             ? outageTarget
-            : typeof entities.grid!.entity === "string"
-            ? entities.grid!.entity
-            : entities.grid!.entity.consumption!;
-        main.openDetails(e, entities.grid?.tap_action, target);
+            : typeof gridConfig!.entity === "string"
+            ? gridConfig!.entity
+            : gridConfig!.entity.consumption!;
+        main.openDetails(e, gridConfig?.tap_action, target);
       }}
       @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
+          const outageTarget = grid.powerOutage?.entityGenerator ?? gridConfig?.power_outage?.entity;
           const target =
             grid.powerOutage?.isOutage && outageTarget
               ? outageTarget
-              : typeof entities.grid!.entity === "string"
-              ? entities.grid!.entity
-              : entities.grid!.entity.consumption!;
-          main.openDetails(e, entities.grid?.tap_action, target);
+              : typeof gridConfig!.entity === "string"
+              ? gridConfig!.entity
+              : gridConfig!.entity.consumption!;
+          main.openDetails(e, gridConfig?.tap_action, target);
         }
       }}
     >
       ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
       ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : null}
-      ${(entities.grid?.display_state === "two_way" ||
-        entities.grid?.display_state === undefined ||
-        (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||
-        (entities.grid?.display_state === "one_way" && (grid.state.fromGrid === null || grid.state.fromGrid === 0) && grid.state.toGrid !== 0)) &&
+      ${(gridConfig?.display_state === "two_way" ||
+        gridConfig?.display_state === undefined ||
+        (gridConfig?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||
+        (gridConfig?.display_state === "one_way" && (grid.state.fromGrid === null || grid.state.fromGrid === 0) && grid.state.toGrid !== 0)) &&
       grid.state.toGrid !== null &&
       !grid.powerOutage.isOutage
         ? html`<span
             class="return"
             @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
-              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-              main.openDetails(e, entities.grid?.tap_action, target);
+              const target = typeof gridConfig!.entity === "string" ? gridConfig!.entity : gridConfig!.entity.production!;
+              main.openDetails(e, gridConfig?.tap_action, target);
             }}
             @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
-                const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-                main.openDetails(e, entities.grid?.tap_action, target);
+                const target = typeof gridConfig!.entity === "string" ? gridConfig!.entity : gridConfig!.entity.production!;
+                main.openDetails(e, gridConfig?.tap_action, target);
               }
             }}
           >
@@ -67,23 +70,23 @@ export const gridElement = (
             })}
           </span>`
         : null}
-      ${((entities.grid?.display_state === "two_way" ||
-        entities.grid?.display_state === undefined ||
-        (entities.grid?.display_state === "one_way_no_zero" && grid.state.fromGrid > 0) ||
-        (entities.grid?.display_state === "one_way" && (grid.state.toGrid === null || grid.state.toGrid === 0))) &&
+      ${((gridConfig?.display_state === "two_way" ||
+        gridConfig?.display_state === undefined ||
+        (gridConfig?.display_state === "one_way_no_zero" && grid.state.fromGrid > 0) ||
+        (gridConfig?.display_state === "one_way" && (grid.state.toGrid === null || grid.state.toGrid === 0))) &&
         grid.state.fromGrid !== null &&
         !grid.powerOutage.isOutage) ||
       (grid.powerOutage.isOutage && !!grid.powerOutage.entityGenerator)
         ? html` <span
             class="consumption"
             @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
-              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-              main.openDetails(e, entities.grid?.tap_action, target);
+              const target = typeof gridConfig!.entity === "string" ? gridConfig!.entity : gridConfig!.entity.consumption!;
+              main.openDetails(e, gridConfig?.tap_action, target);
             }}
             @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
-                const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-                main.openDetails(e, entities.grid?.tap_action, target);
+                const target = typeof gridConfig!.entity === "string" ? gridConfig!.entity : gridConfig!.entity.consumption!;
+                main.openDetails(e, gridConfig?.tap_action, target);
               }
             }}
           >

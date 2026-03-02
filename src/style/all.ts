@@ -81,7 +81,7 @@ export const allDynamicStyles = (
       : "var(--primary-text-color)"
   );
 
-  if (entities.grid?.color_value === false) {
+  if ((entities.grid as any)?.color_value === false) {
     main.style.setProperty("--text-grid-consumption-color", "var(--primary-text-color)");
     main.style.setProperty("--text-grid-return-color", "var(--primary-text-color)");
   } else {

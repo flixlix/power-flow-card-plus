@@ -20,10 +20,12 @@ export const displayNonFossilState = (
   const unitOfMeasurement: "W" | "%" = config.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
   const nonFossilFuelDecimal: number = 1 - (getEntityState(hass, entityFossil) ?? 0) / 100;
   let gridConsumption: number;
-  if (typeof config.entities.grid?.entity === "string") {
+  // Phase 1: entities.grid is GridEntities (house sub-key). Cast to any for flat access.
+  const gridConfig = config.entities.grid as any;
+  if (typeof gridConfig?.entity === "string") {
     gridConsumption = totalFromGrid;
   } else {
-    gridConsumption = getEntityStateWatts(hass, config.entities.grid?.entity.consumption) || 0;
+    gridConsumption = getEntityStateWatts(hass, gridConfig?.entity?.consumption) || 0;
   }
 
   /* based on choice, change output from watts to % */

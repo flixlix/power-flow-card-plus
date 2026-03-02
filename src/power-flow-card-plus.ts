@@ -74,7 +74,7 @@ export class PowerFlowCardPlus extends LitElement {
     if ((config.entities as any).individual1 || (config.entities as any).individual2) {
       throw new Error("You are using an outdated configuration. Please update your configuration to the latest version.");
     }
-    if (!config.entities || (!config.entities?.battery?.entity && !config.entities?.grid?.entity && !config.entities?.solar?.entity)) {
+    if (!config.entities || (!config.entities?.battery?.entity && !(config.entities?.grid as any)?.entity && !config.entities?.solar?.entity)) {
       throw new Error("At least one entity for battery, grid or solar must be defined");
     }
     this._config = {
@@ -161,10 +161,15 @@ export class PowerFlowCardPlus extends LitElement {
 
     const initialNumericState = null as null | number;
 
+    // Phase 1: entities.grid is now GridEntities (house/main sub-keys).
+    // Cast to any here so existing per-field accessors still compile unchanged.
+    // Phase 2 will properly resolve grid_house vs grid_main sub-keys.
+    const gridConfig = entities.grid as any;
+
     const grid: GridObject = {
-      entity: entities.grid?.entity,
-      has: entities?.grid?.entity !== undefined,
-      hasReturnToGrid: typeof entities.grid?.entity === "string" || !!entities.grid?.entity?.production,
+      entity: gridConfig?.entity,
+      has: gridConfig?.entity !== undefined,
+      hasReturnToGrid: typeof gridConfig?.entity === "string" || !!gridConfig?.entity?.production,
       state: {
         fromGrid: getGridConsumptionState(this.hass, this._config),
         toGrid: getGridProductionState(this.hass, this._config),
@@ -172,38 +177,38 @@ export class PowerFlowCardPlus extends LitElement {
         toHome: initialNumericState,
       },
       powerOutage: {
-        has: entities.grid?.power_outage?.entity !== undefined,
+        has: gridConfig?.power_outage?.entity !== undefined,
         isOutage:
-          (entities.grid && this.hass.states[entities.grid.power_outage?.entity]?.state) === (entities.grid?.power_outage?.state_alert ?? "on"),
-        icon: entities.grid?.power_outage?.icon_alert || "mdi:transmission-tower-off",
-        name: entities.grid?.power_outage?.label_alert ?? html`Power<br />Outage`,
-        entityGenerator: entities.grid?.power_outage?.entity_generator,
+          (gridConfig && this.hass.states[gridConfig.power_outage?.entity]?.state) === (gridConfig?.power_outage?.state_alert ?? "on"),
+        icon: gridConfig?.power_outage?.icon_alert || "mdi:transmission-tower-off",
+        name: gridConfig?.power_outage?.label_alert ?? html`Power<br />Outage`,
+        entityGenerator: gridConfig?.power_outage?.entity_generator,
       },
-      icon: computeFieldIcon(this.hass, entities.grid, "mdi:transmission-tower"),
-      name: computeFieldName(this.hass, entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
+      icon: computeFieldIcon(this.hass, gridConfig, "mdi:transmission-tower"),
+      name: computeFieldName(this.hass, gridConfig, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
       mainEntity:
-        typeof entities.grid?.entity === "object" ? entities.grid.entity.consumption || entities.grid.entity.production : entities.grid?.entity,
+        typeof gridConfig?.entity === "object" ? gridConfig.entity.consumption || gridConfig.entity.production : gridConfig?.entity,
       color: {
-        fromGrid: entities.grid?.color?.consumption,
-        toGrid: entities.grid?.color?.production,
-        icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
-        circle_type: entities.grid?.color_circle,
+        fromGrid: gridConfig?.color?.consumption,
+        toGrid: gridConfig?.color?.production,
+        icon_type: gridConfig?.color_icon as boolean | "consumption" | "production" | undefined,
+        circle_type: gridConfig?.color_circle,
       },
-      tap_action: entities.grid?.tap_action,
+      tap_action: gridConfig?.tap_action,
       secondary: {
-        entity: entities.grid?.secondary_info?.entity,
-        decimals: entities.grid?.secondary_info?.decimals,
-        template: entities.grid?.secondary_info?.template,
-        has: entities.grid?.secondary_info?.entity !== undefined,
+        entity: gridConfig?.secondary_info?.entity,
+        decimals: gridConfig?.secondary_info?.decimals,
+        template: gridConfig?.secondary_info?.template,
+        has: gridConfig?.secondary_info?.entity !== undefined,
         state: getGridSecondaryState(this.hass, this._config),
-        icon: entities.grid?.secondary_info?.icon,
-        unit: entities.grid?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.grid?.secondary_info?.unit_white_space,
-        accept_negative: entities.grid?.secondary_info?.accept_negative || false,
+        icon: gridConfig?.secondary_info?.icon,
+        unit: gridConfig?.secondary_info?.unit_of_measurement,
+        unit_white_space: gridConfig?.secondary_info?.unit_white_space,
+        accept_negative: gridConfig?.secondary_info?.accept_negative || false,
         color: {
-          type: entities.grid?.secondary_info?.color_value,
+          type: gridConfig?.secondary_info?.color_value,
         },
-        tap_action: entities.grid?.secondary_info?.tap_action,
+        tap_action: gridConfig?.secondary_info?.tap_action,
       },
     };
 
@@ -322,8 +327,8 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     // Reset Values below Display Zero Tolerance
-    grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);
-    grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, entities.grid?.display_zero_tolerance);
+    grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, gridConfig?.display_zero_tolerance);
+    grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, gridConfig?.display_zero_tolerance);
     solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
     battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
     battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);
@@ -344,7 +349,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (solar.has) {
       solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
-    const largestGridBatteryTolerance = Math.max(entities.grid?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
+    const largestGridBatteryTolerance = Math.max(gridConfig?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
 
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
       // What we returned to the grid and what went in to the battery is more
@@ -700,7 +705,7 @@ export class PowerFlowCardPlus extends LitElement {
   private _tryConnectAll() {
     const { entities } = this._config;
     const templatesObj = {
-      gridSecondary: entities.grid?.secondary_info?.template,
+      gridSecondary: (entities.grid as any)?.secondary_info?.template,
       solarSecondary: entities.solar?.secondary_info?.template,
       homeSecondary: entities.home?.secondary_info?.template,
       individualSecondary: entities.individual?.map((individual) => individual.secondary_info?.template),
@@ -759,7 +764,7 @@ export class PowerFlowCardPlus extends LitElement {
   private async _tryDisconnectAll() {
     const { entities } = this._config;
     const templatesObj = {
-      gridSecondary: entities.grid?.secondary_info?.template,
+      gridSecondary: (entities.grid as any)?.secondary_info?.template,
       solarSecondary: entities.solar?.secondary_info?.template,
       homeSecondary: entities.home?.secondary_info?.template,
       individualSecondary: entities.individual?.map((individual) => individual.secondary_info?.template),
