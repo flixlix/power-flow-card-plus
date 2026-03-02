@@ -54,12 +54,7 @@ export const cardConfigStruct = assign(
       home: optional(any()),
       fossil_fuel_percentage: optional(any()),
       individual: optional(any()),
-      heatpump: optional(object({
-        entity: optional(string()),
-        cop: optional(string()),
-        flow_from_grid_house: optional(string()),
-        flow_from_grid_main: optional(string()),
-      })),
+      intermediate: optional(any()),
     }),
     sort_individual_devices: optional(boolean()),
   })
