@@ -436,6 +436,9 @@ export const styles = css`
   .grid .circle {
     border-color: var(--circle-grid-color);
   }
+  .grid-main .circle {
+    border-color: var(--circle-grid-color);
+  }
   .consumption {
     color: var(--energy-grid-consumption-color);
   }
@@ -453,6 +456,9 @@ export const styles = css`
     fill: var(--energy-grid-consumption-color);
   }
   .grid ha-icon:not(.small) {
+    color: var(--icon-grid-color);
+  }
+  .grid-main ha-icon:not(.small) {
     color: var(--icon-grid-color);
   }
   .home .circle {
