@@ -33,8 +33,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- TypeScript type definitions (GridEntities, HeatpumpEntity) + grid state accessor fix
-- [ ] 01-02-PLAN.md -- migrateConfig pure function + full test suite (TDD)
+- [x] 01-01-PLAN.md -- TypeScript type definitions (GridEntities, HeatpumpEntity) + grid state accessor fix
+- [x] 01-02-PLAN.md -- migrateConfig pure function + full test suite (TDD)
 - [ ] 01-03-PLAN.md -- superstruct update + wire migrateConfig into both setConfig() calls
 
 ### Phase 2: Grid Main Node and Energy Balance
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Type Foundation and Config Migration | 1/3 | In Progress|  |
+| 1. Type Foundation and Config Migration | 2/3 | In Progress|  |
 | 2. Grid Main Node and Energy Balance | 0/? | Not started | - |
 | 3. Heatpump Node and Flow Lines | 0/? | Not started | - |
 | 4. Visual Editor | 0/? | Not started | - |
