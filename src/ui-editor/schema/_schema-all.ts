@@ -46,11 +46,20 @@ export const cardConfigStruct = assign(
     disable_dots: optional(boolean()),
     entities: object({
       battery: optional(any()),
-      grid: optional(any()),
+      grid: optional(object({
+        house: optional(any()),
+        main: optional(any()),
+      })),
       solar: optional(any()),
       home: optional(any()),
       fossil_fuel_percentage: optional(any()),
       individual: optional(any()),
+      heatpump: optional(object({
+        entity: optional(string()),
+        cop: optional(string()),
+        flow_from_grid_house: optional(string()),
+        flow_from_grid_main: optional(string()),
+      })),
     }),
     sort_individual_devices: optional(boolean()),
   })
