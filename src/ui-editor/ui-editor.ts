@@ -17,6 +17,7 @@ import { solarSchema } from "./schema/solar";
 import { batterySchema } from "./schema/battery";
 import { nonFossilSchema } from "./schema/fossil_fuel_percentage";
 import { homeSchema } from "./schema/home";
+import { migrateConfig } from "../utils/migrate-config";
 import { ConfigPage } from "./types/config-page";
 
 const CONFIG_PAGES: {
@@ -69,7 +70,8 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
   @state() private _configEntities?: LovelaceRowConfig[] = [];
   @state() private _currentConfigPage: ConfigPage = null;
 
-  public async setConfig(config: PowerFlowCardPlusConfig): Promise<void> {
+  public async setConfig(rawConfig: unknown): Promise<void> {
+    const config = migrateConfig(rawConfig);
     assert(config, cardConfigStruct);
     this._config = config;
   }
