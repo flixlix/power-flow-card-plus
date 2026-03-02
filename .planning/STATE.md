@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** All existing card functionality and visual editor support must remain fully intact -- this is a targeted extension, not a rewrite.
-**Current focus:** Phase 1: Type Foundation and Config Migration
+**Current focus:** Phase 1 complete. Ready for Phase 2: Grid Main Integration
 
 ## Current Position
 
 Phase: 1 of 5 (Type Foundation and Config Migration)
-Plan: 2 of ? in current phase
-Status: In progress
-Last activity: 2026-03-02 -- Completed 01-02 config migration plan
+Plan: 3 of 3 in current phase (COMPLETE)
+Status: Phase 1 complete
+Last activity: 2026-03-02 -- Completed 01-03 superstruct wiring plan (Phase 1 done)
 
-Progress: [**········] 10%
+Progress: [***·······] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 3 min
-- Total execution time: 0.10 hours
+- Total execution time: 0.15 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-type-foundation-and-config-migration | 2 | 6 min | 3 min |
+| 01-type-foundation-and-config-migration | 3 | 9 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4 min), 01-02 (2 min)
+- Last 5 plans: 01-01 (4 min), 01-02 (2 min), 01-03 (3 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -52,6 +52,9 @@ Recent decisions affecting current work:
 - [01-02]: migrateConfig detects flat format via 'entity' in grid guard; wraps in { house: originalGrid } spread — idempotency guaranteed by same-reference return
 - [01-02]: Deprecation message '[power-flow-card-plus] entities.grid has been migrated to entities.grid.house automatically.' fires once per setConfig call on flat detection
 - [01-02]: migrateConfig is a pure function standalone module — call it in setConfig before superstruct assertion (Plan 01-03)
+- [01-03]: Both setConfig() signatures changed to unknown — raw input accepted before migration/validation
+- [01-03]: Entity guard in card setConfig updated from grid?.entity to (grid as any)?.house?.entity to match GridEntities nested shape
+- [01-03]: heatpump added to cardConfigStruct with all four optional string fields (entity, cop, flow_from_grid_house, flow_from_grid_main)
 
 ### Pending Todos
 
@@ -66,6 +69,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-02T12:55:31Z
-Stopped at: Completed 01-02-PLAN.md (migrateConfig pure function with full TDD test suite)
+Last session: 2026-03-02T13:04:00Z
+Stopped at: Completed 01-03-PLAN.md (superstruct wiring + migration integration — Phase 1 complete)
 Resume file: None
