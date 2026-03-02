@@ -732,7 +732,6 @@ export class PowerFlowCardPlus extends LitElement {
           </div>
           ${battery.has || heatpump.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
-                <div class="spacer"></div>
                 ${heatpump.has ? heatpumpElement(this, this._config, { heatpump, entities }) : html`<div class="spacer"></div>`}
                 ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
                 ${individualFieldLeftBottom

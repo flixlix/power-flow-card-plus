@@ -440,6 +440,8 @@ export const styles = css`
     border-color: var(--circle-grid-color);
   }
   .circle-container.heatpump {
+    height: 110px;
+    justify-content: flex-end;
   }
   .heatpump .circle {
     border-color: var(--energy-grid-consumption-color, #ff9800);
