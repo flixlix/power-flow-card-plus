@@ -97,6 +97,7 @@ export type NewDur = {
   solarToHome: number;
   individual: number[];
   nonFossil: number;
+  gridMainToGridHouse: number;
 };
 
 export type GridObject = {
