@@ -682,6 +682,9 @@ export class PowerFlowCardPlus extends LitElement {
               </div>`
             : html``}
           <div class="row">
+            ${gridMain.has
+              ? gridMainElement(this, this._config, { entities, gridMain, templatesObj })
+              : html`<div class="spacer"></div>`}
             ${grid.has
               ? gridElement(this, this._config, {
                   entities,
@@ -735,6 +738,7 @@ export class PowerFlowCardPlus extends LitElement {
           ${flowElement(this._config, {
             battery,
             grid,
+            gridMain,
             individual: individualObjs,
             newDur,
             solar,
