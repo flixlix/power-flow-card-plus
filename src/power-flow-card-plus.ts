@@ -6,7 +6,7 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { batteryElement } from "./components/battery";
 import { flowElement } from "./components/flows";
 import { gridElement } from "./components/grid";
-import { heatpumpElement } from "./components/heatpump";
+import { intermediateElement } from "./components/intermediate";
 import { homeElement } from "./components/home";
 import { individualLeftBottomElement } from "./components/individualLeftBottomElement";
 import { individualLeftTopElement } from "./components/individualLeftTopElement";
@@ -19,7 +19,7 @@ import { handleAction } from "./ha/panels/lovelace/common/handle-action";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
 import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
 import { getGridConsumptionState, getGridProductionState, getGridSecondaryState, getGridMainConsumptionState, getGridMainProductionState, getGridMainSecondaryState } from "./states/raw/grid";
-import { getHeatpumpState, getHeatpumpCopState, getHeatpumpFlowFromGridHouseState, getHeatpumpFlowFromGridMainState } from "./states/raw/heatpump";
+import { getIntermediateState, getIntermediateFlowFromGridHouseState, getIntermediateFlowFromGridMainState, getIntermediateSecondaryState } from "./states/raw/intermediate";
 import { gridMainElement } from "./components/gridMain";
 import { getHomeSecondaryState } from "./states/raw/home";
 import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
@@ -265,20 +265,27 @@ export class PowerFlowCardPlus extends LitElement {
       },
     };
 
-    const heatpumpConfig = entities.heatpump;
-    const heatpump = {
-      entity: heatpumpConfig?.entity,
-      has: heatpumpConfig?.entity !== undefined,
-      state: getHeatpumpState(this.hass, this._config),
-      cop: {
-        state: getHeatpumpCopState(this.hass, this._config),
+    const intermediateObjs = (entities.intermediate || []).slice(0, 2).map((cfg) => ({
+      entity: cfg.entity,
+      has: cfg.entity !== undefined,
+      state: getIntermediateState(this.hass, cfg),
+      flowFromGridHouse: getIntermediateFlowFromGridHouseState(this.hass, cfg),
+      flowFromGridMain: getIntermediateFlowFromGridMainState(this.hass, cfg),
+      icon: computeFieldIcon(this.hass, cfg, "mdi:lightning-bolt"),
+      name: computeFieldName(this.hass, cfg, "Device"),
+      tap_action: cfg.tap_action,
+      secondary: {
+        entity: cfg.secondary_info?.entity,
+        has: cfg.secondary_info?.entity !== undefined,
+        state: getIntermediateSecondaryState(this.hass, cfg),
+        decimals: cfg.secondary_info?.decimals,
+        unit: cfg.secondary_info?.unit_of_measurement,
+        unit_white_space: cfg.secondary_info?.unit_white_space,
+        icon: cfg.secondary_info?.icon,
+        accept_negative: cfg.secondary_info?.accept_negative || false,
+        tap_action: cfg.secondary_info?.tap_action,
       },
-      flowFromGridHouse: getHeatpumpFlowFromGridHouseState(this.hass, this._config),
-      flowFromGridMain: getHeatpumpFlowFromGridMainState(this.hass, this._config),
-      icon: computeFieldIcon(this.hass, heatpumpConfig, "mdi:heat-pump"),
-      name: computeFieldName(this.hass, heatpumpConfig, "Heat Pump"),
-      tap_action: heatpumpConfig?.tap_action,
-    };
+    }));
 
     const hasSolarEntity = entities.solar?.entity !== undefined;
     const isProducingSolar = getSolarState(this.hass, this._config) ?? 0 > 0;
@@ -570,8 +577,8 @@ export class PowerFlowCardPlus extends LitElement {
         Math.max(gridMain.state.fromGridMain ?? 0, gridMain.state.toGridMain ?? 0),
         totalLines
       ),
-      heatpumpFromGridHouse: computeFlowRate(this._config, heatpump.flowFromGridHouse ?? 0, totalLines),
-      heatpumpFromGridMain: computeFlowRate(this._config, heatpump.flowFromGridMain ?? 0, totalLines),
+      intermediateFromGridHouse: intermediateObjs.map((obj) => computeFlowRate(this._config, obj.flowFromGridHouse ?? 0, totalLines)),
+      intermediateFromGridMain: intermediateObjs.map((obj) => computeFlowRate(this._config, obj.flowFromGridMain ?? 0, totalLines)),
     };
 
     // Smooth duration changes
@@ -651,6 +658,9 @@ export class PowerFlowCardPlus extends LitElement {
     const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
     const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
 
+    const hasLeftSection = gridMain.has || intermediateObjs.some((o) => o.has);
+    const hasRightSection = checkHasRightIndividual(individualObjs);
+
     return html`
       <ha-card
         .header=${this._config.title}
@@ -662,33 +672,31 @@ export class PowerFlowCardPlus extends LitElement {
           id="power-flow-card-cascade"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >
-          ${solar.has || individualObjs?.some((individual) => individual?.has) || nonFossil.hasPercentage
+          ${solar.has || individualObjs?.some((i) => i?.has) || nonFossil.hasPercentage || intermediateObjs[1]?.has
             ? html`<div class="row">
-                ${nonFossilElement(this, this._config, {
-                  entities,
-                  grid,
-                  newDur,
-                  nonFossil,
-                  templatesObj,
-                })}
+                ${hasLeftSection
+                  ? gridMain.has
+                    ? nonFossilElement(this, this._config, { entities, grid, newDur, nonFossil, templatesObj })
+                    : html`<div class="spacer"></div>`
+                  : ""}
+                ${hasLeftSection
+                  ? intermediateObjs[1]?.has
+                    ? intermediateElement(this, this._config, { intermediateObj: intermediateObjs[1], entities, index: 1 })
+                    : html`<div class="spacer"></div>`
+                  : ""}
+                ${!gridMain.has && (nonFossil.hasPercentage || nonFossil.has)
+                  ? nonFossilElement(this, this._config, { entities, grid, newDur, nonFossil, templatesObj })
+                  : html`<div class="spacer"></div>`}
                 ${solar.has
                   ? solarElement(this, this._config, {
                       entities,
                       solar,
                       templatesObj,
                     })
-                  : individualObjs?.some((individual) => individual?.has)
+                  : individualObjs?.some((i) => i?.has)
                   ? html`<div class="spacer"></div>`
                   : ""}
-                ${individualFieldLeftTop
-                  ? individualLeftTopElement(this, this._config, {
-                      individualObj: individualFieldLeftTop,
-                      displayState: getIndividualDisplayState(individualFieldLeftTop),
-                      newDur,
-                      templatesObj,
-                    })
-                  : html`<div class="spacer"></div>`}
-                ${checkHasRightIndividual(individualObjs)
+                ${individualFieldRightTop
                   ? individualRightTopElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldRightTop),
                       individualObj: individualFieldRightTop,
@@ -697,13 +705,26 @@ export class PowerFlowCardPlus extends LitElement {
                       battery,
                       individualObjs,
                     })
-                  : html``}
+                  : html`<div class="spacer"></div>`}
+                ${hasRightSection
+                  ? individualFieldLeftTop
+                    ? individualLeftTopElement(this, this._config, {
+                        individualObj: individualFieldLeftTop,
+                        displayState: getIndividualDisplayState(individualFieldLeftTop),
+                        newDur,
+                        templatesObj,
+                      })
+                    : html`<div class="spacer"></div>`
+                  : ""}
               </div>`
             : html``}
           <div class="row">
-            ${gridMain.has
-              ? gridMainElement(this, this._config, { entities, gridMain, templatesObj })
-              : html`<div class="spacer"></div>`}
+            ${hasLeftSection
+              ? gridMain.has
+                ? gridMainElement(this, this._config, { entities, gridMain, templatesObj })
+                : html`<div class="spacer"></div>`
+              : ""}
+            ${hasLeftSection ? html`<div class="spacer"></div>` : ""}
             ${grid.has
               ? gridElement(this, this._config, {
                   entities,
@@ -728,21 +749,19 @@ export class PowerFlowCardPlus extends LitElement {
                   individual: individualObjs,
                 })
               : html`<div class="spacer"></div>`}
-            ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : html``}
+            ${hasRightSection ? html`<div class="spacer"></div>` : ""}
           </div>
-          ${battery.has || heatpump.has || checkHasBottomIndividual(individualObjs)
+          ${battery.has || intermediateObjs[0]?.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
-                ${heatpump.has ? heatpumpElement(this, this._config, { heatpump, entities }) : html`<div class="spacer"></div>`}
+                ${hasLeftSection ? html`<div class="spacer"></div>` : ""}
+                ${hasLeftSection
+                  ? intermediateObjs[0]?.has
+                    ? intermediateElement(this, this._config, { intermediateObj: intermediateObjs[0], entities, index: 0 })
+                    : html`<div class="spacer"></div>`
+                  : ""}
+                <div class="spacer"></div>
                 ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
-                ${individualFieldLeftBottom
-                  ? individualLeftBottomElement(this, this._config, {
-                      displayState: getIndividualDisplayState(individualFieldLeftBottom),
-                      individualObj: individualFieldLeftBottom,
-                      newDur,
-                      templatesObj,
-                    })
-                  : html`<div class="spacer"></div>`}
-                ${checkHasRightIndividual(individualObjs)
+                ${individualFieldRightBottom
                   ? individualRightBottomElement(this, this._config, {
                       displayState: getIndividualDisplayState(individualFieldRightBottom),
                       individualObj: individualFieldRightBottom,
@@ -751,14 +770,24 @@ export class PowerFlowCardPlus extends LitElement {
                       battery,
                       individualObjs,
                     })
-                  : html``}
+                  : html`<div class="spacer"></div>`}
+                ${hasRightSection
+                  ? individualFieldLeftBottom
+                    ? individualLeftBottomElement(this, this._config, {
+                        displayState: getIndividualDisplayState(individualFieldLeftBottom),
+                        individualObj: individualFieldLeftBottom,
+                        newDur,
+                        templatesObj,
+                      })
+                    : html`<div class="spacer"></div>`
+                  : ""}
               </div>`
             : html`<div class="spacer"></div>`}
           ${flowElement(this._config, {
             battery,
             grid,
             gridMain,
-            heatpump,
+            intermediateObjs,
             individual: individualObjs,
             newDur,
             solar,
