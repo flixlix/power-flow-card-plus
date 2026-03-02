@@ -7,10 +7,10 @@
 
 ### Config Structure
 
-- [ ] **CONF-01**: `entities.grid` accepts nested `house:` and `main:` sub-keys (both optional)
+- [x] **CONF-01**: `entities.grid` accepts nested `house:` and `main:` sub-keys (both optional)
 - [ ] **CONF-02**: Flat `entities.grid` silently auto-migrates to `entities.grid.house` at runtime
 - [ ] **CONF-03**: Deprecation warning logged to console when flat grid config is detected
-- [ ] **CONF-04**: `entities.heatpump` added as new top-level entity key with: entity (power sensor), COP entity, flow_from_grid_house entity, flow_from_grid_main entity
+- [x] **CONF-04**: `entities.heatpump` added as new top-level entity key with: entity (power sensor), COP entity, flow_from_grid_house entity, flow_from_grid_main entity
 - [ ] **CONF-05**: `CardConfigStruct` (superstruct) updated to validate new nested config shape — migration runs before validation in `setConfig()`
 
 ### Grid Main Node
@@ -72,10 +72,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONF-01 | Phase 1 | Pending |
+| CONF-01 | Phase 1 | Complete |
 | CONF-02 | Phase 1 | Pending |
 | CONF-03 | Phase 1 | Pending |
-| CONF-04 | Phase 1 | Pending |
+| CONF-04 | Phase 1 | Complete |
 | CONF-05 | Phase 1 | Pending |
 | GRID-01 | Phase 2 | Pending |
 | GRID-02 | Phase 2 | Pending |
