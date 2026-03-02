@@ -43,6 +43,22 @@ export const heatpumpElement = (
           </span>`
         : null}
       <ha-icon id="heatpump-icon" .icon=${heatpump.icon} />
+      ${heatpump.flowFromGridHouse
+        ? html`<span class="flow-from-grid-house">
+            <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
+            ${displayValue(main.hass, config, heatpump.flowFromGridHouse, {
+              watt_threshold: config.watt_threshold,
+            })}
+          </span>`
+        : null}
+      ${heatpump.flowFromGridMain
+        ? html`<span class="flow-from-grid-main">
+            <ha-icon class="small" .icon=${"mdi:arrow-down"}></ha-icon>
+            ${displayValue(main.hass, config, heatpump.flowFromGridMain, {
+              watt_threshold: config.watt_threshold,
+            })}
+          </span>`
+        : null}
       <span
         class="consumption"
         @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
