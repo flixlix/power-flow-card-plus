@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v0.2
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-02T14:43:47.196Z"
+status: in_progress
+last_updated: "2026-03-02T19:38:17Z"
 progress:
-  total_phases: 2
+  total_phases: 5
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 7
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** All existing card functionality and visual editor support must remain fully intact -- this is a targeted extension, not a rewrite.
-**Current focus:** Phase 2 complete: Grid Main Node and Energy Balance (3 of 3 plans complete)
+**Current focus:** Phase 3 in progress: Heatpump Node and Flow Lines (1 of 3 plans complete)
 
 ## Current Position
 
-Phase: 2 of 5 (Grid Main Node and Energy Balance)
-Plan: 3 of 3 in current phase (02-03 complete — phase done)
-Status: Phase 2 complete
-Last activity: 2026-03-02 -- Completed 02-03 wire render() integration (grid_main node + energy balance)
+Phase: 3 of 5 (Heatpump Node and Flow Lines)
+Plan: 1 of 3 in current phase (03-01 complete)
+Status: Phase 3 in progress
+Last activity: 2026-03-02 -- Completed 03-01 type foundation and heatpump node element
 
-Progress: [**********] 100% (Phase 2 complete)
+Progress: [********************] 33% (Phase 3: 1/3 plans)
 
 ## Performance Metrics
 
@@ -42,9 +42,10 @@ Progress: [**********] 100% (Phase 2 complete)
 |-------|-------|-------|----------|
 | 01-type-foundation-and-config-migration | 3 | 9 min | 3 min |
 | 02-grid-main-node-and-energy-balance | 3 | 6 min | 2 min |
+| 03-heatpump-node-and-flow-lines | 1/3 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (2 min), 01-03 (3 min), 02-01 (2 min), 02-02 (2 min), 02-03 (2 min)
+- Last 5 plans: 01-03 (3 min), 02-01 (2 min), 02-02 (2 min), 02-03 (2 min), 03-01 (4 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [02-03]: nonFossilElement call unchanged — flex layout handles non-fossil bubble positioning automatically
 - [02-03]: totalHomeConsumption formula unchanged (grid.state.toHome + solar + battery) — gridMain state is display-only (BAL-01)
 - [02-03]: gridMainToGridHouse uses Math.max(fromGridMain, toGridMain) — bidirectional meter, animate at dominant flow rate
+- [03-01]: heatpumpFromGridHouse/Main initialized to 0 in newDur placeholder — Plan 03-03 will compute real flow rates
+- [03-01]: tap_action added to HeatpumpEntity interface — required for openDetails click handler in heatpumpElement
+- [03-01]: ActionConfig imported from custom-card-helpers in power-flow-card-plus-config.ts to support tap_action in HeatpumpEntity
 
 ### Pending Todos
 
@@ -92,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-02T14:31:30Z
-Stopped at: Completed 02-03-PLAN.md (wire render() integration — Phase 2 complete)
+Last session: 2026-03-02T19:38:17Z
+Stopped at: Completed 03-01-PLAN.md (type foundation and heatpump node element)
 Resume file: None

@@ -108,6 +108,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Type Foundation and Config Migration | 3/3 | Complete   | 2026-03-02 |
 | 2. Grid Main Node and Energy Balance | 3/3 | Complete   | 2026-03-02 |
-| 3. Heatpump Node and Flow Lines | 0/3 | Not started | - |
+| 3. Heatpump Node and Flow Lines | 1/3 | In Progress|  |
 | 4. Visual Editor | 0/? | Not started | - |
 | 5. Polish and Regression Verification | 0/? | Not started | - |
