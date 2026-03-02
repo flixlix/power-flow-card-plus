@@ -17,7 +17,8 @@ import { solarElement } from "./components/solar";
 import { handleAction } from "./ha/panels/lovelace/common/handle-action";
 import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
 import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
-import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
+import { getGridConsumptionState, getGridProductionState, getGridSecondaryState, getGridMainConsumptionState, getGridMainProductionState, getGridMainSecondaryState } from "./states/raw/grid";
+import { gridMainElement } from "./components/gridMain";
 import { getHomeSecondaryState } from "./states/raw/home";
 import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
 import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
@@ -163,15 +164,14 @@ export class PowerFlowCardPlus extends LitElement {
 
     const initialNumericState = null as null | number;
 
-    // Phase 1: entities.grid is now GridEntities (house/main sub-keys).
-    // Cast to any here so existing per-field accessors still compile unchanged.
-    // Phase 2 will properly resolve grid_house vs grid_main sub-keys.
-    const gridConfig = entities.grid as any;
+    // Phase 2: entities.grid is GridEntities (house/main sub-keys).
+    // Read grid_house (existing meter) from the .house sub-key.
+    const gridHouseConfig = (entities.grid as any)?.house;
 
     const grid: GridObject = {
-      entity: gridConfig?.entity,
-      has: gridConfig?.entity !== undefined,
-      hasReturnToGrid: typeof gridConfig?.entity === "string" || !!gridConfig?.entity?.production,
+      entity: gridHouseConfig?.entity,
+      has: gridHouseConfig?.entity !== undefined,
+      hasReturnToGrid: typeof gridHouseConfig?.entity === "string" || !!gridHouseConfig?.entity?.production,
       state: {
         fromGrid: getGridConsumptionState(this.hass, this._config),
         toGrid: getGridProductionState(this.hass, this._config),
@@ -179,38 +179,87 @@ export class PowerFlowCardPlus extends LitElement {
         toHome: initialNumericState,
       },
       powerOutage: {
-        has: gridConfig?.power_outage?.entity !== undefined,
+        has: gridHouseConfig?.power_outage?.entity !== undefined,
         isOutage:
-          (gridConfig && this.hass.states[gridConfig.power_outage?.entity]?.state) === (gridConfig?.power_outage?.state_alert ?? "on"),
-        icon: gridConfig?.power_outage?.icon_alert || "mdi:transmission-tower-off",
-        name: gridConfig?.power_outage?.label_alert ?? html`Power<br />Outage`,
-        entityGenerator: gridConfig?.power_outage?.entity_generator,
+          (gridHouseConfig && this.hass.states[gridHouseConfig.power_outage?.entity]?.state) === (gridHouseConfig?.power_outage?.state_alert ?? "on"),
+        icon: gridHouseConfig?.power_outage?.icon_alert || "mdi:transmission-tower-off",
+        name: gridHouseConfig?.power_outage?.label_alert ?? html`Power<br />Outage`,
+        entityGenerator: gridHouseConfig?.power_outage?.entity_generator,
       },
-      icon: computeFieldIcon(this.hass, gridConfig, "mdi:transmission-tower"),
-      name: computeFieldName(this.hass, gridConfig, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
+      icon: computeFieldIcon(this.hass, gridHouseConfig, "mdi:transmission-tower"),
+      name: computeFieldName(this.hass, gridHouseConfig, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
       mainEntity:
-        typeof gridConfig?.entity === "object" ? gridConfig.entity.consumption || gridConfig.entity.production : gridConfig?.entity,
+        typeof gridHouseConfig?.entity === "object" ? gridHouseConfig.entity.consumption || gridHouseConfig.entity.production : gridHouseConfig?.entity,
       color: {
-        fromGrid: gridConfig?.color?.consumption,
-        toGrid: gridConfig?.color?.production,
-        icon_type: gridConfig?.color_icon as boolean | "consumption" | "production" | undefined,
-        circle_type: gridConfig?.color_circle,
+        fromGrid: gridHouseConfig?.color?.consumption,
+        toGrid: gridHouseConfig?.color?.production,
+        icon_type: gridHouseConfig?.color_icon as boolean | "consumption" | "production" | undefined,
+        circle_type: gridHouseConfig?.color_circle,
       },
-      tap_action: gridConfig?.tap_action,
+      tap_action: gridHouseConfig?.tap_action,
       secondary: {
-        entity: gridConfig?.secondary_info?.entity,
-        decimals: gridConfig?.secondary_info?.decimals,
-        template: gridConfig?.secondary_info?.template,
-        has: gridConfig?.secondary_info?.entity !== undefined,
+        entity: gridHouseConfig?.secondary_info?.entity,
+        decimals: gridHouseConfig?.secondary_info?.decimals,
+        template: gridHouseConfig?.secondary_info?.template,
+        has: gridHouseConfig?.secondary_info?.entity !== undefined,
         state: getGridSecondaryState(this.hass, this._config),
-        icon: gridConfig?.secondary_info?.icon,
-        unit: gridConfig?.secondary_info?.unit_of_measurement,
-        unit_white_space: gridConfig?.secondary_info?.unit_white_space,
-        accept_negative: gridConfig?.secondary_info?.accept_negative || false,
+        icon: gridHouseConfig?.secondary_info?.icon,
+        unit: gridHouseConfig?.secondary_info?.unit_of_measurement,
+        unit_white_space: gridHouseConfig?.secondary_info?.unit_white_space,
+        accept_negative: gridHouseConfig?.secondary_info?.accept_negative || false,
         color: {
-          type: gridConfig?.secondary_info?.color_value,
+          type: gridHouseConfig?.secondary_info?.color_value,
         },
-        tap_action: gridConfig?.secondary_info?.tap_action,
+        tap_action: gridHouseConfig?.secondary_info?.tap_action,
+      },
+    };
+
+    const gridMainConfig = (entities.grid as any)?.main;
+
+    const gridMain = {
+      entity: gridMainConfig?.entity,
+      has: gridMainConfig?.entity !== undefined,
+      hasReturnToGrid: typeof gridMainConfig?.entity === "string" || !!gridMainConfig?.entity?.production,
+      state: {
+        fromGridMain: getGridMainConsumptionState(this.hass, this._config),
+        toGridMain: getGridMainProductionState(this.hass, this._config),
+      },
+      powerOutage: {
+        has: gridMainConfig?.power_outage?.entity !== undefined,
+        isOutage:
+          (gridMainConfig && this.hass.states[gridMainConfig.power_outage?.entity]?.state) ===
+          (gridMainConfig?.power_outage?.state_alert ?? "on"),
+        icon: gridMainConfig?.power_outage?.icon_alert || "mdi:transmission-tower-off",
+        name: gridMainConfig?.power_outage?.label_alert ?? html`Power<br />Outage`,
+        entityGenerator: gridMainConfig?.power_outage?.entity_generator,
+      },
+      icon: computeFieldIcon(this.hass, gridMainConfig, "mdi:transmission-tower"),
+      name: computeFieldName(this.hass, gridMainConfig, "Grid Main"),
+      mainEntity:
+        typeof gridMainConfig?.entity === "object"
+          ? gridMainConfig.entity.consumption || gridMainConfig.entity.production
+          : gridMainConfig?.entity,
+      color: {
+        fromGridMain: gridMainConfig?.color?.consumption,
+        toGridMain: gridMainConfig?.color?.production,
+        icon_type: gridMainConfig?.color_icon as boolean | "consumption" | "production" | undefined,
+        circle_type: gridMainConfig?.color_circle,
+      },
+      tap_action: gridMainConfig?.tap_action,
+      secondary: {
+        entity: gridMainConfig?.secondary_info?.entity,
+        decimals: gridMainConfig?.secondary_info?.decimals,
+        template: gridMainConfig?.secondary_info?.template,
+        has: gridMainConfig?.secondary_info?.entity !== undefined,
+        state: getGridMainSecondaryState(this.hass, this._config),
+        icon: gridMainConfig?.secondary_info?.icon,
+        unit: gridMainConfig?.secondary_info?.unit_of_measurement,
+        unit_white_space: gridMainConfig?.secondary_info?.unit_white_space,
+        accept_negative: gridMainConfig?.secondary_info?.accept_negative || false,
+        color: {
+          type: gridMainConfig?.secondary_info?.color_value,
+        },
+        tap_action: gridMainConfig?.secondary_info?.tap_action,
       },
     };
 
@@ -329,8 +378,8 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     // Reset Values below Display Zero Tolerance
-    grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, gridConfig?.display_zero_tolerance);
-    grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, gridConfig?.display_zero_tolerance);
+    grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, gridHouseConfig?.display_zero_tolerance);
+    grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, gridHouseConfig?.display_zero_tolerance);
     solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
     battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
     battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);
@@ -351,7 +400,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (solar.has) {
       solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
     }
-    const largestGridBatteryTolerance = Math.max(gridConfig?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
+    const largestGridBatteryTolerance = Math.max(gridHouseConfig?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
 
     if (solar.state.toHome !== null && solar.state.toHome < 0) {
       // What we returned to the grid and what went in to the battery is more
@@ -499,7 +548,11 @@ export class PowerFlowCardPlus extends LitElement {
       solarToHome: computeFlowRate(this._config, solar.state.toHome ?? 0, totalLines),
       individual: individualObjs?.map((individual) => computeFlowRate(this._config, individual.state ?? 0, totalIndividualConsumption)) || [],
       nonFossil: computeFlowRate(this._config, nonFossil.state.power ?? 0, totalLines),
-      gridMainToGridHouse: 0, // Placeholder — Plan 02-03 will compute using getGridMainConsumptionState/getGridMainProductionState
+      gridMainToGridHouse: computeFlowRate(
+        this._config,
+        Math.max(gridMain.state.fromGridMain ?? 0, gridMain.state.toGridMain ?? 0),
+        totalLines
+      ),
     };
 
     // Smooth duration changes

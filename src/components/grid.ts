@@ -10,9 +10,8 @@ export const gridElement = (
   config: PowerFlowCardPlusConfig,
   { entities, grid, templatesObj }: { entities: ConfigEntities; grid: any; templatesObj: TemplatesObj }
 ) => {
-  // Phase 1: entities.grid is now GridEntities (house/main). Cast to any so
-  // existing flat-field accessors still compile. Phase 2 resolves sub-keys properly.
-  const gridConfig = entities.grid as any;
+  // Phase 2: entities.grid is GridEntities (house/main). Read from .house sub-key.
+  const gridConfig = (entities.grid as any)?.house;
   return html`<div class="circle-container grid">
     <div
       class="circle"
