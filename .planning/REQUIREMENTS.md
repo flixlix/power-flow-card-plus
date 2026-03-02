@@ -32,9 +32,9 @@
 - [x] **HP-02**: Heatpump displays power consumption from configured HA entity
 - [x] **HP-03**: COP displayed as "COP [value]" label above heatpump icon, using a dedicated configurable HA sensor entity
 - [x] **HP-04**: COP label hidden (or shows "--") when COP entity is unavailable/unknown — no crash
-- [ ] **HP-05**: Animated monodirectional flow line from `grid_house` → heatpump, powered by a dedicated configurable HA sensor (`flow_from_grid_house`). If entity not configured, no line is drawn.
-- [ ] **HP-06**: Animated monodirectional flow line from `grid_main` → heatpump, powered by a dedicated configurable HA sensor (`flow_from_grid_main`)
-- [ ] **HP-07**: Each heatpump flow line hides when its respective sensor = 0W; respects `display_zero_lines` config for grey-on-zero behavior
+- [x] **HP-05**: Animated monodirectional flow line from `grid_house` → heatpump, powered by a dedicated configurable HA sensor (`flow_from_grid_house`). If entity not configured, no line is drawn.
+- [x] **HP-06**: Animated monodirectional flow line from `grid_main` → heatpump, powered by a dedicated configurable HA sensor (`flow_from_grid_main`)
+- [x] **HP-07**: Each heatpump flow line hides when its respective sensor = 0W; respects `display_zero_lines` config for grey-on-zero behavior
 
 ### Energy Balance
 
@@ -88,9 +88,9 @@
 | HP-02 | Phase 3 | Complete |
 | HP-03 | Phase 3 | Complete |
 | HP-04 | Phase 3 | Complete |
-| HP-05 | Phase 3 | Pending |
-| HP-06 | Phase 3 | Pending |
-| HP-07 | Phase 3 | Pending |
+| HP-05 | Phase 3 | Complete |
+| HP-06 | Phase 3 | Complete |
+| HP-07 | Phase 3 | Complete |
 | BAL-01 | Phase 2 | Complete |
 | BAL-02 | Phase 3 | Complete |
 | ED-01 | Phase 4 | Pending |

@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v0.2
 milestone_name: milestone
-status: in_progress
-last_updated: "2026-03-02T19:38:17Z"
+status: unknown
+last_updated: "2026-03-02T19:45:04.421Z"
 progress:
-  total_phases: 5
+  total_phases: 3
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** All existing card functionality and visual editor support must remain fully intact -- this is a targeted extension, not a rewrite.
-**Current focus:** Phase 3 in progress: Heatpump Node and Flow Lines (1 of 3 plans complete)
+**Current focus:** Phase 3 in progress: Heatpump Node and Flow Lines (2 of 3 plans complete)
 
 ## Current Position
 
 Phase: 3 of 5 (Heatpump Node and Flow Lines)
-Plan: 1 of 3 in current phase (03-01 complete)
+Plan: 2 of 3 in current phase (03-02 complete)
 Status: Phase 3 in progress
-Last activity: 2026-03-02 -- Completed 03-01 type foundation and heatpump node element
+Last activity: 2026-03-02 -- Completed 03-02 heatpump flow lines (gridHouseToHeatpump, gridMainToHeatpump)
 
-Progress: [********************] 33% (Phase 3: 1/3 plans)
+Progress: [*************-------] 67% (Phase 3: 2/3 plans)
 
 ## Performance Metrics
 
@@ -42,13 +42,14 @@ Progress: [********************] 33% (Phase 3: 1/3 plans)
 |-------|-------|-------|----------|
 | 01-type-foundation-and-config-migration | 3 | 9 min | 3 min |
 | 02-grid-main-node-and-energy-balance | 3 | 6 min | 2 min |
-| 03-heatpump-node-and-flow-lines | 1/3 | 4 min | 4 min |
+| 03-heatpump-node-and-flow-lines | 2/3 | 6 min | 3 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (3 min), 02-01 (2 min), 02-02 (2 min), 02-03 (2 min), 03-01 (4 min)
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase 03-heatpump-node-and-flow-lines P02 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ Recent decisions affecting current work:
 - [03-01]: heatpumpFromGridHouse/Main initialized to 0 in newDur placeholder — Plan 03-03 will compute real flow rates
 - [03-01]: tap_action added to HeatpumpEntity interface — required for openDetails click handler in heatpumpElement
 - [03-01]: ActionConfig imported from custom-card-helpers in power-flow-card-plus-config.ts to support tap_action in HeatpumpEntity
+- [Phase 03-02]: FlowsWithHeatpump intersection type used locally in each flow file (same pattern as FlowsWithGridMain) — keeps Flows interface clean while providing strict typing
+- [Phase 03-02]: heatpump?: any added as optional field to Flows interface — existing flowElement callers unchanged until Plan 03-03 passes heatpump
+- [Phase 03-02]: Unused parameters removed from flow function destructuring to satisfy noUnusedLocals — callers still pass full Flows object for interface compatibility
 
 ### Pending Todos
 
@@ -96,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-02T19:38:17Z
-Stopped at: Completed 03-01-PLAN.md (type foundation and heatpump node element)
+Last session: 2026-03-02T19:43:58Z
+Stopped at: Completed 03-02-PLAN.md (heatpump flow lines)
 Resume file: None
