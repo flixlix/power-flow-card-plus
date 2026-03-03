@@ -21,12 +21,11 @@ export const flowGridHouseToIntermediate = (
   const pathId = `grid-house-intermediate-${index}`;
   const divId = `grid-house-intermediate-${index}-flow`;
 
-  // index=0: curve from gridHouse mid down-left to intermediate[0] bottom
-  // index=1: curve from gridHouse mid up-left to intermediate[1] top
-  // These coordinates are approximate — tune visually in HA after build.
+  // index=0: S-curve from gridHouse (right side) down-left to intermediate[0] (bottom slot)
+  // index=1: S-curve from gridHouse (right side) up-left to intermediate[1] (top slot)
   const d = index === 0
-    ? "M55,50 v8 c0,42 -43,42 -43,42"
-    : "M55,50 v-8 c0,-42 -43,-42 -43,-42";
+    ? "M80,50 v8 c0,42 -60,42 -60,42"
+    : "M80,50 v-8 c0,-42 -60,-42 -60,-42";
 
   return html`<div
       class="lines ${classMap({

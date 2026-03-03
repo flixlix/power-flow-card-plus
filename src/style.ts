@@ -445,6 +445,7 @@ export const styles = css`
   }
   .circle-container.intermediate-top {
     height: 130px;
+    justify-content: flex-end;
   }
   .intermediate .circle {
     border-color: var(--energy-grid-consumption-color, #488fc2);

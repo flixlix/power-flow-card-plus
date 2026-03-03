@@ -10,7 +10,6 @@ import { flowBatteryToHome } from "./batteryToHome";
 import { flowBatteryGrid } from "./batteryGrid";
 import { flowGridMainToGridHouse } from "./gridMainToGridHouse";
 import { flowGridHouseToIntermediate } from "./gridHouseToIntermediate";
-import { flowGridMainToIntermediate } from "./gridMainToIntermediate";
 
 export interface Flows {
   battery: any;
@@ -36,7 +35,5 @@ export const flowElement = (
   ${flowBatteryGrid(config, { battery, grid, individual, newDur })}
   ${intermediateObjs.length > 0 ? flowGridHouseToIntermediate(config, { battery, grid, intermediateObjs, individual, solar, newDur }, 0) : ""}
   ${intermediateObjs.length > 1 ? flowGridHouseToIntermediate(config, { battery, grid, intermediateObjs, individual, solar, newDur }, 1) : ""}
-  ${gridMain && intermediateObjs.length > 0 ? flowGridMainToIntermediate(config, { battery, grid, gridMain, intermediateObjs, individual, solar, newDur }, 0) : ""}
-  ${gridMain && intermediateObjs.length > 1 ? flowGridMainToIntermediate(config, { battery, grid, gridMain, intermediateObjs, individual, solar, newDur }, 1) : ""}
 </div>`;
 };

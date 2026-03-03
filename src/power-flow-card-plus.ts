@@ -658,7 +658,6 @@ export class PowerFlowCardPlus extends LitElement {
     const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
     const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
 
-    const hasLeftSection = gridMain.has || intermediateObjs.some((o) => o.has);
     const hasRightSection = checkHasRightIndividual(individualObjs);
 
     return html`
@@ -674,19 +673,9 @@ export class PowerFlowCardPlus extends LitElement {
         >
           ${solar.has || individualObjs?.some((i) => i?.has) || nonFossil.hasPercentage || intermediateObjs[1]?.has
             ? html`<div class="row">
-                ${hasLeftSection
-                  ? gridMain.has
-                    ? nonFossilElement(this, this._config, { entities, grid, newDur, nonFossil, templatesObj })
-                    : html`<div class="spacer"></div>`
-                  : ""}
-                ${hasLeftSection
-                  ? intermediateObjs[1]?.has
-                    ? intermediateElement(this, this._config, { intermediateObj: intermediateObjs[1], entities, index: 1 })
-                    : html`<div class="spacer"></div>`
-                  : ""}
-                ${!gridMain.has && (nonFossil.hasPercentage || nonFossil.has)
-                  ? nonFossilElement(this, this._config, { entities, grid, newDur, nonFossil, templatesObj })
-                  : html`<div class="spacer"></div>`}
+                ${intermediateObjs[1]?.has
+                  ? intermediateElement(this, this._config, { intermediateObj: intermediateObjs[1], entities, index: 1 })
+                  : nonFossilElement(this, this._config, { entities, grid, newDur, nonFossil, templatesObj })}
                 ${solar.has
                   ? solarElement(this, this._config, {
                       entities,
@@ -696,35 +685,32 @@ export class PowerFlowCardPlus extends LitElement {
                   : individualObjs?.some((i) => i?.has)
                   ? html`<div class="spacer"></div>`
                   : ""}
-                ${individualFieldRightTop
-                  ? individualRightTopElement(this, this._config, {
-                      displayState: getIndividualDisplayState(individualFieldRightTop),
-                      individualObj: individualFieldRightTop,
+                ${individualFieldLeftTop
+                  ? individualLeftTopElement(this, this._config, {
+                      individualObj: individualFieldLeftTop,
+                      displayState: getIndividualDisplayState(individualFieldLeftTop),
                       newDur,
                       templatesObj,
-                      battery,
-                      individualObjs,
                     })
                   : html`<div class="spacer"></div>`}
                 ${hasRightSection
-                  ? individualFieldLeftTop
-                    ? individualLeftTopElement(this, this._config, {
-                        individualObj: individualFieldLeftTop,
-                        displayState: getIndividualDisplayState(individualFieldLeftTop),
+                  ? individualFieldRightTop
+                    ? individualRightTopElement(this, this._config, {
+                        displayState: getIndividualDisplayState(individualFieldRightTop),
+                        individualObj: individualFieldRightTop,
                         newDur,
                         templatesObj,
+                        battery,
+                        individualObjs,
                       })
                     : html`<div class="spacer"></div>`
                   : ""}
               </div>`
             : html``}
           <div class="row">
-            ${hasLeftSection
-              ? gridMain.has
-                ? gridMainElement(this, this._config, { entities, gridMain, templatesObj })
-                : html`<div class="spacer"></div>`
-              : ""}
-            ${hasLeftSection ? html`<div class="spacer"></div>` : ""}
+            ${gridMain.has
+              ? gridMainElement(this, this._config, { entities, gridMain, templatesObj })
+              : html`<div class="spacer"></div>`}
             ${grid.has
               ? gridElement(this, this._config, {
                   entities,
@@ -753,31 +739,27 @@ export class PowerFlowCardPlus extends LitElement {
           </div>
           ${battery.has || intermediateObjs[0]?.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
-                ${hasLeftSection ? html`<div class="spacer"></div>` : ""}
-                ${hasLeftSection
-                  ? intermediateObjs[0]?.has
-                    ? intermediateElement(this, this._config, { intermediateObj: intermediateObjs[0], entities, index: 0 })
-                    : html`<div class="spacer"></div>`
-                  : ""}
-                <div class="spacer"></div>
+                ${intermediateObjs[0]?.has
+                  ? intermediateElement(this, this._config, { intermediateObj: intermediateObjs[0], entities, index: 0 })
+                  : html`<div class="spacer"></div>`}
                 ${battery.has ? batteryElement(this, this._config, { battery, entities }) : html`<div class="spacer"></div>`}
-                ${individualFieldRightBottom
-                  ? individualRightBottomElement(this, this._config, {
-                      displayState: getIndividualDisplayState(individualFieldRightBottom),
-                      individualObj: individualFieldRightBottom,
+                ${individualFieldLeftBottom
+                  ? individualLeftBottomElement(this, this._config, {
+                      displayState: getIndividualDisplayState(individualFieldLeftBottom),
+                      individualObj: individualFieldLeftBottom,
                       newDur,
                       templatesObj,
-                      battery,
-                      individualObjs,
                     })
                   : html`<div class="spacer"></div>`}
                 ${hasRightSection
-                  ? individualFieldLeftBottom
-                    ? individualLeftBottomElement(this, this._config, {
-                        displayState: getIndividualDisplayState(individualFieldLeftBottom),
-                        individualObj: individualFieldLeftBottom,
+                  ? individualFieldRightBottom
+                    ? individualRightBottomElement(this, this._config, {
+                        displayState: getIndividualDisplayState(individualFieldRightBottom),
+                        individualObj: individualFieldRightBottom,
                         newDur,
                         templatesObj,
+                        battery,
+                        individualObjs,
                       })
                     : html`<div class="spacer"></div>`
                   : ""}
