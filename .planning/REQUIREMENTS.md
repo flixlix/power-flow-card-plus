@@ -43,11 +43,11 @@
 
 ### Visual Editor
 
-- [ ] **ED-01**: `grid_house` editor page with all current grid fields (entity, colors, secondary_info, power_outage, tap_action)
-- [ ] **ED-02**: `grid_main` editor page with same schema as grid_house
+- [x] **ED-01**: `grid_house` editor page with all current grid fields (entity, colors, secondary_info, power_outage, tap_action)
+- [x] **ED-02**: `grid_main` editor page with same schema as grid_house
 - [ ] **ED-03**: `heatpump` editor page with: entity, COP entity, flow_from_grid_house entity, flow_from_grid_main entity, display options
-- [ ] **ED-04**: Editor's `_valueChanged` handler routes nested grid config correctly (special-case routing like `individual`/`advanced` already use)
-- [ ] **ED-05**: Editor detects flat `grid` config and displays a one-click migration prompt
+- [x] **ED-04**: Editor's `_valueChanged` handler routes nested grid config correctly (special-case routing like `individual`/`advanced` already use)
+- [x] **ED-05**: Editor detects flat `grid` config and displays a one-click migration prompt
 
 ## v2 Requirements
 
@@ -93,11 +93,11 @@
 | HP-07 | Phase 3 | Complete |
 | BAL-01 | Phase 2 | Complete |
 | BAL-02 | Phase 3 | Complete |
-| ED-01 | Phase 4 | Pending |
-| ED-02 | Phase 4 | Pending |
+| ED-01 | Phase 4 | Complete |
+| ED-02 | Phase 4 | Complete |
 | ED-03 | Phase 4 | Pending |
-| ED-04 | Phase 4 | Pending |
-| ED-05 | Phase 4 | Pending |
+| ED-04 | Phase 4 | Complete |
+| ED-05 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total
