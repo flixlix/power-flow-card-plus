@@ -7,6 +7,7 @@ import { nonFossilSchema } from "./fossil_fuel_percentage";
 import { gridSchema } from "./grid";
 import { homeSchema } from "./home";
 import { individualSchema } from "./individual";
+export { intermediateSchema } from "./intermediate";
 import { solarSchema } from "./solar";
 
 const baseLovelaceCardConfig = object({
