@@ -75,6 +75,11 @@
     "grey_color": "धूसर रंग",
     "tap_action": "टैप क्रिया",
     "navigation_path": "नेविगेशन पथ",
-    "sort_individual_devices": "व्यक्तिगत डिवाइस क्रमबद्ध करें"
+    "sort_individual_devices": "व्यक्तिगत डिवाइस क्रमबद्ध करें",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

@@ -75,6 +75,11 @@
     "grey_color": "Grijstint",
     "tap_action": "Tik Actie",
     "navigation_path": "Navigatiepad",
-    "sort_individual_devices": "Sorteer individuele apparaten"
+    "sort_individual_devices": "Sorteer individuele apparaten",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

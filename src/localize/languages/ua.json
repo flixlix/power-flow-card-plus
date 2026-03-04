@@ -75,6 +75,11 @@
     "grey_color": "Колір затемнення",
     "tap_action": "Дія при натисканні",
     "navigation_path": "Шлях переходу",
-    "sort_individual_devices": "Сортувати окремі пристрої"
+    "sort_individual_devices": "Сортувати окремі пристрої",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

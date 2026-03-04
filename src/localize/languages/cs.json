@@ -75,6 +75,11 @@
     "grey_color": "Šedá barva",
     "tap_action": "Akce po klepnutí",
     "navigation_path": "Navigační cesta",
-    "sort_individual_devices": "Seřaďte individuálně"
+    "sort_individual_devices": "Seřaďte individuálně",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

@@ -75,6 +75,11 @@
     "grey_color": "Colore Sfumato",
     "tap_action": "Azione al tocco",
     "navigation_path": "Percorso di navigazione",
-    "sort_individual_devices": "Ordina i singoli individuale"
+    "sort_individual_devices": "Ordina i singoli individuale",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

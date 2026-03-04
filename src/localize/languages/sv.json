@@ -75,6 +75,11 @@
     "grey_color": "Grå färg",
     "tap_action": "Tryckåtgärd",
     "navigation_path": "Navigationsväg",
-    "sort_individual_devices": "Sortera enskilda enheter"
+    "sort_individual_devices": "Sortera enskilda enheter",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

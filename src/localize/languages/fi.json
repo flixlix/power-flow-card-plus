@@ -75,6 +75,11 @@
     "grey_color": "Harmaa väri",
     "tap_action": "Napauta toimintoa",
     "navigation_path": "Navigointipolku",
-    "sort_individual_devices": "Lajittele yksittäiset laitteet"
+    "sort_individual_devices": "Lajittele yksittäiset laitteet",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

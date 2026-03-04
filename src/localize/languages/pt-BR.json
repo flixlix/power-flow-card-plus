@@ -75,6 +75,11 @@
     "grey_color": "Cor do Cinza",
     "tap_action": "Ação de Toque",
     "navigation_path": "Caminho de Navegação",
-    "sort_individual_devices": "Classifique dispositivos individuais"
+    "sort_individual_devices": "Classifique dispositivos individuais",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

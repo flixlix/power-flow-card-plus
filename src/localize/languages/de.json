@@ -75,6 +75,11 @@
     "grey_color": "Graue Farbe",
     "tap_action": "Aktion beim Antippen",
     "navigation_path": "Navigationspfad",
-    "sort_individual_devices": "Individuelle Geräte sortieren"
+    "sort_individual_devices": "Individuelle Geräte sortieren",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

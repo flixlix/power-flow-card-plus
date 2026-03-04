@@ -75,6 +75,11 @@
     "grey_color": "Color Gris",
     "tap_action": "Acción de Toque",
     "navigation_path": "Ruta de Navegación",
-    "sort_individual_devices": "Ordenar dispositivos individuales"
+    "sort_individual_devices": "Ordenar dispositivos individuales",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

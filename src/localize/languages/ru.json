@@ -75,6 +75,11 @@
     "grey_color": "Серый цвет",
     "tap_action": "действие касания",
     "navigation_path": "путь навигации",
-    "sort_individual_devices": "Сортировка отдельных устройств"
+    "sort_individual_devices": "Сортировка отдельных устройств",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }

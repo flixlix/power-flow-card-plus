@@ -75,6 +75,11 @@
     "grey_color": "Grå farve",
     "tap_action": "Tap Handling",
     "navigation_path": "Navigationssti",
-    "sort_individual_devices": "Sorter individuelle enheder"
+    "sort_individual_devices": "Sorter individuelle enheder",
+    "grid_house": "Grid House",
+    "grid_main": "Grid Main",
+    "intermediate": "Intermediate",
+    "flowFromGridHouse": "Flow from Grid House",
+    "flowFromGridMain": "Flow from Grid Main"
   }
 }
