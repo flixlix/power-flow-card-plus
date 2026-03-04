@@ -26,8 +26,13 @@ const CONFIG_PAGES: {
   schema?: any;
 }[] = [
   {
-    page: "grid",
+    page: "grid_house",
     icon: "mdi:transmission-tower",
+    schema: gridSchema,
+  },
+  {
+    page: "grid_main",
+    icon: "mdi:meter-electric",
     schema: gridSchema,
   },
   {
@@ -53,6 +58,10 @@ const CONFIG_PAGES: {
   {
     page: "individual",
     icon: "mdi:dots-horizontal-circle-outline",
+  },
+  {
+    page: "intermediate",
+    icon: "mdi:hub-outline",
   },
   {
     page: "advanced",
@@ -115,7 +124,13 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         currentPage === "advanced"
           ? advancedOptionsSchema(localize, this._config.display_zero_lines?.mode ?? defaultValues.displayZeroLines.mode)
           : CONFIG_PAGES.find((page) => page.page === currentPage)?.schema;
-      const dataForForm = currentPage === "advanced" ? data : data.entities[currentPage];
+      const dataForForm = currentPage === "advanced"
+        ? data
+        : currentPage === "grid_house"
+          ? (data.entities.grid as any)?.house ?? {}
+          : currentPage === "grid_main"
+            ? (data.entities.grid as any)?.main ?? {}
+            : data.entities[currentPage as keyof typeof data.entities];
 
       return html`
         <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
@@ -132,8 +147,8 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     const renderLinkSubpage = (page: ConfigPage, fallbackIcon: string | undefined = "mdi:dots-horizontal-circle-outline") => {
       if (page === null) return html``;
       const getIconToUse = () => {
-        if (page === "individual" || page === "advanced") return fallbackIcon;
-        return (this?._config?.entities[page] as any)?.icon || fallbackIcon;
+        if (page === "individual" || page === "advanced" || page === "grid_house" || page === "grid_main" || page === "intermediate") return fallbackIcon;
+        return (this?._config?.entities[page as keyof typeof this._config.entities] as any)?.icon || fallbackIcon;
       };
       const icon = getIconToUse();
       return html`
@@ -153,6 +168,15 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
 
     return html`
       <div class="card-config">
+        ${this._isFlatGridConfig() ? html`
+          <ha-alert alert-type="warning">
+            Your grid configuration uses the legacy flat format.
+            Migrate to the new nested structure to use the Grid House and Grid Main editors.
+            <mwc-button slot="action" @click=${this._migrateGridConfig}>
+              Migrate
+            </mwc-button>
+          </ha-alert>
+        ` : nothing}
         <ha-form
           .hass=${this.hass}
           .data=${data}
@@ -172,7 +196,20 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
       return;
     }
 
-    if (this._currentConfigPage !== null && this._currentConfigPage !== "advanced" && this._currentConfigPage !== "individual") {
+    if (this._currentConfigPage === "grid_house" || this._currentConfigPage === "grid_main") {
+      const subKey = this._currentConfigPage === "grid_house" ? "house" : "main";
+      config = {
+        ...this._config,
+        entities: {
+          ...this._config.entities,
+          grid: {
+            ...(this._config.entities.grid as any),
+            [subKey]: config,
+          },
+        },
+      };
+    } else if (this._currentConfigPage !== null && this._currentConfigPage !== "advanced"
+               && this._currentConfigPage !== "individual" && this._currentConfigPage !== "intermediate") {
       config = {
         ...this._config,
         entities: {
@@ -183,6 +220,17 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     }
 
     fireEvent(this, "config-changed", { config });
+  }
+
+  private _isFlatGridConfig(): boolean {
+    const grid = this._config?.entities?.grid as Record<string, unknown> | undefined;
+    return grid !== undefined && "entity" in grid;
+  }
+
+  private _migrateGridConfig(): void {
+    if (!this._config) return;
+    const migrated = migrateConfig(this._config);
+    fireEvent(this, "config-changed", { config: migrated });
   }
 
   private _computeLabelCallback = (schema: any) =>
