@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v0.2
 milestone_name: milestone
-status: completed
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-04T15:14:06.110Z"
-last_activity: 2026-03-04 -- Completed 04-02 intermediate entity array editor
+status: in-progress
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-04T20:15:06Z"
+last_activity: 2026-03-04 -- Completed 05-01 format and dead code removal
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 11
-  completed_plans: 11
-  percent: 100
+  total_plans: 14
+  completed_plans: 12
+  percent: 86
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** All existing card functionality and visual editor support must remain fully intact -- this is a targeted extension, not a rewrite.
-**Current focus:** Phase 4 complete. All visual editor plans done (grid sub-page editor, intermediate array editor). Ready for Phase 5 (polish).
+**Current focus:** Phase 5 in progress. Format and dead code removal complete (05-01). Next: SVG path fixes (05-02).
 
 ## Current Position
 
-Phase: 4 of 5 (Visual Editor)
-Plan: 2 of 2 in current phase (04-02 complete)
-Status: Phase 4 complete
-Last activity: 2026-03-04 -- Completed 04-02 intermediate entity array editor
+Phase: 5 of 5 (Polish and Regression Verification)
+Plan: 1 of 3 in current phase (05-01 complete)
+Status: Phase 5 in progress
+Last activity: 2026-03-04 -- Completed 05-01 format and dead code removal
 
-Progress: [********************] 100% (Phase 4: 2/2 plans)
+Progress: [*****************---] 86% (Phase 5: 1/3 plans)
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [********************] 100% (Phase 4: 2/2 plans)
 | Phase 03-heatpump-node-and-flow-lines P03 | 15 | 4 tasks | 5 files |
 | Phase 04-visual-editor P01 | 2 | 2 tasks | 19 files |
 | Phase 04-visual-editor P02 | 3 | 2 tasks | 5 files |
+| Phase 05-polish-and-regression-verification P01 | 3 | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -103,6 +104,9 @@ Recent decisions affecting current work:
 - [04-01]: Migration banner uses existing migrateConfig utility for flat-to-nested conversion
 - [04-02]: IntermediateDevicesEditor omits _subElementEditorConfig detail mode -- intermediate items use inline row editing only (simpler than individual pattern)
 - [04-02]: IntermediateEntity[] cast to LovelaceRowConfig[] via as-cast to satisfy shared entity-rows typing
+- [05-01]: Deleted entire src/components/flows/ directory (10 files) -- all flow functions returned empty strings, overlay system fully replaced by inline SVGs
+- [05-01]: Removed flowStyle, flowStyleVertical, flowPixelWidth from flowGeometry.ts; kept only FlowGeometry interface and computeFlowGeometry
+- [05-01]: isCardWideEnough variable removed -- allDynamicStyles never reads it (confirmed via grep)
 
 ### Pending Todos
 
@@ -112,10 +116,10 @@ None yet.
 
 - [RESOLVED 03-03]: SVG path coordinates updated for heatpump col-1 position; gridHouseToHeatpump bezier may need one more visual tuning pass
 - [Research]: `mdiHeatPump` icon constant name unverified in @mdi/js 7.x -- check at Phase 3 start
-- [Research]: `isCardWideEnough` threshold (420px) may need adjustment with grid_main added -- Phase 5 concern
+- [RESOLVED 05-01]: `isCardWideEnough` variable removed entirely -- allDynamicStyles never read it
 
 ## Session Continuity
 
-Last session: 2026-03-04T15:14:06.108Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-polish-and-regression-verification/05-CONTEXT.md
+Last session: 2026-03-04T20:15:06Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: .planning/phases/05-polish-and-regression-verification/05-01-SUMMARY.md
