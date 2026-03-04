@@ -675,6 +675,15 @@ export class PowerFlowCardPlus extends LitElement {
     const geo = computeFlowGeometry(gridMain.has, hasRightSection);
     this.style.setProperty("--row-max-width", `${geo.rowMaxWidth}px`);
 
+    // Dynamic SVG path coordinates: adapt to actual card width
+    // At max width (rowMaxWidth), gap = 60px, leftReach = -100, rightReach = 180, straightLineLength = 280 (same as old hardcoded values)
+    // At narrower widths, gap shrinks proportionally, so reach and lineLength adapt
+    const actualRowWidth = Math.min(this._width || geo.rowMaxWidth, geo.rowMaxWidth);
+    const gapBetweenCircles = geo.numCols > 1 ? (actualRowWidth - geo.numCols * 80) / (geo.numCols - 1) : 0;
+    const leftReach = -(gapBetweenCircles + 40); // negative: distance from spacer left edge to left circle center
+    const rightReach = 80 + gapBetweenCircles + 40; // distance from spacer left edge to right circle center
+    const straightLineLength = rightReach - leftReach; // total horizontal line length
+
     return html`
       <ha-card
         .header=${this._config.title}
@@ -745,7 +754,7 @@ export class PowerFlowCardPlus extends LitElement {
                   ${grid.has && (showLine(this._config, gridMain.state.fromGridMain ?? 0) || showLine(this._config, gridMain.state.toGridMain ?? 0))
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M-100 40 h280"
+                          d="M${leftReach} 40 h${straightLineLength}"
                           id="grid-main-to-grid"
                           class="grid ${styleLine(gridMain.state.fromGridMain || gridMain.state.toGridMain || 0, this._config)}"
                           vector-effect="non-scaling-stroke"
@@ -773,7 +782,7 @@ export class PowerFlowCardPlus extends LitElement {
                   showLine(this._config, intermediateObjs[1].flowFromGridHouse ?? 0)
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M160 35 H85 A40,40 0 0,1 45 -5 V-80"
+                          d="M${rightReach} 35 H85 A40,40 0 0,1 45 -5 V-80"
                           id="grid-house-intermediate-1"
                           class="intermediate ${styleLine(intermediateObjs[1].flowFromGridHouse || 0, this._config)}"
                           vector-effect="non-scaling-stroke"
@@ -793,7 +802,7 @@ export class PowerFlowCardPlus extends LitElement {
                   showLine(this._config, intermediateObjs[0].flowFromGridHouse ?? 0)
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M160 45 H85 A40,40 0 0,0 45 85 V160"
+                          d="M${rightReach} 45 H85 A40,40 0 0,0 45 85 V160"
                           id="grid-house-intermediate-0"
                           class="intermediate ${styleLine(intermediateObjs[0].flowFromGridHouse || 0, this._config)}"
                           vector-effect="non-scaling-stroke"
@@ -813,7 +822,7 @@ export class PowerFlowCardPlus extends LitElement {
                   showLine(this._config, intermediateObjs[1].flowFromGridMain ?? 0)
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M-120 35 H-5 A40,40 0 0,0 35 -5 V-80"
+                          d="M${leftReach - 20} 35 H-5 A40,40 0 0,0 35 -5 V-80"
                           id="grid-main-intermediate-1"
                           class="intermediate ${styleLine(intermediateObjs[1].flowFromGridMain || 0, this._config)}"
                           vector-effect="non-scaling-stroke"
@@ -833,7 +842,7 @@ export class PowerFlowCardPlus extends LitElement {
                   showLine(this._config, intermediateObjs[0].flowFromGridMain ?? 0)
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M-120 45 H-5 A40,40 0 0,1 35 85 V160"
+                          d="M${leftReach - 20} 45 H-5 A40,40 0 0,1 35 85 V160"
                           id="grid-main-intermediate-0"
                           class="intermediate ${styleLine(intermediateObjs[0].flowFromGridMain || 0, this._config)}"
                           vector-effect="non-scaling-stroke"
@@ -856,7 +865,7 @@ export class PowerFlowCardPlus extends LitElement {
               ${grid.has && showLine(this._config, grid.state.fromGrid) && !entities.home?.hide
                 ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                     <path
-                      d="M-100 40 h280"
+                      d="M${leftReach} 40 h${straightLineLength}"
                       id="grid-to-home"
                       class="grid ${styleLine(grid.state.toHome || 0, this._config)}"
                       vector-effect="non-scaling-stroke"
@@ -873,7 +882,7 @@ export class PowerFlowCardPlus extends LitElement {
               ${solar.has && showLine(this._config, solar.state.toHome ?? 0) && !entities.home?.hide
                 ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                     <path
-                      d="M45 -80 V-5 A40,40 0 0,0 85 35 H160"
+                      d="M45 -80 V-5 A40,40 0 0,0 85 35 H${rightReach}"
                       id="solar-to-home"
                       class="solar ${styleLine(solar.state.toHome || 0, this._config)}"
                       vector-effect="non-scaling-stroke"
@@ -890,7 +899,7 @@ export class PowerFlowCardPlus extends LitElement {
               ${grid.hasReturnToGrid && solar.has && showLine(this._config, solar.state.toGrid ?? 0)
                 ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                     <path
-                      d="M35 -80 V-5 A40,40 0 0,1 -5 35 H-120"
+                      d="M35 -80 V-5 A40,40 0 0,1 -5 35 H${leftReach - 20}"
                       id="solar-to-grid"
                       class="return ${styleLine(solar.state.toGrid || 0, this._config)}"
                       vector-effect="non-scaling-stroke"
@@ -907,7 +916,7 @@ export class PowerFlowCardPlus extends LitElement {
               ${battery.has && showLine(this._config, battery.state.toHome ?? 0) && !entities.home?.hide
                 ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                     <path
-                      d="M45 160 V85 A40,40 0 0,1 85 45 H160"
+                      d="M45 160 V85 A40,40 0 0,1 85 45 H${rightReach}"
                       id="battery-to-home"
                       class="battery-home ${styleLine(battery.state.toHome || 0, this._config)}"
                       vector-effect="non-scaling-stroke"
@@ -924,7 +933,7 @@ export class PowerFlowCardPlus extends LitElement {
               ${grid.has && battery.has && showLine(this._config, Math.max(grid.state.toBattery ?? 0, battery.state.toGrid ?? 0))
                 ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                     <path
-                      d="M35 160 V85 A40,40 0 0,0 -5 45 H-120"
+                      d="M35 160 V85 A40,40 0 0,0 -5 45 H${leftReach - 20}"
                       id="battery-grid"
                       class="${styleLine(battery.state.toGrid || grid.state.toBattery || 0, this._config)}"
                       vector-effect="non-scaling-stroke"
@@ -973,7 +982,7 @@ export class PowerFlowCardPlus extends LitElement {
                   !entities.home?.hide
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M35 -80 V-5 A40,40 0 0,1 -5 35 H-120"
+                          d="M35 -80 V-5 A40,40 0 0,1 -5 35 H${leftReach - 20}"
                           id="ind-right-top-to-home"
                           class="individual-top ${styleLine(individualObjs[2].state || 0, this._config)}"
                           vector-effect="non-scaling-stroke"
@@ -1001,7 +1010,7 @@ export class PowerFlowCardPlus extends LitElement {
                   !entities.home?.hide
                     ? html`<svg width="80" height="80" style="position:absolute;top:0;left:0;overflow:visible;pointer-events:none">
                         <path
-                          d="M35 160 V85 A40,40 0 0,0 -5 45 H-120"
+                          d="M35 160 V85 A40,40 0 0,0 -5 45 H${leftReach - 20}"
                           id="ind-right-bottom-to-home"
                           class="individual-bottom ${styleLine(individualObjs[3].state || 0, this._config)}"
                           vector-effect="non-scaling-stroke"

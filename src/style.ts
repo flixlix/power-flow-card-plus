@@ -95,6 +95,7 @@ export const styles = css`
     align-items: center;
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
   }
   .circle-container.solar {
     height: 130px;
@@ -116,6 +117,7 @@ export const styles = css`
   }
   .spacer {
     width: var(--size-circle-entity);
+    flex-shrink: 0;
   }
 
   .circle-container .circle {
