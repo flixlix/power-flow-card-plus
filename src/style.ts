@@ -84,17 +84,6 @@ export const styles = css`
   .row {
     max-width: var(--row-max-width, 640px);
   }
-  .lines {
-    position: absolute;
-    box-sizing: border-box;
-    pointer-events: none;
-  }
-  .lines svg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
   .row {
     display: flex;
     justify-content: space-between;

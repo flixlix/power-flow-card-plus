@@ -4,7 +4,6 @@ import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { html, svg, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { batteryElement } from "./components/battery";
-import { flowElement } from "./components/flows";
 import { gridElement } from "./components/grid";
 import { intermediateElement } from "./components/intermediate";
 import { homeElement } from "./components/home";
@@ -649,7 +648,6 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     // Styles
-    const isCardWideEnough = this._width > 420;
     allDynamicStyles(this, {
       grid,
       solar,
@@ -661,7 +659,6 @@ export class PowerFlowCardPlus extends LitElement {
       homeSources,
       individual: individualObjs,
       nonFossil,
-      isCardWideEnough,
     });
 
     const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
@@ -1067,16 +1064,6 @@ export class PowerFlowCardPlus extends LitElement {
                   : ""}
               </div>`
             : html`<div class="spacer"></div>`}
-          ${flowElement(this._config, {
-            battery,
-            grid,
-            gridMain,
-            intermediateObjs,
-            individual: individualObjs,
-            newDur,
-            solar,
-            geo,
-          })}
         </div>
         ${dashboardLinkElement(this._config, this.hass)}
       </ha-card>
