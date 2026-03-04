@@ -9,6 +9,7 @@ import localize from "../localize/localize";
 import { defaultValues } from "../utils/get-default-config";
 import { LovelaceRowConfig } from "./types/entity-rows";
 import "./components/individual-devices-editor";
+import "./components/intermediate-devices-editor";
 import "./components/link-subpage";
 import "./components/subpage-header";
 import { loadHaForm } from "./utils/loadHAForm";
@@ -116,6 +117,13 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         return html`
           <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
           <individual-devices-editor .hass=${this.hass} .config=${this._config} @config-changed=${this._valueChanged}></individual-devices-editor>
+        `;
+      }
+
+      if (this._currentConfigPage === "intermediate") {
+        return html`
+          <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
+          <intermediate-devices-editor .hass=${this.hass} .config=${this._config} @config-changed=${this._valueChanged}></intermediate-devices-editor>
         `;
       }
 
