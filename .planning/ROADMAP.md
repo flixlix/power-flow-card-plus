@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Grid Main Node and Energy Balance** - Render grid_main node, bidirectional meter connection, corrected energy balance (completed 2026-03-02)
 - [x] **Phase 3: Intermediate Entities and Inline Flow Lines** - Intermediate entity nodes with flow lines, generalized from heatpump; all flows migrated to inline SVGs (completed 2026-03-03)
 - [x] **Phase 4: Visual Editor** - Editor pages for grid_house, grid_main, and intermediate entities with migration prompt (completed 2026-03-04)
-- [ ] **Phase 5: Polish and Regression Verification** - Responsive layout, edge cases, zero-regression confirmation
+- [x] **Phase 5: Polish and Regression Verification** - Responsive layout, edge cases, zero-regression confirmation (completed 2026-03-04)
 
 ## Phase Details
 
@@ -99,9 +99,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Format codebase + remove dead flow overlay code (flowElement, flowStyle, .lines CSS, isCardWideEnough)
-- [ ] 05-02-PLAN.md — Dynamic SVG path coordinates for responsive flow line alignment + flex-shrink protection
-- [ ] 05-03-PLAN.md — Edge case code audit, non-MK8 regression verification, full build, visual checkpoint
+- [x] 05-01-PLAN.md — Format codebase + remove dead flow overlay code (flowElement, flowStyle, .lines CSS, isCardWideEnough)
+- [x] 05-02-PLAN.md — Dynamic SVG path coordinates for responsive flow line alignment + flex-shrink protection
+- [x] 05-03-PLAN.md — Edge case code audit, non-MK8 regression verification, full build, visual checkpoint
 
 ## Progress
 
@@ -114,4 +114,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Grid Main Node and Energy Balance | 3/3 | Complete   | 2026-03-02 |
 | 3. Heatpump Node and Flow Lines | 3/3 | Complete   | 2026-03-03 |
 | 4. Visual Editor | 2/2 | Complete   | 2026-03-04 |
-| 5. Polish and Regression Verification | 0/3 | In Progress | - |
+| 5. Polish and Regression Verification | 3/3 | Complete | 2026-03-04 |
