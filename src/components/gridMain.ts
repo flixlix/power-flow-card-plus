@@ -43,7 +43,9 @@ export const gridMainElement = (
       ${(gridMainConfig?.display_state === "two_way" ||
         gridMainConfig?.display_state === undefined ||
         (gridMainConfig?.display_state === "one_way_no_zero" && (gridMain.state.toGridMain ?? 0) > 0) ||
-        (gridMainConfig?.display_state === "one_way" && (gridMain.state.fromGridMain === null || gridMain.state.fromGridMain === 0) && gridMain.state.toGridMain !== 0)) &&
+        (gridMainConfig?.display_state === "one_way" &&
+          (gridMain.state.fromGridMain === null || gridMain.state.fromGridMain === 0) &&
+          gridMain.state.toGridMain !== 0)) &&
       gridMain.state.toGridMain !== null &&
       !gridMain.powerOutage.isOutage
         ? html`<span
@@ -98,7 +100,9 @@ export const gridMainElement = (
             })}
           </span>`
         : ""}
-      ${gridMain.powerOutage?.isOutage && !gridMain.powerOutage?.entityGenerator ? html`<span class="grid-main power-outage">${gridMain.powerOutage.name}</span>` : ""}
+      ${gridMain.powerOutage?.isOutage && !gridMain.powerOutage?.entityGenerator
+        ? html`<span class="grid-main power-outage">${gridMain.powerOutage.name}</span>`
+        : ""}
     </div>
     <span class="label">${gridMain.name}</span>
   </div>`;

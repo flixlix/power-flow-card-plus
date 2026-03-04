@@ -8,5 +8,9 @@ console.log("Readme:", "https://github.com/flixlix/power-flow-card-plus");
 console.groupEnd();
 
 export const logError = debounce((error: string) => {
-  console.log(`%c⚡ Power Flow Card Cascade v${version} %cError: ${error}`, "color: #488fc2; font-weight: bold", "color: #b33a3a; font-weight: normal");
+  console.log(
+    `%c⚡ Power Flow Card Cascade v${version} %cError: ${error}`,
+    "color: #488fc2; font-weight: bold",
+    "color: #b33a3a; font-weight: normal"
+  );
 }, 60000);

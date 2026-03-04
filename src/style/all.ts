@@ -15,7 +15,6 @@ export const allDynamicStyles = (
   main: PowerFlowCardPlus,
   {
     grid,
-    solar,
     entities,
     individual,
     battery,
@@ -24,7 +23,6 @@ export const allDynamicStyles = (
     nonFossil,
     display_zero_lines_transparency,
     display_zero_lines_grey_color,
-    isCardWideEnough,
   }: AllDynamicStyles
 ) => {
   // Grid
@@ -201,28 +199,6 @@ export const allDynamicStyles = (
     let greyColor = display_zero_lines_grey_color;
     if (typeof greyColor === "object") greyColor = convertColorListToHex(greyColor);
     main.style.setProperty("--greyed-out--line-color", greyColor);
-  }
-
-  if (solar.has) {
-    if (battery.has) {
-      // has solar, battery and grid
-      // main.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "106%" : "102%");
-      main.style.setProperty("--lines-svg-not-flat-line-height", "106%");
-      // main.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-3%" : "-1%");
-      main.style.setProperty("--lines-svg-not-flat-line-top", "-3%");
-      main.style.setProperty("--lines-svg-flat-width", isCardWideEnough ? "calc(100% - 160px)" : "calc(100% - 160px)");
-      main.style.setProperty("--lines-svg-flat-left", "0");
-      main.style.setProperty("--lines-svg-not-flat-left", "0");
-    } else {
-      // has solar but no battery
-      // main.style.setProperty("--lines-svg-not-flat-line-height", isCardWideEnough ? "104%" : "102%");
-      // main.style.setProperty("--lines-svg-not-flat-line-top", isCardWideEnough ? "-2%" : "-1%");
-      main.style.setProperty("--lines-svg-not-flat-line-top", "-2%");
-      main.style.setProperty("--lines-svg-flat-width", isCardWideEnough ? "calc(100% - 154px)" : "calc(100% - 157px)");
-      main.style.setProperty("--lines-svg-not-flat-width", isCardWideEnough ? "calc(103% - 172px)" : "calc(103% - 169px)");
-      main.style.setProperty("--lines-svg-not-flat-left", "3px");
-      main.style.setProperty("--lines-svg-flat-left", "-3px");
-    }
   }
 
   if (individual?.some((ind) => ind.has)) {

@@ -132,13 +132,14 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         currentPage === "advanced"
           ? advancedOptionsSchema(localize, this._config.display_zero_lines?.mode ?? defaultValues.displayZeroLines.mode)
           : CONFIG_PAGES.find((page) => page.page === currentPage)?.schema;
-      const dataForForm = currentPage === "advanced"
-        ? data
-        : currentPage === "grid_house"
+      const dataForForm =
+        currentPage === "advanced"
+          ? data
+          : currentPage === "grid_house"
           ? (data.entities.grid as any)?.house ?? {}
           : currentPage === "grid_main"
-            ? (data.entities.grid as any)?.main ?? {}
-            : data.entities[currentPage as keyof typeof data.entities];
+          ? (data.entities.grid as any)?.main ?? {}
+          : data.entities[currentPage as keyof typeof data.entities];
 
       return html`
         <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
@@ -155,7 +156,8 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     const renderLinkSubpage = (page: ConfigPage, fallbackIcon: string | undefined = "mdi:dots-horizontal-circle-outline") => {
       if (page === null) return html``;
       const getIconToUse = () => {
-        if (page === "individual" || page === "advanced" || page === "grid_house" || page === "grid_main" || page === "intermediate") return fallbackIcon;
+        if (page === "individual" || page === "advanced" || page === "grid_house" || page === "grid_main" || page === "intermediate")
+          return fallbackIcon;
         return (this?._config?.entities[page as keyof typeof this._config.entities] as any)?.icon || fallbackIcon;
       };
       const icon = getIconToUse();
@@ -176,15 +178,14 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
 
     return html`
       <div class="card-config">
-        ${this._isFlatGridConfig() ? html`
-          <ha-alert alert-type="warning">
-            Your grid configuration uses the legacy flat format.
-            Migrate to the new nested structure to use the Grid House and Grid Main editors.
-            <mwc-button slot="action" @click=${this._migrateGridConfig}>
-              Migrate
-            </mwc-button>
-          </ha-alert>
-        ` : nothing}
+        ${this._isFlatGridConfig()
+          ? html`
+              <ha-alert alert-type="warning">
+                Your grid configuration uses the legacy flat format. Migrate to the new nested structure to use the Grid House and Grid Main editors.
+                <mwc-button slot="action" @click=${this._migrateGridConfig}> Migrate </mwc-button>
+              </ha-alert>
+            `
+          : nothing}
         <ha-form
           .hass=${this.hass}
           .data=${data}
@@ -216,8 +217,12 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
           },
         },
       };
-    } else if (this._currentConfigPage !== null && this._currentConfigPage !== "advanced"
-               && this._currentConfigPage !== "individual" && this._currentConfigPage !== "intermediate") {
+    } else if (
+      this._currentConfigPage !== null &&
+      this._currentConfigPage !== "advanced" &&
+      this._currentConfigPage !== "individual" &&
+      this._currentConfigPage !== "intermediate"
+    ) {
       config = {
         ...this._config,
         entities: {
