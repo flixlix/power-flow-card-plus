@@ -254,10 +254,6 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         align-self: center;
       }
 
-      .entities-section * {
-        background-color: #f00;
-      }
-
       .card-config {
         display: flex;
         flex-direction: column;
