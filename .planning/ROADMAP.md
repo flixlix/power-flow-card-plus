@@ -2,7 +2,9 @@
 
 ## Overview
 
-This roadmap extends the power-flow-card-plus card to support Messkonzept 8 -- a cascaded dual-meter configuration with a dedicated heatpump node. The work progresses through five phases following a strict dependency chain: types and migration first (zero visual changes), then grid_main node and meter connections, then heatpump node and flow lines, then visual editor support, and finally polish and regression verification. Every phase after Phase 1 produces visible, testable output. The ordering is non-negotiable: three of six critical pitfalls identified during research must be resolved in Phase 1 before any rendering work begins.
+This roadmap extends the power-flow-card-plus card to support Messkonzept 8 -- a cascaded dual-meter configuration with generic intermediate entity nodes. The work progresses through five phases following a strict dependency chain: types and migration first (zero visual changes), then grid_main node and meter connections, then intermediate entities and flow lines, then visual editor support, and finally polish and regression verification. Every phase after Phase 1 produces visible, testable output. The ordering is non-negotiable: three of six critical pitfalls identified during research must be resolved in Phase 1 before any rendering work begins.
+
+**Post-Phase 3 refactor (2026-03-03):** The original heatpump-specific design was generalized to support arbitrary intermediate entities (e.g., heatpump, EV charger). All flow lines were migrated from absolutely-positioned CSS overlays to inline SVGs within circle-containers. The layout was rewritten for adaptive 4-6 column grids.
 
 ## Phases
 
@@ -14,8 +16,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Type Foundation and Config Migration** - Extend types, add config migration, update superstruct validation (zero visual changes) (completed 2026-03-02)
 - [x] **Phase 2: Grid Main Node and Energy Balance** - Render grid_main node, bidirectional meter connection, corrected energy balance (completed 2026-03-02)
-- [ ] **Phase 3: Heatpump Node and Flow Lines** - Render heatpump node with COP display and flow lines from both meters
-- [ ] **Phase 4: Visual Editor** - Editor pages for grid_house, grid_main, and heatpump with migration prompt
+- [x] **Phase 3: Intermediate Entities and Inline Flow Lines** - Intermediate entity nodes with flow lines, generalized from heatpump; all flows migrated to inline SVGs (completed 2026-03-03)
+- [ ] **Phase 4: Visual Editor** - Editor pages for grid_house, grid_main, and intermediate entities with migration prompt
 - [ ] **Phase 5: Polish and Regression Verification** - Responsive layout, RTL, edge cases, zero-regression confirmation
 
 ## Phase Details
@@ -35,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md -- TypeScript type definitions (GridEntities, HeatpumpEntity) + grid state accessor fix
 - [x] 01-02-PLAN.md -- migrateConfig pure function + full test suite (TDD)
-- [ ] 01-03-PLAN.md -- superstruct update + wire migrateConfig into both setConfig() calls
+- [x] 01-03-PLAN.md -- superstruct update + wire migrateConfig into both setConfig() calls
 
 ### Phase 2: Grid Main Node and Energy Balance
 **Goal**: Users with Messkonzept 8 see a grid_main node with animated bidirectional flow to grid_house, and the home consumption balance is correct
@@ -50,9 +52,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Type/state foundation: add gridMainToGridHouse to NewDur, add grid_main state resolvers, fix grid_house invert_state bug
-- [ ] 02-02-PLAN.md — gridMainElement component, gridMainToGridHouse flow line, flows/index.ts update, grid-main CSS
-- [ ] 02-03-PLAN.md — Wire gridMain into render(): object construction, middle row slot, newDur, flowElement integration
+- [x] 02-01-PLAN.md — Type/state foundation: add gridMainToGridHouse to NewDur, add grid_main state resolvers, fix grid_house invert_state bug
+- [x] 02-02-PLAN.md — gridMainElement component, gridMainToGridHouse flow line, flows/index.ts update, grid-main CSS
+- [x] 02-03-PLAN.md — Wire gridMain into render(): object construction, middle row slot, newDur, flowElement integration
 
 ### Phase 3: Heatpump Node and Flow Lines
 **Goal**: Users see a heatpump consumption node with COP display and animated flow lines from both meters, without double-counting in home consumption
@@ -76,14 +78,14 @@ Plans:
 **Requirements**: ED-01, ED-02, ED-03, ED-04, ED-05
 **Success Criteria** (what must be TRUE):
   1. The visual editor has separate pages for grid_house and grid_main with all standard grid fields (entity, colors, secondary_info, power_outage, tap_action)
-  2. The visual editor has a heatpump page with fields for entity, COP entity, flow_from_grid_house entity, flow_from_grid_main entity, and display options
+  2. The visual editor has an intermediate page with fields for entity, COP entity, flow_from_grid_house entity, flow_from_grid_main entity, and display options
   3. Editing nested grid config through the editor correctly saves to `entities.grid.house` and `entities.grid.main` (not flattened to top-level keys)
   4. When the editor detects a flat `entities.grid` config, it displays a one-click migration prompt that converts to the nested structure
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Grid House/Grid Main editor pages, ConfigPage type extension, _valueChanged routing, migration banner, localization keys
+- [ ] 04-02-PLAN.md — Intermediate entity array editor (intermediate-devices-editor + intermediate-row-editor + intermediateSchema)
 
 ### Phase 5: Polish and Regression Verification
 **Goal**: The card is visually correct across all layout modes and edge cases, with zero regression for existing users
@@ -109,5 +111,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Type Foundation and Config Migration | 3/3 | Complete   | 2026-03-02 |
 | 2. Grid Main Node and Energy Balance | 3/3 | Complete   | 2026-03-02 |
 | 3. Heatpump Node and Flow Lines | 2/3 | In Progress|  |
-| 4. Visual Editor | 0/? | Not started | - |
+| 4. Visual Editor | 0/2 | Not started | - |
 | 5. Polish and Regression Verification | 0/? | Not started | - |
