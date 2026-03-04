@@ -38,12 +38,10 @@ created: 2026-03-04
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 04-01-01 | 01 | 1 | ED-01, ED-02 | typecheck + manual | `pnpm typecheck` | ✅ | ⬜ pending |
-| 04-01-02 | 01 | 1 | ED-04 | typecheck + unit | `pnpm typecheck` | ✅ | ⬜ pending |
-| 04-01-03 | 01 | 1 | ED-01, ED-02 | typecheck | `pnpm typecheck` | ✅ | ⬜ pending |
-| 04-02-01 | 02 | 2 | ED-03 | typecheck + manual | `pnpm typecheck` | ❌ W0 | ⬜ pending |
-| 04-02-02 | 02 | 2 | ED-03, ED-04 | typecheck + manual | `pnpm typecheck` | ❌ W0 | ⬜ pending |
-| 04-03-01 | 03 | 2 | ED-05 | unit + manual | `pnpm test -- --testPathPattern=migrate-config` | ✅ partial | ⬜ pending |
+| 04-01-01 | 01 | 1 | ED-01, ED-02, ED-04 | typecheck | `pnpm typecheck` | ✅ | ⬜ pending |
+| 04-01-02 | 01 | 1 | ED-01, ED-02, ED-04, ED-05 | typecheck + build | `pnpm typecheck && pnpm test && pnpm build` | ✅ | ⬜ pending |
+| 04-02-01 | 02 | 2 | ED-03 | typecheck | `pnpm typecheck` | ❌ W0 | ⬜ pending |
+| 04-02-02 | 02 | 2 | ED-03, ED-04 | typecheck + build | `pnpm typecheck && pnpm test && pnpm build` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
