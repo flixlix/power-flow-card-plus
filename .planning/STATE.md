@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v0.2
 milestone_name: milestone
-status: in-progress
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-04T20:15:06Z"
-last_activity: 2026-03-04 -- Completed 05-01 format and dead code removal
+status: executing
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-04T20:21:33.780Z"
+last_activity: 2026-03-04 -- Completed 05-02 dynamic SVG path coordinates
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 14
-  completed_plans: 12
-  percent: 86
+  completed_plans: 13
+  percent: 93
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 5 of 5 (Polish and Regression Verification)
-Plan: 1 of 3 in current phase (05-01 complete)
+Plan: 2 of 3 in current phase (05-02 complete)
 Status: Phase 5 in progress
-Last activity: 2026-03-04 -- Completed 05-01 format and dead code removal
+Last activity: 2026-03-04 -- Completed 05-02 dynamic SVG path coordinates
 
-Progress: [*****************---] 86% (Phase 5: 1/3 plans)
+Progress: [█████████░] 93% (Phase 5: 2/3 plans)
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [*****************---] 86% (Phase 5: 1/3 plans)
 | Phase 04-visual-editor P01 | 2 | 2 tasks | 19 files |
 | Phase 04-visual-editor P02 | 3 | 2 tasks | 5 files |
 | Phase 05-polish-and-regression-verification P01 | 3 | 2 tasks | 13 files |
+| Phase 05 P02 | 2 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,9 @@ Recent decisions affecting current work:
 - [05-01]: Deleted entire src/components/flows/ directory (10 files) -- all flow functions returned empty strings, overlay system fully replaced by inline SVGs
 - [05-01]: Removed flowStyle, flowStyleVertical, flowPixelWidth from flowGeometry.ts; kept only FlowGeometry interface and computeFlowGeometry
 - [05-01]: isCardWideEnough variable removed -- allDynamicStyles never reads it (confirmed via grep)
+- [Phase 05-02]: leftReach = -(gap + 40), rightReach = 80 + gap + 40: formula derived from space-between flex layout with 80px items
+- [Phase 05-02]: Preserved 20px offset (leftReach - 20) for paths that overlap straight lines to maintain visual separation
+- [Phase 05-02]: actualRowWidth = Math.min(this._width || rowMaxWidth, rowMaxWidth): clamps to max, falls back to max on initial render
 
 ### Pending Todos
 
@@ -120,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T20:15:06Z
-Stopped at: Completed 05-01-PLAN.md
-Resume file: .planning/phases/05-polish-and-regression-verification/05-01-SUMMARY.md
+Last session: 2026-03-04T20:21:33.779Z
+Stopped at: Completed 05-02-PLAN.md
+Resume file: None
