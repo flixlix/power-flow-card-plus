@@ -17,8 +17,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Type Foundation and Config Migration** - Extend types, add config migration, update superstruct validation (zero visual changes) (completed 2026-03-02)
 - [x] **Phase 2: Grid Main Node and Energy Balance** - Render grid_main node, bidirectional meter connection, corrected energy balance (completed 2026-03-02)
 - [x] **Phase 3: Intermediate Entities and Inline Flow Lines** - Intermediate entity nodes with flow lines, generalized from heatpump; all flows migrated to inline SVGs (completed 2026-03-03)
-- [ ] **Phase 4: Visual Editor** - Editor pages for grid_house, grid_main, and intermediate entities with migration prompt
-- [ ] **Phase 5: Polish and Regression Verification** - Responsive layout, RTL, edge cases, zero-regression confirmation
+- [x] **Phase 4: Visual Editor** - Editor pages for grid_house, grid_main, and intermediate entities with migration prompt (completed 2026-03-04)
+- [ ] **Phase 5: Polish and Regression Verification** - Responsive layout, edge cases, zero-regression confirmation
 
 ## Phase Details
 
@@ -68,9 +68,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Type foundation + state resolvers + heatpump node element + CSS
-- [ ] 03-02-PLAN.md — Curved flow files (gridHouseToHeatpump + gridMainToHeatpump) + flows/index extension
-- [ ] 03-03-PLAN.md — Wire heatpump into render(): object construction, bottom row, newDur, flowElement
+- [x] 03-01-PLAN.md — Type foundation + state resolvers + heatpump node element + CSS
+- [x] 03-02-PLAN.md — Curved flow files (gridHouseToHeatpump + gridMainToHeatpump) + flows/index extension
+- [x] 03-03-PLAN.md — Wire heatpump into render(): object construction, bottom row, newDur, flowElement
 
 ### Phase 4: Visual Editor
 **Goal**: Every new config field is editable through the Lovelace visual editor with no YAML-only fields
@@ -84,8 +84,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Grid House/Grid Main editor pages, ConfigPage type extension, _valueChanged routing, migration banner, localization keys
-- [ ] 04-02-PLAN.md — Intermediate entity array editor (intermediate-devices-editor + intermediate-row-editor + intermediateSchema)
+- [x] 04-01-PLAN.md — Grid House/Grid Main editor pages, ConfigPage type extension, _valueChanged routing, migration banner, localization keys
+- [x] 04-02-PLAN.md — Intermediate entity array editor (intermediate-devices-editor + intermediate-row-editor + intermediateSchema)
 
 ### Phase 5: Polish and Regression Verification
 **Goal**: The card is visually correct across all layout modes and edge cases, with zero regression for existing users
@@ -96,10 +96,12 @@ Plans:
   2. Card with no `entities.grid.main` configured is pixel-identical to v0.2.6 output (verified by visual comparison)
   3. Edge case configurations work without errors: no battery, no solar, with individual devices, power outage on each meter independently
   4. `pnpm typecheck && pnpm format:write && pnpm test` passes with full test suite green
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Format codebase + remove dead flow overlay code (flowElement, flowStyle, .lines CSS, isCardWideEnough)
+- [ ] 05-02-PLAN.md — Dynamic SVG path coordinates for responsive flow line alignment + flex-shrink protection
+- [ ] 05-03-PLAN.md — Edge case code audit, non-MK8 regression verification, full build, visual checkpoint
 
 ## Progress
 
@@ -110,6 +112,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Type Foundation and Config Migration | 3/3 | Complete   | 2026-03-02 |
 | 2. Grid Main Node and Energy Balance | 3/3 | Complete   | 2026-03-02 |
-| 3. Heatpump Node and Flow Lines | 2/3 | In Progress|  |
-| 4. Visual Editor | 0/2 | Not started | - |
-| 5. Polish and Regression Verification | 0/? | Not started | - |
+| 3. Heatpump Node and Flow Lines | 3/3 | Complete   | 2026-03-03 |
+| 4. Visual Editor | 2/2 | Complete   | 2026-03-04 |
+| 5. Polish and Regression Verification | 0/3 | In Progress | - |
