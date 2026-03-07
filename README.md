@@ -8,8 +8,8 @@
 
 ![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 
-> [!TIP]  
-> Version 0.2.0 is out now! ✨ Check out the [new features](https://github.com/flixlix/power-flow-card-plus/releases/tag/v0.2.0)!
+> [!TIP]
+> Version 0.2.0 is out now! Check out the [new features](https://github.com/flixlix/power-flow-card-plus/releases/tag/v0.2.0)!
 
 ## Additional Features / Enhancements
 
@@ -19,6 +19,10 @@
 - Secondary Information for all circles ℹ️
 - Display Grid Power Outage ⚡️
 - Template functionality 📙
+- Grid Main + Grid House split for upstream/downstream metering 🔌
+- Intermediate entities (e.g. heat pump, pool pump) between grid and home 🔄
+- Sort individual devices by power consumption 📊
+- Option to disable animated flow dots 🚫
 
 <details>
 <summary>... and More:</summary>
@@ -26,10 +30,10 @@
 - Option for card full size
 - Add Grid Tolerance for small values, to not display the battery correcting grid values
 - New and improved Flow Rate Model
-- Choose wether or not to color icons, text, etc.
+- Choose whether or not to color icons, text, etc.
 - Display Individual power entities
 - Customize Individual entities's label, icon and color
-- Configure wether to hide Individual Entity when state is 0 or unavailable
+- Configure whether to hide Individual Entity when state is 0 or unavailable
 - Clickable entities (including home)
 - Fixed crooked lines
 - Have curved lines connect to the Circles
@@ -37,6 +41,10 @@
 - Display Low Carbon Energy from the grid
 - Customize Low Carbon Energy label, icon, circle color, icon color and state type
 - Customize Battery, Solar and Home's color, icon, color of icon and label
+- Hide home circle
+- Home circle animation
+- Tap actions on all entities including secondary info
+- Use entity metadata for names and icons
 
 </details>
 
@@ -125,6 +133,8 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | style_ha_card               | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the container of the card (border and background of the card).                                                                               |
 | style_card_content          | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the content of the card (all circles and lines of the card).                                                                                 |
 | use_new_flow_rate_model     | `boolean` |                  false                   | If set to true, the card will use the [New Flow Formula](#new-flow-formula).                                                                                                                                             |
+| disable_dots                | `boolean` |                  false                   | If set to true, the animated dots on the flow lines will be hidden.                                                                                                                                                      |
+| sort_individual_devices     | `boolean` |                  false                   | If set to true, individual devices will be sorted by power consumption (highest first).                                                                                                                                  |
 
 #### Entities object
 
@@ -138,23 +148,58 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | individual             | `array`  | Check [Individual Devices](#individual-configuration) for more information.      |
 | home                   | `object` | Check [Home Configuration](#home-configuration) for more information.            |
 | fossil_fuel_percentage | `object` | Check [Fossil Fuel Percentage](#fossil-fuel-configuration) for more information. |
+| intermediate           | `array`  | Check [Intermediate Configuration](#intermediate-configuration) for more information. |
 
 #### Grid Configuration
 
+The grid configuration supports two modes:
+
+1. **Simple mode** (backwards compatible): Configure `grid` with `entity` and other options directly under `grid.house` (or the legacy flat format).
+2. **Split mode**: Configure separate `house` and `main` sub-objects under `grid` for upstream/downstream metering. When `main` is configured, an additional "Grid Main" circle appears on the card with intermediate entity slots between them.
+
+```yaml
+# Simple mode (house meter only)
+entities:
+  grid:
+    house:
+      entity: sensor.grid_power
+      name: Grid
+
+# Split mode (house + main meters)
+entities:
+  grid:
+    house:
+      entity:
+        consumption: sensor.grid_power_import
+        production: sensor.grid_power_export
+      name: Grid
+    main:
+      entity:
+        consumption: sensor.grid_main_import
+        production: sensor.grid_main_export
+      name: Main
+```
+
+Both `house` and `main` accept the same configuration options:
+
 | Name                   | Type                                        | Default                                                                                                      | Description                                                                                                                                                                                                                                                                                                                                                                                   |
 | ---------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity                 | `string` or `object`                        | `undefined` required                                                                                         | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entites](#split-entities). Examples of both can be found below.                                                                                                                                                                               |
+| entity                 | `string` or `object`                        | `undefined` required                                                                                         | Entity ID of a sensor supporting a single state with negative values for production and positive values for consumption or an object for [split entities](#split-entities). Examples of both can be found below.                                                                                                                                                                              |
 | name                   | `string`                                    | `Grid`                                                                                                       | If you don't populate this option, the label will continue to update based on the language selected.                                                                                                                                                                                                                                                                                          |
 | icon                   | `string`                                    | `mdi:transmission-tower`                                                                                     | Icon path for the icon inside the Grid Circle.                                                                                                                                                                                                                                                                                                                                                |
 | color                  | `object`                                    |                                                                                                              | Check [Color Objects](#color-object) for more information.                                                                                                                                                                                                                                                                                                                                    |
 | color_icon             | `boolean` or "production" or "consumption"  | `false`                                                                                                      | If set to `true`, icon color will match the highest value. If set to `production`, icon color will match the production. If set to `consumption`, icon color will match the consumption.                                                                                                                                                                                                      |
-| display_state          | "two_way" or "one_way" or "one_way_no_zero" | `two_way`                                                                                                    | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps ✅). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
+| display_state          | "two_way" or "one_way" or "one_way_no_zero" | `two_way`                                                                                                    | If set to `two_way` the production will always be shown simultaneously, no matter the state. If set to `one_way` only the direction that is active will be shown (since this card only shows instantaneous power, there will be no overlaps). If set to `one_way_no_zero` the behavior will be the same as `one_way` but you will still the consumption direction when every state is `0`. |
 | color_circle           | `boolean` or "production" or "consumption"  | `false`                                                                                                      | If set to `true`, the color of the grid circle changes depending on if you are consuming from the grid or returning to it. If set to `production`, circle color will match the production. If set to `consumption`, circle color will match the consumption. If set to `false`, circle color will match the consumption.                                                                      |
 | secondary_info         | `object`                                    | `undefined`                                                                                                  | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                                                                                                  |
 | display_zero_tolerance | `number`                                    | `0`                                                                                                          | If the state of the entity is less than this number, it will be considered zero. This is to avoid having the grid circle show a small amount of consumption when the battery is trying to correct itself to the grid.                                                                                                                                                                         |
 | power_outage           | `object`                                    | `undefined`                                                                                                  | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.                                                                                                                                                                                                                                                                                             |
-| color_value            | `boolean`                                   | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |                                                                                                                                                                                                                                                                                                                                                                                               |
+| color_value            | `boolean`                                   | `true`                                                                                                       | If set to `false`, the values of power will not be colored according to input and output.                                                                                                                                                                                                                                                                                                     |
 | invert_state           | `boolean`                                   | `false`                                                                                                      | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
+| tap_action             | `object`                                    | `undefined`                                                                                                  | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                                                                                                                                                                                                                                                |
+| unit_of_measurement    | `string`                                    | `W` or `kW` (dynamic)                                                                                       | Sets the unit of measurement to show in the corresponding circle.                                                                                                                                                                                                                                                                                                                             |
+| unit_white_space       | `boolean`                                   | `true`                                                                                                       | If set to `false`, there will be no white space between the value and the unit.                                                                                                                                                                                                                                                                                                               |
+| use_metadata           | `boolean`                                   | `false`                                                                                                      | If set to `true`, the card will use the entity's friendly name and icon from Home Assistant metadata.                                                                                                                                                                                                                                                                                         |
 
 #### Solar Configuration
 
@@ -169,7 +214,10 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | secondary_info     | `object`  | `undefined`          | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                       |
 | display_zero       | `boolean` | `true`               | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the solar circle will be hidden.    |
 | display_zero_state | `boolean` | `true`               | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                             |
+| color_label        | `boolean` | `false`              | If set to `true`, the label text color will match the circle's color.                                                                                              |
 | invert_state       | `boolean` | `false`              | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0. |
+| tap_action         | `object`  | `undefined`          | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                      |
+| use_metadata       | `boolean` | `false`              | If set to `true`, the card will use the entity's friendly name and icon from Home Assistant metadata.                                                              |
 
 #### Battery Configuration
 
@@ -180,6 +228,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | state_of_charge_unit             | `string`                                    | `%`                                                    | Unit of the state of charge.                                                                                                                                                                                                                                                                                                                                                                  |
 | state_of_charge_unit_white_space | `boolean`                                   | `true`                                                 | If set to `false`, the unit of the state of charge will not have a white space in front of it.                                                                                                                                                                                                                                                                                                |
 | state_of_charge_decimals         | `number`                                    | `0`                                                    | Number of decimals to show for the state of charge.                                                                                                                                                                                                                                                                                                                                           |
+| show_state_of_charge             | `boolean`                                   | `true`                                                 | If set to `false`, the state of charge will not be displayed inside the battery circle.                                                                                                                                                                                                                                                                                                       |
 | name                             | `string`                                    | `Battery`                                              | Label for the battery option. If you don't populate this option, the label will continue to update based on the language selected.                                                                                                                                                                                                                                                            |
 | icon                             | `string`                                    | `mdi:battery` or dynamic based on state of the battery | Icon path for the icon inside the Battery Circle.                                                                                                                                                                                                                                                                                                                                             |
 | color                            | `object`                                    |                                                        | Check [Color Objects](#color-object) for more information.                                                                                                                                                                                                                                                                                                                                    |
@@ -190,6 +239,10 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_circle                     | `boolean` or "production" or "consumption"  | `true`                                                 | If set to `true`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption.                                                                                                                                                                                           |
 | color_value                      | `boolean`                                   | `true`                                                 | If set to `false`, the values of power will not be colored according to input and output.                                                                                                                                                                                                                                                                                                     |
 | invert_state                     | `boolean`                                   | `false`                                                | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
+| tap_action                       | `object`                                    | `undefined`                                            | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                                                                                                                                                                                                                                                |
+| unit_of_measurement              | `string`                                    | `W` or `kW` (dynamic)                                 | Sets the unit of measurement to show in the corresponding circle.                                                                                                                                                                                                                                                                                                                             |
+| unit_white_space                 | `boolean`                                   | `true`                                                 | If set to `false`, there will be no white space between the value and the unit.                                                                                                                                                                                                                                                                                                               |
+| use_metadata                     | `boolean`                                   | `false`                                                | If set to `true`, the card will use the entity's friendly name and icon from Home Assistant metadata.                                                                                                                                                                                                                                                                                         |
 
 #### Individual Configuration
 
@@ -209,7 +262,12 @@ The Individual fields must be an array of objects. Each object must follow the f
 | display_zero_tolerance | `number`  | `0`                                            | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
 | display_zero_state     | `boolean` | `true`                                         | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                                               |
 | color_value            | `boolean` | `false`                                        | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.                                                |
+| color_label            | `boolean` | `false`                                        | If set to `true`, the label text color will match the circle's color.                                                                                                                |
 | decimals               | `number`  | `0`                                            | Number of decimals to show in the corresponding state.                                                                                                                               |
+| calculate_flow_rate    | `boolean` | `false`                                        | If set to `true`, the flow rate will be calculated using the flow rate formula. If set to a number, the flow rate will be set to that number (seconds per dot traversal).             |
+| use_metadata           | `boolean` | `false`                                        | If set to `true`, the card will use the entity's friendly name and icon from Home Assistant metadata.                                                                                |
+| show_direction         | `boolean` | `false`                                        | If set to `true`, an arrow icon will be shown indicating the direction of the power flow.                                                                                            |
+| tap_action             | `object`  | `undefined`                                    | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                                        |
 
 #### Home Configuration
 
@@ -222,7 +280,11 @@ The Individual fields must be an array of objects. Each object must follow the f
 | color_value         | `boolean` or "solar" or "grid" or "battery" | `false`              | If set to `true`, state text color will match the highest value. If set to `solar`, state text color will match the color of solar. If set to `grid`, state text color will match the color of the grid consumption. If set to `battery`, state text color will match the color of the battery consumption. |
 | secondary_info      | `object`                                    | `undefined`          | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                |
 | subtract_individual | `boolean`                                   | false                | If set to `true`, the home consumption will be calculated by subtracting the sum of the individual devices from the home consumption.                                                                                                                                                                       |
-| override_state      | `boolean`                                   | `false`              | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is caluclated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses.                                                                |
+| override_state      | `boolean`                                   | `false`              | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is calculated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses.                                                                |
+| circle_animation    | `boolean`                                   | `false`              | If set to `true`, the home circle will have a pulsing animation.                                                                                                                                                                                                                                        |
+| hide                | `boolean`                                   | `false`              | If set to `true`, the home circle will be hidden from the card.                                                                                                                                                                                                                                         |
+| tap_action          | `object`                                    | `undefined`          | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                                                                                                                                                           |
+| use_metadata        | `boolean`                                   | `false`              | If set to `true`, the card will use the entity's friendly name and icon from Home Assistant metadata.                                                                                                                                                                                                   |
 
 #### Fossil Fuel Configuration
 
@@ -238,6 +300,53 @@ The Individual fields must be an array of objects. Each object must follow the f
 | state_type          | `string`              | `power`         | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon.                                                                                                                                                                                      |
 | unit_white_space    | `boolean`             | `true`          | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added.                                                                                                                                                                                                                                                                                                                                                    |
 | calculate_flow_rate | `boolean` or `number` | `false`         | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds.                                                                                                                                                         |
+| color_value         | `boolean`             | `false`         | If set to `true`, state text color will match the circle's color.                                                                                                                                                                                                                                                                                                                                                                                              |
+| color_label         | `boolean`             | `false`         | If set to `true`, the label text color will match the circle's color.                                                                                                                                                                                                                                                                                                                                                                                          |
+| secondary_info      | `object`              | `undefined`     | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                                                                                                                                                                   |
+| tap_action          | `object`              | `undefined`     | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                                                                                                                                                                                                                                                                                                                  |
+
+#### Intermediate Configuration
+
+Intermediate entities allow you to display devices that sit between the grid and your home, such as heat pumps, pool pumps, or other loads that draw power from the grid before it reaches your home. Up to 2 intermediate entities can be configured. They appear between the Grid Main and Grid House circles when using the [split grid configuration](#grid-configuration).
+
+The intermediate fields must be an array of objects. Each object must follow the following structure:
+
+| Name              | Type     | Default     | Description                                                                                                                                                           |
+| ----------------- | -------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity            | `string` | `undefined` | Entity ID providing a state with the power consumption of the intermediate device.                                                                                    |
+| name              | `string` | `undefined` | Label for the intermediate device.                                                                                                                                    |
+| icon              | `string` | `undefined` | Icon path for the icon inside the Intermediate Device Circle.                                                                                                         |
+| color             | `object` | `undefined` | Object with `consumption` and/or `production` keys, each a HEX color string.                                                                                         |
+| color_circle      | `string` | `undefined` | HEX value of the color for the circle stroke.                                                                                                                         |
+| secondary_info    | `object` | `undefined` | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                          |
+| flowFromGridHouse | `string` | `undefined` | Entity ID providing the power flowing from the Grid House meter to this intermediate device. When set, the value is displayed inside the circle.                      |
+| flowFromGridMain  | `string` | `undefined` | Entity ID providing the power flowing from the Grid Main meter to this intermediate device. When set, the value is displayed inside the circle.                       |
+| tap_action        | `object` | `undefined` | [Action](https://www.home-assistant.io/dashboards/actions/) to perform on tap (e.g. `more-info`, `navigate`, `call-service`).                                         |
+
+Example:
+
+```yaml
+entities:
+  intermediate:
+    - entity: sensor.heatpump_power
+      name: Heat Pump
+      icon: mdi:heat-pump
+      color:
+        consumption: "#ff6d00"
+      flowFromGridHouse: sensor.heatpump_power_from_grid
+      secondary_info:
+        entity: sensor.heatpump_cop
+        unit_of_measurement: COP
+        decimals: 1
+      tap_action:
+        action: more-info
+    - entity: sensor.pool_pump_power
+      name: Pool Pump
+      icon: mdi:pool
+      color:
+        consumption: "#00bcd4"
+      flowFromGridHouse: sensor.pool_pump_power_from_grid
+```
 
 #### Color Object
 
@@ -270,6 +379,8 @@ This Feature allows you to configure an additional small text for each Individua
 | decimals               | `number`          | The number of decimal places to round the value to.                                                                                                                                                                                                                                                                                                                                                          |
 | template               | `string`          | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
 | accept_negative        | `boolean`         | Default is `false`. If set to `true`, negative values will be displayed as negative, otherwise they will be transformed to positive                                                                                                                                                                                                                                                                          |
+| color_value            | `boolean` or `string` | Default is `false`. If set to `true`, the secondary info text color will match the parent circle's color. Can also be set to `"production"` or `"consumption"` to match a specific direction.                                                                                                                                                                                                           |
+| tap_action             | `object`          | [Action](https://www.home-assistant.io/dashboards/actions/) to perform when tapping on the secondary info text (e.g. `more-info`, `navigate`, `call-service`).                                                                                                                                                                                                                                               |
 
 #### Power Outage
 
@@ -386,11 +497,12 @@ entities:
     name: Non Fossil
     state_type: power
   grid:
-    icon: mdi:ab-testing
-    name: Provider
-    entity:
-      production: sensor.grid_production
-      consumption: sensor.grid_consumption
+    house:
+      icon: mdi:ab-testing
+      name: Provider
+      entity:
+        production: sensor.grid_production
+        consumption: sensor.grid_consumption
   solar:
     icon: mdi:solar-panel-large
     entity: sensor.solar_production
@@ -423,6 +535,74 @@ title: Power Flow Card Plus
 
 This should give you something like this:
 ![minimal_config_full](https://user-images.githubusercontent.com/61006057/227789815-41f15dd4-3d24-4eb8-96ca-c7f7f01a4f46.png)
+
+### Advanced Config with Grid Main + Intermediate
+
+> This configuration demonstrates the split grid (house + main) and intermediate entities features.
+
+```yaml
+type: custom:power-flow-card-plus
+entities:
+  solar:
+    entity: sensor.solar_power
+    color_icon: true
+    color_value: true
+    display_zero: true
+  grid:
+    house:
+      entity:
+        consumption: sensor.grid_power_import
+        production: sensor.grid_power_export
+      name: Grid
+      color_circle: true
+      color_value: true
+    main:
+      entity:
+        consumption: sensor.grid_main_import
+        production: sensor.grid_main_export
+      name: Main
+      color_circle: true
+  home:
+    entity: sensor.home_power_consumption
+    color_icon: solar
+    subtract_individual: true
+  battery:
+    entity:
+      consumption: sensor.battery_charge_power
+      production: sensor.battery_discharge_power
+    state_of_charge: sensor.battery_state_of_charge
+    show_state_of_charge: true
+    color_circle: consumption
+    color_value: true
+  intermediate:
+    - entity: sensor.heatpump_power
+      name: Heat Pump
+      icon: mdi:heat-pump
+      color:
+        consumption: "#ff6d00"
+      flowFromGridHouse: sensor.heatpump_power_from_grid
+      secondary_info:
+        entity: sensor.heatpump_cop
+        unit_of_measurement: COP
+        decimals: 1
+    - entity: sensor.pool_pump_power
+      name: Pool Pump
+      icon: mdi:pool
+      color:
+        consumption: "#00bcd4"
+      flowFromGridHouse: sensor.pool_pump_power_from_grid
+  individual:
+    - entity: sensor.ev_charger_power
+      name: EV Charger
+      icon: mdi:car-electric
+      color: "#7c4dff"
+      color_icon: true
+      display_zero: false
+watt_threshold: 1000
+clickable_entities: true
+sort_individual_devices: true
+use_new_flow_rate_model: true
+```
 
 ### Random Configurations
 
