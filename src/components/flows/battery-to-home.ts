@@ -1,11 +1,11 @@
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
-import { showLine } from "@/utils/showLine";
+import { showLine } from "@/utils/show-line";
 import { html, svg } from "lit";
-import { styleLine } from "@/utils/styleLine";
+import { styleLine } from "@/utils/style-line";
 import { type Flows } from "./index";
-import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
-import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/compute-individual-position";
+import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
 type FlowBatteryToHomeFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
 

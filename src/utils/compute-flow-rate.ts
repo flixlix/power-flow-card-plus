@@ -1,4 +1,4 @@
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 
 const newFlowRateMapRange = (value: number, minOut: number, maxOut: number, minIn: number, maxIn: number): number => {
   if (value > maxIn) return maxOut;

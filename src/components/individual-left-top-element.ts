@@ -1,13 +1,13 @@
 import { html, svg } from "lit";
-import { individualSecondarySpan } from "./spans/individualSecondarySpan";
-import { NewDur, TemplatesObj } from "../type";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { computeIndividualFlowRate } from "../utils/computeFlowRate";
-import { showLine } from "../utils/showLine";
-import { IndividualObject } from "../states/raw/individual/getIndividualObject";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { styleLine } from "../utils/styleLine";
-import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { individualSecondarySpan } from "./spans/individual-secondary-span";
+import { NewDur, TemplatesObj } from "@/type";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { computeIndividualFlowRate } from "@/utils/compute-flow-rate";
+import { showLine } from "@/utils/show-line";
+import { IndividualObject } from "@/states/raw/individual/get-individual-object";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { styleLine } from "@/utils/style-line";
+import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
 interface TopIndividual {
   newDur: NewDur;

@@ -1,6 +1,6 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { DisplayZeroLinesMode } from "../power-flow-card-plus-config";
-import { getFirstEntityName } from "../states/utils/mutliEntity";
+import { DisplayZeroLinesMode } from "@/power-flow-card-plus-config";
+import { getFirstEntityName } from "../states/utils/mutli-entity";
 
 export const defaultValues = {
   maxFlowRate: 6,

@@ -1,13 +1,13 @@
 import { html, svg } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { IndividualObject } from "../states/raw/individual/getIndividualObject";
-import { NewDur, TemplatesObj } from "../type";
-import { checkShouldShowDots } from "../utils/checkShouldShowDots";
-import { computeIndividualFlowRate } from "../utils/computeFlowRate";
-import { showLine } from "../utils/showLine";
-import { styleLine } from "../utils/styleLine";
-import { individualSecondarySpan } from "./spans/individualSecondarySpan";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { IndividualObject } from "@/states/raw/individual/get-individual-object";
+import { NewDur, TemplatesObj } from "@/type";
+import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { computeIndividualFlowRate } from "@/utils/compute-flow-rate";
+import { showLine } from "@/utils/show-line";
+import { styleLine } from "@/utils/style-line";
+import { individualSecondarySpan } from "./spans/individual-secondary-span";
 
 interface IndividualBottom {
   newDur: NewDur;

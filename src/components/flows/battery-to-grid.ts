@@ -1,15 +1,15 @@
 import { classMap } from "lit/directives/class-map.js";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
-import { showLine } from "@/utils/showLine";
+import { showLine } from "@/utils/show-line";
 import { html, svg } from "lit";
-import { styleLine } from "@/utils/styleLine";
+import { styleLine } from "@/utils/style-line";
 import { type Flows } from "./index";
-import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
-import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
+import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/compute-individual-position";
+import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
-type FlowBatteryGridFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
+type FlowBatteryToGridFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
 
-export const flowBatteryGrid = (config: PowerFlowCardPlusConfig, { battery, grid, individual, newDur }: FlowBatteryGridFlows) => {
+export const flowBatteryToGrid = (config: PowerFlowCardPlusConfig, { battery, grid, individual, newDur }: FlowBatteryToGridFlows) => {
   return grid.has && battery.has && showLine(config, Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0))
     ? html`<div
         class="lines ${classMap({

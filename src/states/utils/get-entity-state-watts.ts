@@ -1,6 +1,6 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { getEntityState } from "./getEntityState";
-import { getFirstEntityName } from "./mutliEntity";
+import { getEntityState } from "./get-entity-state";
+import { getFirstEntityName } from "./mutli-entity";
 
 const prefixes = ["K", "M", "G", "T", "P", "E", "Z", "Y"];
 

@@ -3,35 +3,36 @@ import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-hel
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
-import { batteryElement } from "./components/battery";
-import { flowElement } from "./components/flows";
-import { gridElement } from "./components/grid";
-import { homeElement } from "./components/home";
-import { individualLeftBottomElement } from "./components/individualLeftBottomElement";
-import { individualLeftTopElement } from "./components/individualLeftTopElement";
-import { individualRightBottomElement } from "./components/individualRightBottomElement";
-import { individualRightTopElement } from "./components/individualRightTopElement";
-import { dashboardLinkElement } from "./components/misc/dashboard_link";
-import { nonFossilElement } from "./components/nonFossil";
-import { solarElement } from "./components/solar";
-import { handleAction } from "./ha/panels/lovelace/common/handle-action";
-import { PowerFlowCardPlusConfig } from "./power-flow-card-plus-config";
-import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "./states/raw/battery";
-import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
-import { getHomeSecondaryState } from "./states/raw/home";
-import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
-import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
-import { getSolarSecondaryState, getSolarState } from "./states/raw/solar";
-import { adjustZeroTolerance } from "./states/tolerance/base";
-import { doesEntityExist } from "./states/utils/existenceEntity";
-import { getEntityState } from "./states/utils/getEntityState";
-import { getEntityStateWatts } from "./states/utils/getEntityStateWatts";
-import { styles } from "./style";
-import { allDynamicStyles } from "./style/all";
-import { RenderTemplateResult, subscribeRenderTemplate } from "./template/ha-websocket.js";
-import { GridObject, HomeSources, NewDur, TemplatesObj } from "./type";
-import { computeFieldIcon, computeFieldName } from "./utils/computeFieldAttributes";
-import { computeFlowRate } from "./utils/computeFlowRate";
+import { batteryElement } from "@/components/battery";
+import { flowElement } from "@/components/flows";
+import { gridElement } from "@/components/grid";
+import { homeElement } from "@/components/home";
+import { individualLeftBottomElement } from "@/components/individual-left-bottom-element";
+import { individualLeftTopElement } from "@/components/individual-left-top-element";
+import { individualRightBottomElement } from "@/components/individual-right-bottom-element";
+import { individualRightTopElement } from "@/components/individual-right-top-element";
+import { dashboardLinkElement } from "@/components/misc/dashboard-link";
+import { nonFossilElement } from "@/components/non-fossil";
+import { solarElement } from "@/components/solar";
+import { handleAction } from "@/ha/panels/lovelace/common/handle-action";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "@/states/raw/battery";
+import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "@/states/raw/grid";
+import { getHomeSecondaryState } from "@/states/raw/home";
+import { getIndividualObject, IndividualObject } from "@/states/raw/individual/get-individual-object";
+import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "@/states/raw/non-fossil";
+import { getSolarSecondaryState, getSolarState } from "@/states/raw/solar";
+import { adjustZeroTolerance } from "@/states/tolerance/base";
+import { doesEntityExist } from "@/states/utils/existence-entity";
+import { getEntityState } from "@/states/utils/get-entity-state";
+import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
+import { styles } from "@/style";
+import { allDynamicStyles } from "@/style/all";
+import { RenderTemplateResult, subscribeRenderTemplate } from "@/template/ha-websocket.js";
+import { GridObject, HomeSources, NewDur, TemplatesObj } from "@/type";
+import { computeFieldIcon, computeFieldName } from "@/utils/compute-field-attributes";
+import { computeFlowRate } from "@/utils/compute-flow-rate";
+import { computePowerDistributionAfterSolarAndBattery } from "@/utils/compute-power-distribution";
 import {
   checkHasBottomIndividual,
   checkHasRightIndividual,
@@ -39,11 +40,11 @@ import {
   getBottomRightIndividual,
   getTopLeftIndividual,
   getTopRightIndividual,
-} from "./utils/computeIndividualPosition";
-import { displayValue } from "./utils/displayValue";
-import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
-import { registerCustomCard } from "./utils/register-custom-card";
-import { coerceNumber } from "./utils/utils";
+} from "@/utils/compute-individual-position";
+import { displayValue } from "@/utils/display-value";
+import { defaultValues, getDefaultConfig } from "@/utils/get-default-config";
+import { registerCustomCard } from "@/utils/register-custom-card";
+import { coerceNumber } from "@/utils/utils";
 
 const circleCircumference = 238.76104;
 
@@ -341,83 +342,26 @@ export class PowerFlowCardPlus extends LitElement {
       battery.state.toHome = 0;
     }
 
-    if (solar.has) {
-      solar.state.toHome = (solar.state.total ?? 0) - (grid.state.toGrid ?? 0) - (battery.state.toBattery ?? 0);
-    }
-    const largestGridBatteryTolerance = Math.max(entities.grid?.display_zero_tolerance ?? 0, entities.battery?.display_zero_tolerance ?? 0);
-
-    if (solar.state.toHome !== null && solar.state.toHome < 0) {
-      // What we returned to the grid and what went in to the battery is more
-      // than produced, so we have used grid energy to fill the battery or
-      // returned battery energy to the grid
-      if (battery.has) {
-        grid.state.toBattery = Math.abs(solar.state.toHome);
-        if (grid.state.toBattery > (grid.state.fromGrid ?? 0)) {
-          battery.state.toGrid = Math.min(grid.state.toBattery - (grid.state.fromGrid ?? 0), 0);
-          grid.state.toBattery = grid.state.fromGrid;
-        }
-      }
-      solar.state.toHome = 0;
-    } else if (battery.state.toBattery !== null && battery.state.toBattery > 0) {
-      // Battery is being charged, but by what (grid or solar) and by how much?
-      // Solar is charging battery with any power left over after powering the
-      // home and sending to grid
-      solar.state.toBattery = solar.state.total - (solar.state.toHome || 0) - (grid.state.toGrid || 0);
-
-      // Grid is providing any left over battery charging power after
-      // compensating for the solar charging
-      grid.state.toBattery = battery.state.toBattery - solar.state.toBattery;
-    } else {
-      grid.state.toBattery = 0;
-    }
-    grid.state.toBattery = (grid.state.toBattery ?? 0) > largestGridBatteryTolerance ? grid.state.toBattery : 0;
-
-    if (battery.has) {
-      if (solar.has) {
-        if (!battery.state.toGrid) {
-          battery.state.toGrid = Math.max(
-            0,
-            (grid.state.toGrid || 0) - (solar.state.total || 0) - (battery.state.toBattery || 0) - (grid.state.toBattery || 0)
-          );
-        }
-        solar.state.toBattery = battery.state.toBattery - (grid.state.toBattery || 0);
-        if (entities.solar?.display_zero_tolerance) {
-          if (entities.solar.display_zero_tolerance >= (solar.state.total || 0)) solar.state.toBattery = 0;
-        }
-      } else {
-        battery.state.toGrid = grid.state.toGrid || 0;
-      }
-      battery.state.toGrid = (battery.state.toGrid || 0) > largestGridBatteryTolerance ? battery.state.toGrid || 0 : 0;
-      battery.state.toHome = (battery.state.fromBattery ?? 0) - (battery.state.toGrid ?? 0);
-    }
-
-    grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
-
-    if (solar.has && grid.state.toGrid) solar.state.toGrid = grid.state.toGrid - (battery.state.toGrid ?? 0);
-
-    // Handle Power Outage
-    if (grid.powerOutage.isOutage) {
-      grid.state.fromGrid = grid.powerOutage.entityGenerator ? Math.max(getEntityStateWatts(this.hass, grid.powerOutage.entityGenerator), 0) : 0;
-      grid.state.toHome = Math.max(grid.state.fromGrid - (grid.state.toBattery ?? 0), 0);
-      grid.state.toGrid = 0;
-      battery.state.toGrid = 0;
-      solar.state.toGrid = 0;
-      grid.icon = grid.powerOutage.icon;
-      nonFossil.has = false;
-      nonFossil.hasPercentage = false;
-    }
-
-    // Set Initial State for Non Fossil Fuel Percentage
-    if (nonFossil.has) {
-      const nonFossilFuelDecimal = 1 - (getEntityState(this.hass, entities.fossil_fuel_percentage?.entity) ?? 0) / 100;
-      nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
-    }
+    computePowerDistributionAfterSolarAndBattery({
+      entities: {
+        grid: entities.grid,
+        battery: entities.battery,
+        solar: entities.solar,
+        fossil_fuel_percentage: entities.fossil_fuel_percentage,
+      },
+      grid,
+      solar,
+      battery,
+      nonFossil,
+      getEntityStateWatts: (entityId) => getEntityStateWatts(this.hass, entityId),
+      getEntityState: (entityId) => getEntityState(this.hass, entityId),
+    });
 
     // Calculate Individual Consumption, ignore not shown objects
     const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.has ? b.state || 0 : 0), 0) || 0;
 
     // Calculate Total Consumptions
-    const totalHomeConsumption = Math.max(grid.state.toHome + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
+    const totalHomeConsumption = Math.max((grid.state.toHome ?? 0) + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
 
     // Calculate Circumferences
     const homeBatteryCircumference = battery.state.toHome ? circleCircumference * (battery.state.toHome / totalHomeConsumption) : 0;
@@ -453,7 +397,7 @@ export class PowerFlowCardPlus extends LitElement {
           });
 
     const totalLines =
-      grid.state.toHome +
+      (grid.state.toHome ?? 0) +
       (solar.state.toHome ?? 0) +
       (solar.state.toGrid ?? 0) +
       (solar.state.toBattery ?? 0) +
@@ -486,7 +430,7 @@ export class PowerFlowCardPlus extends LitElement {
     const newDur: NewDur = {
       batteryGrid: computeFlowRate(this._config, grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
       batteryToHome: computeFlowRate(this._config, battery.state.toHome ?? 0, totalLines),
-      gridToHome: computeFlowRate(this._config, grid.state.toHome, totalLines),
+      gridToHome: computeFlowRate(this._config, grid.state.toHome ?? 0, totalLines),
       solarToBattery: computeFlowRate(this._config, solar.state.toBattery ?? 0, totalLines),
       solarToGrid: computeFlowRate(this._config, solar.state.toGrid ?? 0, totalLines),
       solarToHome: computeFlowRate(this._config, solar.state.toHome ?? 0, totalLines),

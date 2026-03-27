@@ -1,10 +1,9 @@
 import { html, svg } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { generalSecondarySpan } from "./spans/generalSecondarySpan";
-import { NewDur, TemplatesObj } from "../type";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { showLine } from "../utils/showLine";
-import { IndividualObject } from "../states/raw/individual/getIndividualObject";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { generalSecondarySpan } from "./spans/general-secondary-span";
+import { NewDur, TemplatesObj } from "@/type";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { IndividualObject } from "@/states/raw/individual/get-individual-object";
 
 interface Home {
   home: any;
