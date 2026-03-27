@@ -75,6 +75,9 @@
     "grey_color": "Серый цвет",
     "tap_action": "действие касания",
     "navigation_path": "путь навигации",
-    "sort_individual_devices": "Сортировка отдельных устройств"
+    "sort_individual_devices": "Сортировка отдельных устройств",
+    "solar_second_entity": "Вторая сущность",
+    "name_solar_first_entity": "Название первой сущности",
+    "name_solar_second_entity": "Название второй сущности"
   }
 }

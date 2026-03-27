@@ -21,7 +21,7 @@ import { getGridConsumptionState, getGridProductionState, getGridSecondaryState 
 import { getHomeSecondaryState } from "./states/raw/home";
 import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
 import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
-import { getSolarSecondaryState, getSolarState } from "./states/raw/solar";
+import { getSolar1State, getSolar2State, getSolarSecondaryState, getTotalSolarState } from "./states/raw/solar";
 import { adjustZeroTolerance } from "./states/tolerance/base";
 import { doesEntityExist } from "./states/utils/existenceEntity";
 import { getEntityState } from "./states/utils/getEntityState";
@@ -44,6 +44,7 @@ import { displayValue } from "./utils/displayValue";
 import { defaultValues, getDefaultConfig } from "./utils/get-default-config";
 import { registerCustomCard } from "./utils/register-custom-card";
 import { coerceNumber } from "./utils/utils";
+import { Solar, subSolarElement } from "@/components/subSolar";
 
 const circleCircumference = 238.76104;
 
@@ -208,20 +209,25 @@ export class PowerFlowCardPlus extends LitElement {
     };
 
     const hasSolarEntity = entities.solar?.entity !== undefined;
-    const isProducingSolar = getSolarState(this.hass, this._config) ?? 0 > 0;
+    const isProducingSolar = getTotalSolarState(this.hass, this._config) ?? 0 > 0;
     const displayZero = entities.solar?.display_zero !== false || isProducingSolar;
 
     const solar = {
       entity: entities.solar?.entity as string | undefined,
+      solar_second_entity: entities.solar?.solar_second_entity as string | undefined,
       has: hasSolarEntity && displayZero,
       state: {
-        total: getSolarState(this.hass, this._config),
+        total: getTotalSolarState(this.hass, this._config),
+        solar1: getSolar1State(this.hass, this._config),
+        solar2: getSolar2State(this.hass, this._config),
         toHome: initialNumericState,
         toGrid: initialNumericState,
         toBattery: initialNumericState,
       },
       icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
       name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
+      name_first_entity: entities.solar?.name_solar_first_entity ? entities.solar?.name_solar_first_entity : 'PV 1',
+      name_second_entity: entities.solar?.name_solar_second_entity ? entities.solar.name_solar_second_entity : 'PV 2',
       tap_action: entities.solar?.tap_action,
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
@@ -582,6 +588,7 @@ export class PowerFlowCardPlus extends LitElement {
           id="power-flow-card-plus"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >
+          ${subSolarElement(this, this._config, solar as Solar, individualObjs.length > 2)}
           ${solar.has || individualObjs?.some((individual) => individual?.has) || nonFossil.hasPercentage
             ? html`<div class="row">
                 ${nonFossilElement(this, this._config, {

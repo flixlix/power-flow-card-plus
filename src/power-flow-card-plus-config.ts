@@ -56,6 +56,7 @@ interface Grid extends BaseConfigEntity {
 
 interface Solar extends BaseConfigEntity {
   entity: string;
+  solar_second_entity: string;
   color?: any;
   color_icon?: boolean;
   color_value?: boolean;
@@ -63,6 +64,8 @@ interface Solar extends BaseConfigEntity {
   secondary_info?: SecondaryInfoType;
   display_zero?: boolean;
   display_zero_state?: boolean;
+  name_solar_first_entity?: string;
+  name_solar_second_entity?: string;
 }
 
 interface Home extends BaseConfigEntity {

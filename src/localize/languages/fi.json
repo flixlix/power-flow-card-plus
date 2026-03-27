@@ -75,6 +75,9 @@
     "grey_color": "Harmaa väri",
     "tap_action": "Napauta toimintoa",
     "navigation_path": "Navigointipolku",
-    "sort_individual_devices": "Lajittele yksittäiset laitteet"
+    "sort_individual_devices": "Lajittele yksittäiset laitteet",
+    "solar_second_entity": "Toinen yksikkö",
+    "name_solar_first_entity": "Ensimmäisen yksikön nimi",
+    "name_solar_second_entity": "Toisen yksikön nimi"
   }
 }
