@@ -46,6 +46,7 @@
     "show_state_of_charge": "Показать уровень заряда",
     "state_type": "Тип состояния",
     "subtract_individual": "Вычесть индивидуально",
+    "subtract_from": "Вычесть из",
     "override_state": "Переопределить состояние",
     "calculate_flow_rate": "Рассчитать скорость потока",
     "inverted_animation": "Инвертированная анимация",

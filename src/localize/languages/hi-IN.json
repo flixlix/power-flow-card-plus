@@ -46,6 +46,7 @@
     "show_state_of_charge": "चार्ज की स्थिति दिखाएँ",
     "state_type": "स्थिति प्रकार",
     "subtract_individual": "व्यक्तिगत घटाएँ",
+    "subtract_from": "से घटाएँ",
     "override_state": "स्थिति ओवरराइड करें",
     "calculate_flow_rate": "प्रवाह दर की गणना करें",
     "inverted_animation": "एनिमेशन उलटें",

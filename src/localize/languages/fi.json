@@ -46,6 +46,7 @@
     "show_state_of_charge": "Näytä varauksen tila",
     "state_type": "Tilan tyyppi",
     "subtract_individual": "Vähennä yksittäinen",
+    "subtract_from": "Vähennä",
     "override_state": "Korvaa tila",
     "calculate_flow_rate": "Laske virtausnopeus",
     "inverted_animation": "Käänteinen animaatio",

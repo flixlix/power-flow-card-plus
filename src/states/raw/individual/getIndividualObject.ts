@@ -18,6 +18,7 @@ const fallbackIndividualObject: IndividualObject = {
   unit_white_space: false,
   invertAnimation: false,
   showDirection: false,
+  subtractFrom: "none",
   secondary: {
     entity: null,
     template: null,
@@ -48,6 +49,7 @@ export type IndividualObject = {
   decimals?: number;
   invertAnimation: boolean;
   showDirection: boolean;
+  subtractFrom: "none" | "home" | "grid" | "both";
   secondary: {
     entity: string | null;
     template: string | null;
@@ -91,6 +93,7 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
     decimals: field?.decimals,
     invertAnimation,
     showDirection: field?.show_direction || false,
+    subtractFrom: field?.subtract_from || "none",
     secondary: {
       entity: field?.secondary_info?.entity || null,
       template: field?.secondary_info?.template || null,
