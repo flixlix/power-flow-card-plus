@@ -60,6 +60,7 @@
     "min_flow_rate": "Minimalt flöde",
     "max_expected_power": "Maximal förväntad effekt",
     "min_expected_power": "Minimal förväntad effekt",
+    "flow_dots_count": "Antal punkter",
     "watt_threshold": "Tröskelvärde för kiloprefix",
     "display_zero_lines": "Vising av inaktiva linjer",
     "clickable_entities": "Klickbara entiteter",

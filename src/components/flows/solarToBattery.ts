@@ -6,6 +6,8 @@ import { styleLine } from "@/utils/styleLine";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
 import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "@/utils/checkFlowDotsCount";
+
 
 type FlowSolarToBatteryFlows = Pick<Flows, Exclude<keyof Flows, "grid">>;
 
@@ -26,19 +28,28 @@ export const flowSolarToBattery = (config: PowerFlowCardPlusConfig, { battery, i
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && solar.state.toBattery
-            ? svg`<circle
+            ? svg`
+            ${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                            const n = checkFlowDotsCount(config) ?? 1;
+                            const start = i / n;
+                            const end = (i + 1) / n;
+                            return svg`
+            <circle
                 r="1"
                 class="battery-solar"
                 vector-effect="non-scaling-stroke"
               >
                 <animateMotion
-                  dur="${newDur.solarToBattery}s"
+                  dur="${newDur.solarToBattery / n}s"
+                  keyTimes="0;1;1"
+                  keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}"
                   repeatCount="indefinite"
                   calcMode="linear"
                 >
                   <mpath xlink:href="#battery-solar" />
                 </animateMotion>
               </circle>`
+              })}`
             : ""}
         </svg>
       </div>`

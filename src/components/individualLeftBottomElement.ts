@@ -4,6 +4,7 @@ import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
 import { IndividualObject } from "../states/raw/individual/getIndividualObject";
 import { NewDur, TemplatesObj } from "../type";
 import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "../utils/checkFlowDotsCount";
 import { computeIndividualFlowRate } from "../utils/computeFlowRate";
 import { showLine } from "../utils/showLine";
 import { styleLine } from "../utils/styleLine";
@@ -29,22 +30,33 @@ export const individualLeftBottomElement = (
       ? html`
           <svg width="80" height="30">
             <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />
+            
+
+
             ${checkShouldShowDots(config) && individualObj?.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-              ? svg`<circle
-                                r="1.75"
-                                class="individual-bottom"
-                                vector-effect="non-scaling-stroke"
-                              >
-                                <animateMotion
-                                  dur="${computeIndividualFlowRate(individualObj.field?.calculate_flow_rate !== false, duration)}s"
-                                  repeatCount="indefinite"
-                                  calcMode="linear"
-                                  keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
-                                  keyTimes="0;1"
-                                >
-                                  <mpath xlink:href="#individual-bottom" />
-                                </animateMotion>
-                              </circle>`
+              ? svg`
+              ${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                const n = checkFlowDotsCount(config) ?? 1;
+                const start = i / n;
+                const end = (i + 1) / n;  
+                return svg`
+                  <circle
+                    r="1.75"
+                    class="individual-bottom"
+                    vector-effect="non-scaling-stroke"
+                  >
+                    <animateMotion
+                      dur="${computeIndividualFlowRate(individualObj.field?.calculate_flow_rate !== false, duration) / n}s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                      keyPoints=${individualObj.invertAnimation ? `${start} ; ${end}; ${start}` : `${end} ; ${start}; ${end}`}
+                      keyTimes="0;1;1"
+                    >
+                      <mpath xlink:href="#individual-bottom" />
+                    </animateMotion>
+                  </circle>
+                `;
+              })}`
               : ""}
           </svg>
         `

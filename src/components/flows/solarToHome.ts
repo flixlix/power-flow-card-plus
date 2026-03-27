@@ -6,6 +6,8 @@ import { styleLine } from "@/utils/styleLine";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
 import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "@/utils/checkFlowDotsCount";
+
 
 export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {
   return solar.has && showLine(config, solar.state.toHome || 0) && !config.entities.home?.hide
@@ -24,19 +26,27 @@ export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && solar.state.toHome
-            ? svg`<circle
+            ? svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                            const n = checkFlowDotsCount(config) ?? 1;
+                            const start = i / n;
+                            const end = (i + 1) / n;
+                            return svg`
+                     <circle
                         r="1"
                         class="solar"
                         vector-effect="non-scaling-stroke"
                       >
                         <animateMotion
-                          dur="${newDur.solarToHome}s"
+                          dur="${newDur.solarToHome / n}s"
+                          keyTimes="0;1;1"
+                          keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}"
                           repeatCount="indefinite"
                           calcMode="linear"
                         >
                           <mpath xlink:href="#solar" />
                         </animateMotion>
                       </circle>`
+                      })}`
             : ""}
         </svg>
       </div>`

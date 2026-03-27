@@ -6,6 +6,7 @@ import { styleLine } from "@/utils/styleLine";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/computeIndividualPosition";
 import { checkShouldShowDots } from "@/utils/checkShouldShowDots";
+import { checkFlowDotsCount } from "@/utils/checkFlowDotsCount";
 
 export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {
   return grid.has && showLine(config, grid.state.fromGrid) && !config.entities.home?.hide
@@ -24,19 +25,28 @@ export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid,
             vector-effect="non-scaling-stroke"
           ></path>
           ${checkShouldShowDots(config) && grid.state.toHome
-            ? svg`<circle
+            ? svg`
+            ${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {
+                            const n = checkFlowDotsCount(config) ?? 1;
+                            const start = i / n;
+                            const end = (i + 1) / n;
+                            return svg`
+            <circle
           r="1"
           class="grid"
           vector-effect="non-scaling-stroke"
         >
           <animateMotion
-            dur="${newDur.gridToHome}s"
+            dur="${newDur.gridToHome / n}s"
+            keyTimes="0;1;1"
+            keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}"
             repeatCount="indefinite"
             calcMode="linear"
           >
             <mpath xlink:href="#grid" />
           </animateMotion>
-        </circle>`
+        </circle>`;
+              })}`
             : ""}
         </svg>
       </div>`
