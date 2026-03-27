@@ -28,7 +28,10 @@ export const displayValue = (
     watt_threshold?: number;
   }
 ): string => {
-  if (value === null) return "0";
+const space = unitWhiteSpace === false ? "" : " ";
+  if (value === null || value === undefined || value === "") {
+    return `0${space}${unit ?? "W"}`;
+  }
 
   if (!isNumberValue(value)) return value.toString();
 
