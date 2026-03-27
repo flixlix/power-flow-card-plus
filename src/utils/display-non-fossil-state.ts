@@ -1,10 +1,10 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { isEntityAvailable } from "../states/utils/existenceEntity";
-import { unavailableOrMisconfiguredError } from "./unavailableError";
-import { getEntityState } from "../states/utils/getEntityState";
-import { getEntityStateWatts } from "../states/utils/getEntityStateWatts";
-import { displayValue } from "./displayValue";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { isEntityAvailable } from "@/states/utils/existence-entity";
+import { unavailableOrMisconfiguredError } from "@/utils/unavailable-error";
+import { getEntityState } from "@/states/utils/get-entity-state";
+import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
+import { displayValue } from "@/utils/display-value";
 
 export const displayNonFossilState = (
   hass: HomeAssistant,
@@ -17,7 +17,7 @@ export const displayNonFossilState = (
     return "NaN";
   }
   const unitWhiteSpace = config.entities.fossil_fuel_percentage?.unit_white_space ?? true;
-  const unitOfMeasurement: "W" | "%" = config.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
+  const unitOfMeasurement: "W" | "%" = config.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W";
   const nonFossilFuelDecimal: number = 1 - (getEntityState(hass, entityFossil) ?? 0) / 100;
   let gridConsumption: number;
   if (typeof config.entities.grid?.entity === "string") {

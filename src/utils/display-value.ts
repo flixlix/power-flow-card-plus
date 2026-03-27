@@ -1,5 +1,5 @@
 import { HomeAssistant, formatNumber } from "custom-card-helpers";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { isNumberValue, round } from "./utils";
 
 /**

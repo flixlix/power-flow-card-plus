@@ -1,8 +1,8 @@
 import { ActionConfig, HomeAssistant } from "custom-card-helpers";
 import { IndividualDeviceType } from "@/type";
-import { computeFieldIcon, computeFieldName } from "@/utils/computeFieldAttributes";
+import { computeFieldIcon, computeFieldName } from "@/utils/compute-field-attributes";
 import { getIndividualSecondaryState, getIndividualState } from ".";
-import { hasIndividualObject } from "./hasIndividualObject";
+import { hasIndividualObject } from "./has-individual-object";
 
 const fallbackIndividualObject: IndividualObject = {
   field: undefined,

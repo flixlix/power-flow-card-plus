@@ -1,13 +1,13 @@
 import { html, svg } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { generalSecondarySpan } from "./spans/generalSecondarySpan";
-import { displayNonFossilState } from "../utils/displayNonFossilState";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { NewDur, TemplatesObj } from "../type";
-import { styleLine } from "../utils/styleLine";
-import { computeIndividualFlowRate } from "../utils/computeFlowRate";
-import { showLine } from "../utils/showLine";
-import { checkShouldShowDots } from "../utils/checkShouldShowDots";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { generalSecondarySpan } from "./spans/general-secondary-span";
+import { displayNonFossilState } from "@/utils/display-non-fossil-state";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { NewDur, TemplatesObj } from "@/type";
+import { styleLine } from "@/utils/style-line";
+import { computeIndividualFlowRate } from "@/utils/compute-flow-rate";
+import { showLine } from "@/utils/show-line";
+import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
 interface NonFossil {
   newDur: NewDur;
