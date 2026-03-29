@@ -20,7 +20,7 @@ import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "
 import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "./states/raw/grid";
 import { getHomeSecondaryState } from "./states/raw/home";
 import { getIndividualObject, IndividualObject } from "./states/raw/individual/getIndividualObject";
-import { getNonFossilHas, getNonFossilHasPercentage, getNonFossilSecondaryState } from "./states/raw/nonFossil";
+import { getNonFossilHas, getNonFossilSecondaryState, getNonFossilState } from "./states/raw/nonFossil";
 import { getSolarSecondaryState, getSolarState } from "./states/raw/solar";
 import { adjustZeroTolerance } from "./states/tolerance/base";
 import { doesEntityExist } from "./states/utils/existenceEntity";
@@ -299,7 +299,6 @@ export class PowerFlowCardPlus extends LitElement {
       name: computeFieldName(this.hass, entities.fossil_fuel_percentage, this.hass.localize("card.label.non_fossil_fuel_percentage")),
       icon: computeFieldIcon(this.hass, entities.fossil_fuel_percentage, "mdi:leaf"),
       has: getNonFossilHas(this.hass, this._config),
-      hasPercentage: getNonFossilHasPercentage(this.hass, this._config),
       state: {
         power: initialNumericState,
       },
@@ -404,13 +403,11 @@ export class PowerFlowCardPlus extends LitElement {
       solar.state.toGrid = 0;
       grid.icon = grid.powerOutage.icon;
       nonFossil.has = false;
-      nonFossil.hasPercentage = false;
     }
 
     // Set Initial State for Non Fossil Fuel Percentage
     if (nonFossil.has) {
-      const nonFossilFuelDecimal = 1 - (getEntityState(this.hass, entities.fossil_fuel_percentage?.entity) ?? 0) / 100;
-      nonFossil.state.power = grid.state.toHome * nonFossilFuelDecimal;
+      nonFossil.state.power = getNonFossilState(this.hass, this._config) ?? 0;
     }
 
     // Calculate Individual Consumption, ignore not shown objects
@@ -582,7 +579,7 @@ export class PowerFlowCardPlus extends LitElement {
           id="power-flow-card-plus"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >
-          ${solar.has || individualObjs?.some((individual) => individual?.has) || nonFossil.hasPercentage
+          ${solar.has || individualObjs?.some((individual) => individual?.has) || nonFossil.has
             ? html`<div class="row">
                 ${nonFossilElement(this, this._config, {
                   entities,

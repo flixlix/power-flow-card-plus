@@ -166,7 +166,7 @@ export const allDynamicStyles = (
   }
   main.style.setProperty(
     "--icon-non-fossil-color",
-    entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)" || "var(--non-fossil-color)"
+    entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)"
   );
   main.style.setProperty(
     "--text-non-fossil-color",

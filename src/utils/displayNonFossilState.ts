@@ -5,6 +5,7 @@ import { unavailableOrMisconfiguredError } from "./unavailableError";
 import { getEntityState } from "../states/utils/getEntityState";
 import { getEntityStateWatts } from "../states/utils/getEntityStateWatts";
 import { displayValue } from "./displayValue";
+import { isEntityInverted } from "../states/utils/isEntityInverted";
 
 export const displayNonFossilState = (
   hass: HomeAssistant,
@@ -17,8 +18,10 @@ export const displayNonFossilState = (
     return "NaN";
   }
   const unitWhiteSpace = config.entities.fossil_fuel_percentage?.unit_white_space ?? true;
-  const unitOfMeasurement: "W" | "%" = config.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W" || "W";
-  const nonFossilFuelDecimal: number = 1 - (getEntityState(hass, entityFossil) ?? 0) / 100;
+  const unitOfMeasurement: "W" | "%" = config.entities.fossil_fuel_percentage?.state_type === "percentage" ? "%" : "W";
+  const percentageState = getEntityState(hass, entityFossil) ?? 0;
+  const inverted = isEntityInverted(config, "fossil_fuel_percentage");
+  const nonFossilFuelDecimal: number = inverted ? percentageState / 100 : 1 - percentageState / 100;
   let gridConsumption: number;
   if (typeof config.entities.grid?.entity === "string") {
     gridConsumption = totalFromGrid;
@@ -41,7 +44,7 @@ export const displayNonFossilState = (
       watt_threshold: config.watt_threshold,
     });
   }
-  let nonFossilFuelPercentage: number = 100 - (getEntityState(hass, entityFossil) ?? 0);
+  let nonFossilFuelPercentage: number = inverted ? percentageState : 100 - percentageState;
   if (displayZeroTolerance) {
     if (nonFossilFuelPercentage < displayZeroTolerance) {
       nonFossilFuelPercentage = 0;
