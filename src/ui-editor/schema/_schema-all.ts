@@ -2,8 +2,8 @@ import { mdiBatteryHigh, mdiHome, mdiLeaf, mdiTransmissionTower, mdiWeatherSunny
 import { any, assign, boolean, integer, number, object, optional, string } from "superstruct";
 import memoizeOne from "memoize-one";
 import { batterySchema } from "./battery";
-import { displayZeroLinesSchema } from "./display_zero_lines";
-import { nonFossilSchema } from "./fossil_fuel_percentage";
+import { displayZeroLinesSchema } from "./display-zero-lines";
+import { nonFossilSchema } from "./fossil-fuel-percentage";
 import { gridSchema } from "./grid";
 import { homeSchema } from "./home";
 import { individualSchema } from "./individual";

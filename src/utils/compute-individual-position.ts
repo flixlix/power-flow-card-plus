@@ -1,5 +1,4 @@
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { IndividualObject } from "../states/raw/individual/getIndividualObject";
+import { IndividualObject } from "@/states/raw/individual/get-individual-object";
 
 const filterUnusedIndividualObjs = (individualObjs: IndividualObject[]): IndividualObject[] => {
   const cloneIndividualObjs = JSON.parse(JSON.stringify(individualObjs)) as IndividualObject[];

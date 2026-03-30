@@ -1,7 +1,7 @@
 import { html } from "lit";
-import { baseSecondarySpan } from "./baseSecondarySpan";
+import { baseSecondarySpan } from "./base-secondary-span";
 import { ActionConfig, HomeAssistant } from "custom-card-helpers";
-import { displayValue } from "@/utils/displayValue";
+import { displayValue } from "@/utils/display-value";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { TemplatesObj } from "@/type";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";

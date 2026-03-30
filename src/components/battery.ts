@@ -1,7 +1,7 @@
 import { html } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { displayValue } from "../utils/displayValue";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { displayValue } from "@/utils/display-value";
 
 export const batteryElement = (
   main: PowerFlowCardPlus,

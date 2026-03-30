@@ -1,4 +1,4 @@
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 
 export const styleLine = (power: number, config: PowerFlowCardPlusConfig): string => {
   if (power > 0) return "";

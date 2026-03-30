@@ -1,8 +1,8 @@
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities } from "../power-flow-card-plus-config";
-import { IndividualObject } from "../states/raw/individual/getIndividualObject";
-import { IndividualDeviceType } from "../type";
-import { convertColorListToHex } from "../utils/convertColor";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { ConfigEntities } from "@/power-flow-card-plus-config";
+import { IndividualObject } from "@/states/raw/individual/get-individual-object";
+import { IndividualDeviceType } from "@/type";
+import { convertColorListToHex } from "@/utils/convert-color";
 import { computeColor } from "./colors";
 
 interface AllDynamicStyles {
@@ -166,7 +166,7 @@ export const allDynamicStyles = (
   }
   main.style.setProperty(
     "--icon-non-fossil-color",
-    entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)" || "var(--non-fossil-color)"
+    entities.fossil_fuel_percentage?.color_icon ? "var(--non-fossil-color)" : "var(--primary-text-color)"
   );
   main.style.setProperty(
     "--text-non-fossil-color",

@@ -1,5 +1,5 @@
 import { ActionConfig, HomeAssistant } from "custom-card-helpers";
-import { fireEvent } from "@/ha/common/dom/fire_event";
+import { fireEvent } from "@/ha/common/dom/fire-event";
 
 export type ActionConfigParams = {
   entity?: string;
