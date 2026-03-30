@@ -341,12 +341,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (!this._config || !this.hass) {
       return;
     }
-    if (
-      changedProps.has("hass") ||
-      changedProps.has("_config") ||
-      changedProps.has("_templateResults") ||
-      this._renderData === undefined
-    ) {
+    if (changedProps.has("hass") || changedProps.has("_config") || changedProps.has("_templateResults") || this._renderData === undefined) {
       this.style.setProperty("--clickable-cursor", this._config.clickable_entities ? "pointer" : "default");
       this._renderData = this._computeRenderData();
     }
