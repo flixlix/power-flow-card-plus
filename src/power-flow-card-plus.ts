@@ -45,6 +45,7 @@ import { displayValue } from "@/utils/display-value";
 import { defaultValues, getDefaultConfig } from "@/utils/get-default-config";
 import { registerCustomCard } from "@/utils/register-custom-card";
 import { coerceNumber } from "@/utils/utils";
+import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
 const circleCircumference = 238.76104;
 
@@ -70,6 +71,29 @@ export class PowerFlowCardPlus extends LitElement {
   @query("#solar-battery-flow") solarToBatteryFlow?: SVGSVGElement;
   @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
   @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
+  private _renderData?:
+    | {
+        entities: PowerFlowCardPlusConfig["entities"];
+        grid: GridObject;
+        solar: any;
+        battery: any;
+        home: any;
+        nonFossil: any;
+        individualObjs: IndividualObject[];
+        newDur: NewDur;
+        templatesObj: TemplatesObj;
+        homeBatteryCircumference: number;
+        homeSolarCircumference: number;
+        homeNonFossilCircumference: number;
+        homeGridCircumference: number;
+        homeUsageToDisplay: string;
+        sortedIndividualObjects: IndividualObject[];
+        individualFieldLeftTop?: IndividualObject;
+        individualFieldLeftBottom?: IndividualObject;
+        individualFieldRightTop?: IndividualObject;
+        individualFieldRightBottom?: IndividualObject;
+      }
+    | undefined;
 
   setConfig(config: PowerFlowCardPlusConfig): void {
     if ((config.entities as any).individual1 || (config.entities as any).individual2) {
@@ -104,7 +128,6 @@ export class PowerFlowCardPlus extends LitElement {
     this._tryDisconnectAll();
   }
 
-  // do not use ui editor for now, as it is not working
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
     return document.createElement("power-flow-card-plus-editor");
@@ -155,321 +178,27 @@ export class PowerFlowCardPlus extends LitElement {
     if (!this._config || !this.hass) {
       return html``;
     }
-
-    const { entities } = this._config;
-
-    this.style.setProperty("--clickable-cursor", this._config.clickable_entities ? "pointer" : "default");
-
-    const initialNumericState = null as null | number;
-
-    const grid: GridObject = {
-      entity: entities.grid?.entity,
-      has: entities?.grid?.entity !== undefined,
-      hasReturnToGrid: typeof entities.grid?.entity === "string" || !!entities.grid?.entity?.production,
-      state: {
-        fromGrid: getGridConsumptionState(this.hass, this._config),
-        toGrid: getGridProductionState(this.hass, this._config),
-        toBattery: initialNumericState,
-        toHome: initialNumericState,
-      },
-      powerOutage: {
-        has: entities.grid?.power_outage?.entity !== undefined,
-        isOutage:
-          (entities.grid && this.hass.states[entities.grid.power_outage?.entity]?.state) === (entities.grid?.power_outage?.state_alert ?? "on"),
-        icon: entities.grid?.power_outage?.icon_alert || "mdi:transmission-tower-off",
-        name: entities.grid?.power_outage?.label_alert ?? html`Power<br />Outage`,
-        entityGenerator: entities.grid?.power_outage?.entity_generator,
-      },
-      icon: computeFieldIcon(this.hass, entities.grid, "mdi:transmission-tower"),
-      name: computeFieldName(this.hass, entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
-      mainEntity:
-        typeof entities.grid?.entity === "object" ? entities.grid.entity.consumption || entities.grid.entity.production : entities.grid?.entity,
-      color: {
-        fromGrid: entities.grid?.color?.consumption,
-        toGrid: entities.grid?.color?.production,
-        icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
-        circle_type: entities.grid?.color_circle,
-      },
-      tap_action: entities.grid?.tap_action,
-      secondary: {
-        entity: entities.grid?.secondary_info?.entity,
-        decimals: entities.grid?.secondary_info?.decimals,
-        template: entities.grid?.secondary_info?.template,
-        has: entities.grid?.secondary_info?.entity !== undefined,
-        state: getGridSecondaryState(this.hass, this._config),
-        icon: entities.grid?.secondary_info?.icon,
-        unit: entities.grid?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.grid?.secondary_info?.unit_white_space,
-        accept_negative: entities.grid?.secondary_info?.accept_negative || false,
-        color: {
-          type: entities.grid?.secondary_info?.color_value,
-        },
-        tap_action: entities.grid?.secondary_info?.tap_action,
-      },
-    };
-
-    const hasSolarEntity = entities.solar?.entity !== undefined;
-    const isProducingSolar = getSolarState(this.hass, this._config) ?? 0 > 0;
-    const displayZero = entities.solar?.display_zero !== false || isProducingSolar;
-
-    const solar = {
-      entity: entities.solar?.entity as string | undefined,
-      has: hasSolarEntity && displayZero,
-      state: {
-        total: getSolarState(this.hass, this._config),
-        toHome: initialNumericState,
-        toGrid: initialNumericState,
-        toBattery: initialNumericState,
-      },
-      icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
-      name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
-      tap_action: entities.solar?.tap_action,
-      secondary: {
-        entity: entities.solar?.secondary_info?.entity,
-        decimals: entities.solar?.secondary_info?.decimals,
-        template: entities.solar?.secondary_info?.template,
-        has: entities.solar?.secondary_info?.entity !== undefined,
-        accept_negative: entities.solar?.secondary_info?.accept_negative || false,
-        state: getSolarSecondaryState(this.hass, this._config),
-        icon: entities.solar?.secondary_info?.icon,
-        unit: entities.solar?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.solar?.secondary_info?.unit_white_space,
-        tap_action: entities.solar?.secondary_info?.tap_action,
-      },
-    };
-
-    const checkIfHasBattery = () => {
-      if (!entities.battery?.entity) return false;
-      if (typeof entities.battery?.entity === "object") return entities.battery?.entity.consumption || entities.battery?.entity.production;
-      return entities.battery?.entity !== undefined;
-    };
-
-    const battery = {
-      entity: entities.battery?.entity,
-      has: checkIfHasBattery(),
-      mainEntity: typeof entities.battery?.entity === "object" ? entities.battery.entity.consumption : entities.battery?.entity,
-      name: computeFieldName(this.hass, entities.battery, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.battery")),
-      icon: computeFieldIcon(this.hass, entities.battery, "mdi:battery-high"),
-      state_of_charge: {
-        state: getBatteryStateOfCharge(this.hass, this._config),
-        unit: entities?.battery?.state_of_charge_unit ?? "%",
-        unit_white_space: entities?.battery?.state_of_charge_unit_white_space ?? true,
-        decimals: entities?.battery?.state_of_charge_decimals || 0,
-      },
-      state: {
-        toBattery: getBatteryInState(this.hass, this._config),
-        fromBattery: getBatteryOutState(this.hass, this._config),
-        toGrid: 0,
-        toHome: 0,
-      },
-      tap_action: entities.battery?.tap_action,
-      color: {
-        fromBattery: entities.battery?.color?.consumption,
-        toBattery: entities.battery?.color?.production,
-        icon_type: undefined as string | boolean | undefined,
-        circle_type: entities.battery?.color_circle,
-      },
-    };
-
-    const home = {
-      entity: entities.home?.entity,
-      has: entities?.home?.entity !== undefined,
-      state: initialNumericState,
-      icon: computeFieldIcon(this.hass, entities?.home, "mdi:home"),
-      name: computeFieldName(this.hass, entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
-      tap_action: entities.home?.tap_action,
-      secondary: {
-        entity: entities.home?.secondary_info?.entity,
-        template: entities.home?.secondary_info?.template,
-        has: entities.home?.secondary_info?.entity !== undefined,
-        state: getHomeSecondaryState(this.hass, this._config),
-        accept_negative: entities.home?.secondary_info?.accept_negative || false,
-        unit: entities.home?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.home?.secondary_info?.unit_white_space,
-        icon: entities.home?.secondary_info?.icon,
-        decimals: entities.home?.secondary_info?.decimals,
-        tap_action: entities.home?.secondary_info?.tap_action,
-      },
-    };
-
-    type IndividualObjects = IndividualObject[] | [];
-    const individualObjs: IndividualObjects = entities.individual?.map((individual) => getIndividualObject(this.hass, individual)) || [];
-
-    const nonFossil = {
-      entity: entities.fossil_fuel_percentage?.entity,
-      name: computeFieldName(this.hass, entities.fossil_fuel_percentage, this.hass.localize("card.label.non_fossil_fuel_percentage")),
-      icon: computeFieldIcon(this.hass, entities.fossil_fuel_percentage, "mdi:leaf"),
-      has: getNonFossilHas(this.hass, this._config),
-      hasPercentage: getNonFossilHasPercentage(this.hass, this._config),
-      state: {
-        power: initialNumericState,
-      },
-      color: entities.fossil_fuel_percentage?.color,
-      color_value: entities.fossil_fuel_percentage?.color_value,
-      tap_action: entities.fossil_fuel_percentage?.tap_action,
-      secondary: {
-        entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
-        decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
-        template: entities.fossil_fuel_percentage?.secondary_info?.template,
-        has: entities.fossil_fuel_percentage?.secondary_info?.entity !== undefined,
-        state: getNonFossilSecondaryState(this.hass, this._config),
-        accept_negative: entities.fossil_fuel_percentage?.secondary_info?.accept_negative || false,
-        icon: entities.fossil_fuel_percentage?.secondary_info?.icon,
-        unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
-        unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
-        color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
-        tap_action: entities.fossil_fuel_percentage?.secondary_info?.tap_action,
-      },
-    };
-
-    // Reset Values below Display Zero Tolerance
-    grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);
-    grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, entities.grid?.display_zero_tolerance);
-    solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
-    battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
-    battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);
-    if (grid.state.fromGrid === 0) {
-      grid.state.toHome = 0;
-      grid.state.toBattery = 0;
-    }
-    if (solar.state.total === 0) {
-      solar.state.toGrid = 0;
-      solar.state.toBattery = 0;
-      solar.state.toHome = 0;
-    }
-    if (battery.state.fromBattery === 0) {
-      battery.state.toGrid = 0;
-      battery.state.toHome = 0;
-    }
-
-    computePowerDistributionAfterSolarAndBattery({
-      entities: {
-        grid: entities.grid,
-        battery: entities.battery,
-        solar: entities.solar,
-        fossil_fuel_percentage: entities.fossil_fuel_percentage,
-      },
+    const data = this._renderData ?? this._computeRenderData();
+    const {
+      entities,
       grid,
       solar,
       battery,
+      home,
       nonFossil,
-      getEntityStateWatts: (entityId) => getEntityStateWatts(this.hass, entityId),
-      getEntityState: (entityId) => getEntityState(this.hass, entityId),
-    });
-
-    // Calculate Individual Consumption, ignore not shown objects
-    const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.has ? b.state || 0 : 0), 0) || 0;
-
-    // Calculate Total Consumptions
-    const totalHomeConsumption = Math.max((grid.state.toHome ?? 0) + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
-
-    // Calculate Circumferences
-    const homeBatteryCircumference = battery.state.toHome ? circleCircumference * (battery.state.toHome / totalHomeConsumption) : 0;
-    const homeSolarCircumference = solar.state.toHome ? circleCircumference * (solar.state.toHome / totalHomeConsumption) : 0;
-    const homeNonFossilCircumference = nonFossil.state.power ? circleCircumference * (nonFossil.state.power / totalHomeConsumption) : 0;
-    const homeGridCircumference =
-      circleCircumference *
-      ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.toHome ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
-
-    const homeUsageToDisplay =
-      entities.home?.override_state && entities.home.entity
-        ? entities.home?.subtract_individual
-          ? displayValue(this.hass, this._config, getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption, {
-              unit: entities.home?.unit_of_measurement,
-              unitWhiteSpace: entities.home?.unit_white_space,
-              watt_threshold: this._config.watt_threshold,
-            })
-          : displayValue(this.hass, this._config, getEntityStateWatts(this.hass, entities.home.entity), {
-              unit: entities.home?.unit_of_measurement,
-              unitWhiteSpace: entities.home?.unit_white_space,
-              watt_threshold: this._config.watt_threshold,
-            })
-        : entities.home?.subtract_individual
-        ? displayValue(this.hass, this._config, totalHomeConsumption - totalIndividualConsumption || 0, {
-            unit: entities.home?.unit_of_measurement,
-            unitWhiteSpace: entities.home?.unit_white_space,
-            watt_threshold: this._config.watt_threshold,
-          })
-        : displayValue(this.hass, this._config, totalHomeConsumption, {
-            unit: entities.home?.unit_of_measurement,
-            unitWhiteSpace: entities.home?.unit_white_space,
-            watt_threshold: this._config.watt_threshold,
-          });
-
-    const totalLines =
-      (grid.state.toHome ?? 0) +
-      (solar.state.toHome ?? 0) +
-      (solar.state.toGrid ?? 0) +
-      (solar.state.toBattery ?? 0) +
-      (battery.state.toHome ?? 0) +
-      (grid.state.toBattery ?? 0) +
-      (battery.state.toGrid ?? 0);
-
-    // Battery SoC
-    if (battery.state_of_charge.state === null) {
-      battery.icon = "mdi:battery";
-    } else if (battery.state_of_charge.state <= 72 && battery.state_of_charge.state > 44) {
-      battery.icon = "mdi:battery-medium";
-    } else if (battery.state_of_charge.state <= 44 && battery.state_of_charge.state > 16) {
-      battery.icon = "mdi:battery-low";
-    } else if (battery.state_of_charge.state <= 16) {
-      battery.icon = "mdi:battery-outline";
-    }
-    if (entities.battery?.icon !== undefined) battery.icon = entities.battery?.icon;
-
-    // override icon of battery entity if use_metadata is true
-    const batteryUseMetadataIcon = entities.battery?.use_metadata;
-    if (batteryUseMetadataIcon) {
-      const metadataIcon = computeFieldIcon(this.hass, entities.battery, "NO_ICON_METADATA");
-      if (metadataIcon !== "NO_ICON_METADATA") {
-        battery.icon = metadataIcon;
-      }
-    }
-
-    // Compute durations
-    const newDur: NewDur = {
-      batteryGrid: computeFlowRate(this._config, grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
-      batteryToHome: computeFlowRate(this._config, battery.state.toHome ?? 0, totalLines),
-      gridToHome: computeFlowRate(this._config, grid.state.toHome ?? 0, totalLines),
-      solarToBattery: computeFlowRate(this._config, solar.state.toBattery ?? 0, totalLines),
-      solarToGrid: computeFlowRate(this._config, solar.state.toGrid ?? 0, totalLines),
-      solarToHome: computeFlowRate(this._config, solar.state.toHome ?? 0, totalLines),
-      individual: individualObjs?.map((individual) => computeFlowRate(this._config, individual.state ?? 0, totalIndividualConsumption)) || [],
-      nonFossil: computeFlowRate(this._config, nonFossil.state.power ?? 0, totalLines),
-    };
-
-    // Smooth duration changes
-    ["batteryGrid", "batteryToHome", "gridToHome", "solarToBattery", "solarToGrid", "solarToHome"].forEach((flowName) => {
-      const flowSVGElement = this[`${flowName}Flow`] as SVGSVGElement;
-      if (flowSVGElement && this.previousDur[flowName] && this.previousDur[flowName] !== newDur[flowName]) {
-        flowSVGElement.pauseAnimations();
-        flowSVGElement.setCurrentTime(flowSVGElement.getCurrentTime() * (newDur[flowName] / this.previousDur[flowName]));
-        flowSVGElement.unpauseAnimations();
-      }
-      this.previousDur[flowName] = newDur[flowName];
-    });
-
-    const homeSources: HomeSources = {
-      battery: {
-        value: homeBatteryCircumference,
-        color: "var(--energy-battery-out-color)",
-      },
-      solar: {
-        value: homeSolarCircumference,
-        color: "var(--energy-solar-color)",
-      },
-      grid: {
-        value: homeGridCircumference,
-        color: "var(--energy-grid-consumption-color)",
-      },
-      gridNonFossil: {
-        value: homeNonFossilCircumference,
-        color: "var(--energy-non-fossil-color)",
-      },
-    };
-
-    const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
-
+      individualObjs,
+      newDur,
+      templatesObj,
+      homeBatteryCircumference,
+      homeGridCircumference,
+      homeNonFossilCircumference,
+      homeSolarCircumference,
+      homeUsageToDisplay,
+      individualFieldLeftTop,
+      individualFieldLeftBottom,
+      individualFieldRightTop,
+      individualFieldRightBottom,
+    } = data;
     const getIndividualDisplayState = (field?: IndividualObject) => {
       if (!field) return "";
       if (field?.state === undefined) return "";
@@ -480,40 +209,6 @@ export class PowerFlowCardPlus extends LitElement {
         watt_threshold: this._config.watt_threshold,
       });
     };
-
-    const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
-    // Templates
-    const templatesObj: TemplatesObj = {
-      gridSecondary: this._templateResults.gridSecondary?.result,
-      solarSecondary: this._templateResults.solarSecondary?.result,
-      homeSecondary: this._templateResults.homeSecondary?.result,
-
-      nonFossilFuelSecondary: this._templateResults.nonFossilFuelSecondary?.result,
-      individual: individualObjs?.map((_, index) => this._templateResults[`${individualKeys[index]}Secondary`]?.result) || [],
-    };
-
-    // Styles
-    const isCardWideEnough = this._width > 420;
-    allDynamicStyles(this, {
-      grid,
-      solar,
-      battery,
-      display_zero_lines_grey_color: this._config.display_zero_lines?.mode === "grey_out" ? this._config.display_zero_lines?.grey_color : "",
-      display_zero_lines_transparency: this._config.display_zero_lines?.mode === "transparency" ? this._config.display_zero_lines?.transparency : "",
-      entities,
-      homeLargestSource,
-      homeSources,
-      individual: individualObjs,
-      nonFossil,
-      isCardWideEnough,
-    });
-
-    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
-
-    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
-    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
-    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
-    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
 
     return html`
       <ha-card
@@ -639,6 +334,357 @@ export class PowerFlowCardPlus extends LitElement {
     this._width = parseInt(widthStr.replace("px", ""), 10);
 
     this._tryConnectAll();
+  }
+
+  protected willUpdate(changedProps: PropertyValues): void {
+    super.willUpdate(changedProps);
+    if (!this._config || !this.hass) {
+      return;
+    }
+    if (
+      changedProps.has("hass") ||
+      changedProps.has("_config") ||
+      changedProps.has("_templateResults") ||
+      this._renderData === undefined
+    ) {
+      this.style.setProperty("--clickable-cursor", this._config.clickable_entities ? "pointer" : "default");
+      this._renderData = this._computeRenderData();
+    }
+  }
+
+  private _computeRenderData() {
+    const { entities } = this._config;
+    const initialNumericState = null as null | number;
+    const grid: GridObject = {
+      entity: entities.grid?.entity,
+      has: entities?.grid?.entity !== undefined,
+      hasReturnToGrid: typeof entities.grid?.entity === "string" || !!entities.grid?.entity?.production,
+      state: {
+        fromGrid: getGridConsumptionState(this.hass, this._config),
+        toGrid: getGridProductionState(this.hass, this._config),
+        toBattery: initialNumericState,
+        toHome: initialNumericState,
+      },
+      powerOutage: {
+        has: entities.grid?.power_outage?.entity !== undefined,
+        isOutage:
+          (entities.grid && this.hass.states[entities.grid.power_outage?.entity]?.state) === (entities.grid?.power_outage?.state_alert ?? "on"),
+        icon: entities.grid?.power_outage?.icon_alert || "mdi:transmission-tower-off",
+        name: entities.grid?.power_outage?.label_alert ?? html`Power<br />Outage`,
+        entityGenerator: entities.grid?.power_outage?.entity_generator,
+      },
+      icon: computeFieldIcon(this.hass, entities.grid, "mdi:transmission-tower"),
+      name: computeFieldName(this.hass, entities.grid, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.grid")),
+      mainEntity:
+        typeof entities.grid?.entity === "object" ? entities.grid.entity.consumption || entities.grid.entity.production : entities.grid?.entity,
+      color: {
+        fromGrid: entities.grid?.color?.consumption,
+        toGrid: entities.grid?.color?.production,
+        icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
+        circle_type: entities.grid?.color_circle,
+      },
+      tap_action: entities.grid?.tap_action,
+      secondary: {
+        entity: entities.grid?.secondary_info?.entity,
+        decimals: entities.grid?.secondary_info?.decimals,
+        template: entities.grid?.secondary_info?.template,
+        has: entities.grid?.secondary_info?.entity !== undefined,
+        state: getGridSecondaryState(this.hass, this._config),
+        icon: entities.grid?.secondary_info?.icon,
+        unit: entities.grid?.secondary_info?.unit_of_measurement,
+        unit_white_space: entities.grid?.secondary_info?.unit_white_space,
+        accept_negative: entities.grid?.secondary_info?.accept_negative || false,
+        color: {
+          type: entities.grid?.secondary_info?.color_value,
+        },
+        tap_action: entities.grid?.secondary_info?.tap_action,
+      },
+    };
+    const hasSolarEntity = entities.solar?.entity !== undefined;
+    const isProducingSolar = (getSolarState(this.hass, this._config) ?? 0) > 0;
+    const displayZero = entities.solar?.display_zero !== false || isProducingSolar;
+    const solar = {
+      entity: entities.solar?.entity as string | undefined,
+      has: hasSolarEntity && displayZero,
+      state: {
+        total: getSolarState(this.hass, this._config),
+        toHome: initialNumericState,
+        toGrid: initialNumericState,
+        toBattery: initialNumericState,
+      },
+      icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
+      name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
+      tap_action: entities.solar?.tap_action,
+      secondary: {
+        entity: entities.solar?.secondary_info?.entity,
+        decimals: entities.solar?.secondary_info?.decimals,
+        template: entities.solar?.secondary_info?.template,
+        has: entities.solar?.secondary_info?.entity !== undefined,
+        accept_negative: entities.solar?.secondary_info?.accept_negative || false,
+        state: getSolarSecondaryState(this.hass, this._config),
+        icon: entities.solar?.secondary_info?.icon,
+        unit: entities.solar?.secondary_info?.unit_of_measurement,
+        unit_white_space: entities.solar?.secondary_info?.unit_white_space,
+        tap_action: entities.solar?.secondary_info?.tap_action,
+      },
+    };
+    const checkIfHasBattery = () => {
+      if (!entities.battery?.entity) return false;
+      if (typeof entities.battery?.entity === "object") return entities.battery?.entity.consumption || entities.battery?.entity.production;
+      return entities.battery?.entity !== undefined;
+    };
+    const battery = {
+      entity: entities.battery?.entity,
+      has: checkIfHasBattery(),
+      mainEntity: typeof entities.battery?.entity === "object" ? entities.battery.entity.consumption : entities.battery?.entity,
+      name: computeFieldName(this.hass, entities.battery, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.battery")),
+      icon: computeFieldIcon(this.hass, entities.battery, "mdi:battery-high"),
+      state_of_charge: {
+        state: getBatteryStateOfCharge(this.hass, this._config),
+        unit: entities?.battery?.state_of_charge_unit ?? "%",
+        unit_white_space: entities?.battery?.state_of_charge_unit_white_space ?? true,
+        decimals: entities?.battery?.state_of_charge_decimals || 0,
+      },
+      state: {
+        toBattery: getBatteryInState(this.hass, this._config),
+        fromBattery: getBatteryOutState(this.hass, this._config),
+        toGrid: 0,
+        toHome: 0,
+      },
+      tap_action: entities.battery?.tap_action,
+      color: {
+        fromBattery: entities.battery?.color?.consumption,
+        toBattery: entities.battery?.color?.production,
+        icon_type: undefined as string | boolean | undefined,
+        circle_type: entities.battery?.color_circle,
+      },
+    };
+    const home = {
+      entity: entities.home?.entity,
+      has: entities?.home?.entity !== undefined,
+      state: initialNumericState,
+      icon: computeFieldIcon(this.hass, entities?.home, "mdi:home"),
+      name: computeFieldName(this.hass, entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
+      tap_action: entities.home?.tap_action,
+      secondary: {
+        entity: entities.home?.secondary_info?.entity,
+        template: entities.home?.secondary_info?.template,
+        has: entities.home?.secondary_info?.entity !== undefined,
+        state: getHomeSecondaryState(this.hass, this._config),
+        accept_negative: entities.home?.secondary_info?.accept_negative || false,
+        unit: entities.home?.secondary_info?.unit_of_measurement,
+        unit_white_space: entities.home?.secondary_info?.unit_white_space,
+        icon: entities.home?.secondary_info?.icon,
+        decimals: entities.home?.secondary_info?.decimals,
+        tap_action: entities.home?.secondary_info?.tap_action,
+      },
+    };
+    const individualObjs: IndividualObject[] = entities.individual?.map((individual) => getIndividualObject(this.hass, individual)) || [];
+    const nonFossil = {
+      entity: entities.fossil_fuel_percentage?.entity,
+      name: computeFieldName(this.hass, entities.fossil_fuel_percentage, this.hass.localize("card.label.non_fossil_fuel_percentage")),
+      icon: computeFieldIcon(this.hass, entities.fossil_fuel_percentage, "mdi:leaf"),
+      has: getNonFossilHas(this.hass, this._config),
+      hasPercentage: getNonFossilHasPercentage(this.hass, this._config),
+      state: {
+        power: initialNumericState,
+      },
+      color: entities.fossil_fuel_percentage?.color,
+      color_value: entities.fossil_fuel_percentage?.color_value,
+      tap_action: entities.fossil_fuel_percentage?.tap_action,
+      secondary: {
+        entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
+        decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
+        template: entities.fossil_fuel_percentage?.secondary_info?.template,
+        has: entities.fossil_fuel_percentage?.secondary_info?.entity !== undefined,
+        state: getNonFossilSecondaryState(this.hass, this._config),
+        accept_negative: entities.fossil_fuel_percentage?.secondary_info?.accept_negative || false,
+        icon: entities.fossil_fuel_percentage?.secondary_info?.icon,
+        unit: entities.fossil_fuel_percentage?.secondary_info?.unit_of_measurement,
+        unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
+        color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
+        tap_action: entities.fossil_fuel_percentage?.secondary_info?.tap_action,
+      },
+    };
+    grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);
+    grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, entities.grid?.display_zero_tolerance);
+    solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
+    battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
+    battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);
+    if (grid.state.fromGrid === 0) {
+      grid.state.toHome = 0;
+      grid.state.toBattery = 0;
+    }
+    if (solar.state.total === 0) {
+      solar.state.toGrid = 0;
+      solar.state.toBattery = 0;
+      solar.state.toHome = 0;
+    }
+    if (battery.state.fromBattery === 0) {
+      battery.state.toGrid = 0;
+      battery.state.toHome = 0;
+    }
+    computePowerDistributionAfterSolarAndBattery({
+      entities: {
+        grid: entities.grid,
+        battery: entities.battery,
+        solar: entities.solar,
+        fossil_fuel_percentage: entities.fossil_fuel_percentage,
+      },
+      grid,
+      solar,
+      battery,
+      nonFossil,
+      getEntityStateWatts: (entityId) => getEntityStateWatts(this.hass, entityId),
+      getEntityState: (entityId) => getEntityState(this.hass, entityId),
+    });
+    const totalIndividualConsumption = individualObjs?.reduce((a, b) => a + (b.has ? b.state || 0 : 0), 0) || 0;
+    const totalHomeConsumption = Math.max((grid.state.toHome ?? 0) + (solar.state.toHome ?? 0) + (battery.state.toHome ?? 0), 0);
+    const homeBatteryCircumference = battery.state.toHome ? circleCircumference * (battery.state.toHome / totalHomeConsumption) : 0;
+    const homeSolarCircumference = solar.state.toHome ? circleCircumference * (solar.state.toHome / totalHomeConsumption) : 0;
+    const homeNonFossilCircumference = nonFossil.state.power ? circleCircumference * (nonFossil.state.power / totalHomeConsumption) : 0;
+    const homeGridCircumference =
+      circleCircumference *
+      ((totalHomeConsumption - (nonFossil.state.power ?? 0) - (battery.state.toHome ?? 0) - (solar.state.toHome ?? 0)) / totalHomeConsumption);
+    const homeUsageToDisplay =
+      entities.home?.override_state && entities.home.entity
+        ? entities.home?.subtract_individual
+          ? displayValue(this.hass, this._config, getEntityStateWatts(this.hass, entities.home.entity) - totalIndividualConsumption, {
+              unit: entities.home?.unit_of_measurement,
+              unitWhiteSpace: entities.home?.unit_white_space,
+              watt_threshold: this._config.watt_threshold,
+            })
+          : displayValue(this.hass, this._config, getEntityStateWatts(this.hass, entities.home.entity), {
+              unit: entities.home?.unit_of_measurement,
+              unitWhiteSpace: entities.home?.unit_white_space,
+              watt_threshold: this._config.watt_threshold,
+            })
+        : entities.home?.subtract_individual
+        ? displayValue(this.hass, this._config, totalHomeConsumption - totalIndividualConsumption || 0, {
+            unit: entities.home?.unit_of_measurement,
+            unitWhiteSpace: entities.home?.unit_white_space,
+            watt_threshold: this._config.watt_threshold,
+          })
+        : displayValue(this.hass, this._config, totalHomeConsumption, {
+            unit: entities.home?.unit_of_measurement,
+            unitWhiteSpace: entities.home?.unit_white_space,
+            watt_threshold: this._config.watt_threshold,
+          });
+    const totalLines =
+      (grid.state.toHome ?? 0) +
+      (solar.state.toHome ?? 0) +
+      (solar.state.toGrid ?? 0) +
+      (solar.state.toBattery ?? 0) +
+      (battery.state.toHome ?? 0) +
+      (grid.state.toBattery ?? 0) +
+      (battery.state.toGrid ?? 0);
+    if (battery.state_of_charge.state === null) {
+      battery.icon = "mdi:battery";
+    } else if (battery.state_of_charge.state <= 72 && battery.state_of_charge.state > 44) {
+      battery.icon = "mdi:battery-medium";
+    } else if (battery.state_of_charge.state <= 44 && battery.state_of_charge.state > 16) {
+      battery.icon = "mdi:battery-low";
+    } else if (battery.state_of_charge.state <= 16) {
+      battery.icon = "mdi:battery-outline";
+    }
+    if (entities.battery?.icon !== undefined) battery.icon = entities.battery?.icon;
+    const batteryUseMetadataIcon = entities.battery?.use_metadata;
+    if (batteryUseMetadataIcon) {
+      const metadataIcon = computeFieldIcon(this.hass, entities.battery, "NO_ICON_METADATA");
+      if (metadataIcon !== "NO_ICON_METADATA") {
+        battery.icon = metadataIcon;
+      }
+    }
+    const newDur: NewDur = {
+      batteryGrid: computeFlowRate(this._config, grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
+      batteryToHome: computeFlowRate(this._config, battery.state.toHome ?? 0, totalLines),
+      gridToHome: computeFlowRate(this._config, grid.state.toHome ?? 0, totalLines),
+      solarToBattery: computeFlowRate(this._config, solar.state.toBattery ?? 0, totalLines),
+      solarToGrid: computeFlowRate(this._config, solar.state.toGrid ?? 0, totalLines),
+      solarToHome: computeFlowRate(this._config, solar.state.toHome ?? 0, totalLines),
+      individual: individualObjs?.map((individual) => computeFlowRate(this._config, individual.state ?? 0, totalIndividualConsumption)) || [],
+      nonFossil: computeFlowRate(this._config, nonFossil.state.power ?? 0, totalLines),
+    };
+    if (checkShouldShowDots(this._config)) {
+      ["batteryGrid", "batteryToHome", "gridToHome", "solarToBattery", "solarToGrid", "solarToHome"].forEach((flowName) => {
+        const flowSVGElement = this[`${flowName}Flow`] as SVGSVGElement;
+        if (flowSVGElement && this.previousDur[flowName] && this.previousDur[flowName] !== newDur[flowName]) {
+          flowSVGElement.pauseAnimations();
+          flowSVGElement.setCurrentTime(flowSVGElement.getCurrentTime() * (newDur[flowName] / this.previousDur[flowName]));
+          flowSVGElement.unpauseAnimations();
+        }
+        this.previousDur[flowName] = newDur[flowName];
+      });
+    } else {
+      this.previousDur = {};
+    }
+    const homeSources: HomeSources = {
+      battery: {
+        value: homeBatteryCircumference,
+        color: "var(--energy-battery-out-color)",
+      },
+      solar: {
+        value: homeSolarCircumference,
+        color: "var(--energy-solar-color)",
+      },
+      grid: {
+        value: homeGridCircumference,
+        color: "var(--energy-grid-consumption-color)",
+      },
+      gridNonFossil: {
+        value: homeNonFossilCircumference,
+        color: "var(--energy-non-fossil-color)",
+      },
+    };
+    const homeLargestSource = Object.keys(homeSources).reduce((a, b) => (homeSources[a].value > homeSources[b].value ? a : b));
+    const individualKeys = ["left-top", "left-bottom", "right-top", "right-bottom"];
+    const templatesObj: TemplatesObj = {
+      gridSecondary: this._templateResults.gridSecondary?.result,
+      solarSecondary: this._templateResults.solarSecondary?.result,
+      homeSecondary: this._templateResults.homeSecondary?.result,
+      nonFossilFuelSecondary: this._templateResults.nonFossilFuelSecondary?.result,
+      individual: individualObjs?.map((_, index) => this._templateResults[`${individualKeys[index]}Secondary`]?.result) || [],
+    };
+    const isCardWideEnough = this._width > 420;
+    allDynamicStyles(this, {
+      grid,
+      solar,
+      battery,
+      display_zero_lines_grey_color: this._config.display_zero_lines?.mode === "grey_out" ? this._config.display_zero_lines?.grey_color : "",
+      display_zero_lines_transparency: this._config.display_zero_lines?.mode === "transparency" ? this._config.display_zero_lines?.transparency : "",
+      entities,
+      homeLargestSource,
+      homeSources,
+      individual: individualObjs,
+      nonFossil,
+      isCardWideEnough,
+    });
+    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
+    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
+    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
+    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
+    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
+    return {
+      entities,
+      grid,
+      solar,
+      battery,
+      home,
+      nonFossil,
+      individualObjs,
+      newDur,
+      templatesObj,
+      homeBatteryCircumference,
+      homeSolarCircumference,
+      homeNonFossilCircumference,
+      homeGridCircumference,
+      homeUsageToDisplay,
+      sortedIndividualObjects,
+      individualFieldLeftTop,
+      individualFieldLeftBottom,
+      individualFieldRightTop,
+      individualFieldRightBottom,
+    };
   }
 
   private _tryConnectAll() {
