@@ -32,20 +32,20 @@ export const flowSolarToBattery = (config: PowerFlowCardPlusConfig, { battery, i
   if (!shouldShow) return nothing;
 
   return html`<div
-        class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(individual),
-          "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(individual),
-        })}"
-      >
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-battery-flow" class="flat-line">
-          <path
-            id="battery-solar"
-            class="battery-solar ${styleLine(solar.state.toBattery || 0, config)}"
-            d="M50,0 V100"
-            vector-effect="non-scaling-stroke"
-          ></path>
-          ${solarToBatteryDot(config, solar, newDur)}
-        </svg>
-      </div>`;
+    class="lines ${classMap({
+      high: battery.has || checkHasBottomIndividual(individual),
+      "individual1-individual2": !battery.has && individual.every((i) => i?.has),
+      "multi-individual": checkHasRightIndividual(individual),
+    })}"
+  >
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="solar-battery-flow" class="flat-line">
+      <path
+        id="battery-solar"
+        class="battery-solar ${styleLine(solar.state.toBattery || 0, config)}"
+        d="M50,0 V100"
+        vector-effect="non-scaling-stroke"
+      ></path>
+      ${solarToBatteryDot(config, solar, newDur)}
+    </svg>
+  </div>`;
 };

@@ -30,20 +30,20 @@ export const flowGridToHome = (config: PowerFlowCardPlusConfig, { battery, grid,
   if (!shouldShow) return nothing;
 
   return html`<div
-        class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(individual),
-          "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(individual),
-        })}"
-      >
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow" class="flat-line">
-          <path
-            class="grid ${styleLine(grid.state.toHome || 0, config)}"
-            id="grid"
-            d="M0,${battery.has ? 50 : solar.has ? 56 : 53} H100"
-            vector-effect="non-scaling-stroke"
-          ></path>
-          ${gridToHomeDot(config, grid, newDur)}
-        </svg>
-      </div>`;
+    class="lines ${classMap({
+      high: battery.has || checkHasBottomIndividual(individual),
+      "individual1-individual2": !battery.has && individual.every((i) => i?.has),
+      "multi-individual": checkHasRightIndividual(individual),
+    })}"
+  >
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="grid-home-flow" class="flat-line">
+      <path
+        class="grid ${styleLine(grid.state.toHome || 0, config)}"
+        id="grid"
+        d="M0,${battery.has ? 50 : solar.has ? 56 : 53} H100"
+        vector-effect="non-scaling-stroke"
+      ></path>
+      ${gridToHomeDot(config, grid, newDur)}
+    </svg>
+  </div>`;
 };

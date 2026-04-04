@@ -7,11 +7,7 @@ import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/compute-individual-position";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
-const batteryToHomeDot = (
-  config: PowerFlowCardPlusConfig,
-  battery: FlowBatteryToHomeFlows["battery"],
-  newDur: FlowBatteryToHomeFlows["newDur"]
-) => {
+const batteryToHomeDot = (config: PowerFlowCardPlusConfig, battery: FlowBatteryToHomeFlows["battery"], newDur: FlowBatteryToHomeFlows["newDur"]) => {
   if (!checkShouldShowDots(config) || !battery.state.toHome) return nothing;
 
   return svg`<circle
@@ -36,20 +32,20 @@ export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, gr
   if (!shouldShow) return nothing;
 
   return html`<div
-        class="lines ${classMap({
-          high: battery.has || checkHasBottomIndividual(individual),
-          "individual1-individual2": !battery.has && individual.every((i) => i?.has),
-          "multi-individual": checkHasRightIndividual(individual),
-        })}"
-      >
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-home-flow">
-          <path
-            id="battery-home"
-            class="battery-home ${styleLine(battery.state.toHome || 0, config)}"
-            d="M55,100 v-${grid.has ? 15 : 17} c0,-30 10,-30 30,-30 h20"
-            vector-effect="non-scaling-stroke"
-          ></path>
-          ${batteryToHomeDot(config, battery, newDur)}
-        </svg>
-      </div>`;
+    class="lines ${classMap({
+      high: battery.has || checkHasBottomIndividual(individual),
+      "individual1-individual2": !battery.has && individual.every((i) => i?.has),
+      "multi-individual": checkHasRightIndividual(individual),
+    })}"
+  >
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" id="battery-home-flow">
+      <path
+        id="battery-home"
+        class="battery-home ${styleLine(battery.state.toHome || 0, config)}"
+        d="M55,100 v-${grid.has ? 15 : 17} c0,-30 10,-30 30,-30 h20"
+        vector-effect="non-scaling-stroke"
+      ></path>
+      ${batteryToHomeDot(config, battery, newDur)}
+    </svg>
+  </div>`;
 };
