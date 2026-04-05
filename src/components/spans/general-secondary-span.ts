@@ -41,7 +41,7 @@ export const generalSecondarySpan = (
           watt_threshold: config.watt_threshold,
         }),
         tap_action: field.secondary.tap_action,
-        template: templatesObj[`${key === "low-carbon" ? "nonFossilFuel" : key}Secondary`],
+        template: templatesObj[`${key}Secondary`],
       })}`
     : ""}`;
 };
