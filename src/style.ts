@@ -566,3 +566,6 @@ export const styles = css`
     pointer-events: none;
   }
 `;
+
+
+// 359px
