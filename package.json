@@ -36,6 +36,7 @@
     "start:hass": "docker run --rm -p8123:8123 -v ./.hass_dev:/config homeassistant/home-assistant:beta"
   },
   "dependencies": {
+    "@changesets/changelog-github": "^0.6.0",
     "@mdi/js": "^7.4.47",
     "custom-card-helpers": "^1.9.0",
     "home-assistant-js-websocket": "^8.2.0",
