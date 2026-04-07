@@ -61,7 +61,7 @@ export const nonFossilElement = (
                   <animateMotion
                     dur="${computeIndividualFlowRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
                     repeatCount="indefinite"
-                    calcMode="linear"
+                    calcMode="paced"
                   >
                     <mpath xlink:href="#low-carbon" />
                   </animateMotion>
