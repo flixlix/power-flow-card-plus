@@ -64,6 +64,8 @@ export class PowerFlowCardPlus extends LitElement {
   @state() private _templateResults: Partial<Record<string, RenderTemplateResult>> = {};
   @state() private _unsubRenderTemplates?: Map<string, Promise<UnsubscribeFunc>> = new Map();
   @state() private _width = 0;
+  private readonly wideEnoughForFourIndividuals = 359;
+  private _resizeObserver?: ResizeObserver;
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -125,7 +127,10 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   public disconnectedCallback() {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
     this._tryDisconnectAll();
+    super.disconnectedCallback();
   }
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
@@ -329,9 +334,24 @@ export class PowerFlowCardPlus extends LitElement {
       return;
     }
 
-    const elem = this?.shadowRoot?.querySelector("#power-flow-card-plus");
-    const widthStr = elem ? getComputedStyle(elem).getPropertyValue("width") : "0px";
-    this._width = parseInt(widthStr.replace("px", ""), 10);
+    const elem = this.shadowRoot?.querySelector("#power-flow-card-plus") as HTMLElement | null;
+    if (elem) {
+      if (!this._resizeObserver) {
+        this._resizeObserver = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          const width = Math.round(entry.contentRect.width);
+          if (width !== this._width) {
+            this._width = width;
+          }
+        });
+      }
+      this._resizeObserver.observe(elem);
+      const width = Math.round(elem.getBoundingClientRect().width);
+      if (width !== this._width) {
+        this._width = width;
+      }
+    }
 
     this._tryConnectAll();
   }
@@ -341,7 +361,13 @@ export class PowerFlowCardPlus extends LitElement {
     if (!this._config || !this.hass) {
       return;
     }
-    if (changedProps.has("hass") || changedProps.has("_config") || changedProps.has("_templateResults") || this._renderData === undefined) {
+    if (
+      changedProps.has("hass") ||
+      changedProps.has("_config") ||
+      changedProps.has("_templateResults") ||
+      changedProps.has("_width") ||
+      this._renderData === undefined
+    ) {
       this.style.setProperty("--clickable-cursor", this._config.clickable_entities ? "pointer" : "default");
       this._renderData = this._computeRenderData();
     }
@@ -655,10 +681,12 @@ export class PowerFlowCardPlus extends LitElement {
       isCardWideEnough,
     });
     const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
-    const individualFieldLeftTop = getTopLeftIndividual(sortedIndividualObjects);
-    const individualFieldLeftBottom = getBottomLeftIndividual(sortedIndividualObjects);
-    const individualFieldRightTop = getTopRightIndividual(sortedIndividualObjects);
-    const individualFieldRightBottom = getBottomRightIndividual(sortedIndividualObjects);
+    const maxVisibleIndividuals = this._width >= this.wideEnoughForFourIndividuals ? 4 : 2;
+    const visibleIndividualObjects = sortedIndividualObjects.slice(0, maxVisibleIndividuals);
+    const individualFieldLeftTop = getTopLeftIndividual(visibleIndividualObjects);
+    const individualFieldLeftBottom = getBottomLeftIndividual(visibleIndividualObjects);
+    const individualFieldRightTop = getTopRightIndividual(visibleIndividualObjects);
+    const individualFieldRightBottom = getBottomRightIndividual(visibleIndividualObjects);
     return {
       entities,
       grid,
@@ -666,7 +694,7 @@ export class PowerFlowCardPlus extends LitElement {
       battery,
       home,
       nonFossil,
-      individualObjs,
+      individualObjs: visibleIndividualObjects,
       newDur,
       templatesObj,
       homeBatteryCircumference,
@@ -674,7 +702,7 @@ export class PowerFlowCardPlus extends LitElement {
       homeNonFossilCircumference,
       homeGridCircumference,
       homeUsageToDisplay,
-      sortedIndividualObjects,
+      sortedIndividualObjects: visibleIndividualObjects,
       individualFieldLeftTop,
       individualFieldLeftBottom,
       individualFieldRightTop,
