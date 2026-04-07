@@ -76,7 +76,7 @@ export const individualRightTopElement = (
                     <animateMotion
                     dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
                     repeatCount="indefinite"
-                    calcMode="linear"
+                    calcMode="paced"
                     keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
                     keyTimes="0;1"
                     >
