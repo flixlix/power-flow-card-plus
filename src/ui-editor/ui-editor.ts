@@ -60,8 +60,6 @@ const CONFIG_PAGES: {
   },
 ];
 
-type ConfigPages = typeof CONFIG_PAGES;
-
 @customElement("power-flow-card-plus-editor")
 export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;

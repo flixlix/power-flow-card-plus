@@ -309,8 +309,6 @@ export class PowerFlowCardPlus extends LitElement {
                       individualObj: individualFieldRightBottom,
                       newDur,
                       templatesObj,
-                      battery,
-                      individualObjs,
                     })
                   : html``}
               </div>`

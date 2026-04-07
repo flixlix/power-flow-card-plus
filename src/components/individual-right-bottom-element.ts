@@ -7,7 +7,6 @@ import { showLine } from "@/utils/show-line";
 import { IndividualObject } from "@/states/raw/individual/get-individual-object";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { styleLine } from "@/utils/style-line";
-import { checkHasBottomIndividual } from "@/utils/compute-individual-position";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 
 interface TopIndividual {
@@ -15,14 +14,12 @@ interface TopIndividual {
   templatesObj: TemplatesObj;
   individualObj?: IndividualObject;
   displayState: string;
-  battery: any;
-  individualObjs: IndividualObject[];
 }
 
 export const individualRightBottomElement = (
   main: PowerFlowCardPlus,
   config: PowerFlowCardPlusConfig,
-  { individualObj, templatesObj, displayState, newDur, battery, individualObjs }: TopIndividual
+  { individualObj, templatesObj, displayState, newDur }: TopIndividual
 ) => {
   if (!individualObj) return html`<div class="spacer"></div>`;
 
@@ -30,8 +27,6 @@ export const individualRightBottomElement = (
   if (indexOfIndividual === -1) return html`<div class="spacer"></div>`;
 
   const duration = newDur.individual[indexOfIndividual] || 1.66;
-
-  const hasBottomRow = !!battery?.has || checkHasBottomIndividual(individualObjs);
 
   return html`<div class="circle-container individual-bottom individual-right individual-right-bottom">
     <div

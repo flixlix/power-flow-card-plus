@@ -170,13 +170,6 @@ type Condition =
   | AndCondition
   | NotCondition;
 
-// Legacy conditional card condition
-interface LegacyCondition {
-  entity?: string;
-  state?: string | string[];
-  state_not?: string | string[];
-}
-
 interface BaseCondition {
   condition: string;
 }
