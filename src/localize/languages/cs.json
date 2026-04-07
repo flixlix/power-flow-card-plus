@@ -23,6 +23,8 @@
     "decimals": "Desetinná místa",
     "consumption": "Spotřeba",
     "production": "Výroba",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Barva ikony",
     "color_circle": "Barva kruhu",
     "color_value": "Barva hodnoty",

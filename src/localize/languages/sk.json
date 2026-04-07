@@ -23,6 +23,8 @@
     "decimals": "Desatinné",
     "consumption": "Spotreba",
     "production": "Výroba",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Farba ikony",
     "color_circle": "Farba kruhu",
     "color_value": "Farba hodnoty",

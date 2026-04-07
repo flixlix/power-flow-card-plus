@@ -34,7 +34,7 @@ export const allDynamicStyles = (
       ? "var(--energy-grid-consumption-color)"
       : grid.color.icon_type === "production"
       ? "var(--energy-grid-return-color)"
-      : grid.color.icon_type === true
+      : grid.color.icon_type === "color_dynamically"
       ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
         ? "var(--energy-grid-consumption-color)"
         : "var(--energy-grid-return-color)"
@@ -47,7 +47,7 @@ export const allDynamicStyles = (
       ? "var(--energy-grid-consumption-color)"
       : grid.color.circle_type === "production"
       ? "var(--energy-grid-return-color)"
-      : grid.color.circle_type === true
+      : grid.color.circle_type === "color_dynamically"
       ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
         ? "var(--energy-grid-consumption-color)"
         : "var(--energy-grid-return-color)"
@@ -74,7 +74,7 @@ export const allDynamicStyles = (
       ? "var(--energy-grid-consumption-color)"
       : grid.secondary.color.type === "production"
       ? "var(--energy-grid-return-color)"
-      : grid.secondary.color.type === true
+      : grid.secondary.color.type === "color_dynamically"
       ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
         ? "var(--energy-grid-consumption-color)"
         : "var(--energy-grid-return-color)"
@@ -120,7 +120,7 @@ export const allDynamicStyles = (
       ? "var(--energy-battery-in-color)"
       : battery.color.icon_type === "production"
       ? "var(--energy-battery-out-color)"
-      : battery.color.icon_type === true
+      : battery.color.icon_type === "color_dynamically"
       ? battery.state.fromBattery >= battery.state.toBattery
         ? "var(--energy-battery-out-color)"
         : "var(--energy-battery-in-color)"

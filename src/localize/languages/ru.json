@@ -23,6 +23,8 @@
     "decimals": "Десятичные",
     "consumption": "Потребление",
     "production": "Производство",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Цвет иконки",
     "color_circle": "Цвет круга",
     "color_value": "Цвет значения",

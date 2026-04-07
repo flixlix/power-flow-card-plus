@@ -23,6 +23,8 @@
     "decimals": "Dezimalstellen",
     "consumption": "Verbrauch",
     "production": "Produktion",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Farbe des Symbols",
     "color_circle": "Farbe des Kreises",
     "color_value": "Farbe des Wertes",

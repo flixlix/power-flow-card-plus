@@ -70,13 +70,13 @@ export const entitiesSchema = memoizeOne((localize) => [
     type: "grid",
     column_min_width: "400px",
     schema: [
-      {
-        title: localize("editor.grid"),
-        name: "grid",
-        type: "expandable",
-        iconPath: mdiTransmissionTower,
-        schema: gridSchema,
-      },
+      // {
+      //   title: localize("editor.grid"),
+      //   name: "grid",
+      //   type: "expandable",
+      //   iconPath: mdiTransmissionTower,
+      //   schema: gridSchema,
+      // },
       {
         title: localize("editor.solar"),
         name: "solar",
