@@ -249,9 +249,9 @@ export const allDynamicStyles = (
         field?.secondary_info?.color_value ? `var(--individual-${fieldName}-color)` : `var(--primary-text-color)`
       );
     };
-
-    for (let index = 0; index < (individual.length < 4 ? individual.length : 4); index++){
-      getStylesForIndividual(individual![index], index);
-    };
+    const individualsShown = individual.filter((i) => i?.has);
+    for (let index = 0; index < (individualsShown.length < 4 ? individualsShown.length : 4); index++) {
+      getStylesForIndividual(individualsShown[index], index);
+    }
   }
 };
