@@ -1,5 +1,5 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { TemplatesObj } from "@/type";
 import { displayValue } from "@/utils/display-value";
@@ -54,5 +54,5 @@ export const individualSecondarySpan = (
         template: templatesObj.individual[index] || undefined,
         tap_action: individual?.secondary?.tap_action || undefined,
       })}`
-    : ""}`;
+    : nothing}`;
 };

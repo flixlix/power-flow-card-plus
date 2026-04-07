@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { generalSecondarySpan } from "./spans/general-secondary-span";
@@ -37,7 +37,7 @@ export const solarElement = (
       }}
     >
       ${generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar")}
-      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : null}
+      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : nothing}
       ${entities.solar?.display_zero_state !== false || (bottomSolarState || 0) > 0
         ? html` <span class="solar">
             ${displayValue(main.hass, config, bottomSolarState, {
@@ -47,7 +47,7 @@ export const solarElement = (
               watt_threshold: config.watt_threshold,
             })}
           </span>`
-        : ""}
+        : nothing}
     </div>
   </div>`;
 };

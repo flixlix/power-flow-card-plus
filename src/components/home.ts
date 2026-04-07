@@ -1,4 +1,4 @@
-import { html, svg } from "lit";
+import { html, nothing, svg } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { generalSecondarySpan } from "./spans/general-secondary-span";
 import { NewDur, TemplatesObj } from "@/type";
@@ -52,7 +52,7 @@ export const homeElement = (
     }}
   >
     ${generalSecondarySpan(main.hass, main, config, templatesObj, home, "home")}
-    ${home.icon !== " " ? html`<ha-icon id="home-icon" .icon=${home.icon} />` : null}
+    ${home.icon !== " " ? html`<ha-icon id="home-icon" .icon=${home.icon} />` : nothing}
     ${homeUsageToDisplay}
     <svg class="home-circle-sections">
       ${
@@ -66,7 +66,7 @@ export const homeElement = (
                 shape-rendering="geometricPrecision"
                 stroke-dashoffset="-${circleCircumference - homeSolarCircumference}"
               />`
-          : ""
+          : nothing
       }
       ${
         homeBatteryCircumference
@@ -79,7 +79,7 @@ export const homeElement = (
                 stroke-dashoffset="-${circleCircumference - homeBatteryCircumference - (homeSolarCircumference || 0)}"
                 shape-rendering="geometricPrecision"
               />`
-          : ""
+          : nothing
       }
       ${
         homeNonFossilCircumference !== undefined
@@ -94,7 +94,7 @@ export const homeElement = (
                 }"
                 shape-rendering="geometricPrecision"
               />`
-          : ""
+          : nothing
       }
       <circle
         class="grid"

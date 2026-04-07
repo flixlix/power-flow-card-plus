@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { displayValue } from "@/utils/display-value";
@@ -56,7 +56,7 @@ export const batteryElement = (
               watt_threshold: config.watt_threshold,
             })}
           </span>`
-        : null}
+        : nothing}
       ${battery.icon !== " "
         ? html` <ha-icon
             id="battery-icon"
@@ -70,7 +70,7 @@ export const batteryElement = (
               }
             }}
           />`
-        : null}
+        : nothing}
       ${entities.battery?.display_state === "two_way" ||
       entities.battery?.display_state === undefined ||
       (entities.battery?.display_state === "one_way_no_zero" && battery.state.toBattery > 0) ||
@@ -98,7 +98,7 @@ export const batteryElement = (
               watt_threshold: config.watt_threshold,
             })}</span
           >`
-        : ""}
+        : nothing}
       ${entities.battery?.display_state === "two_way" ||
       entities.battery?.display_state === undefined ||
       (entities.battery?.display_state === "one_way_no_zero" && battery.state.fromBattery > 0) ||
@@ -126,7 +126,7 @@ export const batteryElement = (
               watt_threshold: config.watt_threshold,
             })}</span
           >`
-        : ""}
+        : nothing}
     </div>
     <span class="label">${battery.name}</span>
   </div>`;
