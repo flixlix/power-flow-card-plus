@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { baseSecondarySpan } from "./base-secondary-span";
 import { ActionConfig, HomeAssistant } from "custom-card-helpers";
 import { displayValue } from "@/utils/display-value";
@@ -27,21 +27,21 @@ export const generalSecondarySpan = (
   },
   key: string
 ) => {
-  return html` ${field?.secondary?.has || field?.secondary?.template
-    ? html` ${baseSecondarySpan({
-        main,
-        className: key,
-        entityId: field.secondary.entity,
-        icon: field.secondary.icon,
-        value: displayValue(hass, config, field.secondary.state, {
-          unit: field.secondary.unit,
-          unitWhiteSpace: field.secondary.unit_white_space,
-          decimals: field.secondary.decimals,
-          accept_negative: field.secondary.accept_negative,
-          watt_threshold: config.watt_threshold,
-        }),
-        tap_action: field.secondary.tap_action,
-        template: templatesObj[`${key}Secondary`],
-      })}`
-    : ""}`;
+  if (!field?.secondary?.has && !field?.secondary?.template) return nothing;
+
+  return html` ${baseSecondarySpan({
+    main,
+    className: key,
+    entityId: field.secondary.entity,
+    icon: field.secondary.icon,
+    value: displayValue(hass, config, field.secondary.state, {
+      unit: field.secondary.unit,
+      unitWhiteSpace: field.secondary.unit_white_space,
+      decimals: field.secondary.decimals,
+      accept_negative: field.secondary.accept_negative,
+      watt_threshold: config.watt_threshold,
+    }),
+    tap_action: field.secondary.tap_action,
+    template: templatesObj[`${key}Secondary`],
+  })}`;
 };

@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { HomeAssistant } from "custom-card-helpers";
 
@@ -22,5 +22,5 @@ export const dashboardLinkElement = (config: PowerFlowCardPlusConfig, hass: Home
             : ""}
         </div>
       `
-    : html``;
+    : nothing;
 };
