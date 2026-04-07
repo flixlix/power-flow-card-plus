@@ -1,7 +1,7 @@
 import { html } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { displayValue } from "../utils/displayValue";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { displayValue } from "@/utils/display-value";
 
 export const batteryElement = (
   main: PowerFlowCardPlus,
@@ -52,7 +52,7 @@ export const batteryElement = (
               unit: battery.state_of_charge.unit ?? "%",
               unitWhiteSpace: battery.state_of_charge.unit_white_space,
               decimals: battery.state_of_charge.decimals,
-              accept_negative: undefined,
+              accept_negative: true,
               watt_threshold: config.watt_threshold,
             })}
           </span>`

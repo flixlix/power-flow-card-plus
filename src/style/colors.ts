@@ -1,4 +1,4 @@
-import { HomeSources } from "../type";
+import { HomeSources } from "@/type";
 
 export const computeColor = (colorType: boolean | string | undefined, homeSources: HomeSources, homeLargestSource: string): string => {
   let iconHomeColor: string = "var(--primary-text-color)";

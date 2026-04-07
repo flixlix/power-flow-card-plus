@@ -2,10 +2,10 @@ import { HomeAssistant } from "custom-card-helpers";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { EntityType } from "@/type";
 import { isNumberValue } from "@/utils/utils";
-import { isEntityInverted } from "../utils/isEntityInverted";
-import { onlyNegative, onlyPositive } from "../utils/negativePositive";
-import { getEntityStateWatts } from "../utils/getEntityStateWatts";
-import { getFirstEntityName } from "../utils/mutliEntity";
+import { isEntityInverted } from "@/states/utils/is-entity-inverted";
+import { onlyNegative, onlyPositive } from "@/states/utils/negative-positive";
+import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
+import { getFirstEntityName } from "@/states/utils/mutli-entity";
 
 export const getSecondaryState = (hass: HomeAssistant, config: PowerFlowCardPlusConfig, field: EntityType) => {
   const entity = config.entities?.[field]?.secondary_info?.entity;

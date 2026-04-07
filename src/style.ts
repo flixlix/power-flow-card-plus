@@ -109,6 +109,10 @@ export const styles = css`
     box-sizing: border-box;
   }
 
+  :dir(rtl) .lines {
+    justify-content: flex-end;
+  }
+
   .lines:not(.multi-individual) svg.flat-line {
     left: var(--lines-svg-flat-left);
   }
@@ -195,6 +199,7 @@ export const styles = css`
     stroke: var(--battery-grid-line);
   }
   ha-icon {
+    display: inline;
     padding-bottom: 2px;
   }
   ha-icon.small {

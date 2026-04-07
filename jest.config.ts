@@ -148,6 +148,10 @@ const config: Config = {
   // The test environment that will be used for testing
   testEnvironment: "node",
 
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
+
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
 

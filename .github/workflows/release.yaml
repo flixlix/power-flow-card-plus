@@ -1,44 +1,59 @@
 name: Release
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release-bundle:
+  release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
-
-    outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Cache pnpm modules
-        id: cache-modules
-        uses: actions/cache@v4
         with:
-          path: |
-            ~/.pnpm-store
-            **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'rollup.config.js') }}
-          restore-keys: |
-            ${{ runner.os }}-
+          # Important for Changesets to see the history
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: latest
-          run_install: false
 
-      - name: Install Packages
-        if: steps.cache-modules.outputs.cache-hit != 'true'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm build
+      - name: Create Release PR or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This runs 'pnpm release' from your package.json
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Release
-        run: pnpx semantic-release
+      - name: Get Version from package.json
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        id: package_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release and Upload Assets
+        # This runs if the bot merged the Version PR (no more changesets left)
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.package_version.outputs.version }}
+          files: dist/power-flow-card-plus.js
+          # Use the changelog from the latest tag
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

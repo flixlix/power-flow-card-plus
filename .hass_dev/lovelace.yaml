@@ -1,0 +1,8 @@
+  mode: storage
+  dashboards:
+    lovelace-pfcp-showcase:
+      mode: yaml
+      title: Showcase
+      icon: mdi:flash
+      show_in_sidebar: true
+      filename: lovelace-pfcp-showcase.yaml
