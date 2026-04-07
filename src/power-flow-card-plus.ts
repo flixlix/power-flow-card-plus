@@ -673,7 +673,6 @@ export class PowerFlowCardPlus extends LitElement {
     const individualFieldLeftBottom = getBottomLeftIndividual(visibleIndividualObjects);
     const individualFieldRightTop = getTopRightIndividual(visibleIndividualObjects);
     const individualFieldRightBottom = getBottomRightIndividual(visibleIndividualObjects);
-    console.log(sortedIndividualObjects, visibleIndividualObjects);
     allDynamicStyles(this, {
       grid,
       solar,
