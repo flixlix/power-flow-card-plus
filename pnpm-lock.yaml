@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@changesets/changelog-github':
-        specifier: ^0.6.0
-        version: 0.6.0
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -51,6 +48,9 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.28.5
         version: 7.28.5(@babel/core@7.29.0)
+      '@changesets/changelog-github':
+        specifier: ^0.6.0
+        version: 0.6.0
       '@changesets/cli':
         specifier: ^2.30.0
         version: 2.30.0(@types/node@20.19.37)
