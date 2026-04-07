@@ -28,7 +28,11 @@ export const displayValue = (
     watt_threshold?: number;
   }
 ): string => {
-  if (value === null) return "0";
+  const whiteSpace = unitWhiteSpace === false ? "" : " ";
+
+  if (value === null || value === undefined || value === "") {
+    return `0${whiteSpace}${unit ?? "W"}`;
+  }
 
   if (!isNumberValue(value)) return value.toString();
 
@@ -45,5 +49,5 @@ export const displayValue = (
     hass.locale
   );
 
-  return `${v}${unitWhiteSpace === false ? "" : " "}${unit || (isKW ? "kW" : "W")}`;
+  return `${v}${whiteSpace}${unit || (isKW ? "kW" : "W")}`;
 };
