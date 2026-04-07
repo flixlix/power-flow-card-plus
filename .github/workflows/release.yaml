@@ -1,43 +1,51 @@
 name: Release
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release-bundle:
+  release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
-
-    outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Cache pnpm modules
-        id: cache-modules
-        uses: actions/cache@v4
         with:
-          path: |
-            ~/.pnpm-store
-            **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'rollup.config.js') }}
-          restore-keys: |
-            ${{ runner.os }}-
+          # Important for Changesets to see the history
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          run_install: false
+          # Using version 9 as you likely use it, or your specific version
+          version: 9
 
-      - name: Install Packages
-        if: steps.cache-modules.outputs.cache-hit != 'true'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm build
+      - name: Create Release PR or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This runs 'pnpm release' from your package.json
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Release
-        run: pnpx semantic-release
+      - name: Upload Release Assets
+        if: steps.changesets.outputs.published == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          # Grabs the version from the first package published
+          tag_name: v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
+          files: dist/power-flow-card-plus.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
