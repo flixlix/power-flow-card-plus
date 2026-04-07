@@ -1,0 +1,4 @@
+input_boolean:
+  power_outage_state:
+    name: Power Outage State
+    initial: false

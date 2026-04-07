@@ -1,0 +1,91 @@
+input_number:
+  grid_power_combined:
+    name: Grid Power Combined
+    initial: 30
+    min: -100
+    max: 100
+    step: 0.5
+  grid_power_import:
+    name: Grid Power Import
+    initial: 0
+    min: 0
+    max: 100
+    step: 0.5
+  grid_power_export:
+    name: Grid Power Export
+    initial: 50
+    min: 0
+    max: 100
+    step: 0.5
+  battery_soc:
+    name: Battery State of Charge
+    initial: 67
+    min: 0
+    max: 100
+    step: 0.5
+  battery_power_combined:
+    name: Battery Power Combined
+    initial: 40
+    min: -100
+    max: 100
+    step: 0.5
+  battery_power_import:
+    name: Battery Power Import
+    initial: 0
+    min: 0
+    max: 100
+    step: 0.5
+  battery_power_export:
+    name: Battery Power Export
+    initial: 60
+    min: 0
+    max: 100
+    step: 0.5
+  solar_power:
+    name: Solar Power
+    initial: 100
+    min: 0
+    max: 100
+    step: 0.5
+  fossil_fuel_percentage:
+    name: Fossil Fuel Percentage
+    initial: 25
+    min: 0
+    max: 100
+    step: 1
+  generator_power:
+    name: Generator Power
+    initial: 20
+    min: 0
+    max: 100
+    step: 0.5
+  ev_power:
+    name: EV Power
+    initial: 10
+    min: 0
+    max: 100
+    step: 0.5
+  washing_machine_power:
+    name: Washing Machine Power
+    initial: 10
+    min: 0
+    max: 100
+    step: 0.5
+  dishwasher_power:
+    name: Dishwasher Power
+    initial: 10
+    min: 0
+    max: 100
+    step: 0.5
+  dryer_power:
+    name: Dryer Power
+    initial: 10
+    min: 0
+    max: 100
+    step: 0.5
+  fridge_power:
+    name: Fridge Power
+    initial: 10
+    min: 0
+    max: 100
+    step: 0.5

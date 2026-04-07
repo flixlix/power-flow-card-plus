@@ -1,7 +1,7 @@
 import { HomeAssistant } from "custom-card-helpers";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { getFieldInState, getFieldOutState } from "./base";
-import { getEntityState } from "../utils/getEntityState";
+import { getEntityState } from "@/states/utils/get-entity-state";
 
 export const getBatteryStateOfCharge = (hass: HomeAssistant, config: PowerFlowCardPlusConfig) => {
   const entity = config.entities.battery?.state_of_charge;

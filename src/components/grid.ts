@@ -1,9 +1,9 @@
 import { html } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { displayValue } from "../utils/displayValue";
-import { generalSecondarySpan } from "./spans/generalSecondarySpan";
-import { TemplatesObj } from "../type";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { displayValue } from "@/utils/display-value";
+import { generalSecondarySpan } from "./spans/general-secondary-span";
+import { TemplatesObj } from "@/type";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 
 export const gridElement = (
   main: PowerFlowCardPlus,

@@ -1,9 +1,9 @@
 import { html } from "lit";
-import { PowerFlowCardPlus } from "../power-flow-card-plus";
-import { ConfigEntities, PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
-import { generalSecondarySpan } from "./spans/generalSecondarySpan";
-import { displayValue } from "../utils/displayValue";
-import { TemplatesObj } from "../type";
+import { PowerFlowCardPlus } from "@/power-flow-card-plus";
+import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { generalSecondarySpan } from "./spans/general-secondary-span";
+import { displayValue } from "@/utils/display-value";
+import { TemplatesObj } from "@/type";
 
 export const solarElement = (
   main: PowerFlowCardPlus,

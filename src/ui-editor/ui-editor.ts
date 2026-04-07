@@ -3,7 +3,7 @@ import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { assert } from "superstruct";
-import { PowerFlowCardPlusConfig } from "../power-flow-card-plus-config";
+import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { cardConfigStruct, generalConfigSchema, advancedOptionsSchema } from "./schema/_schema-all";
 import localize from "../localize/localize";
 import { defaultValues } from "../utils/get-default-config";
@@ -11,11 +11,11 @@ import { LovelaceRowConfig } from "./types/entity-rows";
 import "./components/individual-devices-editor";
 import "./components/link-subpage";
 import "./components/subpage-header";
-import { loadHaForm } from "./utils/loadHAForm";
+import { loadHaForm } from "./utils/load-ha-form";
 import { gridSchema } from "./schema/grid";
 import { solarSchema } from "./schema/solar";
 import { batterySchema } from "./schema/battery";
-import { nonFossilSchema } from "./schema/fossil_fuel_percentage";
+import { nonFossilSchema } from "./schema/fossil-fuel-percentage";
 import { homeSchema } from "./schema/home";
 import { ConfigPage } from "./types/config-page";
 
@@ -59,8 +59,6 @@ const CONFIG_PAGES: {
     schema: advancedOptionsSchema,
   },
 ];
-
-type ConfigPages = typeof CONFIG_PAGES;
 
 @customElement("power-flow-card-plus-editor")
 export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardEditor {
