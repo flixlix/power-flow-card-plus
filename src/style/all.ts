@@ -35,7 +35,7 @@ export const allDynamicStyles = (
       : grid.color.icon_type === "production"
       ? "var(--energy-grid-return-color)"
       : grid.color.icon_type === true
-      ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
+      ? (grid.state.fromGrid ?? 0) > (grid.state.toGrid ?? 0)
         ? "var(--energy-grid-consumption-color)"
         : "var(--energy-grid-return-color)"
       : "var(--primary-text-color)"
@@ -48,7 +48,7 @@ export const allDynamicStyles = (
       : grid.color.circle_type === "production"
       ? "var(--energy-grid-return-color)"
       : grid.color.circle_type === true
-      ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
+      ? (grid.state.fromGrid ?? 0) > (grid.state.toGrid ?? 0)
         ? "var(--energy-grid-consumption-color)"
         : "var(--energy-grid-return-color)"
       : "var(--energy-grid-consumption-color)"
