@@ -76,7 +76,7 @@ describe("core utils", () => {
   test("displayValue returns 0 for null", () => {
     const hass = { locale: "en" } as any;
     const config = { kw_decimals: 1, w_decimals: 0, watt_threshold: 1000 } as unknown as PowerFlowCardPlusConfig;
-    expect(displayValue(hass, config, null, {})).toBe("0");
+    expect(displayValue(hass, config, null, {})).toBe("0 W");
   });
 
   test("displayValue chooses kW when unit is missing and value >= watt_threshold", () => {
