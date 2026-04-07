@@ -59,7 +59,7 @@ export const solarSchema = [
     title: localize("editor.secondary_info"),
     name: "secondary_info",
     type: "expandable",
-    schema: secondaryInfoSchema,
+    schema: [...secondaryInfoSchema, { name: "sum_total", label: "Sum Total", selector: { boolean: {} } }],
   },
   {
     title: localize("editor.tap_action"),

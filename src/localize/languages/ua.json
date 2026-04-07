@@ -64,6 +64,7 @@
     "display_zero_lines": "Показувати лінії з нульовим значенням",
     "clickable_entities": "Клікабельні сутності",
     "disable_dots": "Вимкнути точки",
+    "sum_total": "Sum solar and secondary",
     "use_new_flow_rate_model": "Новий алгоритм швидкості потоку",
     "use_metadata": "Використовувати метадані",
     "mode": "Режим",

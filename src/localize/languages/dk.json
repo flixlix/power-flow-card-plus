@@ -64,6 +64,7 @@
     "display_zero_lines": "Vis Nul Linjer",
     "clickable_entities": "Klikbar enheder",
     "disable_dots": "Deaktiver prikker",
+    "sum_total": "Sum solar and secondary",
     "use_new_flow_rate_model": "Ny flowhastighedsmodel",
     "use_metadata": "Brug Metadata",
     "mode": "Tilstand",

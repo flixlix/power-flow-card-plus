@@ -64,6 +64,7 @@
     "display_zero_lines": "Vising av inaktiva linjer",
     "clickable_entities": "Klickbara entiteter",
     "disable_dots": "Avaktivera punkter",
+    "sum_total": "Sum solar and secondary",
     "use_new_flow_rate_model": "Ny flödesmodell",
     "use_metadata": "Använd metadata",
     "mode": "Läge",

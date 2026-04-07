@@ -60,7 +60,9 @@ interface Solar extends BaseConfigEntity {
   color_icon?: boolean;
   color_value?: boolean;
   color_label?: boolean;
-  secondary_info?: SecondaryInfoType;
+  secondary_info?: SecondaryInfoType & {
+    sum_total?: boolean;
+  };
   display_zero?: boolean;
   display_zero_state?: boolean;
 }
