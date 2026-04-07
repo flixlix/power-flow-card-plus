@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   branches: ["main", { name: "dev", prerelease: true }],
   preset: "conventionalcommits",
   plugins: [
