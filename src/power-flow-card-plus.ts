@@ -528,6 +528,7 @@ export class PowerFlowCardPlus extends LitElement {
     };
     grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);
     grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, entities.grid?.display_zero_tolerance);
+    console.log(solar.state.total);
     solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
     battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
     battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);

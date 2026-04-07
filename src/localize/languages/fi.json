@@ -64,6 +64,7 @@
     "display_zero_lines": "Näytä nolla-viivat",
     "clickable_entities": "Napautettavat kohteet",
     "disable_dots": "Poista pisteet",
+    "sum_total": "Sum solar and secondary",
     "use_new_flow_rate_model": "Uusi virtausnopeusmalli",
     "use_metadata": "Käytä metatietoja",
     "mode": "Tila",

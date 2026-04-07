@@ -64,6 +64,7 @@
     "display_zero_lines": "Wyświetl linie zera",
     "clickable_entities": "Klikalne jednostki",
     "disable_dots": "Wyłącz kropki",
+    "sum_total": "Sum solar and secondary",
     "use_new_flow_rate_model": "Nowy model wskaźnika przepływu",
     "use_metadata": "Użyj metadanych",
     "mode": "Tryb",

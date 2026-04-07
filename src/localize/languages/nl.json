@@ -64,6 +64,7 @@
     "display_zero_lines": "Nullijnen Weergeven",
     "clickable_entities": "Klikbare Entiteiten",
     "disable_dots": "Punten Uitschakelen",
+    "sum_total": "Sum solar and secondary",
     "use_new_flow_rate_model": "Nieuw Stroomsnelheid Model Gebruiken",
     "use_metadata": "Metadata Gebruiken",
     "mode": "Modus",
