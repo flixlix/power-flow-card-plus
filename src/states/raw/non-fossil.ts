@@ -6,7 +6,6 @@ import { getSecondaryState } from "./base";
 
 export const getNonFossilHas = (hass: HomeAssistant, config: PowerFlowCardPlusConfig) => {
   const nonFossil = config.entities.fossil_fuel_percentage;
-  const grid = config.entities.grid;
   const fossilPercentageEntity = nonFossil?.entity;
   const fossilPercentageDisplayZero = nonFossil?.display_zero;
   const gridFromGrid = getGridConsumptionState(hass, config);
@@ -22,7 +21,6 @@ export const getNonFossilHas = (hass: HomeAssistant, config: PowerFlowCardPlusCo
 
 export const getNonFossilHasPercentage = (hass: HomeAssistant, config: PowerFlowCardPlusConfig) => {
   const nonFossil = config.entities.fossil_fuel_percentage;
-  const grid = config.entities.grid;
   const fossilPercentageEntity = nonFossil?.entity;
   const fossilPercentageDisplayZero = nonFossil?.display_zero;
   const gridFromGrid = getGridConsumptionState(hass, config);
