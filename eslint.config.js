@@ -23,6 +23,13 @@ export default [
       "no-use-before-define": "off",
       "class-methods-use-this": "off",
       "lines-between-class-members": "off",
+      "no-console": ["warn", { allow: ["warn", "error", "info", "groupCollapsed", "groupEnd"] }],
+    },
+  },
+  {
+    files: ["src/logging.ts"],
+    rules: {
+      "no-console": "off",
     },
   },
 ];
