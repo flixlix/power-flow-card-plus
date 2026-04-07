@@ -24,7 +24,7 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint src/*",
-    "release": "pnpm build && pnpm changeset publish",
+    "release": "pnpm build && pnpm changeset tag",
     "start": "rollup -wc",
     "watch": "rollup -c --watch",
     "typecheck": "tsc --noEmit",

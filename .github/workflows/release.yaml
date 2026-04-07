@@ -37,12 +37,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Release Assets
-        if: steps.changesets.outputs.published == 'true'
+      - name: Get Version from package.json
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        id: package_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release and Upload Assets
+        # This runs if the bot merged the Version PR (no more changesets left)
+        if: steps.changesets.outputs.hasChangesets == 'false'
         uses: softprops/action-gh-release@v2
         with:
-          # Grabs the version from the first package published
-          tag_name: v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
+          tag_name: v${{ steps.package_version.outputs.version }}
           files: dist/power-flow-card-plus.js
+          # Use the changelog from the latest tag
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
