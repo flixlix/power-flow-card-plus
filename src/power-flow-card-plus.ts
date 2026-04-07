@@ -615,7 +615,7 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
     const newDur: NewDur = {
-      batteryGrid: computeFlowRate(this._config, grid.state.toBattery ?? battery.state.toGrid ?? 0, totalLines),
+      batteryGrid: computeFlowRate(this._config, Math.max(grid.state.toBattery ?? 0, battery.state.toGrid ?? 0, 0), totalLines),
       batteryToHome: computeFlowRate(this._config, battery.state.toHome ?? 0, totalLines),
       gridToHome: computeFlowRate(this._config, grid.state.toHome ?? 0, totalLines),
       solarToBattery: computeFlowRate(this._config, solar.state.toBattery ?? 0, totalLines),
