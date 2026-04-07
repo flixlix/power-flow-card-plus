@@ -46,6 +46,7 @@ import { defaultValues, getDefaultConfig } from "@/utils/get-default-config";
 import { registerCustomCard } from "@/utils/register-custom-card";
 import { coerceNumber } from "@/utils/utils";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { sortIndividualObjects } from "@/utils/sort-individual-objects";
 
 const circleCircumference = 238.76104;
 
@@ -665,6 +666,14 @@ export class PowerFlowCardPlus extends LitElement {
       individual: individualObjs?.map((_, index) => this._templateResults[`${individualKeys[index]}Secondary`]?.result) || [],
     };
     const isCardWideEnough = this._width > 420;
+    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
+    const maxVisibleIndividuals = this._width >= this.wideEnoughForFourIndividuals ? 4 : 2;
+    const visibleIndividualObjects = sortedIndividualObjects.slice(0, maxVisibleIndividuals);
+    const individualFieldLeftTop = getTopLeftIndividual(visibleIndividualObjects);
+    const individualFieldLeftBottom = getBottomLeftIndividual(visibleIndividualObjects);
+    const individualFieldRightTop = getTopRightIndividual(visibleIndividualObjects);
+    const individualFieldRightBottom = getBottomRightIndividual(visibleIndividualObjects);
+    console.log(sortedIndividualObjects, visibleIndividualObjects);
     allDynamicStyles(this, {
       grid,
       solar,
@@ -674,17 +683,10 @@ export class PowerFlowCardPlus extends LitElement {
       entities,
       homeLargestSource,
       homeSources,
-      individual: individualObjs,
+      individual: sortedIndividualObjects,
       nonFossil,
       isCardWideEnough,
     });
-    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
-    const maxVisibleIndividuals = this._width >= this.wideEnoughForFourIndividuals ? 4 : 2;
-    const visibleIndividualObjects = sortedIndividualObjects.slice(0, maxVisibleIndividuals);
-    const individualFieldLeftTop = getTopLeftIndividual(visibleIndividualObjects);
-    const individualFieldLeftBottom = getBottomLeftIndividual(visibleIndividualObjects);
-    const individualFieldRightTop = getTopRightIndividual(visibleIndividualObjects);
-    const individualFieldRightBottom = getBottomRightIndividual(visibleIndividualObjects);
     return {
       entities,
       grid,
@@ -803,14 +805,4 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   static styles = styles;
-}
-
-function sortIndividualObjects(individualObjs: IndividualObject[]) {
-  const sorted = [...individualObjs];
-  sorted
-    .sort((a, b) => {
-      return (a.state || 0) - (b.state || 0);
-    })
-    .reverse();
-  return sorted;
 }

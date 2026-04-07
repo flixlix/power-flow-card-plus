@@ -23,8 +23,8 @@ export const individualRightBottomElement = (
 ) => {
   if (!individualObj) return html`<div class="spacer"></div>`;
 
-  const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity) || -1;
-  if (indexOfIndividual === -1) return html`<div class="spacer"></div>`;
+  const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity);
+  if (indexOfIndividual === -1 || indexOfIndividual === undefined) return html`<div class="spacer"></div>`;
 
   const duration = newDur.individual[indexOfIndividual] || 1.66;
 
