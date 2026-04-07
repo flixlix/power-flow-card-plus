@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
@@ -182,7 +181,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
   }
 
   private _computeLabelCallback = (schema: any) =>
-    this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`) || localize(`editor.${schema?.name}`);
+    this.hass!.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`) || localize(`editor.${schema?.name}`) || schema?.label;
 
   static get styles() {
     return css`

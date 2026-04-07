@@ -23,6 +23,8 @@
     "decimals": "Miejsca po przecinku",
     "consumption": "Zużycie",
     "production": "Produkcja",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Kolor ikony",
     "color_circle": "Kolor okręgu",
     "color_value": "Kolor wartości",

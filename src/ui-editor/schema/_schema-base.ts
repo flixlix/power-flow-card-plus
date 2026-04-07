@@ -105,10 +105,10 @@ const batteryOrGridMainConfigSchema = [
     selector: {
       select: {
         options: [
-          { value: false, label: "Do not Color" },
-          { value: true, label: "Color dynamically" },
-          { value: "production", label: "Production" },
-          { value: "consumption", label: "Consumption" },
+          { value: "no_color", label: localize("editor.no_color") },
+          { value: "color_dynamically", label: localize("editor.color_dynamically") },
+          { value: "production", label: localize("editor.production") },
+          { value: "consumption", label: localize("editor.consumption") },
         ],
         custom_value: true,
       },
@@ -120,8 +120,8 @@ const batteryOrGridMainConfigSchema = [
     selector: {
       select: {
         options: [
-          { value: true, label: "Color dynamically" },
-          { value: false, label: "Consumption" },
+          { value: "color_dynamically", label: "Color dynamically" },
+          { value: "consumption", label: "Consumption" },
           { value: "production", label: "Production" },
         ],
         custom_value: true,

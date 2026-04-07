@@ -23,6 +23,8 @@
     "decimals": "Decimaler",
     "consumption": "Konsumtion",
     "production": "Produktion",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Ikonfärg",
     "color_circle": "Cirkelfärg",
     "color_value": "Färg på värde",

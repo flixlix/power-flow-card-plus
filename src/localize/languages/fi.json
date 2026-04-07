@@ -23,6 +23,8 @@
     "decimals": "Desimaalit",
     "consumption": "Kulutus",
     "production": "Tuotanto",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Ikonin väri",
     "color_circle": "Ympyrän väri",
     "color_value": "Arvon väri",

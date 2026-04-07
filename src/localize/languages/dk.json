@@ -23,6 +23,8 @@
     "decimals": "Decimaler",
     "consumption": "Forbrug",
     "production": "Produktion",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Farve af Icon",
     "color_circle": "Farve af Cirkel",
     "color_value": "Farve af værdi",

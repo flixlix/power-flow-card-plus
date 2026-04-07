@@ -23,6 +23,8 @@
     "decimals": "Кількість десяткових знаків",
     "consumption": "Споживання",
     "production": "Виробництво",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Колір іконки",
     "color_circle": "Колір кола",
     "color_value": "Колір значення",

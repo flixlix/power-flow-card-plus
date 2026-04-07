@@ -1,4 +1,3 @@
-/* eslint-disable wc/guard-super-call */
 import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { html, LitElement, PropertyValues, TemplateResult } from "lit";
@@ -528,7 +527,6 @@ export class PowerFlowCardPlus extends LitElement {
     };
     grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);
     grid.state.toGrid = adjustZeroTolerance(grid.state.toGrid, entities.grid?.display_zero_tolerance);
-    console.log(solar.state.total);
     solar.state.total = adjustZeroTolerance(solar.state.total, entities.solar?.display_zero_tolerance);
     battery.state.fromBattery = adjustZeroTolerance(battery.state.fromBattery, entities.battery?.display_zero_tolerance);
     battery.state.toBattery = adjustZeroTolerance(battery.state.toBattery, entities.battery?.display_zero_tolerance);
@@ -757,7 +755,7 @@ export class PowerFlowCardPlus extends LitElement {
       );
       this._unsubRenderTemplates?.set(topic, sub);
       await sub;
-    } catch (_err) {
+    } catch {
       this._templateResults = {
         ...this._templateResults,
         [topic]: {

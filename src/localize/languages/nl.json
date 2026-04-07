@@ -23,6 +23,8 @@
     "decimals": "Decimalen",
     "consumption": "Verbruik",
     "production": "Productie",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Kleur van Pictogram",
     "color_circle": "Kleur van Cirkel",
     "color_value": "Kleur van Waarde",

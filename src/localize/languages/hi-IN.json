@@ -23,6 +23,8 @@
     "decimals": "दशमलव",
     "consumption": "उपभोग",
     "production": "उत्पादन",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "आइकन का रंग",
     "color_circle": "सर्कल का रंग",
     "color_value": "मान का रंग",

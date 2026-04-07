@@ -23,6 +23,8 @@
     "decimals": "Casas Decimais",
     "consumption": "Consumo",
     "production": "Produção",
+    "no_color": "No Color",
+    "color_dynamically": "Color Dynamically",
     "color_icon": "Cor do Ícone",
     "color_circle": "Cor do Círculo",
     "color_value": "Cor do Valor",
