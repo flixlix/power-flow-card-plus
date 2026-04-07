@@ -16,16 +16,19 @@ jobs:
           # Important for Changesets to see the history
           fetch-depth: 0
 
+      - name: Read pnpm version from package.json
+        id: pnpm-version
+        run: echo "version=$(node -p \"require('./package.json').packageManager.match(/^pnpm@([^+]+)/)[1]\")" >> "$GITHUB_OUTPUT"
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          # Using version 9 as you likely use it, or your specific version
-          version: 9
+          version: ${{ steps.pnpm-version.outputs.version }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
 
       - name: Install dependencies
