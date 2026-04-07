@@ -37,7 +37,7 @@ export const nonFossilElement = (
             }
           }}
         >
-          ${generalSecondarySpan(main.hass, main, config, templatesObj, nonFossil, "low-carbon")}
+          ${generalSecondarySpan(main.hass, main, config, templatesObj, nonFossil, "nonFossilFuel")}
           ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon} />` : null}
           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
           (nonFossil.state.power || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
@@ -61,7 +61,7 @@ export const nonFossilElement = (
                   <animateMotion
                     dur="${computeIndividualFlowRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
                     repeatCount="indefinite"
-                    calcMode="linear"
+                    calcMode="paced"
                   >
                     <mpath xlink:href="#low-carbon" />
                   </animateMotion>
