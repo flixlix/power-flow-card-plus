@@ -1,8 +1,8 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { getEntityStateWatts } from "@/states/utils/getEntityStateWatts";
+import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
 import { IndividualDeviceType } from "@/type";
 import { isNumberValue } from "@/utils/utils";
-import { getEntityStateObj } from "@/states/utils/getEntityStateObj";
+import { getEntityStateObj } from "@/states/utils/get-entity-state-obj";
 
 export const getIndividualState = (hass: HomeAssistant, field: IndividualDeviceType) => {
   const entity: string = field?.entity;

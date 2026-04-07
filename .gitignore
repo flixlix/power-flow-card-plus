@@ -29,7 +29,7 @@ storybook-static
 custom-elements.json
 # pnpm-lock.yaml
 
-
+.env.local
 
 
 # hass dev

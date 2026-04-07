@@ -4,12 +4,12 @@ import { css, CSSResultGroup, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import type { SortableEvent } from "sortablejs";
-import { EditSubElementEvent, EntityConfig, LovelaceRowConfig } from "../types/entity-rows";
-import { fireEvent } from "../utils/fire_event";
-import { sortableStyles } from "../utils/sortable_styles";
-import { loadSortable, SortableInstance } from "../utils/sortable.ondemand";
+import { EditSubElementEvent, EntityConfig, LovelaceRowConfig } from "@/ui-editor/types/entity-rows";
+import { fireEvent } from "@/ui-editor/utils/fire-event";
+import { sortableStyles } from "@/ui-editor/utils/sortable-styles";
+import { loadSortable, SortableInstance } from "@/ui-editor/utils/sortable.ondemand";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
-import { loadHaForm } from "@/ui-editor/utils/loadHAForm";
+import { loadHaForm } from "@/ui-editor/utils/load-ha-form";
 import { individualSchema } from "@/ui-editor/schema/individual";
 import localize from "@/localize/localize";
 
