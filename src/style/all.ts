@@ -74,7 +74,7 @@ export const allDynamicStyles = (
       ? "var(--energy-grid-consumption-color)"
       : grid.secondary.color.type === "production"
       ? "var(--energy-grid-return-color)"
-      : grid.secondary.color.type === "color_dynamically"
+      : grid.secondary.color.type === true
       ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
         ? "var(--energy-grid-consumption-color)"
         : "var(--energy-grid-return-color)"
@@ -133,7 +133,7 @@ export const allDynamicStyles = (
       ? "var(--energy-battery-in-color)"
       : batteryStateOfChargeColorType === "production"
       ? "var(--energy-battery-out-color)"
-      : batteryStateOfChargeColorType === true
+      : batteryStateOfChargeColorType === "color_dynamically"
       ? battery.state.fromBattery >= battery.state.toBattery
         ? "var(--energy-battery-out-color)"
         : "var(--energy-battery-in-color)"
@@ -145,7 +145,7 @@ export const allDynamicStyles = (
       ? "var(--energy-battery-in-color)"
       : battery.color.circle_type === "production"
       ? "var(--energy-battery-out-color)"
-      : battery.color.circle_type === true
+      : battery.color.circle_type === "color_dynamically"
       ? battery.state.fromBattery >= battery.state.toBattery
         ? "var(--energy-battery-out-color)"
         : "var(--energy-battery-in-color)"

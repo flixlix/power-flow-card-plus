@@ -399,7 +399,7 @@ export class PowerFlowCardPlus extends LitElement {
       color: {
         fromGrid: entities.grid?.color?.consumption,
         toGrid: entities.grid?.color?.production,
-        icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
+        icon_type: entities.grid?.color_icon as "color_dynamically" | "no_color" | "production" | "consumption" | undefined,
         circle_type: entities.grid?.color_circle,
       },
       tap_action: entities.grid?.tap_action,

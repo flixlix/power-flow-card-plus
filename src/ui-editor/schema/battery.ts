@@ -68,12 +68,12 @@ const stateOfChargeSchema = [
         selector: {
           select: {
             options: [
-              { value: false, label: "Do Not Color" },
-              { value: true, label: "Color dynamically" },
-              { value: "consumption", label: "Consumption" },
-              { value: "production", label: "Production" },
+              { value: "no_color", label: localize("editor.no_color") },
+              { value: "color_dynamically", label: localize("editor.color_dynamically") },
+              { value: "production", label: localize("editor.production") },
+              { value: "consumption", label: localize("editor.consumption") },
             ],
-            custom_value: true,
+            mode: "dropdown",
           },
         },
       },
