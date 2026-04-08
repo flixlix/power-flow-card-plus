@@ -53,6 +53,7 @@ export const cardConfigStruct = assign(
       individual: optional(any()),
     }),
     sort_individual_devices: optional(boolean()),
+    allow_layout_break: optional(boolean()),
   })
 );
 
@@ -200,6 +201,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "sort_individual_devices",
         label: "Sort individual devices by usage",
+        selector: { boolean: {} },
+      },
+      {
+        name: "allow_layout_break",
+        label: "Allow Layout Break",
         selector: { boolean: {} },
       },
     ],

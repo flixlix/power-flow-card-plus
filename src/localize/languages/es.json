@@ -78,6 +78,7 @@
     "grey_color": "Color Gris",
     "tap_action": "Acción de Toque",
     "navigation_path": "Ruta de Navegación",
-    "sort_individual_devices": "Ordenar dispositivos individuales"
+    "sort_individual_devices": "Ordenar dispositivos individuales",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

@@ -78,6 +78,7 @@
     "grey_color": "Color Gris",
     "tap_action": "Acció al Tocar",
     "navigation_path": "Ruta de Navegació",
-    "sort_individual_devices": "Ordena Dispositius Individuals"
+    "sort_individual_devices": "Ordena Dispositius Individuals",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

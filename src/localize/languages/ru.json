@@ -78,6 +78,7 @@
     "grey_color": "Серый цвет",
     "tap_action": "действие касания",
     "navigation_path": "путь навигации",
-    "sort_individual_devices": "Сортировка отдельных устройств"
+    "sort_individual_devices": "Сортировка отдельных устройств",
+    "allow_layout_break": "Allow Layout Break"
   }
 }
