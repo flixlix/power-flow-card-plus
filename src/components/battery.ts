@@ -23,7 +23,7 @@ export const batteryElement = (
           : typeof entities.battery?.entity === "string"
           ? entities.battery?.entity!
           : entities.battery?.entity!.production;
-        main.onEntityClick(e, entities.battery, target);
+        main.onEntityClick(e, battery, target);
       }}
       @dblclick=${(e: MouseEvent) => {
         const target = entities.battery?.state_of_charge!
@@ -31,7 +31,7 @@ export const batteryElement = (
           : typeof entities.battery?.entity === "string"
           ? entities.battery?.entity!
           : entities.battery?.entity!.production;
-        main.onEntityDoubleClick(e, entities.battery, target);
+        main.onEntityDoubleClick(e, battery, target);
       }}
       @pointerdown=${(e: PointerEvent) => {
         const target = entities.battery?.state_of_charge!
@@ -39,7 +39,7 @@ export const batteryElement = (
           : typeof entities.battery?.entity === "string"
           ? entities.battery?.entity!
           : entities.battery?.entity!.production;
-        main.onEntityPointerDown(e, entities.battery, target);
+        main.onEntityPointerDown(e, battery, target);
       }}
       @pointerup=${(e: PointerEvent) => {
         main.onEntityPointerUp(e);
@@ -54,7 +54,7 @@ export const batteryElement = (
             : typeof entities.battery!.entity === "string"
             ? entities.battery!.entity!
             : entities.battery!.entity!.production;
-          main.openDetails(e, entities.battery, target, "tap");
+          main.openDetails(e, battery, target, "tap");
         }
       }}
     >
@@ -62,13 +62,13 @@ export const batteryElement = (
       ${battery.state_of_charge.state !== null && entities.battery?.show_state_of_charge !== false
         ? html` <span
             @click=${(e: MouseEvent) => {
-              main.onEntityClick(e, entities.battery, entities.battery?.state_of_charge!);
+              main.onEntityClick(e, battery, entities.battery?.state_of_charge!);
             }}
             @dblclick=${(e: MouseEvent) => {
-              main.onEntityDoubleClick(e, entities.battery, entities.battery?.state_of_charge!);
+              main.onEntityDoubleClick(e, battery, entities.battery?.state_of_charge!);
             }}
             @pointerdown=${(e: PointerEvent) => {
-              main.onEntityPointerDown(e, entities.battery, entities.battery?.state_of_charge!);
+              main.onEntityPointerDown(e, battery, entities.battery?.state_of_charge!);
             }}
             @pointerup=${(e: PointerEvent) => {
               main.onEntityPointerUp(e);
@@ -78,7 +78,7 @@ export const batteryElement = (
             }}
             @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
-                main.openDetails(e, entities.battery, entities.battery?.state_of_charge!, "tap");
+                main.openDetails(e, battery, entities.battery?.state_of_charge!, "tap");
               }
             }}
             id="battery-state-of-charge-text"
@@ -97,13 +97,13 @@ export const batteryElement = (
             id="battery-icon"
             .icon=${battery.icon}
             @click=${(e: MouseEvent) => {
-              main.onEntityClick(e, entities.battery, entities.battery?.state_of_charge!);
+              main.onEntityClick(e, battery, entities.battery?.state_of_charge!);
             }}
             @dblclick=${(e: MouseEvent) => {
-              main.onEntityDoubleClick(e, entities.battery, entities.battery?.state_of_charge!);
+              main.onEntityDoubleClick(e, battery, entities.battery?.state_of_charge!);
             }}
             @pointerdown=${(e: PointerEvent) => {
-              main.onEntityPointerDown(e, entities.battery, entities.battery?.state_of_charge!);
+              main.onEntityPointerDown(e, battery, entities.battery?.state_of_charge!);
             }}
             @pointerup=${(e: PointerEvent) => {
               main.onEntityPointerUp(e);
@@ -113,7 +113,7 @@ export const batteryElement = (
             }}
             @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
-                main.openDetails(e, entities.battery, entities.battery?.state_of_charge!, "tap");
+                main.openDetails(e, battery, entities.battery?.state_of_charge!, "tap");
               }
             }}
           />`

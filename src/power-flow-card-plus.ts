@@ -170,7 +170,11 @@ export class PowerFlowCardPlus extends LitElement {
     if ("tap_action" in config || "hold_action" in config || "double_tap_action" in config) {
       return config as ActionConfigSet;
     }
-    return { tap_action: config as ActionConfig };
+    return {
+      tap_action: {
+        action: "more-info",
+      } as ActionConfig,
+    };
   }
 
   public openDetails(
@@ -208,6 +212,8 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   public onEntityClick(event: MouseEvent, config?: ActionConfig | ActionConfigSet, entityId?: string): void {
+    event.stopPropagation();
+    console.log(config);
     const target = event.currentTarget as HTMLElement | null;
     const normalizedConfig = this._normalizeActionConfig(config);
     if (!target) return;

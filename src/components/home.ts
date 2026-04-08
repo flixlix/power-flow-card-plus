@@ -37,10 +37,12 @@ export const homeElement = (
   }: Home
 ) => {
   const showHomeLabel = individual.filter((i) => i.has).length <= 1;
-
+  const isHomeEntityDefined = entities.home?.entity !== undefined;
+  const staticAction = entities.home?.tap_action !== undefined || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
+  const isClickable = isHomeEntityDefined && !staticAction;
   return html`<div class="circle-container home">
   <div
-    class="circle"
+    class="circle ${!isClickable ? 'no-pointer-events' : ''}"
     id="home-circle"
     @click=${(e: MouseEvent) => {
       main.onEntityClick(e, entities.home, entities.home?.entity);
@@ -63,7 +65,7 @@ export const homeElement = (
       }
     }}
   >
-    <ha-ripple></ha-ripple>
+    <ha-ripple .disabled=${!isClickable}></ha-ripple>
     ${generalSecondarySpan(main.hass, main, config, templatesObj, home, "home")}
     ${home.icon !== " " ? html`<ha-icon id="home-icon" .icon=${home.icon} />` : nothing}
     ${homeUsageToDisplay}

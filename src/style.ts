@@ -121,6 +121,7 @@ export const styles = css`
     justify-content: flex-start;
     padding: 0 16px 16px;
     box-sizing: border-box;
+    pointer-events: none;
   }
 
   :dir(rtl) .lines {
@@ -577,6 +578,10 @@ export const styles = css`
   }
 
   .home-circle-sections {
+    pointer-events: none;
+  }
+
+  .no-pointer-events {
     pointer-events: none;
   }
 `;

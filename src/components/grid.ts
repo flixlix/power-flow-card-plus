@@ -21,7 +21,7 @@ export const gridElement = (
             : typeof entities.grid!.entity === "string"
             ? entities.grid!.entity
             : entities.grid!.entity.consumption!;
-        main.onEntityClick(e, entities.grid, target);
+        main.onEntityClick(e, grid, target);
       }}
       @dblclick=${(e: MouseEvent) => {
         const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
@@ -31,7 +31,7 @@ export const gridElement = (
             : typeof entities.grid!.entity === "string"
             ? entities.grid!.entity
             : entities.grid!.entity.consumption!;
-        main.onEntityDoubleClick(e, entities.grid, target);
+        main.onEntityDoubleClick(e, grid, target);
       }}
       @pointerdown=${(e: PointerEvent) => {
         const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
@@ -75,11 +75,11 @@ export const gridElement = (
             class="return"
             @click=${(e: MouseEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-              main.onEntityClick(e, entities.grid, target);
+              main.onEntityClick(e, grid, target);
             }}
             @dblclick=${(e: MouseEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-              main.onEntityDoubleClick(e, entities.grid, target);
+              main.onEntityDoubleClick(e, grid, target);
             }}
             @pointerdown=${(e: PointerEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
@@ -119,11 +119,11 @@ export const gridElement = (
             class="consumption"
             @click=${(e: MouseEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-              main.onEntityClick(e, entities.grid, target);
+              main.onEntityClick(e, grid, target);
             }}
             @dblclick=${(e: MouseEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-              main.onEntityDoubleClick(e, entities.grid, target);
+              main.onEntityDoubleClick(e, grid, target);
             }}
             @pointerdown=${(e: PointerEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
