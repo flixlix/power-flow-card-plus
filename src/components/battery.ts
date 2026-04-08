@@ -14,9 +14,10 @@ export const batteryElement = (
     entities: ConfigEntities;
   }
 ) => {
+  const disableEntityClick = config.clickable_entities === false;
   return html`<div class="circle-container battery">
     <div
-      class="circle"
+      class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
       @click=${(e: MouseEvent) => {
         const target = entities.battery?.state_of_charge!
           ? entities.battery?.state_of_charge!
@@ -58,7 +59,7 @@ export const batteryElement = (
         }
       }}
     >
-      <ha-ripple></ha-ripple>
+      <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${battery.state_of_charge.state !== null && entities.battery?.show_state_of_charge !== false
         ? html` <span
             @click=${(e: MouseEvent) => {

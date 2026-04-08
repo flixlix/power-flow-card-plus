@@ -41,9 +41,10 @@ export const homeElement = (
   const staticAction =
     entities.home?.tap_action !== undefined || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
   const isClickable = isHomeEntityDefined && !staticAction;
+  const disableEntityClick = config.clickable_entities === false || !isClickable;
   return html`<div class="circle-container home">
   <div
-    class="circle ${!isClickable ? "no-pointer-events" : ""}"
+    class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
     id="home-circle"
     @click=${(e: MouseEvent) => {
       main.onEntityClick(e, entities.home, entities.home?.entity);
@@ -66,7 +67,7 @@ export const homeElement = (
       }
     }}
   >
-    <ha-ripple .disabled=${!isClickable}></ha-ripple>
+    <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
     ${generalSecondarySpan(main.hass, main, config, templatesObj, home, "home")}
     ${home.icon !== " " ? html`<ha-icon id="home-icon" .icon=${home.icon} />` : nothing}
     ${homeUsageToDisplay}

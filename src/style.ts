@@ -581,7 +581,7 @@ export const styles = css`
     pointer-events: none;
   }
 
-  .no-pointer-events {
+  .pointer-events-none {
     pointer-events: none;
   }
 `;

@@ -22,6 +22,7 @@ export const individualLeftBottomElement = (
   { individualObj, templatesObj, displayState, newDur }: IndividualBottom
 ) => {
   if (!individualObj) return html`<div class="spacer"></div>`;
+  const disableEntityClick = config.clickable_entities === false;
   const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity) || 0;
   const duration = newDur.individual[indexOfIndividual] || 0;
   return html`<div class="circle-container individual-bottom bottom">
@@ -50,7 +51,7 @@ export const individualLeftBottomElement = (
         `
       : html` <svg width="80" height="30"></svg> `}
     <div
-      class="circle"
+      class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
       @click=${(e: MouseEvent) => {
         main.onEntityClick(e, individualObj?.field, individualObj?.entity);
       }}
@@ -72,7 +73,7 @@ export const individualLeftBottomElement = (
         }
       }}
     >
-      <ha-ripple></ha-ripple>
+      <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-bottom")}
       ${individualObj?.icon !== " " ? html` <ha-icon id="individual-left-bottom-icon" .icon=${individualObj?.icon} />` : nothing}
       ${individualObj?.field?.display_zero_state !== false || (individualObj?.state || 0) > (individualObj.displayZeroTolerance ?? 0)

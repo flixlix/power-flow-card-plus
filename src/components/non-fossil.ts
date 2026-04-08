@@ -22,12 +22,13 @@ export const nonFossilElement = (
   config: PowerFlowCardPlusConfig,
   { nonFossil, entities, templatesObj, grid, newDur }: NonFossil
 ) => {
+  const disableEntityClick = config.clickable_entities === false;
   return html`${!nonFossil.hasPercentage
     ? html`<div class="spacer"></div>`
     : html`<div class="circle-container low-carbon">
         <span class="label">${nonFossil.name}</span>
         <div
-          class="circle"
+          class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
           @click=${(e: MouseEvent) => {
             main.onEntityClick(e, entities.fossil_fuel_percentage, entities.fossil_fuel_percentage?.entity);
           }}
@@ -49,7 +50,7 @@ export const nonFossilElement = (
             }
           }}
         >
-          <ha-ripple></ha-ripple>
+          <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
           ${generalSecondarySpan(main.hass, main, config, templatesObj, nonFossil, "nonFossilFuel")}
           ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon} />` : nothing}
           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||

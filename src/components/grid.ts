@@ -10,9 +10,10 @@ export const gridElement = (
   config: PowerFlowCardPlusConfig,
   { entities, grid, templatesObj }: { entities: ConfigEntities; grid: any; templatesObj: TemplatesObj }
 ) => {
+  const disableEntityClick = config.clickable_entities === false;
   return html`<div class="circle-container grid">
     <div
-      class="circle"
+      class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
       @click=${(e: MouseEvent) => {
         const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
         const target =
@@ -62,7 +63,7 @@ export const gridElement = (
         }
       }}
     >
-      <ha-ripple></ha-ripple>
+      <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
       ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : nothing}
       ${(entities.grid?.display_state === "two_way" ||
