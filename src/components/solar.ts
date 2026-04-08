@@ -41,15 +41,28 @@ export const solarElement = (
     <span class="label">${solar.name}</span>
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
-        main.openDetails(e, solar.tap_action, solar.entity);
+      @click=${(e: MouseEvent) => {
+        main.onEntityClick(e, solar, solar.entity);
+      }}
+      @dblclick=${(e: MouseEvent) => {
+        main.onEntityDoubleClick(e, solar, solar.entity);
+      }}
+      @pointerdown=${(e: PointerEvent) => {
+        main.onEntityPointerDown(e, solar, solar.entity);
+      }}
+      @pointerup=${(e: PointerEvent) => {
+        main.onEntityPointerUp(e);
+      }}
+      @pointercancel=${(e: PointerEvent) => {
+        main.onEntityPointerUp(e);
       }}
       @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, solar.tap_action, solar.entity);
+          main.openDetails(e, solar, solar.entity, "tap");
         }
       }}
     >
+      <ha-ripple></ha-ripple>
       ${shouldShowSecondary() ? generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar") : nothing}
       ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : nothing}
       ${entities.solar?.display_zero_state !== false || (bottomSolarState || 0) > 0

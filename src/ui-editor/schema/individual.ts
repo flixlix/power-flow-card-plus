@@ -1,4 +1,4 @@
-import { getBaseMainConfigSchema, secondaryInfoSchema, tapActionSchema } from "./_schema-base";
+import { getBaseMainConfigSchema, secondaryInfoSchema, actionSchema } from "./_schema-base";
 import localize from "@/localize/localize";
 
 const mainSchema = {
@@ -87,9 +87,9 @@ export const individualSchema = [
     schema: secondaryInfoSchema,
   },
   {
-    title: localize("editor.tap_action"),
+    title: localize("editor.action"),
     name: "",
     type: "expandable",
-    schema: tapActionSchema,
+    schema: actionSchema,
   },
 ] as const;

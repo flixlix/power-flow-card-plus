@@ -1,7 +1,6 @@
 import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
-import { offlineStr } from "@/type";
-import { ActionConfig } from "custom-card-helpers";
+import { ActionConfigSet, offlineStr } from "@/type";
 
 type BaseSecondarySpan = {
   main: PowerFlowCardPlus;
@@ -10,20 +9,38 @@ type BaseSecondarySpan = {
   value?: string;
   entityId?: string;
   icon?: string;
-  tap_action?: ActionConfig;
+  actions?: ActionConfigSet;
 };
 
-export const baseSecondarySpan = ({ main, className, template, value, entityId, icon, tap_action }: BaseSecondarySpan) => {
+export const baseSecondarySpan = ({ main, className, template, value, entityId, icon, actions }: BaseSecondarySpan) => {
   if (value && offlineStr.includes(value)) return nothing;
   if (value || template) {
     return html`<span
       class="secondary-info ${className}"
-      @click=${(e: { stopPropagation: () => void; key?: string | undefined; target: HTMLElement }) => {
-        main.openDetails(e, tap_action, entityId);
+      @click=${(e: MouseEvent) => {
+        e.stopPropagation();
+        main.onEntityClick(e, actions, entityId);
+      }}
+      @dblclick=${(e: MouseEvent) => {
+        e.stopPropagation();
+        main.onEntityDoubleClick(e, actions, entityId);
+      }}
+      @pointerdown=${(e: PointerEvent) => {
+        e.stopPropagation();
+        main.onEntityPointerDown(e, actions, entityId);
+      }}
+      @pointerup=${(e: PointerEvent) => {
+        e.stopPropagation();
+        main.onEntityPointerUp(e);
+      }}
+      @pointercancel=${(e: PointerEvent) => {
+        e.stopPropagation();
+        main.onEntityPointerUp(e);
       }}
       @keyDown=${(e: { stopPropagation: () => void; key?: string | undefined; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, tap_action, entityId);
+          e.stopPropagation();
+          main.openDetails(e, actions, entityId, "tap");
         }
       }}
     >

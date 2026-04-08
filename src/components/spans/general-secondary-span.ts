@@ -1,9 +1,9 @@
 import { nothing } from "lit";
 import { baseSecondarySpan } from "./base-secondary-span";
-import { ActionConfig, HomeAssistant } from "custom-card-helpers";
+import { HomeAssistant } from "custom-card-helpers";
 import { displayValue } from "@/utils/display-value";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
-import { TemplatesObj } from "@/type";
+import { ActionConfigSet, TemplatesObj } from "@/type";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 
 export const generalSecondarySpan = (
@@ -22,7 +22,9 @@ export const generalSecondarySpan = (
       unit_white_space: boolean | undefined;
       decimals: number | undefined;
       accept_negative: boolean | undefined;
-      tap_action?: ActionConfig | undefined;
+      tap_action?: ActionConfigSet["tap_action"];
+      hold_action?: ActionConfigSet["hold_action"];
+      double_tap_action?: ActionConfigSet["double_tap_action"];
     };
   },
   key: string
@@ -41,7 +43,11 @@ export const generalSecondarySpan = (
       accept_negative: field.secondary.accept_negative,
       watt_threshold: config.watt_threshold,
     }),
-    tap_action: field.secondary.tap_action,
+    actions: {
+      tap_action: field.secondary.tap_action,
+      hold_action: field.secondary.hold_action,
+      double_tap_action: field.secondary.double_tap_action,
+    },
     template: templatesObj[`${key}Secondary`],
   });
 };

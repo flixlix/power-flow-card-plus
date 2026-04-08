@@ -76,7 +76,10 @@
     "grey_out": "Grijstint",
     "transparency": "Transparantie",
     "grey_color": "Grijstint",
+    "action": "Action",
     "tap_action": "Tik Actie",
+    "hold_action": "Ingedrukt houden actie",
+    "double_tap_action": "Dubbel tik actie",
     "navigation_path": "Navigatiepad",
     "sort_individual_devices": "Sorteer individuele apparaten",
     "allow_layout_break": "Allow Layout Break"

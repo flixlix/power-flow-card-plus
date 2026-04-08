@@ -76,7 +76,10 @@
     "grey_out": "धूसर करें",
     "transparency": "पारदर्शिता",
     "grey_color": "धूसर रंग",
+    "action": "Action",
     "tap_action": "टैप क्रिया",
+    "hold_action": "होल्ड क्रिया",
+    "double_tap_action": "डबल टैप क्रिया",
     "navigation_path": "नेविगेशन पथ",
     "sort_individual_devices": "व्यक्तिगत डिवाइस क्रमबद्ध करें",
     "allow_layout_break": "Allow Layout Break"

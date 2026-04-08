@@ -13,7 +13,7 @@ export const gridElement = (
   return html`<div class="circle-container grid">
     <div
       class="circle"
-      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+      @click=${(e: MouseEvent) => {
         const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
         const target =
           grid.powerOutage?.isOutage && outageTarget
@@ -21,7 +21,33 @@ export const gridElement = (
             : typeof entities.grid!.entity === "string"
             ? entities.grid!.entity
             : entities.grid!.entity.consumption!;
-        main.openDetails(e, entities.grid?.tap_action, target);
+        main.onEntityClick(e, entities.grid, target);
+      }}
+      @dblclick=${(e: MouseEvent) => {
+        const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
+        const target =
+          grid.powerOutage?.isOutage && outageTarget
+            ? outageTarget
+            : typeof entities.grid!.entity === "string"
+            ? entities.grid!.entity
+            : entities.grid!.entity.consumption!;
+        main.onEntityDoubleClick(e, entities.grid, target);
+      }}
+      @pointerdown=${(e: PointerEvent) => {
+        const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
+        const target =
+          grid.powerOutage?.isOutage && outageTarget
+            ? outageTarget
+            : typeof entities.grid!.entity === "string"
+            ? entities.grid!.entity
+            : entities.grid!.entity.consumption!;
+        main.onEntityPointerDown(e, entities.grid, target);
+      }}
+      @pointerup=${(e: PointerEvent) => {
+        main.onEntityPointerUp(e);
+      }}
+      @pointercancel=${(e: PointerEvent) => {
+        main.onEntityPointerUp(e);
       }}
       @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
@@ -32,10 +58,11 @@ export const gridElement = (
               : typeof entities.grid!.entity === "string"
               ? entities.grid!.entity
               : entities.grid!.entity.consumption!;
-          main.openDetails(e, entities.grid?.tap_action, target);
+          main.openDetails(e, entities.grid, target, "tap");
         }
       }}
     >
+      <ha-ripple></ha-ripple>
       ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
       ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : nothing}
       ${(entities.grid?.display_state === "two_way" ||
@@ -46,14 +73,28 @@ export const gridElement = (
       !grid.powerOutage.isOutage
         ? html`<span
             class="return"
-            @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+            @click=${(e: MouseEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-              main.openDetails(e, entities.grid?.tap_action, target);
+              main.onEntityClick(e, entities.grid, target);
+            }}
+            @dblclick=${(e: MouseEvent) => {
+              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
+              main.onEntityDoubleClick(e, entities.grid, target);
+            }}
+            @pointerdown=${(e: PointerEvent) => {
+              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
+              main.onEntityPointerDown(e, entities.grid, target);
+            }}
+            @pointerup=${(e: PointerEvent) => {
+              main.onEntityPointerUp(e);
+            }}
+            @pointercancel=${(e: PointerEvent) => {
+              main.onEntityPointerUp(e);
             }}
             @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
                 const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.production!;
-                main.openDetails(e, entities.grid?.tap_action, target);
+                main.openDetails(e, entities.grid, target, "tap");
               }
             }}
           >
@@ -76,14 +117,28 @@ export const gridElement = (
       (grid.powerOutage.isOutage && !!grid.powerOutage.entityGenerator)
         ? html` <span
             class="consumption"
-            @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
+            @click=${(e: MouseEvent) => {
               const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-              main.openDetails(e, entities.grid?.tap_action, target);
+              main.onEntityClick(e, entities.grid, target);
+            }}
+            @dblclick=${(e: MouseEvent) => {
+              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
+              main.onEntityDoubleClick(e, entities.grid, target);
+            }}
+            @pointerdown=${(e: PointerEvent) => {
+              const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
+              main.onEntityPointerDown(e, entities.grid, target);
+            }}
+            @pointerup=${(e: PointerEvent) => {
+              main.onEntityPointerUp(e);
+            }}
+            @pointercancel=${(e: PointerEvent) => {
+              main.onEntityPointerUp(e);
             }}
             @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
               if (e.key === "Enter") {
                 const target = typeof entities.grid!.entity === "string" ? entities.grid!.entity : entities.grid!.entity.consumption!;
-                main.openDetails(e, entities.grid?.tap_action, target);
+                main.openDetails(e, entities.grid, target, "tap");
               }
             }}
           >

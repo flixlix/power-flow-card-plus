@@ -76,7 +76,10 @@
     "grey_out": "En Gris",
     "transparency": "Transparència",
     "grey_color": "Color Gris",
+    "action": "Action",
     "tap_action": "Acció al Tocar",
+    "hold_action": "Acció en mantenir premut",
+    "double_tap_action": "Acció en doble toc",
     "navigation_path": "Ruta de Navegació",
     "sort_individual_devices": "Ordena Dispositius Individuals",
     "allow_layout_break": "Allow Layout Break"

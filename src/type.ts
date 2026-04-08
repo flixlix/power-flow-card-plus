@@ -1,6 +1,12 @@
 import { TemplateResult } from "lit";
 import { ActionConfig } from "custom-card-helpers";
 
+export type ActionConfigSet = {
+  tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
+};
+
 export type ComboEntity = {
   consumption: string;
   production: string;
@@ -17,10 +23,9 @@ export type SecondaryInfoType = {
   template?: string;
   accept_negative?: boolean;
   decimals?: number;
-  tap_action?: ActionConfig;
-};
+} & ActionConfigSet;
 
-export interface BaseConfigEntity {
+export interface BaseConfigEntity extends ActionConfigSet {
   entity: string | ComboEntity;
   name?: string;
   icon?: string;
@@ -33,7 +38,6 @@ export interface BaseConfigEntity {
   use_metadata?: boolean;
   secondary_info?: SecondaryInfoType;
   invert_state?: boolean;
-  tap_action?: ActionConfig;
 }
 
 export type GridPowerOutage = {
@@ -126,6 +130,8 @@ export type GridObject = {
     circle_type?: "color_dynamically" | "production" | "consumption";
   };
   tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
   secondary: {
     entity?: string;
     decimals?: number;
@@ -137,6 +143,8 @@ export type GridObject = {
     unit_white_space?: boolean;
     accept_negative?: boolean;
     tap_action?: ActionConfig;
+    hold_action?: ActionConfig;
+    double_tap_action?: ActionConfig;
     color?: {
       type?: boolean | "production" | "consumption";
     };

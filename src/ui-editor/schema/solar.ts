@@ -1,4 +1,4 @@
-import { secondaryInfoSchema, getBaseMainConfigSchema, tapActionSchema } from "./_schema-base";
+import { secondaryInfoSchema, getBaseMainConfigSchema, actionSchema } from "./_schema-base";
 import localize from "@/localize/localize";
 
 const mainSchema = {
@@ -62,9 +62,9 @@ export const solarSchema = [
     schema: [...secondaryInfoSchema, { name: "sum_total", label: "Sum Total", selector: { boolean: {} } }],
   },
   {
-    title: localize("editor.tap_action"),
+    title: localize("editor.action"),
     name: "",
     type: "expandable",
-    schema: tapActionSchema,
+    schema: actionSchema,
   },
 ] as const;

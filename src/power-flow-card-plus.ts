@@ -28,7 +28,7 @@ import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
 import { styles } from "@/style";
 import { allDynamicStyles } from "@/style/all";
 import { RenderTemplateResult, subscribeRenderTemplate } from "@/template/ha-websocket.js";
-import { GridObject, HomeSources, NewDur, TemplatesObj } from "@/type";
+import { ActionConfigSet, GridObject, HomeSources, NewDur, TemplatesObj } from "@/type";
 import { computeFieldIcon, computeFieldName } from "@/utils/compute-field-attributes";
 import { computeFlowRate } from "@/utils/compute-flow-rate";
 import { computePowerDistributionAfterSolarAndBattery } from "@/utils/compute-power-distribution";
@@ -159,17 +159,32 @@ export class PowerFlowCardPlus extends LitElement {
   }
 
   private previousDur: { [name: string]: number } = {};
+  private _pendingTapTimeouts = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
+  private _holdTimeouts = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
+  private _holdTriggered = new WeakMap<HTMLElement, boolean>();
+  private readonly _doubleTapDelay = 250;
+  private readonly _holdDelay = 500;
+
+  private _normalizeActionConfig(config?: ActionConfig | ActionConfigSet): ActionConfigSet | undefined {
+    if (!config) return undefined;
+    if ("tap_action" in config || "hold_action" in config || "double_tap_action" in config) {
+      return config as ActionConfigSet;
+    }
+    return { tap_action: config as ActionConfig };
+  }
 
   public openDetails(
     event: { stopPropagation: () => void; key?: string; target: HTMLElement },
-    config?: ActionConfig,
-    entityId?: string | undefined
+    config?: ActionConfig | ActionConfigSet,
+    entityId?: string | undefined,
+    action: "tap" | "hold" | "double_tap" = "tap"
   ): void {
     event.stopPropagation();
+    const normalizedConfig = this._normalizeActionConfig(config);
+    const hasAnyAction = !!(normalizedConfig?.tap_action || normalizedConfig?.hold_action || normalizedConfig?.double_tap_action);
 
-    if (!config) {
+    if (!hasAnyAction) {
       if (!entityId || !this._config.clickable_entities) return;
-      /* also needs to open details if entity is unavailable, but not if entity doesn't exist is hass states */
       if (!doesEntityExist(this.hass, entityId)) return;
       const e = new CustomEvent("hass-more-info", {
         composed: true,
@@ -184,10 +199,71 @@ export class PowerFlowCardPlus extends LitElement {
       this.hass!,
       {
         entity: entityId,
-        tap_action: config,
+        tap_action: normalizedConfig?.tap_action,
+        hold_action: normalizedConfig?.hold_action,
+        double_tap_action: normalizedConfig?.double_tap_action,
       },
-      "tap"
+      action
     );
+  }
+
+  public onEntityClick(event: MouseEvent, config?: ActionConfig | ActionConfigSet, entityId?: string): void {
+    const target = event.currentTarget as HTMLElement | null;
+    const normalizedConfig = this._normalizeActionConfig(config);
+    if (!target) return;
+    if (this._holdTriggered.get(target)) {
+      this._holdTriggered.set(target, false);
+      return;
+    }
+    if (normalizedConfig?.double_tap_action) {
+      const existing = this._pendingTapTimeouts.get(target);
+      if (existing) clearTimeout(existing);
+      const timeout = setTimeout(() => {
+        this.openDetails({ stopPropagation: () => event.stopPropagation(), target }, normalizedConfig, entityId, "tap");
+        this._pendingTapTimeouts.delete(target);
+      }, this._doubleTapDelay);
+      this._pendingTapTimeouts.set(target, timeout);
+      return;
+    }
+    this.openDetails({ stopPropagation: () => event.stopPropagation(), target }, normalizedConfig, entityId, "tap");
+  }
+
+  public onEntityDoubleClick(event: MouseEvent, config?: ActionConfig | ActionConfigSet, entityId?: string): void {
+    const target = event.currentTarget as HTMLElement | null;
+    const normalizedConfig = this._normalizeActionConfig(config);
+    if (!target) return;
+    const existing = this._pendingTapTimeouts.get(target);
+    if (existing) {
+      clearTimeout(existing);
+      this._pendingTapTimeouts.delete(target);
+    }
+    if (!normalizedConfig?.double_tap_action) return;
+    this.openDetails({ stopPropagation: () => event.stopPropagation(), target }, normalizedConfig, entityId, "double_tap");
+  }
+
+  public onEntityPointerDown(event: PointerEvent, config?: ActionConfig | ActionConfigSet, entityId?: string): void {
+    const target = event.currentTarget as HTMLElement | null;
+    const normalizedConfig = this._normalizeActionConfig(config);
+    if (!target || !normalizedConfig?.hold_action) return;
+    const existing = this._holdTimeouts.get(target);
+    if (existing) clearTimeout(existing);
+    this._holdTriggered.set(target, false);
+    const timeout = setTimeout(() => {
+      this._holdTriggered.set(target, true);
+      this.openDetails({ stopPropagation: () => event.stopPropagation(), target }, normalizedConfig, entityId, "hold");
+      this._holdTimeouts.delete(target);
+    }, this._holdDelay);
+    this._holdTimeouts.set(target, timeout);
+  }
+
+  public onEntityPointerUp(event: PointerEvent): void {
+    const target = event.currentTarget as HTMLElement | null;
+    if (!target) return;
+    const holdTimeout = this._holdTimeouts.get(target);
+    if (holdTimeout) {
+      clearTimeout(holdTimeout);
+      this._holdTimeouts.delete(target);
+    }
   }
 
   protected render(): TemplateResult | typeof nothing {
@@ -414,6 +490,8 @@ export class PowerFlowCardPlus extends LitElement {
         circle_type: entities.grid?.color_circle,
       },
       tap_action: entities.grid?.tap_action,
+      hold_action: entities.grid?.hold_action,
+      double_tap_action: entities.grid?.double_tap_action,
       secondary: {
         entity: entities.grid?.secondary_info?.entity,
         decimals: entities.grid?.secondary_info?.decimals,
@@ -428,6 +506,8 @@ export class PowerFlowCardPlus extends LitElement {
           type: entities.grid?.secondary_info?.color_value,
         },
         tap_action: entities.grid?.secondary_info?.tap_action,
+        hold_action: entities.grid?.secondary_info?.hold_action,
+        double_tap_action: entities.grid?.secondary_info?.double_tap_action,
       },
     };
     const hasSolarEntity = entities.solar?.entity !== undefined;
@@ -445,6 +525,8 @@ export class PowerFlowCardPlus extends LitElement {
       icon: computeFieldIcon(this.hass, entities.solar, "mdi:solar-power"),
       name: computeFieldName(this.hass, entities.solar, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.solar")),
       tap_action: entities.solar?.tap_action,
+      hold_action: entities.solar?.hold_action,
+      double_tap_action: entities.solar?.double_tap_action,
       secondary: {
         entity: entities.solar?.secondary_info?.entity,
         decimals: entities.solar?.secondary_info?.decimals,
@@ -456,6 +538,8 @@ export class PowerFlowCardPlus extends LitElement {
         unit: entities.solar?.secondary_info?.unit_of_measurement,
         unit_white_space: entities.solar?.secondary_info?.unit_white_space,
         tap_action: entities.solar?.secondary_info?.tap_action,
+        hold_action: entities.solar?.secondary_info?.hold_action,
+        double_tap_action: entities.solar?.secondary_info?.double_tap_action,
       },
     };
     const checkIfHasBattery = () => {
@@ -482,6 +566,8 @@ export class PowerFlowCardPlus extends LitElement {
         toHome: 0,
       },
       tap_action: entities.battery?.tap_action,
+      hold_action: entities.battery?.hold_action,
+      double_tap_action: entities.battery?.double_tap_action,
       color: {
         fromBattery: entities.battery?.color?.consumption,
         toBattery: entities.battery?.color?.production,
@@ -496,6 +582,8 @@ export class PowerFlowCardPlus extends LitElement {
       icon: computeFieldIcon(this.hass, entities?.home, "mdi:home"),
       name: computeFieldName(this.hass, entities?.home, this.hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.home")),
       tap_action: entities.home?.tap_action,
+      hold_action: entities.home?.hold_action,
+      double_tap_action: entities.home?.double_tap_action,
       secondary: {
         entity: entities.home?.secondary_info?.entity,
         template: entities.home?.secondary_info?.template,
@@ -507,6 +595,8 @@ export class PowerFlowCardPlus extends LitElement {
         icon: entities.home?.secondary_info?.icon,
         decimals: entities.home?.secondary_info?.decimals,
         tap_action: entities.home?.secondary_info?.tap_action,
+        hold_action: entities.home?.secondary_info?.hold_action,
+        double_tap_action: entities.home?.secondary_info?.double_tap_action,
       },
     };
     const individualObjs: IndividualObject[] = entities.individual?.map((individual) => getIndividualObject(this.hass, individual)) || [];
@@ -522,6 +612,8 @@ export class PowerFlowCardPlus extends LitElement {
       color: entities.fossil_fuel_percentage?.color,
       color_value: entities.fossil_fuel_percentage?.color_value,
       tap_action: entities.fossil_fuel_percentage?.tap_action,
+      hold_action: entities.fossil_fuel_percentage?.hold_action,
+      double_tap_action: entities.fossil_fuel_percentage?.double_tap_action,
       secondary: {
         entity: entities.fossil_fuel_percentage?.secondary_info?.entity,
         decimals: entities.fossil_fuel_percentage?.secondary_info?.decimals,
@@ -534,6 +626,8 @@ export class PowerFlowCardPlus extends LitElement {
         unit_white_space: entities.fossil_fuel_percentage?.secondary_info?.unit_white_space,
         color_value: entities.fossil_fuel_percentage?.secondary_info?.color_value,
         tap_action: entities.fossil_fuel_percentage?.secondary_info?.tap_action,
+        hold_action: entities.fossil_fuel_percentage?.secondary_info?.hold_action,
+        double_tap_action: entities.fossil_fuel_percentage?.secondary_info?.double_tap_action,
       },
     };
     grid.state.fromGrid = adjustZeroTolerance(grid.state.fromGrid, entities.grid?.display_zero_tolerance);

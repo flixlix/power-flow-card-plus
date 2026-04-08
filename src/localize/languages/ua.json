@@ -76,7 +76,10 @@
     "grey_out": "Затемнити неактивні",
     "transparency": "Прозорість",
     "grey_color": "Колір затемнення",
+    "action": "Action",
     "tap_action": "Дія при натисканні",
+    "hold_action": "Дія при утриманні",
+    "double_tap_action": "Дія при подвійному натисканні",
     "navigation_path": "Шлях переходу",
     "sort_individual_devices": "Сортувати окремі пристрої",
     "allow_layout_break": "Allow Layout Break"

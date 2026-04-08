@@ -3,7 +3,7 @@ import {
   getBaseMainConfigSchema,
   customColorsSchema,
   getEntityCombinedSelectionSchema,
-  tapActionSchema,
+  actionSchema,
 } from "./_schema-base";
 import localize from "@/localize/localize";
 
@@ -93,9 +93,9 @@ export const batterySchema = [
   mainSchema,
   customColorsSchema,
   {
-    title: localize("editor.tap_action"),
+    title: localize("editor.action"),
     name: "",
     type: "expandable",
-    schema: tapActionSchema,
+    schema: actionSchema,
   },
 ] as const;

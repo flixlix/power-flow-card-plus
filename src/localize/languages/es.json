@@ -76,7 +76,10 @@
     "grey_out": "Gris",
     "transparency": "Transparencia",
     "grey_color": "Color Gris",
+    "action": "Action",
     "tap_action": "Acción de Toque",
+    "hold_action": "Acción al Mantener",
+    "double_tap_action": "Acción de Doble Toque",
     "navigation_path": "Ruta de Navegación",
     "sort_individual_devices": "Ordenar dispositivos individuales",
     "allow_layout_break": "Allow Layout Break"

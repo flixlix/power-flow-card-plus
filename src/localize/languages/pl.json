@@ -76,7 +76,10 @@
     "grey_out": "Szary",
     "transparency": "Przezroczystość",
     "grey_color": "Kolor szary",
+    "action": "Action",
     "tap_action": "Akcja dotknięcia",
+    "hold_action": "Akcja przytrzymania",
+    "double_tap_action": "Akcja podwójnego dotknięcia",
     "navigation_path": "Ścieżka nawigacji",
     "sort_individual_devices": "Sortuj poszczególne urządzenia",
     "allow_layout_break": "Allow Layout Break"
