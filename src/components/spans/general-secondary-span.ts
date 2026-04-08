@@ -1,4 +1,4 @@
-import { html, nothing } from "lit";
+import { nothing } from "lit";
 import { baseSecondarySpan } from "./base-secondary-span";
 import { ActionConfig, HomeAssistant } from "custom-card-helpers";
 import { displayValue } from "@/utils/display-value";
@@ -29,7 +29,7 @@ export const generalSecondarySpan = (
 ) => {
   if (!field?.secondary?.has && !field?.secondary?.template) return nothing;
 
-  return html` ${baseSecondarySpan({
+  return baseSecondarySpan({
     main,
     className: key,
     entityId: field.secondary.entity,
@@ -43,5 +43,5 @@ export const generalSecondarySpan = (
     }),
     tap_action: field.secondary.tap_action,
     template: templatesObj[`${key}Secondary`],
-  })}`;
+  });
 };

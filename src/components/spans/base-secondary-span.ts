@@ -27,7 +27,7 @@ export const baseSecondarySpan = ({ main, className, template, value, entityId, 
         }
       }}
     >
-      ${icon ? html`<ha-icon class="secondary-info small" .icon=${icon}></ha-icon>` : ""} ${template ?? value}</span
+      ${icon ? html`<ha-icon class="secondary-info small" .icon=${icon}></ha-icon>` : nothing} ${template ?? value}</span
     >`;
   }
   return nothing;

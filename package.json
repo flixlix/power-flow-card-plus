@@ -32,7 +32,7 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "test": "jest",
-    "precommit": "pnpm typecheck && pnpm format:write && pnpm test",
+    "precommit": "pnpm typecheck && pnpm format:write && pnpm test && pnpm lint",
     "start:hass": "docker run --rm -p8123:8123 -v ./.hass_dev:/config homeassistant/home-assistant:beta"
   },
   "dependencies": {

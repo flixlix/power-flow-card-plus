@@ -12,14 +12,14 @@ export const dashboardLinkElement = (config: PowerFlowCardPlusConfig, hass: Home
                   ${config.dashboard_link_label || hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard")}
                 </ha-button>
               `
-            : ""}
+            : nothing}
           ${config.second_dashboard_link
             ? html`
                 <ha-button appearance="plain" size="small" href=${config.second_dashboard_link}>
                   ${config.second_dashboard_link_label || hass.localize("ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard")}
                 </ha-button>
               `
-            : ""}
+            : nothing}
         </div>
       `
     : nothing;

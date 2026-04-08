@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { ConfigEntities, PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { generalSecondarySpan } from "./spans/general-secondary-span";
@@ -34,7 +34,6 @@ export const solarElement = (
       (config.entities.solar?.secondary_info?.accept_negative && typeof Number(+solar.secondary.state) === "number")
     );
   };
-  console.log(shouldShowSecondary(), solar.secondary.has);
   const sumTotalConfig = entities.solar?.secondary_info?.sum_total;
   const secondaryEntity = config.entities.solar?.secondary_info?.entity;
   const secondarySolarStateWatts = secondaryEntity ? Math.max(getEntityStateWatts(main.hass, secondaryEntity), 0) : 0;
@@ -52,8 +51,8 @@ export const solarElement = (
         }
       }}
     >
-      ${shouldShowSecondary() ? generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar") : ""}
-      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : null}
+      ${shouldShowSecondary() ? generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar") : nothing}
+      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : nothing}
       ${entities.solar?.display_zero_state !== false || (bottomSolarState || 0) > 0
         ? html` <span class="solar">
             ${displayValue(main.hass, config, bottomSolarState, {
@@ -63,7 +62,7 @@ export const solarElement = (
               watt_threshold: config.watt_threshold,
             })}
           </span>`
-        : ""}
+        : nothing}
     </div>
   </div>`;
 };

@@ -243,7 +243,7 @@ export class PowerFlowCardPlus extends LitElement {
                     })
                   : individualObjs?.some((individual) => individual?.has)
                   ? html`<div class="spacer"></div>`
-                  : ""}
+                  : nothing}
                 ${individualFieldLeftTop
                   ? individualLeftTopElement(this, this._config, {
                       individualObj: individualFieldLeftTop,
