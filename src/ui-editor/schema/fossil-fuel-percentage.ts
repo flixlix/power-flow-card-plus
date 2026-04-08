@@ -14,7 +14,7 @@ const mainSchema = {
             { value: "power", label: "Power" },
             { value: "percentage", label: "Percentage" },
           ],
-        mode: "dropdown",
+          mode: "dropdown",
         },
       },
     },
