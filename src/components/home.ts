@@ -38,11 +38,12 @@ export const homeElement = (
 ) => {
   const showHomeLabel = individual.filter((i) => i.has).length <= 1;
   const isHomeEntityDefined = entities.home?.entity !== undefined;
-  const staticAction = entities.home?.tap_action !== undefined || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
+  const staticAction =
+    entities.home?.tap_action !== undefined || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
   const isClickable = isHomeEntityDefined && !staticAction;
   return html`<div class="circle-container home">
   <div
-    class="circle ${!isClickable ? 'no-pointer-events' : ''}"
+    class="circle ${!isClickable ? "no-pointer-events" : ""}"
     id="home-circle"
     @click=${(e: MouseEvent) => {
       main.onEntityClick(e, entities.home, entities.home?.entity);

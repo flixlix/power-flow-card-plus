@@ -213,7 +213,6 @@ export class PowerFlowCardPlus extends LitElement {
 
   public onEntityClick(event: MouseEvent, config?: ActionConfig | ActionConfigSet, entityId?: string): void {
     event.stopPropagation();
-    console.log(config);
     const target = event.currentTarget as HTMLElement | null;
     const normalizedConfig = this._normalizeActionConfig(config);
     if (!target) return;
