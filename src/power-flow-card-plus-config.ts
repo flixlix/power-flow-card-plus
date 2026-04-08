@@ -49,7 +49,7 @@ interface Battery extends BaseConfigEntity {
 interface Grid extends BaseConfigEntity {
   power_outage: GridPowerOutage;
   secondary_info?: SecondaryInfoType;
-  color_circle: "color_dynamically" | "production" | "consumption"
+  color_circle: "color_dynamically" | "production" | "consumption";
   color_value?: boolean;
   color?: ComboEntity;
 }

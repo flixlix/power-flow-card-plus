@@ -111,7 +111,6 @@ const batteryOrGridMainConfigSchema = [
           { value: "consumption", label: localize("editor.consumption") },
         ],
         mode: "dropdown",
-        
       },
     },
   },
