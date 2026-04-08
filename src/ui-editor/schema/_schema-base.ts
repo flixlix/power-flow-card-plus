@@ -110,7 +110,8 @@ const batteryOrGridMainConfigSchema = [
           { value: "production", label: localize("editor.production") },
           { value: "consumption", label: localize("editor.consumption") },
         ],
-        custom_value: true,
+        mode: "dropdown",
+        
       },
     },
   },
@@ -124,7 +125,7 @@ const batteryOrGridMainConfigSchema = [
           { value: "consumption", label: "Consumption" },
           { value: "production", label: "Production" },
         ],
-        custom_value: true,
+        mode: "dropdown",
       },
     },
   },
