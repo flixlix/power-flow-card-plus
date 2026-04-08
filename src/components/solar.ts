@@ -24,7 +24,6 @@ export const solarElement = (
   const shouldShowSecondary = () => {
     if (!!templateResult) return true;
     if (config.entities.solar?.secondary_info?.display_zero === true) return true;
-    console.log(solar, config);
     if (!solar?.secondary?.state) return false;
     if (!isNumberValue(solar?.secondary?.state)) return true;
 
