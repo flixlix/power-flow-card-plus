@@ -1,4 +1,4 @@
-import { html, svg } from "lit";
+import { html, nothing, svg } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { generalSecondarySpan } from "./spans/general-secondary-span";
 import { displayNonFossilState } from "@/utils/display-non-fossil-state";
@@ -38,7 +38,7 @@ export const nonFossilElement = (
           }}
         >
           ${generalSecondarySpan(main.hass, main, config, templatesObj, nonFossil, "nonFossilFuel")}
-          ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon} />` : null}
+          ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon} />` : nothing}
           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
           (nonFossil.state.power || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
             ? html`
@@ -46,7 +46,7 @@ export const nonFossilElement = (
                   >${displayNonFossilState(main.hass, config, entities!.fossil_fuel_percentage!.entity, grid.state.fromGrid)}</span
                 >
               `
-            : ""}
+            : nothing}
         </div>
         ${showLine(config, nonFossil.state.power || 0)
           ? html`
@@ -66,9 +66,9 @@ export const nonFossilElement = (
                     <mpath xlink:href="#low-carbon" />
                   </animateMotion>
               </circle>`
-                  : ""}
+                  : nothing}
               </svg>
             `
-          : ""}
+          : nothing}
       </div>`}`;
 };

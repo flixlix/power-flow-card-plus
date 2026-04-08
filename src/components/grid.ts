@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { displayValue } from "@/utils/display-value";
 import { generalSecondarySpan } from "./spans/general-secondary-span";
@@ -37,7 +37,7 @@ export const gridElement = (
       }}
     >
       ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
-      ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : null}
+      ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : nothing}
       ${(entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
         (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||
@@ -66,7 +66,7 @@ export const gridElement = (
               watt_threshold: config.watt_threshold,
             })}
           </span>`
-        : null}
+        : nothing}
       ${((entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
         (entities.grid?.display_state === "one_way_no_zero" && grid.state.fromGrid > 0) ||
@@ -95,8 +95,10 @@ export const gridElement = (
               watt_threshold: config.watt_threshold,
             })}
           </span>`
-        : ""}
-      ${grid.powerOutage?.isOutage && !grid.powerOutage?.entityGenerator ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>` : ""}
+        : nothing}
+      ${grid.powerOutage?.isOutage && !grid.powerOutage?.entityGenerator
+        ? html`<span class="grid power-outage">${grid.powerOutage.name}</span>`
+        : nothing}
     </div>
     <span class="label">${grid.name}</span>
   </div>`;

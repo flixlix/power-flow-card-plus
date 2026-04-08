@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { debounce } from "custom-card-helpers";
 import { version } from "../package.json";
 

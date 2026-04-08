@@ -125,7 +125,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     }
 
     const renderLinkSubpage = (page: ConfigPage, fallbackIcon: string | undefined = "mdi:dots-horizontal-circle-outline") => {
-      if (page === null) return html``;
+      if (page === null) return nothing;
       const getIconToUse = () => {
         if (page === "individual" || page === "advanced") return fallbackIcon;
         return this?._config?.entities[page]?.icon || fallbackIcon;
