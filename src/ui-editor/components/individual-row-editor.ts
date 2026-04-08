@@ -304,6 +304,7 @@ export class IndividualRowEditor extends LitElement {
 
         .entity ha-entity-picker {
           flex-grow: 1;
+          min-width: 0px;
         }
 
         .special-row {
