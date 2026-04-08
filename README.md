@@ -124,7 +124,8 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | full_size                   | `boolean` |                  false                   | Warning: This option is experimental. To use this option, you must set your view to panel mode. If set to true, the card will take up the full height of the screen. And the Card should go to the center of the screen. |
 | style_ha_card               | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the container of the card (border and background of the card).                                                                               |
 | style_card_content          | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the content of the card (all circles and lines of the card).                                                                                 |
-| use_new_flow_rate_model     | `boolean` |                  false                   | If set to true, the card will use the [New Flow Formula](#new-flow-formula).                                                                                                                                             |
+| use_new_flow_rate_model     | `boolean` |                  false                   | If `true`, the card will use the [New Flow Formula](#new-flow-formula).                                                                                                                                             |
+| sort_individual_devices     | `boolean` |           true (since v0.3.1)            | If `true`, sort devices in order of power consumption -> entity id -> alphabetically.                                                                                                                                               |
 
 #### Entities object
 
