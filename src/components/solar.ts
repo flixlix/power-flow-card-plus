@@ -5,6 +5,7 @@ import { generalSecondarySpan } from "./spans/general-secondary-span";
 import { displayValue } from "@/utils/display-value";
 import { TemplatesObj } from "@/type";
 import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
+import { isNumberValue } from "@/utils/utils";
 
 export const solarElement = (
   main: PowerFlowCardPlus,
@@ -19,6 +20,19 @@ export const solarElement = (
     templatesObj: TemplatesObj;
   }
 ) => {
+  const templateResult = templatesObj.solarSecondary;
+  const shouldShowSecondary = () => {
+    if (!!templateResult) return true;
+    if (config.entities.solar?.secondary_info?.display_zero === true) return true;
+    if (!solar?.secondary?.state) return false;
+    if (!isNumberValue(solar?.secondary?.state)) return true;
+
+    const toleranceSet = config.entities.solar?.secondary_info?.display_zero_tolerance ?? 0;
+    return (
+      Number(solar.secondary.state) >= toleranceSet ||
+      (config.entities.solar?.secondary_info?.accept_negative && typeof Number(+solar.secondary.state) === "number")
+    );
+  };
   const sumTotalConfig = entities.solar?.secondary_info?.sum_total;
   const secondaryEntity = config.entities.solar?.secondary_info?.entity;
   const secondarySolarStateWatts = secondaryEntity ? Math.max(getEntityStateWatts(main.hass, secondaryEntity), 0) : 0;
@@ -36,7 +50,7 @@ export const solarElement = (
         }
       }}
     >
-      ${generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar")}
+      ${shouldShowSecondary() ? generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar") : ""}
       ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : null}
       ${entities.solar?.display_zero_state !== false || (bottomSolarState || 0) > 0
         ? html` <span class="solar">

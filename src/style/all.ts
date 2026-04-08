@@ -251,7 +251,7 @@ export const allDynamicStyles = (
     };
     const individualsShown = individual.filter((i) => i?.has);
     for (let index = 0; index < (individualsShown.length < 4 ? individualsShown.length : 4); index++) {
-      getStylesForIndividual(individualsShown[index], index);
+      getStylesForIndividual(individualsShown[index].field as IndividualDeviceType, index);
     }
   }
 };
