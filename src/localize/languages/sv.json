@@ -78,6 +78,7 @@
     "grey_color": "Grå färg",
     "tap_action": "Tryckåtgärd",
     "navigation_path": "Navigationsväg",
-    "sort_individual_devices": "Sortera enskilda enheter"
+    "sort_individual_devices": "Sortera enskilda enheter",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

@@ -78,6 +78,7 @@
     "grey_color": "Colore Sfumato",
     "tap_action": "Azione al tocco",
     "navigation_path": "Percorso di navigazione",
-    "sort_individual_devices": "Ordina i singoli individuale"
+    "sort_individual_devices": "Ordina i singoli individuale",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

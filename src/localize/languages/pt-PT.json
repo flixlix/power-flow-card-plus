@@ -78,6 +78,7 @@
     "grey_color": "Cor Cinzenta",
     "tap_action": "Ação de Toque",
     "navigation_path": "Caminho de Navegação",
-    "sort_individual_devices": "Classifique dispositivos individuais"
+    "sort_individual_devices": "Classifique dispositivos individuais",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

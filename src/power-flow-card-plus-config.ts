@@ -26,6 +26,7 @@ interface mainConfigOptions {
     grey_color?: string | number[];
   };
   sort_individual_devices?: boolean;
+  allow_layout_break?: boolean;
 }
 
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {

@@ -53,6 +53,7 @@ export const cardConfigStruct = assign(
       individual: optional(any()),
     }),
     sort_individual_devices: optional(boolean()),
+    allow_layout_break: optional(boolean()),
   })
 );
 
@@ -70,13 +71,13 @@ export const entitiesSchema = memoizeOne((localize) => [
     type: "grid",
     column_min_width: "400px",
     schema: [
-      // {
-      //   title: localize("editor.grid"),
-      //   name: "grid",
-      //   type: "expandable",
-      //   iconPath: mdiTransmissionTower,
-      //   schema: gridSchema,
-      // },
+      {
+        title: localize("editor.grid"),
+        name: "grid",
+        type: "expandable",
+        iconPath: mdiTransmissionTower,
+        schema: gridSchema,
+      },
       {
         title: localize("editor.solar"),
         name: "solar",
@@ -200,6 +201,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "sort_individual_devices",
         label: "Sort individual devices by usage",
+        selector: { boolean: {} },
+      },
+      {
+        name: "allow_layout_break",
+        label: "Allow Layout Break",
         selector: { boolean: {} },
       },
     ],
