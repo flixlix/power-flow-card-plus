@@ -57,9 +57,21 @@ export const customColorsSchema = {
   ],
 } as const;
 
-export const tapActionSchema = [
+export const actionSchema = [
   {
     name: "tap_action",
+    selector: {
+      ui_action: {},
+    },
+  },
+  {
+    name: "hold_action",
+    selector: {
+      ui_action: {},
+    },
+  },
+  {
+    name: "double_tap_action",
     selector: {
       ui_action: {},
     },
@@ -91,10 +103,10 @@ export const secondaryInfoSchema = [
     ],
   },
   {
-    title: localize("editor.tap_action"),
+    title: localize("editor.action"),
     name: "",
     type: "expandable",
-    schema: tapActionSchema,
+    schema: actionSchema,
   },
 ] as const;
 

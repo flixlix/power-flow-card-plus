@@ -76,7 +76,10 @@
     "grey_out": "Серый",
     "transparency": "Прозрачность",
     "grey_color": "Серый цвет",
+    "action": "Action",
     "tap_action": "действие касания",
+    "hold_action": "действие удержания",
+    "double_tap_action": "действие двойного касания",
     "navigation_path": "путь навигации",
     "sort_individual_devices": "Сортировка отдельных устройств",
     "allow_layout_break": "Allow Layout Break"

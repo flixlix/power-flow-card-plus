@@ -76,7 +76,10 @@
     "grey_out": "Harmaa",
     "transparency": "Läpinäkyvyys",
     "grey_color": "Harmaa väri",
+    "action": "Action",
     "tap_action": "Napauta toimintoa",
+    "hold_action": "Pidä painettuna -toiminto",
+    "double_tap_action": "Kaksoisnapautustoiminto",
     "navigation_path": "Navigointipolku",
     "sort_individual_devices": "Lajittele yksittäiset laitteet",
     "allow_layout_break": "Allow Layout Break"

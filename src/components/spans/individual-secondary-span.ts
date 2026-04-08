@@ -48,11 +48,15 @@ export const individualSecondarySpan = (
     ? html`${baseSecondarySpan({
         main: main,
         className: key,
-        entityId: individual?.secondary.entity || undefined,
+        entityId: individual?.field?.secondary_info?.entity || individual?.secondary.entity || undefined,
         icon: individual?.secondary?.icon || undefined,
         value,
         template: templatesObj.individual[index] || undefined,
-        tap_action: individual?.secondary?.tap_action || undefined,
+        actions: {
+          tap_action: individual?.field?.secondary_info?.tap_action || individual?.secondary?.tap_action,
+          hold_action: individual?.field?.secondary_info?.hold_action || individual?.secondary?.hold_action,
+          double_tap_action: individual?.field?.secondary_info?.double_tap_action || individual?.secondary?.double_tap_action,
+        },
       })}`
     : nothing}`;
 };

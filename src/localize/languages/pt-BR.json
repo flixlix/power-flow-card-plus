@@ -76,7 +76,10 @@
     "grey_out": "Cinza",
     "transparency": "Transparência",
     "grey_color": "Cor do Cinza",
+    "action": "Action",
     "tap_action": "Ação de Toque",
+    "hold_action": "Ação ao Segurar",
+    "double_tap_action": "Ação de Toque Duplo",
     "navigation_path": "Caminho de Navegação",
     "sort_individual_devices": "Classifique dispositivos individuais",
     "allow_layout_break": "Allow Layout Break"

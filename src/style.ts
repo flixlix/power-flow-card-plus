@@ -91,6 +91,20 @@ export const styles = css`
     color: var(--primary-text-color);
     gap: 2px;
     // background-color: var(--card-background-color); /* hide overflowing lines behind background */
+    overflow: hidden;
+  }
+
+  .circle > ha-ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .circle > :not(ha-ripple) {
+    position: relative;
+    z-index: 1;
   }
 
   .card-content,
@@ -107,6 +121,7 @@ export const styles = css`
     justify-content: flex-start;
     padding: 0 16px 16px;
     box-sizing: border-box;
+    pointer-events: none;
   }
 
   :dir(rtl) .lines {
@@ -563,6 +578,10 @@ export const styles = css`
   }
 
   .home-circle-sections {
+    pointer-events: none;
+  }
+
+  .pointer-events-none {
     pointer-events: none;
   }
 `;

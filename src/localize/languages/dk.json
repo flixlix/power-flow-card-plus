@@ -76,7 +76,10 @@
     "grey_out": "Grået ud",
     "transparency": "Transparens",
     "grey_color": "Grå farve",
+    "action": "Action",
     "tap_action": "Tap Handling",
+    "hold_action": "Hold Handling",
+    "double_tap_action": "Double Tap Handling",
     "navigation_path": "Navigationssti",
     "sort_individual_devices": "Sorter individuelle enheder",
     "allow_layout_break": "Allow Layout Break"

@@ -22,6 +22,7 @@ export const individualRightBottomElement = (
   { individualObj, templatesObj, displayState, newDur }: TopIndividual
 ) => {
   if (!individualObj) return html`<div class="spacer"></div>`;
+  const disableEntityClick = config.clickable_entities === false;
 
   const indexOfIndividual = config?.entities?.individual?.findIndex((e) => e.entity === individualObj.entity);
   if (indexOfIndividual === -1 || indexOfIndividual === undefined) return html`<div class="spacer"></div>`;
@@ -30,16 +31,29 @@ export const individualRightBottomElement = (
 
   return html`<div class="circle-container individual-bottom individual-right individual-right-bottom">
     <div
-      class="circle"
-      @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
-        main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
+      class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
+      @click=${(e: MouseEvent) => {
+        main.onEntityClick(e, individualObj?.field, individualObj?.entity);
+      }}
+      @dblclick=${(e: MouseEvent) => {
+        main.onEntityDoubleClick(e, individualObj?.field, individualObj?.entity);
+      }}
+      @pointerdown=${(e: PointerEvent) => {
+        main.onEntityPointerDown(e, individualObj?.field, individualObj?.entity);
+      }}
+      @pointerup=${(e: PointerEvent) => {
+        main.onEntityPointerUp(e);
+      }}
+      @pointercancel=${(e: PointerEvent) => {
+        main.onEntityPointerUp(e);
       }}
       @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
         if (e.key === "Enter") {
-          main.openDetails(e, individualObj?.field?.tap_action, individualObj?.entity);
+          main.openDetails(e, individualObj?.field, individualObj?.entity, "tap");
         }
       }}
     >
+      <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "right-bottom")}
       ${individualObj.icon !== " " ? html` <ha-icon id="individual-right-bottom-icon" .icon=${individualObj.icon} />` : nothing}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)

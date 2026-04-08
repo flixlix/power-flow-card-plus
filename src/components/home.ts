@@ -37,20 +37,37 @@ export const homeElement = (
   }: Home
 ) => {
   const showHomeLabel = individual.filter((i) => i.has).length <= 1;
-
+  const isHomeEntityDefined = entities.home?.entity !== undefined;
+  const staticAction =
+    entities.home?.tap_action !== undefined || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
+  const isClickable = isHomeEntityDefined && !staticAction;
+  const disableEntityClick = config.clickable_entities === false || !isClickable;
   return html`<div class="circle-container home">
   <div
-    class="circle"
+    class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
     id="home-circle"
-    @click=${(e: { stopPropagation: () => void; target: HTMLElement }) => {
-      main.openDetails(e, entities.home?.tap_action, entities.home?.entity);
+    @click=${(e: MouseEvent) => {
+      main.onEntityClick(e, entities.home, entities.home?.entity);
+    }}
+    @dblclick=${(e: MouseEvent) => {
+      main.onEntityDoubleClick(e, entities.home, entities.home?.entity);
+    }}
+    @pointerdown=${(e: PointerEvent) => {
+      main.onEntityPointerDown(e, entities.home, entities.home?.entity);
+    }}
+    @pointerup=${(e: PointerEvent) => {
+      main.onEntityPointerUp(e);
+    }}
+    @pointercancel=${(e: PointerEvent) => {
+      main.onEntityPointerUp(e);
     }}
     @keyDown=${(e: { key: string; stopPropagation: () => void; target: HTMLElement }) => {
       if (e.key === "Enter") {
-        main.openDetails(e, entities.home?.tap_action, entities.home?.entity);
+        main.openDetails(e, entities.home, entities.home?.entity, "tap");
       }
     }}
   >
+    <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
     ${generalSecondarySpan(main.hass, main, config, templatesObj, home, "home")}
     ${home.icon !== " " ? html`<ha-icon id="home-icon" .icon=${home.icon} />` : nothing}
     ${homeUsageToDisplay}

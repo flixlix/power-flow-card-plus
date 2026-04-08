@@ -62,6 +62,8 @@ export type IndividualObject = {
     displayZeroTolerance: number;
     decimals: number | null;
     tap_action?: ActionConfig;
+    hold_action?: ActionConfig;
+    double_tap_action?: ActionConfig;
   };
 };
 
@@ -111,6 +113,8 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
       displayZeroTolerance: field?.secondary_info?.display_zero_tolerance || 0,
       decimals: field?.secondary_info?.decimals || null,
       tap_action: field?.secondary_info?.tap_action,
+      hold_action: field?.secondary_info?.hold_action,
+      double_tap_action: field?.secondary_info?.double_tap_action,
     },
   };
 };

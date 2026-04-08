@@ -76,7 +76,10 @@
     "grey_out": "Šedý výstup",
     "transparency": "Průhlednost",
     "grey_color": "Šedá barva",
+    "action": "Action",
     "tap_action": "Akce po klepnutí",
+    "hold_action": "Akce při podržení",
+    "double_tap_action": "Akce při dvojitém klepnutí",
     "navigation_path": "Navigační cesta",
     "sort_individual_devices": "Seřaďte individuálně",
     "allow_layout_break": "Allow Layout Break"
