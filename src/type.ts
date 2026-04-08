@@ -122,8 +122,8 @@ export type GridObject = {
   color: {
     fromGrid?: string;
     toGrid?: string;
-    icon_type?: boolean | "production" | "consumption";
-    circle_type?: boolean | "production" | "consumption";
+    icon_type?: "color_dynamically" | "no_color" | "production" | "consumption";
+    circle_type?: "color_dynamically" | "production" | "consumption";
   };
   tap_action?: ActionConfig;
   secondary: {

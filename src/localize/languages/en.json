@@ -78,6 +78,7 @@
     "grey_color": "Grey Color",
     "tap_action": "Tap Action",
     "navigation_path": "Navigation Path",
-    "sort_individual_devices": "Sort individual devices"
+    "sort_individual_devices": "Sort individual devices",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

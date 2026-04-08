@@ -1,4 +1,4 @@
-import { html, svg } from "lit";
+import { html, nothing, svg } from "lit";
 import { individualSecondarySpan } from "./spans/individual-secondary-span";
 import { NewDur, TemplatesObj } from "@/type";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
@@ -38,14 +38,14 @@ export const individualLeftTopElement = (
       }}
     >
       ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-top")}
-      ${individualObj.icon !== " " ? html` <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon} />` : null}
+      ${individualObj.icon !== " " ? html` <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon} />` : nothing}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-top individual-left-top">
             ${individualObj?.showDirection
               ? html`<ha-icon class="small" .icon=${individualObj.invertAnimation ? "mdi:arrow-down" : "mdi:arrow-up"}></ha-icon>`
-              : ""}${displayState}
+              : nothing}${displayState}
           </span>`
-        : ""}
+        : nothing}
     </div>
     ${showLine(config, individualObj.state || 0) && !config.entities.home?.hide
       ? html`
@@ -67,9 +67,9 @@ export const individualLeftTopElement = (
             <mpath xlink:href="#individual-top" />
           </animateMotion>
         </circle>`
-              : ""}
+              : nothing}
           </svg>
         `
-      : ""}
+      : nothing}
   </div>`;
 };

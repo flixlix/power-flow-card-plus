@@ -78,6 +78,7 @@
     "grey_color": "धूसर रंग",
     "tap_action": "टैप क्रिया",
     "navigation_path": "नेविगेशन पथ",
-    "sort_individual_devices": "व्यक्तिगत डिवाइस क्रमबद्ध करें"
+    "sort_individual_devices": "व्यक्तिगत डिवाइस क्रमबद्ध करें",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

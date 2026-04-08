@@ -78,6 +78,7 @@
     "grey_color": "Kolor szary",
     "tap_action": "Akcja dotknięcia",
     "navigation_path": "Ścieżka nawigacji",
-    "sort_individual_devices": "Sortuj poszczególne urządzenia"
+    "sort_individual_devices": "Sortuj poszczególne urządzenia",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

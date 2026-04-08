@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { offlineStr } from "@/type";
 import { ActionConfig } from "custom-card-helpers";
@@ -14,7 +14,7 @@ type BaseSecondarySpan = {
 };
 
 export const baseSecondarySpan = ({ main, className, template, value, entityId, icon, tap_action }: BaseSecondarySpan) => {
-  if (value && offlineStr.includes(value)) return html``;
+  if (value && offlineStr.includes(value)) return nothing;
   if (value || template) {
     return html`<span
       class="secondary-info ${className}"
@@ -27,8 +27,8 @@ export const baseSecondarySpan = ({ main, className, template, value, entityId, 
         }
       }}
     >
-      ${icon ? html`<ha-icon class="secondary-info small" .icon=${icon}></ha-icon>` : ""} ${template ?? value}</span
+      ${icon ? html`<ha-icon class="secondary-info small" .icon=${icon}></ha-icon>` : nothing} ${template ?? value}</span
     >`;
   }
-  return html``;
+  return nothing;
 };

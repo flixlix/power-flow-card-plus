@@ -78,6 +78,7 @@
     "grey_color": "Graue Farbe",
     "tap_action": "Aktion beim Antippen",
     "navigation_path": "Navigationspfad",
-    "sort_individual_devices": "Individuelle Geräte sortieren"
+    "sort_individual_devices": "Individuelle Geräte sortieren",
+    "allow_layout_break": "Allow Layout Break"
   }
 }

@@ -1,6 +1,6 @@
 import { ActionConfig, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { html, LitElement, nothing, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { batteryElement } from "@/components/battery";
 import { flowElement } from "@/components/flows";
@@ -179,9 +179,9 @@ export class PowerFlowCardPlus extends LitElement {
     );
   }
 
-  protected render(): TemplateResult {
+  protected render(): TemplateResult | typeof nothing {
     if (!this._config || !this.hass) {
-      return html``;
+      return nothing;
     }
     const data = this._renderData ?? this._computeRenderData();
     const {
@@ -243,7 +243,7 @@ export class PowerFlowCardPlus extends LitElement {
                     })
                   : individualObjs?.some((individual) => individual?.has)
                   ? html`<div class="spacer"></div>`
-                  : ""}
+                  : nothing}
                 ${individualFieldLeftTop
                   ? individualLeftTopElement(this, this._config, {
                       individualObj: individualFieldLeftTop,
@@ -261,9 +261,9 @@ export class PowerFlowCardPlus extends LitElement {
                       battery,
                       individualObjs,
                     })
-                  : html``}
+                  : nothing}
               </div>`
-            : html``}
+            : nothing}
           <div class="row">
             ${grid.has
               ? gridElement(this, this._config, {
@@ -289,7 +289,7 @@ export class PowerFlowCardPlus extends LitElement {
                   individual: individualObjs,
                 })
               : html`<div class="spacer"></div>`}
-            ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : html``}
+            ${checkHasRightIndividual(individualObjs) ? html` <div class="spacer"></div>` : nothing}
           </div>
           ${battery.has || checkHasBottomIndividual(individualObjs)
             ? html`<div class="row">
@@ -310,7 +310,7 @@ export class PowerFlowCardPlus extends LitElement {
                       newDur,
                       templatesObj,
                     })
-                  : html``}
+                  : nothing}
               </div>`
             : html`<div class="spacer"></div>`}
           ${flowElement(this._config, {
@@ -399,7 +399,7 @@ export class PowerFlowCardPlus extends LitElement {
       color: {
         fromGrid: entities.grid?.color?.consumption,
         toGrid: entities.grid?.color?.production,
-        icon_type: entities.grid?.color_icon as boolean | "consumption" | "production" | undefined,
+        icon_type: entities.grid?.color_icon as "color_dynamically" | "no_color" | "production" | "consumption" | undefined,
         circle_type: entities.grid?.color_circle,
       },
       tap_action: entities.grid?.tap_action,
@@ -665,8 +665,10 @@ export class PowerFlowCardPlus extends LitElement {
       individual: individualObjs?.map((_, index) => this._templateResults[`${individualKeys[index]}Secondary`]?.result) || [],
     };
     const isCardWideEnough = this._width > 420;
+
     const sortedIndividualObjects = this._config.sort_individual_devices !== false ? sortIndividualObjects(individualObjs) : individualObjs;
-    const maxVisibleIndividuals = this._width >= this.wideEnoughForFourIndividuals ? 4 : 2;
+    const maxVisibleIndividuals = this._config.allow_layout_break ? 4 : this._width >= this.wideEnoughForFourIndividuals ? 4 : 2;
+
     const visibleIndividualObjects = sortedIndividualObjects.slice(0, maxVisibleIndividuals);
     const individualFieldLeftTop = getTopLeftIndividual(visibleIndividualObjects);
     const individualFieldLeftBottom = getBottomLeftIndividual(visibleIndividualObjects);

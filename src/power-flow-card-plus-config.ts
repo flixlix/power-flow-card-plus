@@ -26,6 +26,7 @@ interface mainConfigOptions {
     grey_color?: string | number[];
   };
   sort_individual_devices?: boolean;
+  allow_layout_break?: boolean;
 }
 
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
@@ -40,8 +41,8 @@ interface Battery extends BaseConfigEntity {
   state_of_charge_unit_white_space?: boolean;
   state_of_charge_decimals?: number;
   show_state_of_charge?: boolean;
-  color_state_of_charge_value?: boolean | "production" | "consumption";
-  color_circle: boolean | "production" | "consumption";
+  color_state_of_charge_value?: "no_color" | "color_dynamically" | "production" | "consumption";
+  color_circle: "color_dynamically" | "production" | "consumption";
   color_value?: boolean;
   color?: ComboEntity;
 }
@@ -49,7 +50,7 @@ interface Battery extends BaseConfigEntity {
 interface Grid extends BaseConfigEntity {
   power_outage: GridPowerOutage;
   secondary_info?: SecondaryInfoType;
-  color_circle: boolean | "production" | "consumption";
+  color_circle: "color_dynamically" | "production" | "consumption";
   color_value?: boolean;
   color?: ComboEntity;
 }
