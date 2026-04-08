@@ -66,6 +66,11 @@ export class PowerFlowCardPlus extends LitElement {
   @state() private _width = 0;
   private readonly wideEnoughForFourIndividuals = 359;
   private _resizeObserver?: ResizeObserver;
+  private _handleVisibilityChange = () => {
+    if (typeof document !== "undefined" && document.visibilityState === "visible") {
+      this.requestUpdate();
+    }
+  };
 
   @query("#battery-grid-flow") batteryGridFlow?: SVGSVGElement;
   @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
@@ -123,12 +128,18 @@ export class PowerFlowCardPlus extends LitElement {
 
   public connectedCallback() {
     super.connectedCallback();
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", this._handleVisibilityChange);
+    }
     this._tryConnectAll();
   }
 
   public disconnectedCallback() {
     this._resizeObserver?.disconnect();
     this._resizeObserver = undefined;
+    if (typeof document !== "undefined") {
+      document.removeEventListener("visibilitychange", this._handleVisibilityChange);
+    }
     this._tryDisconnectAll();
     super.disconnectedCallback();
   }
