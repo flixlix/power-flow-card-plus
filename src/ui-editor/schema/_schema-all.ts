@@ -186,6 +186,7 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "clickable_entities",
         label: "Clickable Entities",
+        default: true,
         selector: { boolean: {} },
       },
       {
@@ -196,11 +197,13 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "use_new_flow_rate_model",
         label: "New Flow Model?",
+        default: true,
         selector: { boolean: {} },
       },
       {
         name: "sort_individual_devices",
         label: "Sort individual devices by usage",
+        default: true,
         selector: { boolean: {} },
       },
       {

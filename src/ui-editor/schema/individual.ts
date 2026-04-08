@@ -8,16 +8,19 @@ const mainSchema = {
     {
       name: "color_value",
       label: "Color Value",
+      default: true,
       selector: { boolean: {} },
     },
     {
       name: "color_icon",
       label: "Color Icon",
+      default: true,
       selector: { boolean: {} },
     },
     {
       name: "display_zero",
       label: "Display Zero",
+      default: true,
       selector: { boolean: {} },
     },
     {
@@ -28,6 +31,7 @@ const mainSchema = {
     {
       name: "display_zero_state",
       label: "Display Zero State",
+      default: true,
       selector: { boolean: {} },
     },
     {

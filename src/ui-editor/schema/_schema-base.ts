@@ -162,7 +162,7 @@ const batteryOrGridMainConfigSchema = [
           { value: "one_way_no_zero", label: "One Way" },
           { value: "one_way", label: "One Way (Show Zero)" },
         ],
-        custom_value: true,
+        mode: "dropdown",
       },
     },
   },
