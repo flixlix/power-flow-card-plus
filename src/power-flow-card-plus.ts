@@ -665,8 +665,10 @@ export class PowerFlowCardPlus extends LitElement {
       individual: individualObjs?.map((_, index) => this._templateResults[`${individualKeys[index]}Secondary`]?.result) || [],
     };
     const isCardWideEnough = this._width > 420;
-    const sortedIndividualObjects = this._config.sort_individual_devices ? sortIndividualObjects(individualObjs) : individualObjs;
+
+    const sortedIndividualObjects = this._config.sort_individual_devices !== false ? sortIndividualObjects(individualObjs) : individualObjs;
     const maxVisibleIndividuals = this._config.allow_layout_break ? 4 : this._width >= this.wideEnoughForFourIndividuals ? 4 : 2;
+
     const visibleIndividualObjects = sortedIndividualObjects.slice(0, maxVisibleIndividuals);
     const individualFieldLeftTop = getTopLeftIndividual(visibleIndividualObjects);
     const individualFieldLeftBottom = getBottomLeftIndividual(visibleIndividualObjects);
