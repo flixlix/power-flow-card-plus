@@ -39,8 +39,8 @@ export const homeElement = (
   const showHomeLabel = individual.filter((i) => i.has).length <= 1;
   const isHomeEntityDefined = entities.home?.entity !== undefined;
   const staticAction =
-    entities.home?.tap_action !== undefined || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
-  const isClickable = isHomeEntityDefined && !staticAction;
+    entities.home?.tap_action?.action !== "none" || entities.home?.hold_action !== undefined || entities.home?.double_tap_action !== undefined;
+  const isClickable = isHomeEntityDefined && staticAction;
   const disableEntityClick = config.clickable_entities === false || !isClickable;
   return html`<div class="circle-container home">
   <div
