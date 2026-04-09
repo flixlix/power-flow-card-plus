@@ -127,7 +127,7 @@ export const stickersElement = (
           >
             ${!showNameInsideCircle ? html`<span class="label sticker-label">${name}</span>` : nothing}
             <div
-              class="circle sticker-circle ${preventEntityClick ? "pointer-events-none" : ""} ${showCircle ? "" : "sticker-circle--hidden"} ${showNameInsideCircle ? "sticker-circle--name-inside" : ""}"
+              class="circle sticker-circle ${preventEntityClick ? "pointer-events-none" : ""} ${showCircle ? "" : "sticker-circle--hidden"} ${showNameInsideCircle ? "sticker-circle--name-inside" : ""} ${state ? "sticker-circle--has-state" : ""}"
               data-sticker-index=${String(index)}
               data-sticker-source-anchor=${sticker.anchor ?? ""}
               tabindex=${disableEntityClick ? "-1" : "0"}
