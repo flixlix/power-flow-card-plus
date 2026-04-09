@@ -1,4 +1,4 @@
-import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, type LovelaceCardConfig } from "./type.js";
+import { BaseConfigEntity, ComboEntity, GridPowerOutage, IndividualDeviceType, SecondaryInfoType, StickerConfig, type LovelaceCardConfig } from "./type.js";
 
 export type DisplayZeroLinesMode = "show" | "grey_out" | "transparency" | "hide" | "custom";
 
@@ -31,6 +31,7 @@ interface mainConfigOptions {
 
 export interface PowerFlowCardPlusConfig extends LovelaceCardConfig, mainConfigOptions {
   entities: ConfigEntities;
+  stickers?: StickerConfig[];
 }
 
 export type IndividualField = IndividualDeviceType[];

@@ -1,10 +1,28 @@
 import { TemplateResult } from "lit";
 import { ActionConfig } from "custom-card-helpers";
+import type { StickerAnchor } from "@/utils/sticker-anchor";
 
 export type ActionConfigSet = {
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
+};
+
+export type StickerConfig = {
+  entity: string;
+  name?: string;
+  icon?: string;
+  anchor?: StickerAnchor;
+  hide_with_anchor?: boolean;
+  offset_x?: number;
+  offset_y?: number;
+  name_inside_circle?: boolean;
+  show_circle?: boolean;
+  inherit_circle_color?: boolean;
+  unit_white_space?: boolean;
+  x_position?: number;
+  y_position?: number;
+  scale?: number;
 };
 
 export type ComboEntity = {

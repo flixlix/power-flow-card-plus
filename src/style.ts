@@ -73,6 +73,122 @@ export const styles = css`
     margin: 0 auto;
   }
 
+  .stickers-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 25;
+  }
+
+  .stickers-layer--editable {
+    z-index: 40;
+  }
+
+  .sticker-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .sticker-node--dragging {
+    z-index: 41;
+  }
+
+  .sticker-node .sticker-circle {
+    width: calc(80px * var(--sticker-scale, 1));
+    height: calc(80px * var(--sticker-scale, 1));
+    background: var(--card-background-color);
+    border-color: var(--sticker-inherited-circle-color, #6f6f6f);
+    pointer-events: auto;
+    cursor: var(--clickable-cursor);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+
+  .sticker-node .sticker-circle > :not(ha-ripple) {
+    cursor: inherit;
+  }
+
+  .sticker-node--editable .sticker-circle {
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .sticker-node--dragging .sticker-circle {
+    cursor: grabbing;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+
+  .sticker-node .sticker-circle--hidden {
+    width: auto !important;
+    height: auto !important;
+    border-color: transparent !important;
+    border-width: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  .sticker-node .sticker-circle--hidden .sticker-state {
+    order: 0;
+  }
+
+  .sticker-node .sticker-circle--hidden ha-icon {
+    order: 1;
+  }
+
+  .sticker-node .sticker-circle--name-inside .sticker-inner-name {
+    order: 1;
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.1;
+    font-size: 10px;
+    color: var(--secondary-text-color);
+  }
+
+  .sticker-node .sticker-circle--name-inside .sticker-state {
+    order: 2;
+  }
+
+  .sticker-node .sticker-circle--name-inside.sticker-circle--hidden .sticker-inner-name {
+    order: 0;
+  }
+
+  .sticker-node .sticker-circle--name-inside.sticker-circle--hidden .sticker-state {
+    order: 1;
+  }
+
+  .sticker-node .sticker-circle--name-inside.sticker-circle--hidden ha-icon {
+    order: 2;
+  }
+
+  .sticker-node .sticker-circle ha-icon {
+    --mdc-icon-size: clamp(12px, calc(30px * var(--sticker-scale, 1)), 42px);
+  }
+
+  .sticker-label {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% - 3px);
+    transform: translateX(-50%);
+    font-size: 10px;
+    max-width: 120px;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .sticker-state {
+    font-size: 11px;
+    line-height: 1.1;
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .circle {
     width: 80px;
     height: 80px;
@@ -209,6 +325,12 @@ export const styles = css`
 
   .circle-container .circle {
     cursor: var(--clickable-cursor);
+    transition: box-shadow 0.16s ease, transform 0.16s ease;
+  }
+
+  .circle-container .circle[data-sticker-anchor-highlighted] {
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+    transform: scale(1.03);
   }
   #battery-grid {
     stroke: var(--battery-grid-line);
