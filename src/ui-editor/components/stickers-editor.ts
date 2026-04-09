@@ -11,6 +11,13 @@ import { loadHaForm } from "@/ui-editor/utils/load-ha-form";
 import { isStickerAnchor } from "@/utils/sticker-anchor";
 
 const DEFAULT_SCALE = 100;
+const EDITABLE_NUMBER_FIELDS = ["scale", "x_position", "y_position"] as const;
+type EditableNumberField = (typeof EDITABLE_NUMBER_FIELDS)[number];
+type EditableStickerConfig = Omit<StickerConfig, EditableNumberField> & {
+  scale?: number | "";
+  x_position?: number | "";
+  y_position?: number | "";
+};
 
 const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
 const normalizeAnchor = (anchor: unknown): StickerConfig["anchor"] => (isStickerAnchor(anchor) ? anchor : undefined);
@@ -18,6 +25,7 @@ const toOptionalNumber = (value: unknown): number | undefined => {
   const numberValue = Number(value);
   return Number.isFinite(numberValue) ? numberValue : undefined;
 };
+const isEmptyEditableNumber = (value: unknown): value is "" => value === "";
 
 const getStickerIcon = (hass: HomeAssistant, entityId: string): string =>
   hass.states[entityId]?.attributes?.icon || "mdi:circle-outline";
@@ -25,7 +33,7 @@ const getStickerIcon = (hass: HomeAssistant, entityId: string): string =>
 const getStickerName = (hass: HomeAssistant, entityId: string): string =>
   hass.states[entityId]?.attributes?.friendly_name || entityId;
 
-const getNormalizedStickerIcon = (hass: HomeAssistant, sticker: StickerConfig): string => {
+const getNormalizedStickerIcon = (hass: HomeAssistant, sticker: Pick<StickerConfig, "entity" | "icon">): string => {
   if (sticker.icon === "" || sticker.icon === " ") return "";
   if (typeof sticker.icon === "string") return sticker.icon;
   return getStickerIcon(hass, sticker.entity);
@@ -39,7 +47,7 @@ export class StickersEditor extends LitElement {
 
   @state() private _editingIndex: number = -1;
 
-  @state() private _draftStickers: StickerConfig[] = [];
+  @state() private _draftStickers: EditableStickerConfig[] = [];
 
   public connectedCallback(): void {
     super.connectedCallback();
@@ -134,7 +142,7 @@ export class StickersEditor extends LitElement {
     }
   }
 
-  private _normalizeSticker(sticker: StickerConfig, index: number): StickerConfig {
+  private _normalizeSticker(sticker: StickerConfig, index: number): EditableStickerConfig {
     return {
       entity: sticker.entity,
       name: sticker.name ?? "",
@@ -153,7 +161,26 @@ export class StickersEditor extends LitElement {
     };
   }
 
-  private _emitConfig(stickers: StickerConfig[] = this._draftStickers): void {
+  private _toPersistedSticker(sticker: EditableStickerConfig, index: number): StickerConfig {
+    return {
+      entity: sticker.entity,
+      name: sticker.name ?? "",
+      icon: sticker.icon === "" ? "" : getNormalizedStickerIcon(this.hass, sticker),
+      anchor: normalizeAnchor(sticker.anchor),
+      hide_with_anchor: sticker.hide_with_anchor !== false,
+      offset_x: toOptionalNumber(sticker.offset_x) ?? 0,
+      offset_y: toOptionalNumber(sticker.offset_y) ?? 0,
+      name_inside_circle: sticker.name_inside_circle !== false,
+      show_circle: sticker.show_circle !== false,
+      inherit_circle_color: sticker.inherit_circle_color !== false,
+      unit_white_space: sticker.unit_white_space !== false,
+      x_position: clamp(Number(sticker.x_position ?? 24 + (index % 4) * 16), 0, 100),
+      y_position: clamp(Number(sticker.y_position ?? 24 + (index % 3) * 18), 0, 100),
+      scale: clamp(Number(sticker.scale ?? DEFAULT_SCALE), 1, 100),
+    };
+  }
+
+  private _emitConfig(stickers: EditableStickerConfig[] = this._draftStickers): void {
     if (!this.config) {
       return;
     }
@@ -161,7 +188,7 @@ export class StickersEditor extends LitElement {
     fireEvent(this, "config-changed", {
       config: {
         ...this.config,
-        stickers,
+        stickers: stickers.map((sticker, index) => this._toPersistedSticker(sticker, index)),
       },
     });
   }
@@ -249,15 +276,28 @@ export class StickersEditor extends LitElement {
     }
 
     const next = [...this._draftStickers];
-    next[this._editingIndex] = this._normalizeSticker(
-      {
-        ...currentSticker,
-        ...normalizedValue,
-      },
-      this._editingIndex
-    );
+    const nextSticker: EditableStickerConfig = {
+      ...this._normalizeSticker(this._toPersistedSticker(currentSticker, this._editingIndex), this._editingIndex),
+      ...currentSticker,
+      ...normalizedValue,
+    };
+
+    nextSticker.x_position = isEmptyEditableNumber(nextSticker.x_position)
+      ? ""
+      : clamp(Number(nextSticker.x_position ?? 24 + (this._editingIndex % 4) * 16), 0, 100);
+    nextSticker.y_position = isEmptyEditableNumber(nextSticker.y_position)
+      ? ""
+      : clamp(Number(nextSticker.y_position ?? 24 + (this._editingIndex % 3) * 18), 0, 100);
+    nextSticker.scale = isEmptyEditableNumber(nextSticker.scale) ? "" : clamp(Number(nextSticker.scale ?? DEFAULT_SCALE), 1, 100);
+
+    next[this._editingIndex] = nextSticker;
 
     this._draftStickers = next;
+
+    if (EDITABLE_NUMBER_FIELDS.some((field) => isEmptyEditableNumber(nextSticker[field]))) {
+      return;
+    }
+
     this._emitConfig(next);
   }
 
@@ -273,7 +313,7 @@ export class StickersEditor extends LitElement {
     );
   };
 
-  private _getStickerTitle(sticker: StickerConfig, index: number): string {
+  private _getStickerTitle(sticker: EditableStickerConfig, index: number): string {
     return sticker.name || getStickerName(this.hass, sticker.entity) || sticker.entity || `Sticker ${index + 1}`;
   }
 
