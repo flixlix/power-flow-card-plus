@@ -147,6 +147,7 @@ export const styles = css`
     line-height: 1.1;
     font-size: 10px;
     color: var(--secondary-text-color);
+    transform: translateY(-2px);
   }
 
   .sticker-node .sticker-circle--name-inside .sticker-state {
