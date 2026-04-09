@@ -261,8 +261,17 @@ export class StickersEditor extends LitElement {
     this._emitConfig(next);
   }
 
-  private _computeLabelCallback = (schema: any) =>
-    schema?.label || localize(`editor.${schema?.name}`) || this.hass.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`);
+  private _computeLabelCallback = (schema: any) => {
+    const customLabelKey = `editor.${schema?.name}`;
+    const customLabel = localize(customLabelKey);
+
+    return (
+      schema?.label ||
+      this.hass.localize(`ui.panel.lovelace.editor.card.generic.${schema?.name}`) ||
+      (customLabel !== customLabelKey ? customLabel : undefined) ||
+      schema?.name
+    );
+  };
 
   private _getStickerTitle(sticker: StickerConfig, index: number): string {
     return sticker.name || getStickerName(this.hass, sticker.entity) || sticker.entity || `Sticker ${index + 1}`;
