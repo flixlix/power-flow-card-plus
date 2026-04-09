@@ -63,6 +63,12 @@ export const getStickerSchema = (config: PowerFlowCardPlusConfig, hass: HomeAssi
           selector: { boolean: {} },
         },
         {
+          name: "display_zero",
+          label: localize("editor.display_zero"),
+          default: true,
+          selector: { boolean: {} },
+        },
+        {
           name: "name_inside_circle",
           label: localize("editor.name_inside_circle"),
           default: true,
