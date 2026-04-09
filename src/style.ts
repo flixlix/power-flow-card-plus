@@ -189,6 +189,10 @@ export const styles = css`
     white-space: nowrap;
   }
 
+  .sticker-state--raised {
+    transform: translateY(-4px);
+  }
+
   .circle {
     width: 80px;
     height: 80px;
