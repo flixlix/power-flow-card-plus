@@ -79,6 +79,10 @@ type StickerCircleMatch = {
   circle: HTMLElement;
   contactDepth: number;
 };
+type SyncedStickerOffsetsResult = {
+  hasChanges: boolean;
+  stickers: StickerConfig[];
+};
 
 registerCustomCard({
   type: "power-flow-card-plus",
@@ -184,6 +188,13 @@ export class PowerFlowCardPlus extends LitElement {
       this._activeStickerAnchorTarget = undefined;
     }
     this._pendingStickerPositionSyncIndices = pendingStickerPositionSyncIndices;
+
+    if (!this._stickerDragState && pendingStickerPositionSyncIndices.length && this._stickerContentSize) {
+      const syncedStickers = this._getStickersWithSyncedAnchoredOffsets(this._config.stickers || [], pendingStickerPositionSyncIndices);
+      if (syncedStickers.hasChanges) {
+        this._previewStickerOverrides = syncedStickers.stickers;
+      }
+    }
   }
 
   public connectedCallback() {
@@ -662,6 +673,65 @@ export class PowerFlowCardPlus extends LitElement {
     };
   }
 
+  private _getStickersWithSyncedAnchoredOffsets(stickersInput: StickerConfig[], indices: number[]): SyncedStickerOffsetsResult {
+    if (!this._stickerContentSize || !indices.length) {
+      return {
+        stickers: stickersInput,
+        hasChanges: false,
+      };
+    }
+
+    const stickers = [...stickersInput];
+    let hasChanges = false;
+
+    for (const index of indices) {
+      const sticker = stickers[index];
+      if (!sticker?.anchor) {
+        continue;
+      }
+
+      const anchorCenter = this._stickerAnchorCenters[sticker.anchor];
+      if (!anchorCenter) {
+        continue;
+      }
+
+      const desiredX = (clamp(Number(sticker.x_position ?? 50), 0, 100) / 100) * this._stickerContentSize.width;
+      const desiredY = (clamp(Number(sticker.y_position ?? 50), 0, 100) / 100) * this._stickerContentSize.height;
+      const nextOffsetX = Math.round(desiredX - anchorCenter.x);
+      const nextOffsetY = Math.round(desiredY - anchorCenter.y);
+
+      if (nextOffsetX === (Number(sticker.offset_x) || 0) && nextOffsetY === (Number(sticker.offset_y) || 0)) {
+        continue;
+      }
+
+      stickers[index] = {
+        ...sticker,
+        offset_x: nextOffsetX,
+        offset_y: nextOffsetY,
+      };
+      hasChanges = true;
+    }
+
+    return {
+      stickers,
+      hasChanges,
+    };
+  }
+
+  private _getStickerAnchorColor(anchor: NonNullable<StickerConfig["anchor"]>): string | undefined {
+    const root = this.shadowRoot;
+    if (!root) {
+      return undefined;
+    }
+
+    const anchorCircle = root.querySelector(`[data-sticker-anchor="${anchor}"]`) as HTMLElement | null;
+    if (!anchorCircle) {
+      return undefined;
+    }
+
+    return anchorCircle.id === "home-circle" ? "#000000" : getComputedStyle(anchorCircle).borderColor;
+  }
+
   private _findBestStickerCircleMatch(stickerCircle: HTMLElement, content: HTMLElement, candidateCircles: HTMLElement[]): StickerCircleMatch | undefined {
     const stickerRect = this._getElementRectWithinContent(stickerCircle, content);
     if (!stickerRect) {
@@ -736,7 +806,7 @@ export class PowerFlowCardPlus extends LitElement {
       if (!this._stickerDragState) {
         return;
       }
-      this._activeStickerAnchorTarget = this._findBestMainCircleAnchor();
+      this._activeStickerAnchorTarget = this._findBestStickerAnchorTarget();
     });
   }
 
@@ -751,7 +821,7 @@ export class PowerFlowCardPlus extends LitElement {
     if (!position) {
       return stickers;
     }
-    const matchedAnchor = this._findBestMainCircleAnchor();
+    const matchedAnchor = this._findBestStickerAnchorTarget();
 
     if (matchedAnchor) {
       const anchorCenter = this._stickerAnchorCenters[matchedAnchor];
@@ -780,7 +850,7 @@ export class PowerFlowCardPlus extends LitElement {
     return stickers;
   }
 
-  private _findBestMainCircleAnchor(): NonNullable<StickerConfig["anchor"]> | undefined {
+  private _findBestStickerAnchorTarget(): NonNullable<StickerConfig["anchor"]> | undefined {
     const root = this.shadowRoot;
     const content = root?.querySelector("#power-flow-card-plus") as HTMLElement | null;
     if (!root || !content || !this._stickerDragState) {
@@ -799,9 +869,22 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     const anchorCircles = Array.from(root.querySelectorAll("[data-sticker-anchor]")) as HTMLElement[];
-    const bestMatch = this._findBestStickerCircleMatch(stickerCircle, content, anchorCircles);
-    const anchor = bestMatch?.circle.dataset.stickerAnchor;
-    return isStickerAnchor(anchor) ? anchor : undefined;
+    const bestCircleMatch = this._findBestStickerCircleMatch(stickerCircle, content, anchorCircles);
+    const directAnchor = bestCircleMatch?.circle.dataset.stickerAnchor;
+    if (isStickerAnchor(directAnchor)) {
+      return directAnchor;
+    }
+
+    const anchoredStickerCircles = (Array.from(root.querySelectorAll(".sticker-circle[data-sticker-source-anchor]")) as HTMLElement[]).filter(
+      (circle) =>
+        !circle.classList.contains("sticker-circle--hidden") &&
+        circle.dataset.stickerIndex !== String(this._stickerDragState?.index) &&
+        isStickerAnchor(circle.dataset.stickerSourceAnchor)
+    );
+    const anchoredStickerMatch = this._findBestStickerCircleMatch(stickerCircle, content, anchoredStickerCircles);
+    const inheritedAnchor = anchoredStickerMatch?.circle.dataset.stickerSourceAnchor;
+
+    return isStickerAnchor(inheritedAnchor) ? inheritedAnchor : undefined;
   }
 
   private _emitStickerConfigChanged(stickers: StickerConfig[], index?: number): void {
@@ -1320,6 +1403,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
 
     const baseCircles = Array.from(root.querySelectorAll(".circle-container > .circle")) as HTMLElement[];
+    const anchoredStickerCircles = Array.from(root.querySelectorAll(".sticker-circle[data-sticker-source-anchor]")) as HTMLElement[];
     for (const stickerNode of stickerNodes) {
       const stickerCircle = stickerNode.querySelector(".sticker-circle") as HTMLElement | null;
       if (!stickerCircle) {
@@ -1327,7 +1411,31 @@ export class PowerFlowCardPlus extends LitElement {
       }
 
       const bestMatch = this._findBestStickerCircleMatch(stickerCircle, content, baseCircles);
-      const matchedColor = bestMatch ? (bestMatch.circle.id === "home-circle" ? "#000000" : getComputedStyle(bestMatch.circle).borderColor) : undefined;
+      let matchedColor = bestMatch ? (bestMatch.circle.id === "home-circle" ? "#000000" : getComputedStyle(bestMatch.circle).borderColor) : undefined;
+
+      if (!matchedColor) {
+        const stickerAnchorMatch = this._findBestStickerCircleMatch(
+          stickerCircle,
+          content,
+          anchoredStickerCircles.filter(
+            (circle) =>
+              circle !== stickerCircle &&
+              !circle.classList.contains("sticker-circle--hidden") &&
+              isStickerAnchor(circle.dataset.stickerSourceAnchor)
+          )
+        );
+        const inheritedAnchor = stickerAnchorMatch?.circle.dataset.stickerSourceAnchor;
+        if (isStickerAnchor(inheritedAnchor)) {
+          matchedColor = this._getStickerAnchorColor(inheritedAnchor);
+        }
+      }
+
+      if (!matchedColor) {
+        const ownAnchor = stickerNode.dataset.stickerSourceAnchor;
+        if (isStickerAnchor(ownAnchor)) {
+          matchedColor = this._getStickerAnchorColor(ownAnchor);
+        }
+      }
 
       if (matchedColor) {
         stickerNode.style.setProperty("--sticker-inherited-circle-color", matchedColor);
@@ -1342,45 +1450,16 @@ export class PowerFlowCardPlus extends LitElement {
       return;
     }
 
-    const stickers = [...(this._config.stickers || [])];
-    let hasChanges = false;
-
-    for (const index of this._pendingStickerPositionSyncIndices) {
-      const sticker = stickers[index];
-      if (!sticker?.anchor) {
-        continue;
-      }
-
-      const anchorCenter = this._stickerAnchorCenters[sticker.anchor];
-      if (!anchorCenter) {
-        continue;
-      }
-
-      const desiredX = (clamp(Number(sticker.x_position ?? 50), 0, 100) / 100) * this._stickerContentSize.width;
-      const desiredY = (clamp(Number(sticker.y_position ?? 50), 0, 100) / 100) * this._stickerContentSize.height;
-      const nextOffsetX = Math.round(desiredX - anchorCenter.x);
-      const nextOffsetY = Math.round(desiredY - anchorCenter.y);
-
-      if (nextOffsetX === (Number(sticker.offset_x) || 0) && nextOffsetY === (Number(sticker.offset_y) || 0)) {
-        continue;
-      }
-
-      stickers[index] = {
-        ...sticker,
-        offset_x: nextOffsetX,
-        offset_y: nextOffsetY,
-      };
-      hasChanges = true;
-    }
+    const syncedStickers = this._getStickersWithSyncedAnchoredOffsets(this._config.stickers || [], this._pendingStickerPositionSyncIndices);
 
     this._pendingStickerPositionSyncIndices = [];
 
-    if (!hasChanges) {
+    if (!syncedStickers.hasChanges) {
       return;
     }
 
-    this._previewStickerOverrides = stickers;
-    this._emitStickerConfigChanged(stickers);
+    this._previewStickerOverrides = syncedStickers.stickers;
+    this._emitStickerConfigChanged(syncedStickers.stickers);
   }
 
   private _syncStickerAnchorHighlight(): void {
