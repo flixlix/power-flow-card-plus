@@ -20,6 +20,7 @@ const getNormalizedStickerIcon = (sticker: StickerConfig, entity: any): string =
 const normalizeSticker = (sticker: StickerConfig): StickerConfig => ({
   ...sticker,
   anchor: isStickerAnchor(sticker.anchor) ? sticker.anchor : undefined,
+  display_zero: sticker.display_zero !== false,
   hide_with_anchor: sticker.hide_with_anchor !== false,
   offset_x: toOptionalNumber(sticker.offset_x) ?? 0,
   offset_y: toOptionalNumber(sticker.offset_y) ?? 0,
@@ -51,10 +52,19 @@ const getStickerStateToDisplay = (main: PowerFlowCardPlus, config: PowerFlowCard
 
   if (unit !== undefined && unit !== null && unit !== "") {
     if (isWattBasedUnit(String(unit))) {
-      return displayValue(main.hass, config, getEntityStateWatts(main.hass, entity?.entity_id), {
+      const wattState = getEntityStateWatts(main.hass, entity?.entity_id);
+      if (sticker.display_zero === false && wattState === 0) {
+        return "";
+      }
+
+      return displayValue(main.hass, config, wattState, {
         unitWhiteSpace: sticker.unit_white_space,
         watt_threshold: config.watt_threshold,
       });
+    }
+
+    if (sticker.display_zero === false && Number(state) === 0) {
+      return "";
     }
 
     return displayValue(main.hass, config, Number(state), {
@@ -63,6 +73,10 @@ const getStickerStateToDisplay = (main: PowerFlowCardPlus, config: PowerFlowCard
       decimals,
       watt_threshold: config.watt_threshold,
     });
+  }
+
+  if (sticker.display_zero === false && Number(state) === 0) {
+    return "";
   }
 
   return formatNumber(Number(state), main.hass.locale, {
