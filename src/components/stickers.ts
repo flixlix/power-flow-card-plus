@@ -101,6 +101,7 @@ export const stickersElement = (
         const showNameInsideCircle = sticker.name_inside_circle === true;
         const showCircle = sticker.show_circle !== false;
         const inheritCircleColor = sticker.inherit_circle_color === true;
+        const raiseState = showCircle && !!state && (!!icon || (showNameInsideCircle && !!name));
 
         return html`
           <div
@@ -130,7 +131,7 @@ export const stickersElement = (
               <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
               ${icon ? html`<ha-icon .icon=${icon}></ha-icon>` : nothing}
               ${showNameInsideCircle && name ? html`<span class="sticker-inner-name">${name}</span>` : nothing}
-              ${state ? html`<span class="sticker-state">${state}</span>` : nothing}
+              ${state ? html`<span class="sticker-state ${raiseState ? "sticker-state--raised" : ""}">${state}</span>` : nothing}
             </div>
           </div>
         `;
