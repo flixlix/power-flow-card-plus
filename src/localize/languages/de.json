@@ -36,7 +36,7 @@
     "invert_state": "Zustand umkehren",
     "template": "Vorlage",
     "unit_of_measurement": "Einheit",
-    "unit_white_space": "Weißraum für Einheit",
+    "unit_white_space": "Leerzeichen vor Einheit",
     "label_alert": "Beschriftung für Alarm",
     "icon_alert": "Symbol für Alarm",
     "state_alert": "Alarmzustand",
