@@ -82,6 +82,7 @@
     "double_tap_action": "действие двойного касания",
     "navigation_path": "путь навигации",
     "sort_individual_devices": "Сортировка отдельных устройств",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Без меток"
   }
 }

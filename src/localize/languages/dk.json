@@ -82,6 +82,7 @@
     "double_tap_action": "Double Tap Handling",
     "navigation_path": "Navigationssti",
     "sort_individual_devices": "Sorter individuelle enheder",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Ingen etiketter"
   }
 }

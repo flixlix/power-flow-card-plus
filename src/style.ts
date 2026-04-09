@@ -229,6 +229,21 @@ export const styles = css`
     overflow: hidden;
     min-height: 20px;
   }
+  .card-content.no-labels .label {
+    display: none;
+  }
+
+  .card-content.no-labels .circle-container.solar,
+  .card-content.no-labels .circle-container.low-carbon,
+  .card-content.no-labels .circle-container.individual-top {
+    height: 110px !important;
+  }
+
+  .card-content.no-labels .right-individual-flow-container,
+  .card-content.no-labels .lines {
+    transform: translateY(20px);
+  }
+
   line,
   path {
     stroke: var(--disabled-text-color);

@@ -314,7 +314,7 @@ export class PowerFlowCardPlus extends LitElement {
         style=${this._config.style_ha_card ? this._config.style_ha_card : ""}
       >
         <div
-          class="card-content ${this._config.full_size ? "full-size" : ""}"
+          class="card-content ${this._config.full_size ? "full-size" : ""} ${this._config.no_labels ? "no-labels" : ""}"
           id="power-flow-card-plus"
           style=${this._config.style_card_content ? this._config.style_card_content : ""}
         >

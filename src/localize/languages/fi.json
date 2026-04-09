@@ -82,6 +82,7 @@
     "double_tap_action": "Kaksoisnapautustoiminto",
     "navigation_path": "Navigointipolku",
     "sort_individual_devices": "Lajittele yksittäiset laitteet",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Ei tunnisteita"
   }
 }
