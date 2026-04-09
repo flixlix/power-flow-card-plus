@@ -13,6 +13,7 @@ export type StickerConfig = {
   name?: string;
   icon?: string;
   anchor?: StickerAnchor;
+  display_zero?: boolean;
   hide_with_anchor?: boolean;
   offset_x?: number;
   offset_y?: number;
