@@ -42,6 +42,7 @@ export const solarElement = (
     <span class="label">${solar.name}</span>
     <div
       class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
+      data-sticker-anchor="solar"
       @click=${(e: MouseEvent) => {
         main.onEntityClick(e, solar, solar.entity);
       }}

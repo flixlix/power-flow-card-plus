@@ -8,6 +8,7 @@ import { computeIndividualFlowRate } from "@/utils/compute-flow-rate";
 import { showLine } from "@/utils/show-line";
 import { styleLine } from "@/utils/style-line";
 import { individualSecondarySpan } from "./spans/individual-secondary-span";
+import { makeIndividualStickerAnchor } from "@/utils/sticker-anchor";
 
 interface IndividualBottom {
   newDur: NewDur;
@@ -52,6 +53,7 @@ export const individualLeftBottomElement = (
       : html` <svg width="80" height="30"></svg> `}
     <div
       class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
+      data-sticker-anchor=${makeIndividualStickerAnchor(individualObj.entity)}
       @click=${(e: MouseEvent) => {
         main.onEntityClick(e, individualObj?.field, individualObj?.entity);
       }}
