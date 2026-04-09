@@ -123,7 +123,7 @@ export const stickersElement = (
             data-inherit-circle-color=${inheritCircleColor ? "true" : "false"}
             data-sticker-index=${String(index)}
             data-sticker-source-anchor=${sticker.anchor ?? ""}
-            style="left:${position.left}; top:${position.top}; --sticker-scale:${(sticker.scale ?? 100) / 100};"
+            style="left:${position.left}; top:${position.top}; z-index:${stickers.length - index}; --sticker-scale:${(sticker.scale ?? 100) / 100};"
           >
             ${!showNameInsideCircle ? html`<span class="label sticker-label">${name}</span>` : nothing}
             <div
