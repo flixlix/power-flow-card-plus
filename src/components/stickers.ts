@@ -107,11 +107,15 @@ export const stickersElement = (
           <div
             class="sticker-node ${inheritCircleColor ? "inherit-circle-color" : ""} ${editable ? "sticker-node--editable" : ""} ${main.isStickerDragging(index) ? "sticker-node--dragging" : ""}"
             data-inherit-circle-color=${inheritCircleColor ? "true" : "false"}
+            data-sticker-index=${String(index)}
+            data-sticker-source-anchor=${sticker.anchor ?? ""}
             style="left:${position.left}; top:${position.top}; --sticker-scale:${(sticker.scale ?? 100) / 100};"
           >
             ${!showNameInsideCircle ? html`<span class="label sticker-label">${name}</span>` : nothing}
             <div
               class="circle sticker-circle ${preventEntityClick ? "pointer-events-none" : ""} ${showCircle ? "" : "sticker-circle--hidden"} ${showNameInsideCircle ? "sticker-circle--name-inside" : ""}"
+              data-sticker-index=${String(index)}
+              data-sticker-source-anchor=${sticker.anchor ?? ""}
               tabindex=${disableEntityClick ? "-1" : "0"}
               @click=${(ev: MouseEvent) => {
                 if (disableEntityClick) return;
