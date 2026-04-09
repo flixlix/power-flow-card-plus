@@ -1,13 +1,16 @@
-import { mdiClose, mdiPencil } from "@mdi/js";
+import { mdiClose, mdiDrag, mdiPencil } from "@mdi/js";
 import { fireEvent, HomeAssistant } from "custom-card-helpers";
-import { css, html, LitElement, nothing, PropertyValues, TemplateResult } from "lit";
+import { css, CSSResultGroup, html, LitElement, nothing, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import type { SortableEvent } from "sortablejs";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
 import { STICKERS_CONFIG_CHANGED_EVENT, STICKERS_EDITOR_ACTIVE_ATTRIBUTE, StickersConfigChangedDetail } from "@/stickers-events";
 import localize from "@/localize/localize";
 import { StickerConfig } from "@/type";
 import { getStickerSchema } from "@/ui-editor/schema/sticker";
 import { loadHaForm } from "@/ui-editor/utils/load-ha-form";
+import { loadSortable, SortableInstance } from "@/ui-editor/utils/sortable.ondemand";
+import { sortableStyles } from "@/ui-editor/utils/sortable-styles";
 import { isStickerAnchor } from "@/utils/sticker-anchor";
 
 const DEFAULT_SCALE = 100;
@@ -49,6 +52,8 @@ export class StickersEditor extends LitElement {
 
   @state() private _draftStickers: EditableStickerConfig[] = [];
 
+  private _sortable?: SortableInstance;
+
   public connectedCallback(): void {
     super.connectedCallback();
     void loadHaForm();
@@ -59,12 +64,26 @@ export class StickersEditor extends LitElement {
   public disconnectedCallback(): void {
     document.body?.removeAttribute(STICKERS_EDITOR_ACTIVE_ATTRIBUTE);
     window.removeEventListener(STICKERS_CONFIG_CHANGED_EVENT, this._handlePreviewDragConfigChanged as EventListener);
+    this._destroySortable();
     super.disconnectedCallback();
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     if (changedProps.has("config") && this.hass) {
       this._syncDraftStickers();
+    }
+  }
+
+  protected updated(changedProps: PropertyValues): void {
+    super.updated(changedProps);
+
+    if (this._editingIndex !== -1) {
+      this._destroySortable();
+      return;
+    }
+
+    if (changedProps.has("_editingIndex") || changedProps.has("_draftStickers")) {
+      void this._createSortable();
     }
   }
 
@@ -102,12 +121,17 @@ export class StickersEditor extends LitElement {
     }
 
     return html`
+      <ha-entity-picker class="add-entity" .hass=${this.hass} @value-changed=${this._addSticker}></ha-entity-picker>
+
       <div class="entities">
         ${stickers.length
           ? stickers.map(
               (sticker, index) => html`
                 <div class="entity">
                   <div class="handle">
+                    <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
+                  </div>
+                  <div class="icon-slot">
                     ${getNormalizedStickerIcon(this.hass, sticker) ? html`<ha-icon .icon=${getNormalizedStickerIcon(this.hass, sticker)}></ha-icon>` : nothing}
                   </div>
                   <button class="entity-main" type="button" @click=${() => this._openEditor(index)}>
@@ -128,8 +152,6 @@ export class StickersEditor extends LitElement {
             )
           : html`<p class="empty-state">${localize("editor.no_stickers") || "No stickers configured yet."}</p>`}
       </div>
-
-      <ha-entity-picker class="add-entity" .hass=${this.hass} @value-changed=${this._addSticker}></ha-entity-picker>
     `;
   }
 
@@ -210,17 +232,17 @@ export class StickersEditor extends LitElement {
     }
 
     const next = [
-      ...this._draftStickers,
       this._normalizeSticker(
         {
           entity: value,
         },
-        this._draftStickers.length
+        0
       ),
+      ...this._draftStickers.map((sticker, index) => this._normalizeSticker(this._toPersistedSticker(sticker, index), index + 1)),
     ];
 
     this._draftStickers = next;
-    this._editingIndex = next.length - 1;
+    this._editingIndex = 0;
     (ev.target as any).value = "";
     this._emitConfig(next);
   }
@@ -235,6 +257,53 @@ export class StickersEditor extends LitElement {
       this._editingIndex -= 1;
     }
 
+    this._emitConfig(next);
+  }
+
+  private async _createSortable(): Promise<void> {
+    const entities = this.shadowRoot?.querySelector(".entities") as HTMLElement | null;
+    if (!entities) {
+      this._destroySortable();
+      return;
+    }
+
+    this._destroySortable();
+    const Sortable = await loadSortable();
+    if (this._editingIndex !== -1 || entities !== this.shadowRoot?.querySelector(".entities")) {
+      return;
+    }
+
+    this._sortable = new Sortable(entities, {
+      animation: 150,
+      fallbackClass: "sortable-fallback",
+      handle: ".handle",
+      onChoose: (evt: SortableEvent) => {
+        (evt.item as any).placeholder = document.createComment("sort-placeholder");
+        evt.item.after((evt.item as any).placeholder);
+      },
+      onEnd: (evt: SortableEvent) => {
+        if ((evt.item as any).placeholder) {
+          (evt.item as any).placeholder.replaceWith(evt.item);
+          delete (evt.item as any).placeholder;
+        }
+        this._stickerMoved(evt);
+      },
+    });
+  }
+
+  private _destroySortable(): void {
+    this._sortable?.destroy();
+    this._sortable = undefined;
+  }
+
+  private _stickerMoved(ev: SortableEvent): void {
+    if (ev.oldIndex === undefined || ev.newIndex === undefined || ev.oldIndex === ev.newIndex) {
+      return;
+    }
+
+    const next = this._draftStickers.concat();
+    next.splice(ev.newIndex, 0, next.splice(ev.oldIndex, 1)[0]);
+    this._draftStickers = next;
     this._emitConfig(next);
   }
 
@@ -333,8 +402,10 @@ export class StickersEditor extends LitElement {
     this._emitConfig(this._draftStickers);
   };
 
-  static get styles() {
-    return css`
+  static get styles(): CSSResultGroup {
+    return [
+      sortableStyles,
+      css`
       :host {
         display: flex;
         flex-direction: column;
@@ -349,12 +420,23 @@ export class StickersEditor extends LitElement {
 
       .entity {
         display: grid;
-        grid-template-columns: 32px 1fr auto auto;
+        grid-template-columns: 24px 32px 1fr auto auto;
         gap: 8px;
         align-items: center;
         border: 1px solid var(--divider-color);
         border-radius: 12px;
         padding: 8px;
+      }
+
+      .handle {
+        display: flex;
+        justify-content: center;
+        color: var(--secondary-text-color);
+        cursor: move;
+      }
+
+      .handle > * {
+        pointer-events: none;
       }
 
       .entity-main {
@@ -386,6 +468,12 @@ export class StickersEditor extends LitElement {
         color: var(--secondary-text-color);
       }
 
+      .icon-slot {
+        display: flex;
+        justify-content: center;
+        color: var(--secondary-text-color);
+      }
+
       .add-entity {
         width: 100%;
       }
@@ -407,7 +495,11 @@ export class StickersEditor extends LitElement {
         line-height: 1.4;
       }
 
-    `;
+      .sortable-ghost {
+        opacity: 0.45;
+      }
+    `,
+    ];
   }
 }
 
