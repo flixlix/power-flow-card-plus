@@ -22,24 +22,24 @@ export const batteryElement = (
         const target = entities.battery?.state_of_charge!
           ? entities.battery?.state_of_charge!
           : typeof entities.battery?.entity === "string"
-          ? entities.battery?.entity!
-          : entities.battery?.entity!.production;
+            ? entities.battery?.entity!
+            : entities.battery?.entity!.production;
         main.onEntityClick(e, battery, target);
       }}
       @dblclick=${(e: MouseEvent) => {
         const target = entities.battery?.state_of_charge!
           ? entities.battery?.state_of_charge!
           : typeof entities.battery?.entity === "string"
-          ? entities.battery?.entity!
-          : entities.battery?.entity!.production;
+            ? entities.battery?.entity!
+            : entities.battery?.entity!.production;
         main.onEntityDoubleClick(e, battery, target);
       }}
       @pointerdown=${(e: PointerEvent) => {
         const target = entities.battery?.state_of_charge!
           ? entities.battery?.state_of_charge!
           : typeof entities.battery?.entity === "string"
-          ? entities.battery?.entity!
-          : entities.battery?.entity!.production;
+            ? entities.battery?.entity!
+            : entities.battery?.entity!.production;
         main.onEntityPointerDown(e, battery, target);
       }}
       @pointerup=${(e: PointerEvent) => {
@@ -53,8 +53,8 @@ export const batteryElement = (
           const target = entities.battery?.state_of_charge!
             ? entities.battery?.state_of_charge!
             : typeof entities.battery!.entity === "string"
-            ? entities.battery!.entity!
-            : entities.battery!.entity!.production;
+              ? entities.battery!.entity!
+              : entities.battery!.entity!.production;
           main.openDetails(e, battery, target, "tap");
         }
       }}
@@ -117,7 +117,7 @@ export const batteryElement = (
                 main.openDetails(e, battery, entities.battery?.state_of_charge!, "tap");
               }
             }}
-          />`
+          ></ha-icon>`
         : nothing}
       ${entities.battery?.display_state === "two_way" ||
       entities.battery?.display_state === undefined ||

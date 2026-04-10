@@ -5,5 +5,8 @@
   "printWidth": 150,
   "tabWidth": 2,
   "useTabs": false,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "plugins": ["prettier-plugin-embed"],
+  "embeddedLanguageFormatting": "auto",
+  "embeddedHtmlTags": ["svg"]
 }

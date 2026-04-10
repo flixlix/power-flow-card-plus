@@ -20,8 +20,8 @@ export const gridElement = (
           grid.powerOutage?.isOutage && outageTarget
             ? outageTarget
             : typeof entities.grid!.entity === "string"
-            ? entities.grid!.entity
-            : entities.grid!.entity.consumption!;
+              ? entities.grid!.entity
+              : entities.grid!.entity.consumption!;
         main.onEntityClick(e, grid, target);
       }}
       @dblclick=${(e: MouseEvent) => {
@@ -30,8 +30,8 @@ export const gridElement = (
           grid.powerOutage?.isOutage && outageTarget
             ? outageTarget
             : typeof entities.grid!.entity === "string"
-            ? entities.grid!.entity
-            : entities.grid!.entity.consumption!;
+              ? entities.grid!.entity
+              : entities.grid!.entity.consumption!;
         main.onEntityDoubleClick(e, grid, target);
       }}
       @pointerdown=${(e: PointerEvent) => {
@@ -40,8 +40,8 @@ export const gridElement = (
           grid.powerOutage?.isOutage && outageTarget
             ? outageTarget
             : typeof entities.grid!.entity === "string"
-            ? entities.grid!.entity
-            : entities.grid!.entity.consumption!;
+              ? entities.grid!.entity
+              : entities.grid!.entity.consumption!;
         main.onEntityPointerDown(e, entities.grid, target);
       }}
       @pointerup=${(e: PointerEvent) => {
@@ -57,15 +57,15 @@ export const gridElement = (
             grid.powerOutage?.isOutage && outageTarget
               ? outageTarget
               : typeof entities.grid!.entity === "string"
-              ? entities.grid!.entity
-              : entities.grid!.entity.consumption!;
+                ? entities.grid!.entity
+                : entities.grid!.entity.consumption!;
           main.openDetails(e, entities.grid, target, "tap");
         }
       }}
     >
       <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${generalSecondarySpan(main.hass, main, config, templatesObj, grid, "grid")}
-      ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon} />` : nothing}
+      ${grid.icon !== " " ? html` <ha-icon id="grid-icon" .icon=${grid.icon}></ha-icon>` : nothing}
       ${(entities.grid?.display_state === "two_way" ||
         entities.grid?.display_state === undefined ||
         (entities.grid?.display_state === "one_way_no_zero" && (grid.state.toGrid ?? 0) > 0) ||

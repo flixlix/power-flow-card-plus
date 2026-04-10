@@ -65,7 +65,7 @@ export const solarElement = (
     >
       <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${shouldShowSecondary() ? generalSecondarySpan(main.hass, main, config, templatesObj, solar, "solar") : nothing}
-      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon} />` : nothing}
+      ${solar.icon !== " " ? html` <ha-icon id="solar-icon" .icon=${solar.icon}></ha-icon>` : nothing}
       ${entities.solar?.display_zero_state !== false || (bottomSolarState || 0) > 0
         ? html` <span class="solar">
             ${displayValue(main.hass, config, bottomSolarState, {

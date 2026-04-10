@@ -52,7 +52,7 @@ export const individualLeftTopElement = (
     >
       <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "left-top")}
-      ${individualObj.icon !== " " ? html` <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon} />` : nothing}
+      ${individualObj.icon !== " " ? html` <ha-icon id="individual-left-top-icon" .icon=${individualObj.icon}></ha-icon>` : nothing}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-top individual-left-top">
             ${individualObj?.showDirection
@@ -66,21 +66,17 @@ export const individualLeftTopElement = (
           <svg width="80" height="30">
             <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />
             ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-              ? svg`<circle
-          r="1.75"
-          class="individual-top"
-          vector-effect="non-scaling-stroke"
-        >
-          <animateMotion
-            dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
-            repeatCount="indefinite"
-            calcMode="paced"
-            keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
-            keyTimes="0;1"
-          >
-            <mpath xlink:href="#individual-top" />
-          </animateMotion>
-        </circle>`
+              ? svg`<circle r="1.75" class="individual-top" vector-effect="non-scaling-stroke">
+                    <animateMotion
+                      dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
+                      repeatCount="indefinite"
+                      calcMode="paced"
+                      keyPoints="${individualObj.invertAnimation ? "0;1" : "1;0"}"
+                      keyTimes="0;1"
+                    >
+                      <mpath xlink:href="#individual-top" />
+                    </animateMotion>
+                  </circle>`
               : nothing}
           </svg>
         `

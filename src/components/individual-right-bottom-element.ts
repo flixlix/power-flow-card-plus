@@ -55,7 +55,7 @@ export const individualRightBottomElement = (
     >
       <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
       ${individualSecondarySpan(main.hass, main, config, templatesObj, individualObj, indexOfIndividual, "right-bottom")}
-      ${individualObj.icon !== " " ? html` <ha-icon id="individual-right-bottom-icon" .icon=${individualObj.icon} />` : nothing}
+      ${individualObj.icon !== " " ? html` <ha-icon id="individual-right-bottom-icon" .icon=${individualObj.icon}></ha-icon>` : nothing}
       ${individualObj?.field?.display_zero_state !== false || (individualObj.state || 0) > (individualObj.displayZeroTolerance ?? 0)
         ? html` <span class="individual-bottom individual-right-bottom">
             ${individualObj?.showDirection
@@ -76,21 +76,16 @@ export const individualRightBottomElement = (
                 vector-effect="non-scaling-stroke"
               />
               ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-                ? svg`<circle
-                    r="1"
-                    class="individual-bottom"
-                    vector-effect="non-scaling-stroke"
-                    >
-
-                    <animateMotion
-                    dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
-                    repeatCount="indefinite"
-                    calcMode="paced"
-                    keyPoints=${individualObj.invertAnimation ? "0;1" : "1;0"}
-                    keyTimes="0;1"
-                    >
-                    <mpath xlink:href="#individual-bottom-right-home" />
-                    </animateMotion>
+                ? svg`<circle r="1" class="individual-bottom" vector-effect="non-scaling-stroke">
+                      <animateMotion
+                        dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
+                        repeatCount="indefinite"
+                        calcMode="paced"
+                        keyPoints="${individualObj.invertAnimation ? "0;1" : "1;0"}"
+                        keyTimes="0;1"
+                      >
+                        <mpath xlink:href="#individual-bottom-right-home" />
+                      </animateMotion>
                     </circle>`
                 : nothing}
             </svg>

@@ -52,7 +52,7 @@ export const nonFossilElement = (
         >
           <ha-ripple .disabled=${disableEntityClick}></ha-ripple>
           ${generalSecondarySpan(main.hass, main, config, templatesObj, nonFossil, "nonFossilFuel")}
-          ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon} />` : nothing}
+          ${nonFossil.icon !== " " ? html` <ha-icon id="low-carbon-icon" .icon=${nonFossil.icon}></ha-icon>` : nothing}
           ${entities.fossil_fuel_percentage?.display_zero_state !== false ||
           (nonFossil.state.power || 0) > (entities.fossil_fuel_percentage?.display_zero_tolerance || 0)
             ? html`
@@ -67,19 +67,15 @@ export const nonFossilElement = (
               <svg width="80" height="30">
                 <path d="M40 -10 v40" class="low-carbon ${styleLine(nonFossil.state.power || 0, config)}" id="low-carbon" />
                 ${checkShouldShowDots(config) && nonFossil.has && nonFossil.state.power > 0
-                  ? svg`<circle
-                r="1.75"
-                class="low-carbon"
-                vector-effect="non-scaling-stroke"
-              >
-                  <animateMotion
-                    dur="${computeIndividualFlowRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
-                    repeatCount="indefinite"
-                    calcMode="paced"
-                  >
-                    <mpath xlink:href="#low-carbon" />
-                  </animateMotion>
-              </circle>`
+                  ? svg`<circle r="1.75" class="low-carbon" vector-effect="non-scaling-stroke">
+                        <animateMotion
+                          dur="${computeIndividualFlowRate(entities.fossil_fuel_percentage?.calculate_flow_rate, newDur.nonFossil)}s"
+                          repeatCount="indefinite"
+                          calcMode="paced"
+                        >
+                          <mpath xlink:href="#low-carbon" />
+                        </animateMotion>
+                      </circle>`
                   : nothing}
               </svg>
             `

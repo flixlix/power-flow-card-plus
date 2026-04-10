@@ -10,19 +10,11 @@ import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 const batteryToHomeDot = (config: PowerFlowCardPlusConfig, battery: FlowBatteryToHomeFlows["battery"], newDur: FlowBatteryToHomeFlows["newDur"]) => {
   if (!checkShouldShowDots(config) || !battery.state.toHome) return nothing;
 
-  return svg`<circle
-    r="1"
-    class="battery-home"
-    vector-effect="non-scaling-stroke"
-  >
-    <animateMotion
-      dur="${newDur.batteryToHome}s"
-      repeatCount="indefinite"
-      calcMode="paced"
-    >
-      <mpath xlink:href="#battery-home" />
-    </animateMotion>
-  </circle>`;
+  return svg`<circle r="1" class="battery-home" vector-effect="non-scaling-stroke">
+      <animateMotion dur="${newDur.batteryToHome}s" repeatCount="indefinite" calcMode="paced">
+        <mpath xlink:href="#battery-home" />
+      </animateMotion>
+    </circle>`;
 };
 
 type FlowBatteryToHomeFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
