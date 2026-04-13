@@ -13,8 +13,10 @@ import { individualRightTopElement } from "@/components/individual-right-top-ele
 import { dashboardLinkElement } from "@/components/misc/dashboard-link";
 import { nonFossilElement } from "@/components/non-fossil";
 import { solarElement } from "@/components/solar";
+import { stickersElement } from "@/components/stickers";
 import { handleAction } from "@/ha/panels/lovelace/common/handle-action";
 import { PowerFlowCardPlusConfig } from "@/power-flow-card-plus-config";
+import { STICKERS_CONFIG_CHANGED_EVENT, STICKERS_EDITOR_ACTIVE_ATTRIBUTE } from "@/stickers-events";
 import { getBatteryInState, getBatteryOutState, getBatteryStateOfCharge } from "@/states/raw/battery";
 import { getGridConsumptionState, getGridProductionState, getGridSecondaryState } from "@/states/raw/grid";
 import { getHomeSecondaryState } from "@/states/raw/home";
@@ -28,7 +30,7 @@ import { getEntityStateWatts } from "@/states/utils/get-entity-state-watts";
 import { styles } from "@/style";
 import { allDynamicStyles } from "@/style/all";
 import { RenderTemplateResult, subscribeRenderTemplate } from "@/template/ha-websocket.js";
-import { ActionConfigSet, GridObject, HomeSources, NewDur, TemplatesObj } from "@/type";
+import { ActionConfigSet, GridObject, HomeSources, NewDur, StickerConfig, TemplatesObj } from "@/type";
 import { computeFieldIcon, computeFieldName } from "@/utils/compute-field-attributes";
 import { computeFlowRate } from "@/utils/compute-flow-rate";
 import { computePowerDistributionAfterSolarAndBattery } from "@/utils/compute-power-distribution";
@@ -43,11 +45,44 @@ import {
 import { displayValue } from "@/utils/display-value";
 import { defaultValues, getDefaultConfig } from "@/utils/get-default-config";
 import { registerCustomCard } from "@/utils/register-custom-card";
+import { getIndividualEntityIdFromStickerAnchor, isMainStickerAnchor, isStickerAnchor } from "@/utils/sticker-anchor";
 import { coerceNumber } from "@/utils/utils";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 import { sortIndividualObjects } from "@/utils/sort-individual-objects";
 
 const circleCircumference = 238.76104;
+const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
+
+type StickerDragState = {
+  contentRect: DOMRect;
+  index: number;
+  pointerId: number;
+  target: HTMLElement;
+};
+type StickerAnchorCenter = {
+  x: number;
+  y: number;
+};
+type StickerContentSize = {
+  height: number;
+  width: number;
+};
+type RelativeRect = {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
+};
+type StickerCircleMatch = {
+  circle: HTMLElement;
+  contactDepth: number;
+};
+type SyncedStickerOffsetsResult = {
+  hasChanges: boolean;
+  stickers: StickerConfig[];
+};
 
 registerCustomCard({
   type: "power-flow-card-plus",
@@ -64,8 +99,14 @@ export class PowerFlowCardPlus extends LitElement {
   @state() private _templateResults: Partial<Record<string, RenderTemplateResult>> = {};
   @state() private _unsubRenderTemplates?: Map<string, Promise<UnsubscribeFunc>> = new Map();
   @state() private _width = 0;
+  @state() private _stickerAnchorCenters: Record<string, StickerAnchorCenter> = {};
+  @state() private _stickerContentSize?: StickerContentSize;
+  @state() private _activeStickerAnchorTarget?: StickerConfig["anchor"];
+  @state() private _pendingStickerPositionSyncIndices: number[] = [];
+  @state() private _previewStickerOverrides?: StickerConfig[];
   private readonly wideEnoughForFourIndividuals = 359;
   private _resizeObserver?: ResizeObserver;
+  private _stickerDragState?: StickerDragState;
   private _handleVisibilityChange = () => {
     if (typeof document !== "undefined" && document.visibilityState === "visible") {
       this.requestUpdate();
@@ -103,6 +144,23 @@ export class PowerFlowCardPlus extends LitElement {
     | undefined;
 
   setConfig(config: PowerFlowCardPlusConfig): void {
+    const previousConfig = this._config;
+    const previousStickers = previousConfig?.stickers || [];
+    const nextStickers = config.stickers || [];
+    const pendingStickerPositionSyncIndices = nextStickers.reduce<number[]>((indices, sticker, index) => {
+      const previousSticker = previousStickers[index];
+      if (!previousSticker || !sticker?.anchor) {
+        return indices;
+      }
+
+      const positionChanged = previousSticker.x_position !== sticker.x_position || previousSticker.y_position !== sticker.y_position;
+      const anchorChanged = previousSticker.anchor !== sticker.anchor;
+      if (positionChanged || anchorChanged) {
+        indices.push(index);
+      }
+      return indices;
+    }, []);
+
     if ((config.entities as any).individual1 || (config.entities as any).individual2) {
       throw new Error("You are using an outdated configuration. Please update your configuration to the latest version.");
     }
@@ -111,6 +169,7 @@ export class PowerFlowCardPlus extends LitElement {
     }
     this._config = {
       ...config,
+      stickers: config.stickers || [],
       kw_decimals: coerceNumber(config.kw_decimals, defaultValues.kilowattDecimals),
       min_flow_rate: coerceNumber(config.min_flow_rate, defaultValues.minFlowRate),
       max_flow_rate: coerceNumber(config.max_flow_rate, defaultValues.maxFlowRate),
@@ -124,6 +183,18 @@ export class PowerFlowCardPlus extends LitElement {
         grey_color: config.display_zero_lines?.grey_color ?? defaultValues.displayZeroLines.grey_color,
       },
     };
+    if (!this._stickerDragState) {
+      this._previewStickerOverrides = undefined;
+      this._activeStickerAnchorTarget = undefined;
+    }
+    this._pendingStickerPositionSyncIndices = pendingStickerPositionSyncIndices;
+
+    if (!this._stickerDragState && pendingStickerPositionSyncIndices.length && this._stickerContentSize) {
+      const syncedStickers = this._getStickersWithSyncedAnchoredOffsets(this._config.stickers || [], pendingStickerPositionSyncIndices);
+      if (syncedStickers.hasChanges) {
+        this._previewStickerOverrides = syncedStickers.stickers;
+      }
+    }
   }
 
   public connectedCallback() {
@@ -271,6 +342,134 @@ export class PowerFlowCardPlus extends LitElement {
     }
   }
 
+  public isStickerPreviewEditingEnabled(): boolean {
+    return this._isInCardEditorPreview() && !!document.body?.hasAttribute(STICKERS_EDITOR_ACTIVE_ATTRIBUTE);
+  }
+
+  public getStickerCssPosition(sticker: StickerConfig): { left: string; top: string } {
+    const resolvedPosition = this._resolveStickerPositionPx(sticker);
+    if (resolvedPosition) {
+      return {
+        left: `${resolvedPosition.x}px`,
+        top: `${resolvedPosition.y}px`,
+      };
+    }
+
+    return {
+      left: `${clamp(Number(sticker.x_position ?? 50), 0, 100)}%`,
+      top: `${clamp(Number(sticker.y_position ?? 50), 0, 100)}%`,
+    };
+  }
+
+  public getStickerAnchorCenter(anchor: NonNullable<StickerConfig["anchor"]>): StickerAnchorCenter | undefined {
+    return this._stickerAnchorCenters[anchor];
+  }
+
+  public isStickerAnchorVisible(anchor: NonNullable<StickerConfig["anchor"]>): boolean {
+    const data = this._renderData ?? (this._config && this.hass ? this._computeRenderData() : undefined);
+    if (!data) {
+      return false;
+    }
+
+    if (isMainStickerAnchor(anchor)) {
+      switch (anchor) {
+        case "grid":
+          return data.grid.has;
+        case "solar":
+          return data.solar.has;
+        case "battery":
+          return !!data.battery.has;
+        case "home":
+          return data.entities.home?.hide !== true;
+      }
+    }
+
+    const individualEntityId = getIndividualEntityIdFromStickerAnchor(anchor);
+    if (!individualEntityId) {
+      return false;
+    }
+
+    return data.individualObjs.some((individual) => individual.entity === individualEntityId && individual.has);
+  }
+
+  public isStickerDragging(index: number): boolean {
+    return this._stickerDragState?.index === index;
+  }
+
+  public onStickerPointerDown(event: PointerEvent, index: number): void {
+    if (!this.isStickerPreviewEditingEnabled()) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLElement | null;
+    const content = this.shadowRoot?.querySelector(".card-content") as HTMLElement | null;
+    const sticker = this._getRenderedStickers()[index];
+    if (!target || !content || !sticker) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    target.setPointerCapture(event.pointerId);
+
+    const renderedPosition = this._resolveStickerPositionPx(sticker);
+    const previewStickers = [...this._getRenderedStickers()];
+    previewStickers[index] = {
+      ...sticker,
+      anchor: undefined,
+      offset_x: undefined,
+      offset_y: undefined,
+      x_position: renderedPosition ? this._toPercentX(renderedPosition.x, content.getBoundingClientRect().width) : Number(sticker.x_position ?? 50),
+      y_position: renderedPosition ? this._toPercentY(renderedPosition.y, content.getBoundingClientRect().height) : Number(sticker.y_position ?? 50),
+    };
+
+    this._stickerDragState = {
+      contentRect: content.getBoundingClientRect(),
+      index,
+      pointerId: event.pointerId,
+      target,
+    };
+    this._activeStickerAnchorTarget = undefined;
+    this._previewStickerOverrides = previewStickers;
+  }
+
+  public onStickerPointerMove(event: PointerEvent): void {
+    if (!this._stickerDragState || event.pointerId !== this._stickerDragState.pointerId) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this._updateDraggedSticker(event.clientX, event.clientY);
+  }
+
+  public onStickerPointerUp(event: PointerEvent): void {
+    if (!this._stickerDragState || event.pointerId !== this._stickerDragState.pointerId) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this._updateDraggedSticker(event.clientX, event.clientY);
+    this._stickerDragState.target.releasePointerCapture(event.pointerId);
+    const anchoredStickers = this._finalizeDraggedSticker();
+    this._emitStickerConfigChanged(anchoredStickers, this._stickerDragState.index);
+    this._stickerDragState = undefined;
+    this._activeStickerAnchorTarget = undefined;
+  }
+
+  public onStickerPointerCancel(event: PointerEvent): void {
+    if (!this._stickerDragState || event.pointerId !== this._stickerDragState.pointerId) {
+      return;
+    }
+
+    this._stickerDragState.target.releasePointerCapture(event.pointerId);
+    const anchoredStickers = this._finalizeDraggedSticker();
+    this._emitStickerConfigChanged(anchoredStickers, this._stickerDragState.index);
+    this._stickerDragState = undefined;
+    this._activeStickerAnchorTarget = undefined;
+  }
+
   protected render(): TemplateResult | typeof nothing {
     if (!this._config || !this.hass) {
       return nothing;
@@ -306,6 +505,7 @@ export class PowerFlowCardPlus extends LitElement {
         watt_threshold: this._config.watt_threshold,
       });
     };
+    const renderedStickers = this._getRenderedStickers();
 
     return html`
       <ha-card
@@ -412,10 +612,366 @@ export class PowerFlowCardPlus extends LitElement {
             newDur,
             solar,
           })}
+          ${stickersElement(this, this._config, renderedStickers)}
         </div>
         ${dashboardLinkElement(this._config, this.hass)}
       </ha-card>
     `;
+  }
+
+  private _getRenderedStickers(): StickerConfig[] {
+    return this._previewStickerOverrides ?? this._config.stickers ?? [];
+  }
+
+  private _getElementRectWithinContent(element: HTMLElement, content: HTMLElement): RelativeRect | undefined {
+    const elementRect = element.getBoundingClientRect();
+    const contentRect = content.getBoundingClientRect();
+    const contentWidth = content.offsetWidth || content.clientWidth || contentRect.width;
+    const contentHeight = content.offsetHeight || content.clientHeight || contentRect.height;
+    const scaleX = contentWidth ? contentRect.width / contentWidth : 1;
+    const scaleY = contentHeight ? contentRect.height / contentHeight : 1;
+    const safeScaleX = scaleX || 1;
+    const safeScaleY = scaleY || 1;
+
+    if (!Number.isFinite(safeScaleX) || !Number.isFinite(safeScaleY)) {
+      return undefined;
+    }
+
+    const left = (elementRect.left - contentRect.left) / safeScaleX;
+    const top = (elementRect.top - contentRect.top) / safeScaleY;
+    const width = elementRect.width / safeScaleX;
+    const height = elementRect.height / safeScaleY;
+
+    return {
+      left,
+      top,
+      width,
+      height,
+      right: left + width,
+      bottom: top + height,
+    };
+  }
+
+  private _resolveStickerPositionPx(sticker: StickerConfig): StickerAnchorCenter | undefined {
+    if (!this._stickerContentSize?.width || !this._stickerContentSize?.height) {
+      return undefined;
+    }
+
+    if (sticker.anchor) {
+      const anchorCenter = this._stickerAnchorCenters[sticker.anchor];
+      if (anchorCenter) {
+        return {
+          x: clamp(anchorCenter.x + (Number(sticker.offset_x) || 0), 0, this._stickerContentSize.width),
+          y: clamp(anchorCenter.y + (Number(sticker.offset_y) || 0), 0, this._stickerContentSize.height),
+        };
+      }
+    }
+
+    return {
+      x: (clamp(Number(sticker.x_position ?? 50), 0, 100) / 100) * this._stickerContentSize.width,
+      y: (clamp(Number(sticker.y_position ?? 50), 0, 100) / 100) * this._stickerContentSize.height,
+    };
+  }
+
+  private _getStickersWithSyncedAnchoredOffsets(stickersInput: StickerConfig[], indices: number[]): SyncedStickerOffsetsResult {
+    if (!this._stickerContentSize || !indices.length) {
+      return {
+        stickers: stickersInput,
+        hasChanges: false,
+      };
+    }
+
+    const stickers = [...stickersInput];
+    let hasChanges = false;
+
+    for (const index of indices) {
+      const sticker = stickers[index];
+      if (!sticker?.anchor) {
+        continue;
+      }
+
+      const anchorCenter = this._stickerAnchorCenters[sticker.anchor];
+      if (!anchorCenter) {
+        continue;
+      }
+
+      const desiredX = (clamp(Number(sticker.x_position ?? 50), 0, 100) / 100) * this._stickerContentSize.width;
+      const desiredY = (clamp(Number(sticker.y_position ?? 50), 0, 100) / 100) * this._stickerContentSize.height;
+      const nextOffsetX = Math.round(desiredX - anchorCenter.x);
+      const nextOffsetY = Math.round(desiredY - anchorCenter.y);
+
+      if (nextOffsetX === (Number(sticker.offset_x) || 0) && nextOffsetY === (Number(sticker.offset_y) || 0)) {
+        continue;
+      }
+
+      stickers[index] = {
+        ...sticker,
+        offset_x: nextOffsetX,
+        offset_y: nextOffsetY,
+      };
+      hasChanges = true;
+    }
+
+    return {
+      stickers,
+      hasChanges,
+    };
+  }
+
+  private _getStickerAnchorColor(anchor: NonNullable<StickerConfig["anchor"]>): string | undefined {
+    const root = this.shadowRoot;
+    if (!root) {
+      return undefined;
+    }
+
+    const anchorCircle = root.querySelector(`[data-sticker-anchor="${anchor}"]`) as HTMLElement | null;
+    if (!anchorCircle) {
+      return undefined;
+    }
+
+    return anchorCircle.id === "home-circle" ? "#000000" : getComputedStyle(anchorCircle).borderColor;
+  }
+
+  private _findBestStickerCircleMatch(stickerCircle: HTMLElement, content: HTMLElement, candidateCircles: HTMLElement[]): StickerCircleMatch | undefined {
+    const stickerRect = this._getElementRectWithinContent(stickerCircle, content);
+    if (!stickerRect) {
+      return undefined;
+    }
+
+    const stickerCenterX = stickerRect.left + stickerRect.width / 2;
+    const stickerCenterY = stickerRect.top + stickerRect.height / 2;
+    const stickerRadius = Math.min(stickerRect.width, stickerRect.height) / 2;
+    let bestMatch: StickerCircleMatch | undefined;
+
+    for (const candidateCircle of candidateCircles) {
+      const candidateRect = this._getElementRectWithinContent(candidateCircle, content);
+      if (!candidateRect) {
+        continue;
+      }
+
+      const candidateCenterX = candidateRect.left + candidateRect.width / 2;
+      const candidateCenterY = candidateRect.top + candidateRect.height / 2;
+      const candidateRadius = Math.min(candidateRect.width, candidateRect.height) / 2;
+      const distance = Math.hypot(stickerCenterX - candidateCenterX, stickerCenterY - candidateCenterY);
+      const contactDepth = stickerRadius + candidateRadius - distance;
+
+      if (contactDepth < 0) {
+        continue;
+      }
+
+      if (!bestMatch || contactDepth > bestMatch.contactDepth) {
+        bestMatch = {
+          circle: candidateCircle,
+          contactDepth,
+        };
+      }
+    }
+
+    return bestMatch;
+  }
+
+  private _toPercentX(px: number, width: number): number {
+    return width ? Math.round(clamp((px / width) * 100, 0, 100) * 10) / 10 : 50;
+  }
+
+  private _toPercentY(px: number, height: number): number {
+    return height ? Math.round(clamp((px / height) * 100, 0, 100) * 10) / 10 : 50;
+  }
+
+  private _updateDraggedSticker(clientX: number, clientY: number): void {
+    if (!this._stickerDragState) {
+      return;
+    }
+
+    const stickers = [...this._getRenderedStickers()];
+    const sticker = stickers[this._stickerDragState.index];
+    if (!sticker) {
+      return;
+    }
+
+    const scale = clamp(Number(sticker.scale ?? 100), 1, 100) / 100;
+    const halfSize = sticker.show_circle === false ? 14 : 40 * scale;
+    const xMargin = (halfSize / this._stickerDragState.contentRect.width) * 100;
+    const yMargin = (halfSize / this._stickerDragState.contentRect.height) * 100;
+    const x = clamp(((clientX - this._stickerDragState.contentRect.left) / this._stickerDragState.contentRect.width) * 100, xMargin, 100 - xMargin);
+    const y = clamp(((clientY - this._stickerDragState.contentRect.top) / this._stickerDragState.contentRect.height) * 100, yMargin, 100 - yMargin);
+
+    stickers[this._stickerDragState.index] = {
+      ...sticker,
+      x_position: Math.round(x * 10) / 10,
+      y_position: Math.round(y * 10) / 10,
+    };
+    this._previewStickerOverrides = stickers;
+    void this.updateComplete.then(() => {
+      if (!this._stickerDragState) {
+        return;
+      }
+      this._activeStickerAnchorTarget = this._findBestStickerAnchorTarget();
+    });
+  }
+
+  private _finalizeDraggedSticker(): StickerConfig[] {
+    const stickers = [...this._getRenderedStickers()];
+    const sticker = stickers[this._stickerDragState?.index ?? -1];
+    if (!sticker || this._stickerDragState === undefined) {
+      return stickers;
+    }
+
+    const position = this._resolveStickerPositionPx(sticker);
+    if (!position) {
+      return stickers;
+    }
+    const matchedAnchor = this._findBestStickerAnchorTarget();
+
+    if (matchedAnchor) {
+      const anchorCenter = this._stickerAnchorCenters[matchedAnchor];
+      if (anchorCenter) {
+        stickers[this._stickerDragState.index] = {
+          ...sticker,
+          anchor: matchedAnchor,
+          offset_x: Math.round(position.x - anchorCenter.x),
+          offset_y: Math.round(position.y - anchorCenter.y),
+          x_position: this._toPercentX(position.x, this._stickerContentSize?.width ?? this._stickerDragState.contentRect.width),
+          y_position: this._toPercentY(position.y, this._stickerContentSize?.height ?? this._stickerDragState.contentRect.height),
+        };
+      }
+    } else {
+      stickers[this._stickerDragState.index] = {
+        ...sticker,
+        anchor: undefined,
+        offset_x: undefined,
+        offset_y: undefined,
+        x_position: this._toPercentX(position.x, this._stickerContentSize?.width ?? this._stickerDragState.contentRect.width),
+        y_position: this._toPercentY(position.y, this._stickerContentSize?.height ?? this._stickerDragState.contentRect.height),
+      };
+    }
+
+    this._previewStickerOverrides = stickers;
+    return stickers;
+  }
+
+  private _findBestStickerAnchorTarget(): NonNullable<StickerConfig["anchor"]> | undefined {
+    const root = this.shadowRoot;
+    const content = root?.querySelector("#power-flow-card-plus") as HTMLElement | null;
+    if (!root || !content || !this._stickerDragState) {
+      return undefined;
+    }
+
+    const sticker = this._getRenderedStickers()[this._stickerDragState.index];
+    if (sticker?.show_circle === false) {
+      return undefined;
+    }
+
+    const stickerCircles = Array.from(root.querySelectorAll(".sticker-circle")) as HTMLElement[];
+    const stickerCircle = stickerCircles[this._stickerDragState.index];
+    if (!stickerCircle) {
+      return undefined;
+    }
+
+    const anchorCircles = Array.from(root.querySelectorAll("[data-sticker-anchor]")) as HTMLElement[];
+    const bestCircleMatch = this._findBestStickerCircleMatch(stickerCircle, content, anchorCircles);
+    const directAnchor = bestCircleMatch?.circle.dataset.stickerAnchor;
+    if (isStickerAnchor(directAnchor)) {
+      return directAnchor;
+    }
+
+    const anchoredStickerCircles = (Array.from(root.querySelectorAll(".sticker-circle[data-sticker-source-anchor]")) as HTMLElement[]).filter(
+      (circle) =>
+        !circle.classList.contains("sticker-circle--hidden") &&
+        circle.dataset.stickerIndex !== String(this._stickerDragState?.index) &&
+        isStickerAnchor(circle.dataset.stickerSourceAnchor)
+    );
+    const anchoredStickerMatch = this._findBestStickerCircleMatch(stickerCircle, content, anchoredStickerCircles);
+    const inheritedAnchor = anchoredStickerMatch?.circle.dataset.stickerSourceAnchor;
+
+    return isStickerAnchor(inheritedAnchor) ? inheritedAnchor : undefined;
+  }
+
+  private _emitStickerConfigChanged(stickers: StickerConfig[], index?: number): void {
+    this.dispatchEvent(
+      new CustomEvent(STICKERS_CONFIG_CHANGED_EVENT, {
+        bubbles: true,
+        composed: true,
+        detail: {
+          index,
+          stickers,
+        },
+      })
+    );
+  }
+
+  private _isInCardEditorPreview(): boolean {
+    let currentNode: Node = this;
+
+    while (currentNode) {
+      const rootNode = currentNode.getRootNode();
+      if (!(rootNode instanceof ShadowRoot)) {
+        return false;
+      }
+
+      const host = rootNode.host as HTMLElement | undefined;
+      if (!host) {
+        return false;
+      }
+
+      if (host.localName === "hui-card-preview" || host.localName === "hui-dialog-edit-card") {
+        return true;
+      }
+
+      currentNode = host;
+    }
+
+    return false;
+  }
+
+  private _syncStickerAnchorCenters(): void {
+    const root = this.shadowRoot;
+    const content = root?.querySelector("#power-flow-card-plus") as HTMLElement | null;
+    if (!root || !content) {
+      return;
+    }
+
+    const contentRect = content.getBoundingClientRect();
+    if (!contentRect.width || !contentRect.height) {
+      return;
+    }
+
+    const nextContentSize = {
+      width: Math.round(contentRect.width),
+      height: Math.round(contentRect.height),
+    };
+    if (this._stickerContentSize?.width !== nextContentSize.width || this._stickerContentSize?.height !== nextContentSize.height) {
+      this._stickerContentSize = nextContentSize;
+    }
+
+    const nextCenters: Record<string, StickerAnchorCenter> = {};
+    const circles = Array.from(root.querySelectorAll("[data-sticker-anchor]")) as HTMLElement[];
+    for (const circle of circles) {
+      const anchor = circle.dataset.stickerAnchor;
+      if (!isStickerAnchor(anchor)) {
+        continue;
+      }
+
+      const circleRect = this._getElementRectWithinContent(circle, content);
+      if (!circleRect) {
+        continue;
+      }
+      nextCenters[anchor] = {
+        x: Math.round(circleRect.left + circleRect.width / 2),
+        y: Math.round(circleRect.top + circleRect.height / 2),
+      };
+    }
+
+    const keys = Array.from(new Set([...Object.keys(this._stickerAnchorCenters), ...Object.keys(nextCenters)]));
+    const changed = keys.some((key) => {
+      const previous = this._stickerAnchorCenters[key];
+      const next = nextCenters[key];
+      return previous?.x !== next?.x || previous?.y !== next?.y;
+    });
+
+    if (changed) {
+      this._stickerAnchorCenters = nextCenters;
+    }
   }
 
   protected updated(changedProps: PropertyValues): void {
@@ -443,6 +999,10 @@ export class PowerFlowCardPlus extends LitElement {
       }
     }
 
+    this._syncStickerAnchorCenters();
+    this._syncAnchoredStickerPositionsFromPercent();
+    this._syncStickerAnchorHighlight();
+    this._syncStickerInheritedColors();
     this._tryConnectAll();
   }
 
@@ -821,6 +1381,98 @@ export class PowerFlowCardPlus extends LitElement {
       individualFieldRightTop,
       individualFieldRightBottom,
     };
+  }
+
+  private _syncStickerInheritedColors(): void {
+    const root = this.shadowRoot;
+    const content = root?.querySelector("#power-flow-card-plus") as HTMLElement | null;
+    if (!root || !content) {
+      return;
+    }
+
+    const allStickerNodes = Array.from(root.querySelectorAll(".sticker-node")) as HTMLElement[];
+    for (const stickerNode of allStickerNodes) {
+      if (stickerNode.dataset.inheritCircleColor !== "true") {
+        stickerNode.style.removeProperty("--sticker-inherited-circle-color");
+      }
+    }
+
+    const stickerNodes = allStickerNodes.filter((node) => node.dataset.inheritCircleColor === "true");
+    if (!stickerNodes.length) {
+      return;
+    }
+
+    const baseCircles = Array.from(root.querySelectorAll(".circle-container > .circle")) as HTMLElement[];
+    const anchoredStickerCircles = Array.from(root.querySelectorAll(".sticker-circle[data-sticker-source-anchor]")) as HTMLElement[];
+    for (const stickerNode of stickerNodes) {
+      const stickerCircle = stickerNode.querySelector(".sticker-circle") as HTMLElement | null;
+      if (!stickerCircle) {
+        continue;
+      }
+
+      const bestMatch = this._findBestStickerCircleMatch(stickerCircle, content, baseCircles);
+      let matchedColor = bestMatch ? (bestMatch.circle.id === "home-circle" ? "#000000" : getComputedStyle(bestMatch.circle).borderColor) : undefined;
+
+      if (!matchedColor) {
+        const stickerAnchorMatch = this._findBestStickerCircleMatch(
+          stickerCircle,
+          content,
+          anchoredStickerCircles.filter(
+            (circle) =>
+              circle !== stickerCircle &&
+              !circle.classList.contains("sticker-circle--hidden") &&
+              isStickerAnchor(circle.dataset.stickerSourceAnchor)
+          )
+        );
+        const inheritedAnchor = stickerAnchorMatch?.circle.dataset.stickerSourceAnchor;
+        if (isStickerAnchor(inheritedAnchor)) {
+          matchedColor = this._getStickerAnchorColor(inheritedAnchor);
+        }
+      }
+
+      if (!matchedColor) {
+        const ownAnchor = stickerNode.dataset.stickerSourceAnchor;
+        if (isStickerAnchor(ownAnchor)) {
+          matchedColor = this._getStickerAnchorColor(ownAnchor);
+        }
+      }
+
+      if (matchedColor) {
+        stickerNode.style.setProperty("--sticker-inherited-circle-color", matchedColor);
+      } else {
+        stickerNode.style.removeProperty("--sticker-inherited-circle-color");
+      }
+    }
+  }
+
+  private _syncAnchoredStickerPositionsFromPercent(): void {
+    if (!this._pendingStickerPositionSyncIndices.length || !this._stickerContentSize) {
+      return;
+    }
+
+    const syncedStickers = this._getStickersWithSyncedAnchoredOffsets(this._config.stickers || [], this._pendingStickerPositionSyncIndices);
+
+    this._pendingStickerPositionSyncIndices = [];
+
+    if (!syncedStickers.hasChanges) {
+      return;
+    }
+
+    this._previewStickerOverrides = syncedStickers.stickers;
+    this._emitStickerConfigChanged(syncedStickers.stickers);
+  }
+
+  private _syncStickerAnchorHighlight(): void {
+    const root = this.shadowRoot;
+    if (!root) {
+      return;
+    }
+
+    const circles = Array.from(root.querySelectorAll("[data-sticker-anchor]")) as HTMLElement[];
+    for (const circle of circles) {
+      const anchor = circle.dataset.stickerAnchor;
+      circle.toggleAttribute("data-sticker-anchor-highlighted", !!anchor && anchor === this._activeStickerAnchorTarget);
+    }
   }
 
   private _tryConnectAll() {

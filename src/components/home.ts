@@ -46,6 +46,7 @@ export const homeElement = (
   <div
     class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
     id="home-circle"
+    data-sticker-anchor="home"
     @click=${(e: MouseEvent) => {
       main.onEntityClick(e, entities.home, entities.home?.entity);
     }}

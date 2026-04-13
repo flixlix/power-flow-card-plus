@@ -17,6 +17,7 @@ import { batterySchema } from "./schema/battery";
 import { nonFossilSchema } from "./schema/fossil-fuel-percentage";
 import { homeSchema } from "./schema/home";
 import { ConfigPage } from "./types/config-page";
+import "./components/stickers-editor";
 
 const CONFIG_PAGES: {
   page: ConfigPage;
@@ -51,6 +52,10 @@ const CONFIG_PAGES: {
   {
     page: "individual",
     icon: "mdi:dots-horizontal-circle-outline",
+  },
+  {
+    page: "stickers",
+    icon: "mdi:circle-outline",
   },
   {
     page: "advanced",
@@ -98,6 +103,13 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     };
 
     if (this._currentConfigPage !== null) {
+      if (this._currentConfigPage === "stickers") {
+        return html`
+          <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
+          <stickers-editor .hass=${this.hass} .config=${this._config} @config-changed=${this._valueChanged}></stickers-editor>
+        `;
+      }
+
       if (this._currentConfigPage === "individual") {
         return html`
           <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
@@ -110,7 +122,7 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
         currentPage === "advanced"
           ? advancedOptionsSchema(localize, this._config.display_zero_lines?.mode ?? defaultValues.displayZeroLines.mode)
           : CONFIG_PAGES.find((page) => page.page === currentPage)?.schema;
-      const dataForForm = currentPage === "advanced" ? data : data.entities[currentPage];
+      const dataForForm = currentPage === "advanced" ? data : data.entities[currentPage as keyof typeof data.entities];
 
       return html`
         <subpage-header @go-back=${this._goBack} page=${this._currentConfigPage}> </subpage-header>
@@ -127,8 +139,9 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
     const renderLinkSubpage = (page: ConfigPage, fallbackIcon: string | undefined = "mdi:dots-horizontal-circle-outline") => {
       if (page === null) return nothing;
       const getIconToUse = () => {
-        if (page === "individual" || page === "advanced") return fallbackIcon;
-        return this?._config?.entities[page]?.icon || fallbackIcon;
+        if (page === "individual" || page === "advanced" || page === "stickers") return fallbackIcon;
+        const entityConfig = this?._config?.entities[page as keyof typeof this._config.entities];
+        return entityConfig && !Array.isArray(entityConfig) && "icon" in entityConfig ? entityConfig.icon || fallbackIcon : fallbackIcon;
       };
       const icon = getIconToUse();
       return html`
@@ -161,13 +174,18 @@ export class PowerFlowCardPlusEditor extends LitElement implements LovelaceCardE
   }
 
   private _valueChanged(ev: any): void {
-    let config = ev.detail.value || "";
+    let config = ev.detail.value || ev.detail.config || "";
 
     if (!this._config || !this.hass) {
       return;
     }
 
-    if (this._currentConfigPage !== null && this._currentConfigPage !== "advanced" && this._currentConfigPage !== "individual") {
+    if (
+      this._currentConfigPage !== null &&
+      this._currentConfigPage !== "advanced" &&
+      this._currentConfigPage !== "individual" &&
+      this._currentConfigPage !== "stickers"
+    ) {
       config = {
         ...this._config,
         entities: {

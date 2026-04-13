@@ -18,6 +18,7 @@ export const batteryElement = (
   return html`<div class="circle-container battery">
     <div
       class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
+      data-sticker-anchor="battery"
       @click=${(e: MouseEvent) => {
         const target = entities.battery?.state_of_charge!
           ? entities.battery?.state_of_charge!

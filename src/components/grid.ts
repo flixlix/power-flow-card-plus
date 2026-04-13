@@ -14,6 +14,7 @@ export const gridElement = (
   return html`<div class="circle-container grid">
     <div
       class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
+      data-sticker-anchor="grid"
       @click=${(e: MouseEvent) => {
         const outageTarget = grid.powerOutage?.entityGenerator ?? entities.grid?.power_outage?.entity;
         const target =

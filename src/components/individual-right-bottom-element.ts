@@ -8,6 +8,7 @@ import { IndividualObject } from "@/states/raw/individual/get-individual-object"
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { styleLine } from "@/utils/style-line";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { makeIndividualStickerAnchor } from "@/utils/sticker-anchor";
 
 interface TopIndividual {
   newDur: NewDur;
@@ -32,6 +33,7 @@ export const individualRightBottomElement = (
   return html`<div class="circle-container individual-bottom individual-right individual-right-bottom">
     <div
       class="circle ${disableEntityClick ? "pointer-events-none" : ""}"
+      data-sticker-anchor=${makeIndividualStickerAnchor(individualObj.entity)}
       @click=${(e: MouseEvent) => {
         main.onEntityClick(e, individualObj?.field, individualObj?.entity);
       }}
