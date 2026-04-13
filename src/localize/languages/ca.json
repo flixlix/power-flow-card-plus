@@ -82,6 +82,7 @@
     "double_tap_action": "Acció en doble toc",
     "navigation_path": "Ruta de Navegació",
     "sort_individual_devices": "Ordena Dispositius Individuals",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Sense etiquetes"
   }
 }

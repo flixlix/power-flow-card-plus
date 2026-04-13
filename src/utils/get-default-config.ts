@@ -56,6 +56,7 @@ export function getDefaultConfig(hass: HomeAssistant): object {
       solar: firstSolarPowerEntity ? { entity: firstSolarPowerEntity, display_zero_state: true } : undefined,
     },
     clickable_entities: true,
+    no_labels: false,
     display_zero_lines: true,
     use_new_flow_rate_model: true,
     w_decimals: defaultValues.wattDecimals,

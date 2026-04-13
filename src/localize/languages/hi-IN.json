@@ -82,6 +82,7 @@
     "double_tap_action": "डबल टैप क्रिया",
     "navigation_path": "नेविगेशन पथ",
     "sort_individual_devices": "व्यक्तिगत डिवाइस क्रमबद्ध करें",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "लेबल छुपाएँ"
   }
 }

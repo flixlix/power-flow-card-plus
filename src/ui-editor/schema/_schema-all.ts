@@ -44,6 +44,7 @@ export const cardConfigStruct = assign(
     style_ha_card: optional(any()),
     style_card_content: optional(any()),
     disable_dots: optional(boolean()),
+    no_labels: optional(boolean()),
     entities: object({
       battery: optional(any()),
       grid: optional(any()),
@@ -192,6 +193,11 @@ export const advancedOptionsSchema = memoizeOne((localize, displayZeroLinesMode:
       {
         name: "disable_dots",
         label: "Disable Moving Dots",
+        selector: { boolean: {} },
+      },
+      {
+        name: "no_labels",
+        label: localize("editor.no_labels"),
         selector: { boolean: {} },
       },
       {

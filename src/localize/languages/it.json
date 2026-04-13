@@ -82,6 +82,7 @@
     "double_tap_action": "Azione al doppio tocco",
     "navigation_path": "Percorso di navigazione",
     "sort_individual_devices": "Ordina i singoli individuale",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Nessuna etichetta"
   }
 }

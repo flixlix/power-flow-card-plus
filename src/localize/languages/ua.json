@@ -82,6 +82,7 @@
     "double_tap_action": "Дія при подвійному натисканні",
     "navigation_path": "Шлях переходу",
     "sort_individual_devices": "Сортувати окремі пристрої",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Без міток"
   }
 }

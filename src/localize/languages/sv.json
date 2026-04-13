@@ -82,6 +82,7 @@
     "double_tap_action": "Dubbeltrycksåtgärd",
     "navigation_path": "Navigationsväg",
     "sort_individual_devices": "Sortera enskilda enheter",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Inga etiketter"
   }
 }

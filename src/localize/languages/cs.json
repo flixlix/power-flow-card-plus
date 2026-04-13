@@ -82,6 +82,7 @@
     "double_tap_action": "Akce při dvojitém klepnutí",
     "navigation_path": "Navigační cesta",
     "sort_individual_devices": "Seřaďte individuálně",
-    "allow_layout_break": "Allow Layout Break"
+    "allow_layout_break": "Allow Layout Break",
+    "no_labels": "Bez popisků"
   }
 }
