@@ -57,6 +57,7 @@ export const styles = css`
   }
 
   ha-card {
+    isolation: isolate;
     overflow: hidden;
   }
 
