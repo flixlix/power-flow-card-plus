@@ -14,13 +14,14 @@ const mainSchema = {
             { value: "power", label: "Power" },
             { value: "percentage", label: "Percentage" },
           ],
-          custom_value: true,
+          mode: "dropdown",
         },
       },
     },
     {
       name: "color_value",
       label: "Color Value",
+      default: true,
       selector: { boolean: {} },
     },
     {
@@ -31,6 +32,7 @@ const mainSchema = {
     {
       name: "display_zero",
       label: "Display Zero",
+      default: true,
       selector: { boolean: {} },
     },
     {
@@ -41,6 +43,7 @@ const mainSchema = {
     {
       name: "display_zero_state",
       label: "Display Zero State",
+      default: true,
       selector: { boolean: {} },
     },
     {

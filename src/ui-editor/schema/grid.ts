@@ -25,6 +25,7 @@ const mainSchema = {
     {
       name: "color_value",
       label: "Color of Value",
+      default: true,
       selector: { boolean: {} },
     },
   ],

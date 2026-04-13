@@ -15,6 +15,7 @@ const mainSchema = {
     {
       name: "invert_state",
       label: "Invert State",
+      default: true,
       selector: { boolean: {} },
     },
     {
@@ -60,6 +61,7 @@ const stateOfChargeSchema = [
       {
         name: "show_state_of_charge",
         label: "Show State of Charge",
+        default: true,
         selector: { boolean: {} },
       },
       {
