@@ -33,12 +33,12 @@ export const allDynamicStyles = (
     grid.color.icon_type === "consumption"
       ? "var(--energy-grid-consumption-color)"
       : grid.color.icon_type === "production"
-      ? "var(--energy-grid-return-color)"
-      : grid.color.icon_type === "color_dynamically"
-      ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
-        ? "var(--energy-grid-consumption-color)"
-        : "var(--energy-grid-return-color)"
-      : "var(--primary-text-color)"
+        ? "var(--energy-grid-return-color)"
+        : grid.color.icon_type === "color_dynamically"
+          ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
+            ? "var(--energy-grid-consumption-color)"
+            : "var(--energy-grid-return-color)"
+          : "var(--primary-text-color)"
   );
 
   main.style.setProperty(
@@ -46,12 +46,12 @@ export const allDynamicStyles = (
     grid.color.circle_type === "consumption"
       ? "var(--energy-grid-consumption-color)"
       : grid.color.circle_type === "production"
-      ? "var(--energy-grid-return-color)"
-      : grid.color.circle_type === "color_dynamically"
-      ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
-        ? "var(--energy-grid-consumption-color)"
-        : "var(--energy-grid-return-color)"
-      : "var(--energy-grid-consumption-color)"
+        ? "var(--energy-grid-return-color)"
+        : grid.color.circle_type === "color_dynamically"
+          ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
+            ? "var(--energy-grid-consumption-color)"
+            : "var(--energy-grid-return-color)"
+          : "var(--energy-grid-consumption-color)"
   );
 
   if (grid.color.fromGrid !== undefined) {
@@ -73,12 +73,12 @@ export const allDynamicStyles = (
     grid.secondary.color.type === "consumption"
       ? "var(--energy-grid-consumption-color)"
       : grid.secondary.color.type === "production"
-      ? "var(--energy-grid-return-color)"
-      : grid.secondary.color.type === true
-      ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
-        ? "var(--energy-grid-consumption-color)"
-        : "var(--energy-grid-return-color)"
-      : "var(--primary-text-color)"
+        ? "var(--energy-grid-return-color)"
+        : grid.secondary.color.type === true
+          ? (grid.state.fromGrid ?? 0) >= (grid.state.toGrid ?? 0)
+            ? "var(--energy-grid-consumption-color)"
+            : "var(--energy-grid-return-color)"
+          : "var(--primary-text-color)"
   );
 
   if (entities.grid?.color_value === false) {
@@ -119,12 +119,12 @@ export const allDynamicStyles = (
     battery.color.icon_type === "consumption"
       ? "var(--energy-battery-in-color)"
       : battery.color.icon_type === "production"
-      ? "var(--energy-battery-out-color)"
-      : battery.color.icon_type === "color_dynamically"
-      ? battery.state.fromBattery >= battery.state.toBattery
         ? "var(--energy-battery-out-color)"
-        : "var(--energy-battery-in-color)"
-      : "var(--primary-text-color)"
+        : battery.color.icon_type === "color_dynamically"
+          ? battery.state.fromBattery >= battery.state.toBattery
+            ? "var(--energy-battery-out-color)"
+            : "var(--energy-battery-in-color)"
+          : "var(--primary-text-color)"
   );
   const batteryStateOfChargeColorType = entities.battery?.color_state_of_charge_value;
   main.style.setProperty(
@@ -132,24 +132,24 @@ export const allDynamicStyles = (
     batteryStateOfChargeColorType === "consumption"
       ? "var(--energy-battery-in-color)"
       : batteryStateOfChargeColorType === "production"
-      ? "var(--energy-battery-out-color)"
-      : batteryStateOfChargeColorType === "color_dynamically"
-      ? battery.state.fromBattery >= battery.state.toBattery
         ? "var(--energy-battery-out-color)"
-        : "var(--energy-battery-in-color)"
-      : "var(--primary-text-color)"
+        : batteryStateOfChargeColorType === "color_dynamically"
+          ? battery.state.fromBattery >= battery.state.toBattery
+            ? "var(--energy-battery-out-color)"
+            : "var(--energy-battery-in-color)"
+          : "var(--primary-text-color)"
   );
   main.style.setProperty(
     "--circle-battery-color",
     battery.color.circle_type === "consumption"
       ? "var(--energy-battery-in-color)"
       : battery.color.circle_type === "production"
-      ? "var(--energy-battery-out-color)"
-      : battery.color.circle_type === "color_dynamically"
-      ? battery.state.fromBattery >= battery.state.toBattery
         ? "var(--energy-battery-out-color)"
-        : "var(--energy-battery-in-color)"
-      : "var(--energy-battery-in-color)"
+        : battery.color.circle_type === "color_dynamically"
+          ? battery.state.fromBattery >= battery.state.toBattery
+            ? "var(--energy-battery-out-color)"
+            : "var(--energy-battery-in-color)"
+          : "var(--energy-battery-in-color)"
   );
   if (entities.battery?.color_value === false) {
     main.style.setProperty("--text-battery-in-color", "var(--primary-text-color)");

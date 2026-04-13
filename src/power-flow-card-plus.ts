@@ -334,8 +334,8 @@ export class PowerFlowCardPlus extends LitElement {
                       templatesObj,
                     })
                   : individualObjs?.some((individual) => individual?.has)
-                  ? html`<div class="spacer"></div>`
-                  : nothing}
+                    ? html`<div class="spacer"></div>`
+                    : nothing}
                 ${individualFieldLeftTop
                   ? individualLeftTopElement(this, this._config, {
                       individualObj: individualFieldLeftTop,
@@ -689,16 +689,16 @@ export class PowerFlowCardPlus extends LitElement {
               watt_threshold: this._config.watt_threshold,
             })
         : entities.home?.subtract_individual
-        ? displayValue(this.hass, this._config, totalHomeConsumption - totalIndividualConsumption || 0, {
-            unit: entities.home?.unit_of_measurement,
-            unitWhiteSpace: entities.home?.unit_white_space,
-            watt_threshold: this._config.watt_threshold,
-          })
-        : displayValue(this.hass, this._config, totalHomeConsumption, {
-            unit: entities.home?.unit_of_measurement,
-            unitWhiteSpace: entities.home?.unit_white_space,
-            watt_threshold: this._config.watt_threshold,
-          });
+          ? displayValue(this.hass, this._config, totalHomeConsumption - totalIndividualConsumption || 0, {
+              unit: entities.home?.unit_of_measurement,
+              unitWhiteSpace: entities.home?.unit_white_space,
+              watt_threshold: this._config.watt_threshold,
+            })
+          : displayValue(this.hass, this._config, totalHomeConsumption, {
+              unit: entities.home?.unit_of_measurement,
+              unitWhiteSpace: entities.home?.unit_white_space,
+              watt_threshold: this._config.watt_threshold,
+            });
     const totalLines =
       (grid.state.toHome ?? 0) +
       (solar.state.toHome ?? 0) +

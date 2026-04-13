@@ -1,6 +1,7 @@
 import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import wc from "eslint-plugin-wc";
+import { configs } from "eslint-plugin-lit";
 
 export default [
   {
@@ -26,6 +27,7 @@ export default [
       "no-console": ["warn", { allow: ["warn", "error", "info", "groupCollapsed", "groupEnd"] }],
     },
   },
+  configs["flat/recommended"],
   {
     files: ["src/logging.ts"],
     rules: {

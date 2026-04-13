@@ -497,7 +497,9 @@ export const styles = css`
   }
   .circle svg circle {
     animation: var(--home-circle-animation);
-    transition: stroke-dashoffset 0.4s, stroke-dasharray 0.4s;
+    transition:
+      stroke-dashoffset 0.4s,
+      stroke-dasharray 0.4s;
     fill: none;
   }
   span.solar {
