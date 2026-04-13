@@ -11,6 +11,9 @@
 > [!TIP]  
 > Version 0.2.0 is out now! ✨ Check out the [new features](https://github.com/flixlix/power-flow-card-plus/releases/tag/v0.2.0)!
 
+> [!NOTE]
+> This card is distributed via [flixlix/power-flow-card-plus](https://github.com/flixlix/power-flow-card-plus), but the source code lives in the monorepo at [flixlix/flixlix-cards](https://github.com/flixlix/flixlix-cards). Issues and feature requests will be tracked there going forward.
+
 ## Additional Features / Enhancements
 
 - UI Editor!!! 🥳
@@ -132,14 +135,13 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 The card supports Home Assistant action configs on entity circles and other clickable entity surfaces.
 
-| Name              | Type     | Description                                                                                                                                     |
-| ----------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| tap_action        | `object` | Action triggered on tap/click.                                                                                                                  |
-| hold_action       | `object` | Action triggered on long press.                                                                                                                 |
-| double_tap_action | `object` | Action triggered on double tap/click.                                                                                                           |
+| Name              | Type     | Description                           |
+| ----------------- | -------- | ------------------------------------- |
+| tap_action        | `object` | Action triggered on tap/click.        |
+| hold_action       | `object` | Action triggered on long press.       |
+| double_tap_action | `object` | Action triggered on double tap/click. |
 
 If none of these actions are configured for a clickable entity surface, the card falls back to opening more-info when `clickable_entities: true`.
-
 
 #### Entities object
 
@@ -286,9 +288,9 @@ This Feature allows you to configure an additional small text for each Individua
 | template               | `string`          | Here you can enter a [HA Template](https://www.home-assistant.io/docs/configuration/templating/). The output of the template will be displayed. Space is limited inside the circle and too much text will result in overflow using ellipsis, so use with caution. Will update automatically in case one of the provided entities inside the template updates. Can only be used in case `entity` was not set. |
 | accept_negative        | `boolean`         | Default is `false`. If set to `true`, negative values will be displayed as negative, otherwise they will be transformed to positive                                                                                                                                                                                                                                                                          |
 | sum_total              | `boolean`         | The secondary info field on the solar bubble can be used as a second string and be summed with the main entity to create a total of solar consumption. By default, these two values are completely decoupled.                                                                                                                                                                                                |
-| tap_action             | `object`          | Action triggered on tap/click on the secondary info text.                                                                                                                                                                                                                                                                                                                                    |
-| hold_action            | `object`          | Action triggered on long press on the secondary info text.                                                                                                                                                                                                                                                                                                                                   |
-| double_tap_action      | `object`          | Action triggered on double tap/click on the secondary info text.                                                                                                                                                                                                                                                                                                                            |
+| tap_action             | `object`          | Action triggered on tap/click on the secondary info text.                                                                                                                                                                                                                                                                                                                                                    |
+| hold_action            | `object`          | Action triggered on long press on the secondary info text.                                                                                                                                                                                                                                                                                                                                                   |
+| double_tap_action      | `object`          | Action triggered on double tap/click on the secondary info text.                                                                                                                                                                                                                                                                                                                                             |
 
 #### Power Outage
 
