@@ -6,15 +6,20 @@ import { styleLine } from "@/utils/style-line";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/compute-individual-position";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { checkFlowDotsCount } from "@/utils/check-flow-dots-count";
+
 
 const solarToHomeDot = (config: PowerFlowCardPlusConfig, solar: Flows["solar"], newDur: Flows["newDur"]) => {
   if (!checkShouldShowDots(config) || !solar.state.toHome) return nothing;
 
+  return svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {const n = checkFlowDotsCount(config) ?? 1;
   return svg`<circle r="1" class="solar" vector-effect="non-scaling-stroke">
-      <animateMotion dur="${newDur.solarToHome}s" repeatCount="indefinite" calcMode="paced">
+      <animateMotion dur="${newDur.solarToHome / n}s" repeatCount="indefinite" calcMode="paced"
+      keyTimes="0;1;1" keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}">
         <mpath xlink:href="#solar" />
       </animateMotion>
     </circle>`;
+  })}`
 };
 
 export const flowSolarToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, solar, newDur }: Flows) => {

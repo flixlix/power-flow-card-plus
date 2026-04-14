@@ -8,6 +8,8 @@ import { IndividualObject } from "@/states/raw/individual/get-individual-object"
 import { PowerFlowCardPlus } from "@/power-flow-card-plus";
 import { styleLine } from "@/utils/style-line";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { checkFlowDotsCount } from "@/utils/check-flow-dots-count";
+
 
 interface TopIndividual {
   newDur: NewDur;
@@ -64,19 +66,28 @@ export const individualLeftTopElement = (
     ${showLine(config, individualObj.state || 0) && !config.entities.home?.hide
       ? html`
           <svg width="80" height="30">
-            <path d="M40 -10 v50" id="individual-top" class="${styleLine(individualObj.state || 0, config)}" />
+            <path  
+              id="individual-top" 
+              class="${styleLine(individualObj.state || 0, config)}"
+              d="M40 -10 v50"
+              />
             ${checkShouldShowDots(config) && individualObj.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-              ? svg`<circle r="1.75" class="individual-top" vector-effect="non-scaling-stroke">
+              ? svg`${Array.from({ length: Math.round((checkFlowDotsCount(config) ?? 1) / 1.75) }).map((_, i) => {
+                const n = Math.round((checkFlowDotsCount(config) ?? 1) / 1.75);
+                const start = i / n;
+                const end = (i + 1) / n;  
+                return svg`<circle r="1.75" class="individual-top" vector-effect="non-scaling-stroke">
                     <animateMotion
-                      dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration)}s"
+                      dur="${computeIndividualFlowRate(individualObj?.field?.calculate_flow_rate, duration) / n}s"
                       repeatCount="indefinite"
                       calcMode="paced"
-                      keyPoints="${individualObj.invertAnimation ? "0;1" : "1;0"}"
-                      keyTimes="0;1"
+                      keyPoints=${individualObj.invertAnimation ? `${start} ; ${end}; ${start}` : `${end} ; ${start}; ${end}`}
+                      keyTimes="0;1;1"
                     >
                       <mpath xlink:href="#individual-top" />
                     </animateMotion>
                   </circle>`
+                  })}`
               : nothing}
           </svg>
         `

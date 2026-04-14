@@ -6,19 +6,23 @@ import { styleLine } from "@/utils/style-line";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/compute-individual-position";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { checkFlowDotsCount } from "@/utils/check-flow-dots-count";
+
 
 const batteryToHomeDot = (config: PowerFlowCardPlusConfig, battery: FlowBatteryToHomeFlows["battery"], newDur: FlowBatteryToHomeFlows["newDur"]) => {
   if (!checkShouldShowDots(config) || !battery.state.toHome) return nothing;
 
+  return svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {const n = checkFlowDotsCount(config) ?? 1;
   return svg`<circle r="1" class="battery-home" vector-effect="non-scaling-stroke">
-      <animateMotion dur="${newDur.batteryToHome}s" repeatCount="indefinite" calcMode="paced">
+      <animateMotion dur="${newDur.batteryToHome / n}s" repeatCount="indefinite" calcMode="paced"
+      keyTimes="0;1;1" keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}">
         <mpath xlink:href="#battery-home" />
       </animateMotion>
     </circle>`;
+   })}`
 };
 
 type FlowBatteryToHomeFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
-
 export const flowBatteryToHome = (config: PowerFlowCardPlusConfig, { battery, grid, individual, newDur }: FlowBatteryToHomeFlows) => {
   const shouldShow = battery.has && showLine(config, battery.state.toHome) && !config.entities.home?.hide;
   if (!shouldShow) return nothing;
