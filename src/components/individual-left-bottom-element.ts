@@ -7,6 +7,7 @@ import { checkShouldShowDots } from "@/utils/check-should-show-dots";
 import { computeIndividualFlowRate } from "@/utils/compute-flow-rate";
 import { showLine } from "@/utils/show-line";
 import { styleLine } from "@/utils/style-line";
+import { checkFlowDotsCount } from "@/utils/check-flow-dots-count";
 import { individualSecondarySpan } from "./spans/individual-secondary-span";
 
 interface IndividualBottom {
@@ -31,17 +32,22 @@ export const individualLeftBottomElement = (
           <svg width="80" height="30">
             <path d="M40 40 v-40" id="individual-bottom" class="${styleLine(individualObj?.state || 0, config)}" />
             ${checkShouldShowDots(config) && individualObj?.state && individualObj.state >= (individualObj.displayZeroTolerance ?? 0)
-              ? svg`<circle r="1.75" class="individual-bottom" vector-effect="non-scaling-stroke">
+              ? svg`${Array.from({ length: Math.round((checkFlowDotsCount(config) ?? 1) / 1.75) }).map((_, i) => {
+                const n = Math.round((checkFlowDotsCount(config) ?? 1) / 1.75);
+                const start = i / n;
+                const end = (i + 1) / n;  
+                return svg`<circle r="1.75" class="individual-bottom" vector-effect="non-scaling-stroke">
                     <animateMotion
-                      dur="${computeIndividualFlowRate(individualObj.field?.calculate_flow_rate !== false, duration)}s"
+                      dur="${computeIndividualFlowRate(individualObj.field?.calculate_flow_rate !== false, duration) / n}s"
                       repeatCount="indefinite"
                       calcMode="paced"
-                      keyPoints="${individualObj.invertAnimation ? "0;1" : "1;0"}"
-                      keyTimes="0;1"
+                      keyPoints=${individualObj.invertAnimation ? `${start} ; ${end}; ${start}` : `${end} ; ${start}; ${end}`}
+                      keyTimes="0;1;1"
                     >
                       <mpath xlink:href="#individual-bottom" />
                     </animateMotion>
                   </circle>`
+                  })}`
               : nothing}
           </svg>
         `

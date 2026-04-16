@@ -15,6 +15,7 @@ interface mainConfigOptions {
   clickable_entities: boolean;
   max_expected_power: number;
   min_expected_power: number;
+  flow_dots_count: number;
   use_new_flow_rate_model?: boolean;
   full_size?: boolean;
   style_ha_card?: any;

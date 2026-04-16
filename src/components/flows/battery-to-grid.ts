@@ -6,31 +6,36 @@ import { styleLine } from "@/utils/style-line";
 import { type Flows } from "./index";
 import { checkHasBottomIndividual, checkHasRightIndividual } from "@/utils/compute-individual-position";
 import { checkShouldShowDots } from "@/utils/check-should-show-dots";
+import { checkFlowDotsCount } from "@/utils/check-flow-dots-count";
+
 
 const batteryFromGridDot = (config: PowerFlowCardPlusConfig, grid: Flows["grid"], newDur: Flows["newDur"]) => {
   if (!checkShouldShowDots(config) || !grid.state.toBattery) return nothing;
 
+  return svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {const n = checkFlowDotsCount(config) ?? 1;
   return svg`<circle r="1" class="battery-from-grid" vector-effect="non-scaling-stroke">
-      <animateMotion dur="${newDur.batteryGrid}s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="paced">
+      <animateMotion dur="${newDur.batteryGrid / n}s" repeatCount="indefinite" calcMode="paced"
+      keyTimes="0;1;1" keyPoints="${(i + 1) / n} ; ${i / n} ; ${(i + 1) / n}">
         <mpath xlink:href="#battery-grid" />
       </animateMotion>
     </circle>`;
+  })}`
 };
 
 const batteryToGridDot = (config: PowerFlowCardPlusConfig, battery: Flows["battery"], newDur: Flows["newDur"]) => {
   if (!checkShouldShowDots(config) || !battery.state.toGrid) return nothing;
 
-  return svg`
-    <circle r="1" class="battery-to-grid" vector-effect="non-scaling-stroke">
-      <animateMotion dur="${newDur.batteryGrid}s" repeatCount="indefinite" calcMode="paced">
+  return svg`${Array.from({ length: checkFlowDotsCount(config) ?? 1 }).map((_, i) => {const n = checkFlowDotsCount(config) ?? 1;
+  return svg`<circle r="1" class="battery-to-grid" vector-effect="non-scaling-stroke">
+      <animateMotion dur="${newDur.batteryGrid / n}s" repeatCount="indefinite" calcMode="paced"
+      keyTimes="0;1;1" keyPoints="${(i) / n} ; ${(i+1) / n}; ${(i) / n}">
         <mpath xlink:href="#battery-grid" />
       </animateMotion>
-    </circle>
-  `;
+    </circle>`;
+  })}`
 };
 
 type FlowBatteryToGridFlows = Pick<Flows, Exclude<keyof Flows, "solar">>;
-
 export const flowBatteryToGrid = (config: PowerFlowCardPlusConfig, { battery, grid, individual, newDur }: FlowBatteryToGridFlows) => {
   const shouldShow = grid.has && battery.has && showLine(config, Math.max(grid.state.toBattery || 0, battery.state.toGrid || 0));
   if (!shouldShow) return nothing;
