@@ -1,7 +1,7 @@
 {
   "name": "power-flow-card-plus",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.3.3",
   "type": "module",
   "description": "A power flow card for Home Assistant",
   "keywords": [
@@ -11,71 +11,13 @@
     "dashboard",
     "custom-cards"
   ],
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flixlix/power-flow-card-plus.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "flixlix",
   "bugs": {
     "url": "https://github.com/flixlix/power-flow-card-plus/issues"
   },
-  "homepage": "https://github.com/flixlix/power-flow-card-plus#readme",
-  "scripts": {
-    "build": "rollup -c",
-    "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "release": "pnpm build && pnpm changeset tag",
-    "start": "rollup -wc",
-    "watch": "rollup -c --watch",
-    "typecheck": "tsc --noEmit",
-    "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "test": "jest",
-    "precommit": "pnpm typecheck && pnpm format:write && pnpm test && pnpm lint",
-    "start:hass": "docker run --rm -p8123:8123 -v ./.hass_dev:/config homeassistant/home-assistant:beta"
-  },
-  "dependencies": {
-    "@mdi/js": "^7.4.47",
-    "custom-card-helpers": "^1.9.0",
-    "home-assistant-js-websocket": "^8.2.0",
-    "lit": "^2.8.0",
-    "lit-element": "^2.5.1",
-    "lit-html": "^2.8.0",
-    "memoize-one": "^6.0.0",
-    "sortablejs": "^1.15.7",
-    "superstruct": "^1.0.4",
-    "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.2",
-    "@babel/preset-typescript": "^7.28.5",
-    "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.30.0",
-    "@jest/globals": "^29.7.0",
-    "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-commonjs": "^21.1.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^8.5.0",
-    "@types/node": "^20.19.37",
-    "@typescript-eslint/eslint-plugin": "^8.58.0",
-    "@typescript-eslint/parser": "^8.58.0",
-    "conventional-changelog-conventionalcommits": "^4.6.3",
-    "eslint": "^10.2.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-lit": "^2.2.1",
-    "eslint-plugin-wc": "^3.1.0",
-    "jest": "^29.7.0",
-    "prettier": "3.8.2",
-    "prettier-plugin-embed": "^0.5.1",
-    "rollup": "^2.80.0",
-    "rollup-plugin-minify-html-literals": "^1.2.6",
-    "rollup-plugin-serve": "^1.1.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^4.9.5"
-  },
-  "packageManager": "pnpm@10.33.0"
+  "homepage": "https://github.com/flixlix/power-flow-card-plus#readme"
 }
