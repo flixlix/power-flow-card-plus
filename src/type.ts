@@ -52,6 +52,7 @@ export type IndividualDeviceType = BaseConfigEntity & {
   entity: string;
   color?: string;
   color_icon?: boolean;
+  hide_if_lower_than?: number;
   inverted_animation?: boolean;
   display_zero?: boolean;
   display_zero_state?: boolean;

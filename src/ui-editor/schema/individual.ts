@@ -20,12 +20,16 @@ const mainSchema = {
     {
       name: "display_zero",
       label: "Display Zero",
-      default: true,
       selector: { boolean: {} },
     },
     {
       name: "display_zero_tolerance",
       label: "Display Zero Tolerance",
+      selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
+    },
+    {
+      name: "hide_if_lower_than",
+      label: "Hide Below (W)",
       selector: { number: { mode: "box", min: 0, max: 1000000, step: 0.1 } },
     },
     {

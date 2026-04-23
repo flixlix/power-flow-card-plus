@@ -72,8 +72,8 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
   const entity = field.entity;
   const state = getIndividualState(hass, field);
   const displayZero = field?.display_zero || false;
-  const displayZeroTolerance = field?.display_zero_tolerance || 0;
-  const has = hasIndividualObject(displayZero, state, displayZeroTolerance);
+  const minimumVisiblePower = field?.hide_if_lower_than ?? field?.display_zero_tolerance ?? 0;
+  const has = hasIndividualObject(displayZero, state, minimumVisiblePower);
   const isStateNegative = state && state < 0;
   const userConfiguredInvertAnimation = field?.inverted_animation || false;
   const invertAnimation = isStateNegative ? !userConfiguredInvertAnimation : userConfiguredInvertAnimation;
@@ -91,7 +91,7 @@ export const getIndividualObject = (hass: HomeAssistant, field: IndividualDevice
     has,
     state,
     displayZero,
-    displayZeroTolerance,
+    displayZeroTolerance: minimumVisiblePower,
     icon: computeFieldIcon(hass, field, "mdi:flash"),
     name: computeFieldName(hass, field, "Individual"),
     color,
