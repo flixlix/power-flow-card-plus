@@ -112,11 +112,11 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | dashboard_link_label        | `string`  | Go To Energy Dashboard (auto-translates) | If set, overrides the default link label to go to a different dashboard.                                                                                                                                                 |
 | second_dashboard_link       | `string`  |                                          | Shows another link to an Energy Dashboard. Should be a url path to location of your choice. If you wanted to link to the built-in dashboard you would enter `/energy` for example. (Only available in the YAML Editor)   |
 | second_dashboard_link_label | `string`  | Go To Energy Dashboard (auto-translates) | If set, overrides the second default link label to go to a different dashboard.                                                                                                                                          |
-| kw_decimals                 | `number`  |                    1                     | Number of decimals rounded to when kilowatts are displayed.                                                                                                                                                              |
-| w_decimals                  | `number`  |                    1                     | Number of decimals rounded to when watts are displayed.                                                                                                                                                                  |
+| kilo_decimals               | `number`  |                    1                     | Number of decimals rounded to when kilowatts are displayed.                                                                                                                                                              |
+| base_decimals               | `number`  |                    1                     | Number of decimals rounded to when watts are displayed.                                                                                                                                                                  |
 | min_flow_rate               | `number`  |                   .75                    | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds.                                                                                                                   |
 | max_flow_rate               | `number`  |                    6                     | Represents how much time it takes for the slowest dot to travel from one end to the other in seconds.                                                                                                                    |
-| watt_threshold              | `number`  |                    0                     | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                                                             |
+| kilo_threshold              | `number`  |                    0                     | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                                                             |
 | clickable_entities          | `boolean` |                  false                   | If true, clicking on the entity will open the entity's more info dialog.                                                                                                                                                 |
 | min_expected_power          | `number`  |                   0.01                   | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula).                                                         |
 | max_expected_power          | `number`  |                   2000                   | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula).                                                         |
@@ -331,7 +331,7 @@ entities:
       entity: sensor.power_outage
     display_state: one_way
     color_circle: true
-watt_threshold: 10000
+kilo_threshold: 10000
 ```
 
 This should give you something like this:
@@ -379,7 +379,7 @@ entities:
     color_circle: true
   home:
     color_icon: true
-watt_threshold: 10000
+kilo_threshold: 10000
 ```
 
 This should give you something like this:
@@ -430,11 +430,11 @@ entities:
       display_zero: true
       color: "#ff8080"
       icon: mdi:motorbike-electric
-w_decimals: 0
-kw_decimals: 2
+base_decimals: 0
+kilo_decimals: 2
 min_flow_rate: 0.9
 max_flow_rate: 6
-watt_threshold: 10000
+kilo_threshold: 10000
 clickable_entities: true
 title: Power Flow Card Plus
 ```
