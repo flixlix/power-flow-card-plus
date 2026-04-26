@@ -1,5 +1,18 @@
 # power-flow-card-plus
 
+## 0.3.6
+
+### Patch Changes
+
+- [#242](https://github.com/flixlix/flixlix-cards/pull/242) [`ac02bd5`](https://github.com/flixlix/flixlix-cards/commit/ac02bd53e35e758e58abc9de71b1bd3fb4ebbe71) Thanks [@flixlix](https://github.com/flixlix)! - feat: autofix legacy individual devices
+
+- [#243](https://github.com/flixlix/flixlix-cards/pull/243) [`b6216bd`](https://github.com/flixlix/flixlix-cards/commit/b6216bd01c350238c3a579f38dc5a7bf2cf65775) Thanks [@flixlix](https://github.com/flixlix)! - feat: add display zero to battery and grid
+
+- [#242](https://github.com/flixlix/flixlix-cards/pull/242) [`e8b27c5`](https://github.com/flixlix/flixlix-cards/commit/e8b27c56be76fa140bf2427567175e7d90b8c8a6) Thanks [@flixlix](https://github.com/flixlix)! - feat: autofix and alert legacy config ui editor
+
+- Updated dependencies [[`ac02bd5`](https://github.com/flixlix/flixlix-cards/commit/ac02bd53e35e758e58abc9de71b1bd3fb4ebbe71), [`b6216bd`](https://github.com/flixlix/flixlix-cards/commit/b6216bd01c350238c3a579f38dc5a7bf2cf65775), [`e8b27c5`](https://github.com/flixlix/flixlix-cards/commit/e8b27c56be76fa140bf2427567175e7d90b8c8a6)]:
+  - @flixlix-cards/shared@0.0.4
+
 ## 0.3.5
 
 ### Patch Changes
