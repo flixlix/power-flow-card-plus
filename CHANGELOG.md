@@ -1,5 +1,33 @@
 # power-flow-card-plus
 
+## 0.4.0-beta.1
+
+### Minor Changes
+
+- [#431](https://github.com/flixlix/flixlix-cards/pull/431) [`a3b6a42`](https://github.com/flixlix/flixlix-cards/commit/a3b6a42ebda4bb29c344b7c471e5e96dd5b3068d) Thanks [@flixlix](https://github.com/flixlix)! - Default dot speed is back to how it was before 0.4.0-beta.0: the time per dot shrinks linearly with power (with the defaults, 1000 W takes 3.4 s per dot again). The faster speed-based curve from 0.4.0-beta.0, where twice the power looks about twice as fast, is available with `flow_rate_model: speed`, and `flow_rate_model: relative` selects the relative formula. The option replaces the "New Flow Model?" toggle in the editor with a select. `use_new_flow_rate_model` still works as the older alias (`false` is `relative`); `flow_rate_model` wins when both are set. Energy Flow Card Plus always uses the relative formula and ignores `flow_rate_model`.
+
+- [#423](https://github.com/flixlix/flixlix-cards/pull/423) [`9954453`](https://github.com/flixlix/flixlix-cards/commit/995445387c5b3ab9b6936aa0f02eee5d3b9d27aa) Thanks [@flixlix](https://github.com/flixlix)! - New `accept_negative` option on individual devices. With it, a negative reading means the device feeds power to the home (e.g. an EV discharging with V2G): the value keeps its minus sign and the dots and direction arrow flip. Without it, nothing changes: the sign is dropped as before.
+
+### Patch Changes
+
+- [#432](https://github.com/flixlix/flixlix-cards/pull/432) [`9ac9962`](https://github.com/flixlix/flixlix-cards/commit/9ac9962716bfe6e7f32d2a7ad94c01d5a95789cf) Thanks [@flixlix](https://github.com/flixlix)! - The version line each card writes to the browser console has a new look.
+
+- [#424](https://github.com/flixlix/flixlix-cards/pull/424) [`aa5071c`](https://github.com/flixlix/flixlix-cards/commit/aa5071cddc83e1ab995a56c96355791811457cd9) Thanks [@flixlix](https://github.com/flixlix)! - The UI editor no longer shows "Display Zero" switched on for individual devices and the non-fossil node when the option is not set. The card hides those nodes at zero unless `display_zero: true` is set, and the editor now shows the toggle off to match. The non-fossil documentation now gives the default as `false`.
+
+- [#419](https://github.com/flixlix/flixlix-cards/pull/419) [`90f01f4`](https://github.com/flixlix/flixlix-cards/commit/90f01f4ce1b72b8e47b07ccad3e033f04bf2a85c) Thanks [@flixlix](https://github.com/flixlix)! - Docs now state the real flow-rate defaults (no behaviour change): Power Flow Card Plus uses the new flow formula unless `use_new_flow_rate_model: false`, Energy Flow Card Plus always uses the relative formula (so `use_new_flow_rate_model`, `min_expected_power` and `max_expected_power` don't apply to it), and an unset `calculate_flow_rate` uses the calculated rate.
+
+- [#423](https://github.com/flixlix/flixlix-cards/pull/423) [`ed57230`](https://github.com/flixlix/flixlix-cards/commit/ed57230af97753932fdd58449b05b29298dfa2c8) Thanks [@flixlix](https://github.com/flixlix)! - The direction arrow of an individual device in the right-bottom slot now points the way its dots move. It used to point up while the dots moved from the home down to the device.
+
+- [#427](https://github.com/flixlix/flixlix-cards/pull/427) [`8a0df59`](https://github.com/flixlix/flixlix-cards/commit/8a0df5973c604ab0d6dcf264916e9d777294d604) Thanks [@flixlix](https://github.com/flixlix)! - Fix: an individual device's secondary info now shows text states such as "heating", as grid and home already did. Unavailable or unknown states stay hidden.
+
+- [#426](https://github.com/flixlix/flixlix-cards/pull/426) [`7dba4d6`](https://github.com/flixlix/flixlix-cards/commit/7dba4d63a8cd32d75ddd2e126749c43a4f819639) Thanks [@flixlix](https://github.com/flixlix)! - Cards load again on Google Cast displays (Chromecast, Nest Hub) and other older browsers and wall-panel webviews that Home Assistant itself still supports (Chromium 67 and newer). Before, the cards shipped optional chaining (`?.`) and nullish coalescing (`??`), which those browsers cannot read, so the card stayed empty or showed "Configuration Error". The cards are about 5% larger as a result.
+
+- [#430](https://github.com/flixlix/flixlix-cards/pull/430) [`24ecd05`](https://github.com/flixlix/flixlix-cards/commit/24ecd05fff4f659621eafe00416e126aa92e3540) Thanks [@flixlix](https://github.com/flixlix)! - Individual device dots and the grid → battery dot no longer run backwards on older Chromium-based browsers, such as Amazon Fire tablets. The cards also no longer stay blank on browsers older than Chrome 92. Nothing changes on current browsers.
+
+- [#428](https://github.com/flixlix/flixlix-cards/pull/428) [`8ad6715`](https://github.com/flixlix/flixlix-cards/commit/8ad6715c1e4bb58f85e47258e0fd203b7a807e42) Thanks [@flixlix](https://github.com/flixlix)! - On right-to-left Home Assistant languages (Arabic, Hebrew, Persian, …) the flow lines connect the circles again. Before, the circles swapped sides while the lines did not, so grid and home ended up at the wrong ends of their lines. The card layout now stays the same as in left-to-right languages; text inside the circles still reads right to left.
+
+- [#425](https://github.com/flixlix/flixlix-cards/pull/425) [`7f71466`](https://github.com/flixlix/flixlix-cards/commit/7f714668a7918d19bc8a221ee0974b3f95dc5041) Thanks [@flixlix](https://github.com/flixlix)! - Fix: only W and Wh units with an SI prefix are scaled. A water meter in m³ now shows 348.9 m³ instead of 348,900,000 m³, and a sensor in mW is read as milliwatts instead of megawatts. A `unit_of_measurement` of `kW`, `MW`, `kWh` or `MWh` on a node or individual device now shows the reading in that unit (1.5 kW instead of 1,500 kW); any other unit still shows the value as read from the entity.
+
 ## 0.4.0-beta.0
 
 ### Minor Changes

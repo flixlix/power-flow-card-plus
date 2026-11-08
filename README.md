@@ -131,13 +131,14 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | max_flow_rate               | `number`  |                    6                     | Represents how much time it takes for the slowest dot to travel from one end to the other in seconds.                                                                                                                    |
 | kilo_threshold              | `number`  |                    0                     | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                                                             |
 | clickable_entities          | `boolean` |                  false                   | If true, clicking on the entity will open the entity's more info dialog.                                                                                                                                                 |
-| min_expected_power          | `number`  |                   0.01                   | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula).                                                         |
-| max_expected_power          | `number`  |                   2000                   | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used in the [New Flow Formula](#new-flow-formula).                                                         |
+| min_expected_power          | `number`  |                   0.01                   | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used by the `duration` and `speed` [flow rate models](#flow-formula).                                      |
+| max_expected_power          | `number`  |                   2000                   | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used by the `duration` and `speed` [flow rate models](#flow-formula).                                      |
 | display_zero_lines          | `object`  |             `{mode: "show"}`             | Check [Display Zero Lines](#display-zero-lines)                                                                                                                                                                          |
 | full_size                   | `boolean` |                  false                   | Warning: This option is experimental. To use this option, you must set your view to panel mode. If set to true, the card will take up the full height of the screen. And the Card should go to the center of the screen. |
 | style_ha_card               | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the container of the card (border and background of the card).                                                                               |
 | style_card_content          | `css`     |                                          | [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) Styling to apply to the content of the card (all circles and lines of the card).                                                                                 |
-| use_new_flow_rate_model     | `boolean` |                  false                   | If `true`, the card will use the [New Flow Formula](#new-flow-formula).                                                                                                                                                  |
+| flow_rate_model             | `string`  |                `duration`                | How dot speed follows power: `duration`, `speed` or `relative`. See [Flow Formula](#flow-formula).                                                                                                                       |
+| use_new_flow_rate_model     | `boolean` |                                          | Older alias of `flow_rate_model`: `false` is `relative`, `true` is `duration`. Ignored when `flow_rate_model` is set.                                                                                                    |
 | sort_individual_devices     | `boolean` |           true (since v0.3.1)            | If `true`, sort devices in order of power consumption -> entity id -> alphabetically.                                                                                                                                    |
 | allow_layout_break          | `boolean` |                  false                   | Always allow up to 4 individual devices to show, even when there is not enough space, causing visual layout break.                                                                                                       |
 
@@ -155,7 +156,7 @@ If none of these actions are configured for a clickable entity surface, the card
 
 #### Entities object
 
-At least one of _grid_, _battery_, or _solar_ is required. All entites (except _battery_charge_) should have a `unit_of_measurement` attribute of W(watts) or kW(kilowatts).
+At least one of _grid_, _battery_, or _solar_ is required. All entites (except _battery_charge_) should have a `unit_of_measurement` attribute of W(watts) or kW(kilowatts). Entities in other units, e.g. `m³`, are read as they are, without scaling.
 
 | Name                   | Type     | Description                                                                      |
 | ---------------------- | :------- | -------------------------------------------------------------------------------- |
@@ -182,27 +183,27 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | power_outage           | `object`                                                       | `undefined`                                                                                                  | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.                                                                                                                                                                                                                                                                                             |
 | color_value            | `boolean`                                                      | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |                                                                                                                                                                                                                                                                                                                                                                                               |
 | invert_state           | `boolean`                                                      | `false`                                                                                                      | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
-| unit_of_measurement    | `string`                                                       | `W`, `kW` or `MW` (dynamic)                                                                                  | Unit shown after the value. When set, the value is shown as read from the entity, without converting to kW/MW. Useful for non-electrical flows, e.g. `L/min`.                                                                                                                                                                                                                                 |
+| unit_of_measurement    | `string`                                                       | `W`, `kW` or `MW` (dynamic)                                                                                  | Unit shown after the value. When set, the value is shown in that unit, e.g. `kW` shows `1500 W` as `1.5 kW`. Any other unit shows the value as read from the entity, e.g. `L/min`.                                                                                                                                                                                                            |
 | unit_white_space       | `boolean`                                                      | `true`                                                                                                       | If set to `false`, no white space is added between the value and the unit.                                                                                                                                                                                                                                                                                                                    |
 | decimals               | `number`                                                       | `base_decimals`, `kilo_decimals` or `mega_decimals`                                                          | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`.                                                                                                                                                                                                                          |
 
 #### Solar Configuration
 
-| Name                | Type      | Default                                             | Description                                                                                                                                                          |
-| ------------------- | --------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity              | `string`  | `undefined` required                                | Entity ID providing a state with the value of solar production.                                                                                                      |
-| name                | `string`  | `Solar`                                             | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected.                                     |
-| icon                | `string`  | `mdi:solar-power`                                   | Icon path for the icon inside the Solar Circle.                                                                                                                      |
-| color               | `string`  |                                                     | HEX value of the color for circles labels and lines of solar production.                                                                                             |
-| color_icon          | `boolean` | `false`                                             | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                               |
-| color_value         | `boolean` | `false`                                             | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.                 |
-| secondary_info      | `object`  | `undefined`                                         | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                         |
-| display_zero        | `boolean` | `true`                                              | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the solar circle will be hidden.      |
-| display_zero_state  | `boolean` | `true`                                              | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                               |
-| invert_state        | `boolean` | `false`                                             | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0.   |
-| unit_of_measurement | `string`  | `W`, `kW` or `MW` (dynamic)                         | Unit shown after the value. When set, the value is shown as read from the entity, without converting to kW/MW. Useful for non-electrical flows, e.g. `L/min`.        |
-| unit_white_space    | `boolean` | `true`                                              | If set to `false`, no white space is added between the value and the unit.                                                                                           |
-| decimals            | `number`  | `base_decimals`, `kilo_decimals` or `mega_decimals` | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`. |
+| Name                | Type      | Default                                             | Description                                                                                                                                                                        |
+| ------------------- | --------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity              | `string`  | `undefined` required                                | Entity ID providing a state with the value of solar production.                                                                                                                    |
+| name                | `string`  | `Solar`                                             | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected.                                                   |
+| icon                | `string`  | `mdi:solar-power`                                   | Icon path for the icon inside the Solar Circle.                                                                                                                                    |
+| color               | `string`  |                                                     | HEX value of the color for circles labels and lines of solar production.                                                                                                           |
+| color_icon          | `boolean` | `false`                                             | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                                             |
+| color_value         | `boolean` | `false`                                             | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.                               |
+| secondary_info      | `object`  | `undefined`                                         | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                       |
+| display_zero        | `boolean` | `true`                                              | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the solar circle will be hidden.                    |
+| display_zero_state  | `boolean` | `true`                                              | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                                             |
+| invert_state        | `boolean` | `false`                                             | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0.                 |
+| unit_of_measurement | `string`  | `W`, `kW` or `MW` (dynamic)                         | Unit shown after the value. When set, the value is shown in that unit, e.g. `kW` shows `1500 W` as `1.5 kW`. Any other unit shows the value as read from the entity, e.g. `L/min`. |
+| unit_white_space    | `boolean` | `true`                                              | If set to `false`, no white space is added between the value and the unit.                                                                                                         |
+| decimals            | `number`  | `base_decimals`, `kilo_decimals` or `mega_decimals` | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`.               |
 
 #### Battery Configuration
 
@@ -223,7 +224,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_circle                     | "color_dynamically" or "production" or "consumption"           | `consumption`                                          | If set to `color_dynamically`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption.                                                                                                                                                                              |
 | color_value                      | `boolean`                                                      | `true`                                                 | If set to `false`, the values of power will not be colored according to input and output.                                                                                                                                                                                                                                                                                                     |
 | invert_state                     | `boolean`                                                      | `false`                                                | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
-| unit_of_measurement              | `string`                                                       | `W`, `kW` or `MW` (dynamic)                            | Unit shown after the value. When set, the value is shown as read from the entity, without converting to kW/MW. Useful for non-electrical flows, e.g. `L/min`.                                                                                                                                                                                                                                 |
+| unit_of_measurement              | `string`                                                       | `W`, `kW` or `MW` (dynamic)                            | Unit shown after the value. When set, the value is shown in that unit, e.g. `kW` shows `1500 W` as `1.5 kW`. Any other unit shows the value as read from the entity, e.g. `L/min`.                                                                                                                                                                                                            |
 | unit_white_space                 | `boolean`                                                      | `true`                                                 | If set to `false`, no white space is added between the value and the unit.                                                                                                                                                                                                                                                                                                                    |
 | decimals                         | `number`                                                       | `base_decimals`, `kilo_decimals` or `mega_decimals`    | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`.                                                                                                                                                                                                                          |
 
@@ -240,6 +241,7 @@ The Individual fields must be an array of objects. Each object must follow the f
 | color_icon             | `boolean` | `false`                                        | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                                               |
 | unit_of_measurement    | `string`  | `W`or `kW` (dynamic)                           | Sets the unit of measurement to show in the corresponding circle                                                                                                                     |
 | inverted_animation     | `boolean` | `false`                                        | If set to true, the small dots will flow in the opposite direction.                                                                                                                  |
+| accept_negative        | `boolean` | `false`                                        | If set to `true`, a negative reading means the device feeds power to the home: the value keeps its minus sign and the dots and direction arrow flip. Otherwise the sign is dropped.  |
 | secondary_info         | `object`  | `undefined`                                    | Check [Secondary Info Object](#secondary-info-configuration). The `secondary_info` entity can provide a number or a string (eg: EV State `charging` and `discharging`).              |
 | display_zero           | `boolean` | `false`                                        | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden.                |
 | display_zero_tolerance | `number`  | `0`                                            | If set, the device will be displayed if the state is greater than the tolerance set (This is also available for the secondary info). No need to set `display_zero` property to true. |
@@ -269,11 +271,11 @@ The Individual fields must be an array of objects. Each object must follow the f
 | icon                | `string`              | `mdi:leaf`      | Icon path (eg: `mdi:home`) to display inside the circle of the device.                                                                                                                                                                                                                                                                                                                                                                                         |
 | color               | `string`              | `#0f9d58`       | HEX Value of a color to display as the stroke of the circle and line connecting to the grid.                                                                                                                                                                                                                                                                                                                                                                   |
 | color_icon          | `boolean`             | `false`         | If `true`, the icon will be colored with the color property. Otherwise it will be the same color as all other icons.                                                                                                                                                                                                                                                                                                                                           |
-| display_zero        | `boolean`             | `true`          | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden.                                                                                                                                                                                                                                                                                          |
+| display_zero        | `boolean`             | `false`         | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the non-fossil section will be hidden.                                                                                                                                                                                                                                                                                          |
 | display_zero_state  | `boolean`             | `true`          | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                                                                                                                                                                                                                                                                                                                         |
 | state_type          | `string`              | `power`         | The type of state to use for the entity. Can be `power` or `percentage`. When set to `power` the state will be the amount of power from the grid that is low-carbon. When set to `percentage` the state will be the percentage of power from the grid that is low-carbon.                                                                                                                                                                                      |
 | unit_white_space    | `boolean`             | `true`          | If set to `false` will not add any whitespace between unit and state. Otherwise, white space will be added.                                                                                                                                                                                                                                                                                                                                                    |
-| calculate_flow_rate | `boolean` or `number` | `false`         | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds.                                                                                                                                                         |
+| calculate_flow_rate | `boolean` or `number` | `true`          | When unset or `true`, the flow rate is calculated with the flow rate formula (see `flow_rate_model`). If `false`, dots flow at a fixed pace. If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds.                                                                                                                                                                |
 
 #### Color Object
 
@@ -315,15 +317,15 @@ This Feature allows you to configure an additional small text for each Individua
 
 This feature allows you to configure how the card handles a Grid Power Outage scenario.
 
-| Name                | Type                  | Description                                                                                                                                                                                                                                                                                            |
-| ------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| entity              | `string` required     | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor.                                                                                                                                               |
-| entity_generator    | `string`              | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power.                                                                                                              |
-| state_alert         | `string`              | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage.                                                                                                                                 |
-| icon_alert          | `string`              | An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`.                                                                                                                                                                                       |
-| label_alert         | `string`              | A text that will be displayed below the icon when there is a power outage.                                                                                                                                                                                                                             |
-| calculate_flow_rate | `boolean` or `number` | `false`                                                                                                                                                                                                                                                                                                |
-|                     |                       | If set to `true`, the flow rate will be calculated by using the flow rate formula (either the new or the old one, depending on your configuration). If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
+| Name                | Type                  | Description                                                                                                                                                                                                                                                                                     |
+| ------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity              | `string` required     | Entity ID providing a state that changes when there is a Power Outage. (eg: `binary_sensor.grid_connection_status`). Doesn't need to be a binary_sensor.                                                                                                                                        |
+| entity_generator    | `string`              | Entity ID providing the power of a Generator. (eg: `sensor.generator_power`). This is optional, meaning if you don't use this, the card will assume the grid is the only source of power.                                                                                                       |
+| state_alert         | `string`              | The state the provided entity is at when there is a power outage. Default is `on`, meaning if the entity's state is `on` the card will assume there is a power outage.                                                                                                                          |
+| icon_alert          | `string`              | An icon path to be override the grid icon when there is a power outage. Default is `mdi:transmission-tower-off`.                                                                                                                                                                                |
+| label_alert         | `string`              | A text that will be displayed below the icon when there is a power outage.                                                                                                                                                                                                                      |
+| calculate_flow_rate | `boolean` or `number` | `true`                                                                                                                                                                                                                                                                                          |
+|                     |                       | When unset or `true`, the flow rate is calculated with the flow rate formula (see `flow_rate_model`). If `false`, dots flow at a fixed pace. If set to a number, the flow rate will be set to that number. For example, defining the value `10` will ensure one dot will flow every 10 seconds. |
 
 #### Display Zero Lines
 
@@ -481,7 +483,55 @@ This should give you something like this:
 
 ### Flow Formula
 
-This formula is based on the official formula used by the Energy Distribution card.
+`flow_rate_model` picks how a line's value becomes the time one dot takes to travel it:
+
+| `flow_rate_model`    | What moves linearly with power             | Depends on other lines |
+| -------------------- | ------------------------------------------ | ---------------------- |
+| `duration` (default) | time per dot                               | no                     |
+| `speed`              | dot speed (1 / time per dot)               | no                     |
+| `relative`           | time per dot, by the line's share of total | yes                    |
+
+Seconds per dot with the default `min_flow_rate: 0.75`, `max_flow_rate: 6`, `min_expected_power: 0.01` and `max_expected_power: 2000` (for `relative`, the line's share of all lines):
+
+| Line value             | `duration` | `speed` | `relative` |
+| ---------------------- | ---------: | ------: | ---------: |
+| 0 W (0 %)              |       6.00 |    6.00 |       6.00 |
+| 250 W (12.5 %)         |       5.34 |    3.20 |       5.34 |
+| 500 W (25 %)           |       4.69 |    2.18 |       4.69 |
+| 1000 W (50 %)          |       3.38 |    1.33 |       3.38 |
+| 1500 W (75 %)          |       2.06 |    0.96 |       2.06 |
+| 2000 W or more (100 %) |       0.75 |    0.75 |       0.75 |
+
+You may want to play around with `max_expected_power`, `min_expected_power`, `max_flow_rate` and `min_flow_rate` to get the speeds that you wish. `use_new_flow_rate_model` is the older way to choose: `false` means `relative`, `true` or unset means `duration`; `flow_rate_model` wins when both are set.
+
+#### Duration model (default)
+
+The time per dot shrinks linearly with the value, independently from other lines: a state of `10W` always flows with the same velocity, no matter what other lines are doing. This is how the card behaved before 0.4.0-beta.0.
+
+```js
+if (value > maxIn) return minOut; // above max_expected_power, use the fastest speed
+return ((value - minIn) * (minOut - maxOut)) / (maxIn - minIn) + maxOut;
+
+// value = value of the current line to calculate (eg: grid to home)
+// minIn = min_expected_power, maxIn = max_expected_power
+// maxOut = max_flow_rate (seconds per dot at min_expected_power)
+// minOut = min_flow_rate (seconds per dot at max_expected_power)
+// Below min_expected_power, dots move slower than max_flow_rate.
+```
+
+#### Speed model
+
+Like `duration` it is independent from other lines, but the dot speed (one over the duration) grows linearly with the value, so twice the power looks about twice as fast. Mid-range values move noticeably faster than with `duration`. Values outside the expected range use the slowest or fastest speed.
+
+```js
+progress = clamp((value - minIn) / (maxIn - minIn), 0, 1);
+speed = 1 / maxOut + progress * (1 / minOut - 1 / maxOut);
+return 1 / speed; // seconds for one dot to travel the line
+```
+
+#### Relative model
+
+Based on the official formula used by the Energy Distribution card. Each line's flow rate is relative to all the other lines.
 
 ```js
 max - (value / totalLines) * (max - min);
@@ -492,37 +542,7 @@ max - (value / totalLines) * (max - min);
 //   solarToGrid + batteryConsumption + batteryFromGrid + batteryToGrid
 ```
 
-### New Flow Formula
-
-In contrast to the old flow formula, this formula calculates the flow rate independently from other lines, making it more intuitive to interpret the perceived power. This means that a state of `10W` will always flow with the same velocity, no matter what other lines are doing. In other words this flow rate is calculated in absolute and not relative values.
-
-To get this new Flow Formula to work, simply set `use_new_flow_rate_model` in the main configuration to true. You may want to play around with the `max_expected_power`, `min_expected_power`, `max_flow_rate` and `min_flow_rate` to get the speeds that you wish
-
-The dot speed (one over the duration) grows linearly with the value, so twice the power looks about twice as fast. Values outside the expected range use the slowest or fastest speed.
-
-```js
-progress = clamp((value - minIn) / (maxIn - minIn), 0, 1);
-speed = 1 / minOut + progress * (1 / maxOut - 1 / minOut);
-return 1 / speed; // seconds for one dot to travel the line
-
-// value = value of the current line to calculate (eg: grid to home)
-//
-// minIn = amount of watts at which the lowest speed will be selected.
-//   ↳ In your configuration this is `min_expected_power`
-//   ↳ eg: setting this at `100` means that at `100` watts, the dots will still flow at the lowest speed
-// maxIn = amount of watts at which the highest speed will be selected.
-//   ↳ In your configuration this is `max_expected_power`
-//   ↳ eg: setting this at `2000` means that everything more than `2000` will flow at the highest speed selected
-//
-// minOut = amount of watts at which the lowest speed will be selected.
-//   ↳ In your configuration this is `max_flow_rate`
-//   ↳ eg: setting this at `5` means that one dot will take `5` second to travel
-// maxOut = amount of watts at which the highest speed will be selected.
-//   ↳ In your configuration this is `min_flow_rate`
-//   ↳ eg: setting this at `1` means that one dot will take `1` second to travel
-```
-
-The following video aims to show the diffence between the two flow formulas:
+The following video aims to show the difference between the relative and an absolute flow formula:
 
 <https://user-images.githubusercontent.com/61006057/231479254-91d6c625-8f38-4abb-b9ba-8dd24d6395f3.mp4>
 
