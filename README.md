@@ -8,6 +8,16 @@
 
 ![2023-03-26-13-04-07](https://user-images.githubusercontent.com/61006057/227771568-78497ecc-e863-46f2-b29e-e15c7c20a154.gif)
 
+> [!TIP]
+> 📖 **Full documentation: [cards.flixlix.com/power-flow-card-plus](https://cards.flixlix.com/power-flow-card-plus)**
+>
+> The docs site has the complete configuration reference, an interactive configurator with copy-pasteable YAML, and ready-made examples — much easier to navigate than this README.
+>
+> - [Installation](https://cards.flixlix.com/power-flow-card-plus/installation)
+> - [Configuration reference](https://cards.flixlix.com/power-flow-card-plus/configuration)
+> - [Interactive configurator](https://cards.flixlix.com/power-flow-card-plus/configurator)
+> - [Examples](https://cards.flixlix.com/power-flow-card-plus/examples)
+
 > [!NOTE]
 > This card is distributed via [flixlix/power-flow-card-plus](https://github.com/flixlix/power-flow-card-plus), but the source code lives in the monorepo at [flixlix/flixlix-cards](https://github.com/flixlix/flixlix-cards). Issues and feature requests will be tracked there going forward.
 
@@ -26,10 +36,10 @@
 - Option for card full size
 - Add Grid Tolerance for small values, to not display the battery correcting grid values
 - New and improved Flow Rate Model
-- Choose wether or not to color icons, text, etc.
+- Choose whether or not to color icons, text, etc.
 - Display Individual power entities
-- Customize Individual entities's label, icon and color
-- Configure wether to hide Individual Entity when state is 0 or unavailable
+- Customize Individual entities' label, icon and color
+- Configure whether to hide Individual Entity when state is 0 or unavailable
 - Clickable entities (including home)
 - Fixed crooked lines
 - Have curved lines connect to the Circles
@@ -96,8 +106,11 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 
 ## Usage
 
+> [!IMPORTANT]
+> The reference below is kept for offline reading. The **canonical, easier-to-navigate version is at [cards.flixlix.com/power-flow-card-plus/configuration](https://cards.flixlix.com/power-flow-card-plus/configuration)** — with grouped options, an interactive configurator, and copy-pasteable examples.
+
 > [!WARNING]  
-> This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the oficial Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration)
+> This card offers a **LOT** of configuration options. Don't worry, if you want your card's appearance to match the official Energy Flow Card, you will only need to setup the entities. The rest of the options only enable further customization. If this is your goal, please go to [Minimal Configuration](#minimal-configuration) or the [Examples page](https://cards.flixlix.com/power-flow-card-plus/examples) on the docs site.
 
 ### Options
 
@@ -169,21 +182,27 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | power_outage           | `object`                                                       | `undefined`                                                                                                  | Configure how the card handles a power outage. Check [Power Outage](#power-outage) for more info.                                                                                                                                                                                                                                                                                             |
 | color_value            | `boolean`                                                      | Default is `true`. If set to `false`, the values of power will not be colored according to input and output. |                                                                                                                                                                                                                                                                                                                                                                                               |
 | invert_state           | `boolean`                                                      | `false`                                                                                                      | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
+| unit_of_measurement    | `string`                                                       | `W`, `kW` or `MW` (dynamic)                                                                                  | Unit shown after the value. When set, the value is shown as read from the entity, without converting to kW/MW. Useful for non-electrical flows, e.g. `L/min`.                                                                                                                                                                                                                                 |
+| unit_white_space       | `boolean`                                                      | `true`                                                                                                       | If set to `false`, no white space is added between the value and the unit.                                                                                                                                                                                                                                                                                                                    |
+| decimals               | `number`                                                       | `base_decimals`, `kilo_decimals` or `mega_decimals`                                                          | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`.                                                                                                                                                                                                                          |
 
 #### Solar Configuration
 
-| Name               | Type      | Default              | Description                                                                                                                                                        |
-| ------------------ | --------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| entity             | `string`  | `undefined` required | Entity ID providing a state with the value of solar production.                                                                                                    |
-| name               | `string`  | `Solar`              | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected.                                   |
-| icon               | `string`  | `mdi:solar-power`    | Icon path for the icon inside the Solar Circle.                                                                                                                    |
-| color              | `string`  |                      | HEX value of the color for circles labels and lines of solar production.                                                                                           |
-| color_icon         | `boolean` | `false`              | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                             |
-| color_value        | `boolean` | `false`              | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.               |
-| secondary_info     | `object`  | `undefined`          | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                       |
-| display_zero       | `boolean` | `true`               | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the solar circle will be hidden.    |
-| display_zero_state | `boolean` | `true`               | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                             |
-| invert_state       | `boolean` | `false`              | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0. |
+| Name                | Type      | Default                                             | Description                                                                                                                                                          |
+| ------------------- | --------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| entity              | `string`  | `undefined` required                                | Entity ID providing a state with the value of solar production.                                                                                                      |
+| name                | `string`  | `Solar`                                             | Label for the solar option. If you don't populate this option, the label will continue to update based on the language selected.                                     |
+| icon                | `string`  | `mdi:solar-power`                                   | Icon path for the icon inside the Solar Circle.                                                                                                                      |
+| color               | `string`  |                                                     | HEX value of the color for circles labels and lines of solar production.                                                                                             |
+| color_icon          | `boolean` | `false`                                             | If set to `true`, icon color will match the circle's color. If set to `false`, icon color will match the text's color.                                               |
+| color_value         | `boolean` | `false`                                             | If set to `true`, text color of the state will match the circle's color. If set to `false`, text color of the state will be your primary text color.                 |
+| secondary_info      | `object`  | `undefined`                                         | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                         |
+| display_zero        | `boolean` | `true`                                              | If set to `true`, the device will be displayed even if the entity state is `0` or not a number (eg: `unavailable`). Otherwise, the solar circle will be hidden.      |
+| display_zero_state  | `boolean` | `true`                                              | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                               |
+| invert_state        | `boolean` | `false`                                             | If set to true the direction as well as the values will be inverted, meaning a negative value will be shown as production and a negative value will be shown as 0.   |
+| unit_of_measurement | `string`  | `W`, `kW` or `MW` (dynamic)                         | Unit shown after the value. When set, the value is shown as read from the entity, without converting to kW/MW. Useful for non-electrical flows, e.g. `L/min`.        |
+| unit_white_space    | `boolean` | `true`                                              | If set to `false`, no white space is added between the value and the unit.                                                                                           |
+| decimals            | `number`  | `base_decimals`, `kilo_decimals` or `mega_decimals` | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`. |
 
 #### Battery Configuration
 
@@ -204,6 +223,9 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_circle                     | "color_dynamically" or "production" or "consumption"           | `consumption`                                          | If set to `color_dynamically`, circle color will match the highest value. If set to `production`, circle color will match the production. If set to `consumption`, circle text color will match the consumption.                                                                                                                                                                              |
 | color_value                      | `boolean`                                                      | `true`                                                 | If set to `false`, the values of power will not be colored according to input and output.                                                                                                                                                                                                                                                                                                     |
 | invert_state                     | `boolean`                                                      | `false`                                                | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
+| unit_of_measurement              | `string`                                                       | `W`, `kW` or `MW` (dynamic)                            | Unit shown after the value. When set, the value is shown as read from the entity, without converting to kW/MW. Useful for non-electrical flows, e.g. `L/min`.                                                                                                                                                                                                                                 |
+| unit_white_space                 | `boolean`                                                      | `true`                                                 | If set to `false`, no white space is added between the value and the unit.                                                                                                                                                                                                                                                                                                                    |
+| decimals                         | `number`                                                       | `base_decimals`, `kilo_decimals` or `mega_decimals`    | Number of decimals to show. Without `unit_of_measurement` it overrides the card-wide decimals for the current scale, e.g. `1234` with `decimals: 2` shows `1.23 kW`.                                                                                                                                                                                                                          |
 
 #### Individual Configuration
 
@@ -236,7 +258,7 @@ The Individual fields must be an array of objects. Each object must follow the f
 | color_value         | `boolean` or "solar" or "grid" or "battery" | `false`              | If set to `true`, state text color will match the highest value. If set to `solar`, state text color will match the color of solar. If set to `grid`, state text color will match the color of the grid consumption. If set to `battery`, state text color will match the color of the battery consumption. |
 | secondary_info      | `object`                                    | `undefined`          | Check [Secondary Info Object](#secondary-info-configuration)                                                                                                                                                                                                                                                |
 | subtract_individual | `boolean`                                   | false                | If set to `true`, the home consumption will be calculated by subtracting the sum of the individual devices from the home consumption.                                                                                                                                                                       |
-| override_state      | `boolean`                                   | `false`              | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is caluclated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses.                                                                |
+| override_state      | `boolean`                                   | `false`              | If set to `true`, the home consumption will be the state of the entity provided. By default the home consumption is calculated by adding up all sources. This is useful, when for example you are using an inverter and it has power losses.                                                                |
 
 #### Fossil Fuel Configuration
 
@@ -476,9 +498,12 @@ In contrast to the old flow formula, this formula calculates the flow rate indep
 
 To get this new Flow Formula to work, simply set `use_new_flow_rate_model` in the main configuration to true. You may want to play around with the `max_expected_power`, `min_expected_power`, `max_flow_rate` and `min_flow_rate` to get the speeds that you wish
 
+The dot speed (one over the duration) grows linearly with the value, so twice the power looks about twice as fast. Values outside the expected range use the slowest or fastest speed.
+
 ```js
-if (value > maxIn) return maxOut; // In case power exceeds maximum expected power, use the fastest speed and ignore the rest.
-return ((value - minIn) * (maxOut - minOut)) / (maxIn - minIn) + minOut;
+progress = clamp((value - minIn) / (maxIn - minIn), 0, 1);
+speed = 1 / minOut + progress * (1 / maxOut - 1 / minOut);
+return 1 / speed; // seconds for one dot to travel the line
 
 // value = value of the current line to calculate (eg: grid to home)
 //
@@ -520,3 +545,7 @@ Here is my to-do list containing a few enhancements I am planning in adding. The
 - Improve performance [#144](https://github.com/flixlix/power-flow-card-plus/issues/144)
 
 I am still just one person working on this project and obviously have other things going on in my life, so feel free to contribute to the project. You can also feel free to create a PR with a new feature and I'll try my best to review it 😊
+
+## License
+
+This card is released under the [MIT License](LICENSE).

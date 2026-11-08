@@ -1,5 +1,49 @@
 # power-flow-card-plus
 
+## 0.4.0-beta.0
+
+### Minor Changes
+
+- [#370](https://github.com/flixlix/flixlix-cards/pull/370) [`ef34736`](https://github.com/flixlix/flixlix-cards/commit/ef3473652a831b05b9cbbf967c9a487ae3dce5f7) Thanks [@flixlix](https://github.com/flixlix)! - Flows are now worked out the same way on both cards, in the order the Home Assistant energy dashboard uses, so the same readings always draw the same lines. Flows never go negative and never carry more than a source produces or a sink takes: for example, solar can no longer appear to export more than it generates. When the grid is hidden or during a power outage, solar and battery flows are recalculated instead of losing the part that went to the grid, and Energy Flow Card Plus now shows battery flows during an outage too. With a home entity using `override_state`, the card still shows its reading, while the lines and the home circle stay balanced.
+
+  Power Flow Card Plus readings whose flows change:
+
+  | Readings                                                                              | Before                                                                        | Now                                                                                                    |
+  | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+  | Import 200 W, export 600 W, solar 500 W, battery discharging 150 W and charging 200 W | Solar → grid 600 W, grid → battery 200 W, battery → grid 0 W, grid → home 0 W | Solar → grid 450 W, solar → battery 50 W, grid → battery 150 W, battery → grid 150 W, grid → home 50 W |
+  | Grid/battery exchange below the larger of the grid and battery zero tolerances        | Dropped                                                                       | Shown unless below the node's own tolerance                                                            |
+  | Outage with the battery charging                                                      | Grid → battery from the live grid reading                                     | Grid → battery from the generator                                                                      |
+
+### Patch Changes
+
+- [#370](https://github.com/flixlix/flixlix-cards/pull/370) [`2634c20`](https://github.com/flixlix/flixlix-cards/commit/2634c20f63aa3fcd3e3a93ae0a0bc42f4f4afc34) Thanks [@flixlix](https://github.com/flixlix)! - Fix: the home circle no longer breaks (NaN segments) when nothing is being consumed. Energy Flow Card Plus now honours `invert_state` on single grid and battery entities, reads non-fossil and grid values from the selected energy period instead of live sensor states, and individual devices with a numeric `calculate_flow_rate` animate consistently in every position.
+
+- [#296](https://github.com/flixlix/flixlix-cards/pull/296) [`f8bed9e`](https://github.com/flixlix/flixlix-cards/commit/f8bed9ed8f3b87eaefe019444bd6b37a98856966) Thanks [@flixlix](https://github.com/flixlix)! - Fix: individual devices with negative readings are no longer hidden when display_zero is off
+
+- [#368](https://github.com/flixlix/flixlix-cards/pull/368) [`7cc309d`](https://github.com/flixlix/flixlix-cards/commit/7cc309d9d5a8f44c644e0c1160b93c67df588f54) Thanks [@flixlix](https://github.com/flixlix)! - Built against the same Lit and Home Assistant websocket versions as the current Home Assistant frontend.
+
+- [#370](https://github.com/flixlix/flixlix-cards/pull/370) [`35fae9f`](https://github.com/flixlix/flixlix-cards/commit/35fae9fee82bafb9038c91b06bda2476438a8e65) Thanks [@flixlix](https://github.com/flixlix)! - Fix: with `clickable_entities` on, nodes can be reached with Tab and opened with Enter, which never worked before. Holding a node's value no longer runs its hold action twice (a `toggle` hold action used to cancel itself out).
+
+- [#384](https://github.com/flixlix/flixlix-cards/pull/384) [`71c1005`](https://github.com/flixlix/flixlix-cards/commit/71c10057789be2164b533a87a2f39995cb3769fc) Thanks [@flixlix](https://github.com/flixlix)! - With the new flow rate model, dot speed now grows in step with power: twice the power looks about twice as fast. Before, the time per dot shrank in step with power, so most of the range crawled and only values close to `max_expected_power` looked fast. `min_expected_power` still gives the slowest dots (`max_flow_rate`) and `max_expected_power` the fastest (`min_flow_rate`). In between, dots now move faster than before: with the defaults, a flow at half of `max_expected_power` takes 1.3 s per dot instead of 3.4 s. Values below `min_expected_power` no longer move slower than `max_flow_rate`. The old flow rate model (`use_new_flow_rate_model: false`) is unchanged.
+
+  `calculate_flow_rate` set to a number now does what the documentation says: a line moves one dot every that many seconds. Before, the number was only used when no flow rate could be calculated.
+
+- [#382](https://github.com/flixlix/flixlix-cards/pull/382) [`002654f`](https://github.com/flixlix/flixlix-cards/commit/002654f94eaecc53066db0cf3178c0db0d8eef39) Thanks [@flixlix](https://github.com/flixlix)! - Fix: `unit_of_measurement`, `unit_white_space` and `decimals` set on grid, solar or battery are now applied to their values. A custom unit shows the reading as is, without converting it to k/M, so the card can show non-electrical flows such as water in L/min.
+
+  The grid, solar and battery pages of the visual editor now offer these three fields.
+
+- [#368](https://github.com/flixlix/flixlix-cards/pull/368) [`7cc309d`](https://github.com/flixlix/flixlix-cards/commit/7cc309d9d5a8f44c644e0c1160b93c67df588f54) Thanks [@flixlix](https://github.com/flixlix)! - The non-fossil node now appears based on the grid's actual non-fossil share instead of a miscalculated value.
+
+- [#381](https://github.com/flixlix/flixlix-cards/pull/381) [`f8dbfb4`](https://github.com/flixlix/flixlix-cards/commit/f8dbfb4d9bfa59453444a77edb16720be4802cac) Thanks [@flixlix](https://github.com/flixlix)! - Fix: the non-fossil node is now hidden while grid import is within the grid's `display_zero_tolerance`, the same as when the grid reads exactly 0 (unless `fossil_fuel_percentage.display_zero` is on).
+
+- [#379](https://github.com/flixlix/flixlix-cards/pull/379) [`ef910cc`](https://github.com/flixlix/flixlix-cards/commit/ef910cca8825a64e7bae4f8d274b94a3deeef6c6) Thanks [@flixlix](https://github.com/flixlix)! - Cards no longer recalculate and redraw when an entity they don't show changes in Home Assistant, which lowers CPU and battery use on dashboards, especially on phones and tablets. Numbers are formatted with reused formatters, and the flow cards no longer measure their width on every update.
+
+- [#383](https://github.com/flixlix/flixlix-cards/pull/383) [`a9f14aa`](https://github.com/flixlix/flixlix-cards/commit/a9f14aa2ab48ded8ec8a99eb6c9a0eb7031fe592) Thanks [@flixlix](https://github.com/flixlix)! - Individual devices are now sorted by their value, largest first, when `sort_individual_devices` is not set, as the documentation has always said. Until now an unset option left them in config order. Devices are compared in watts (or watt-hours), so a `3.8 kW` charger now ranks above a `20 W` light.
+
+  If you have not set this option, your devices may move to a different slot, and on a card that shows only some of them, a different set may be visible. To keep your configured order, add `sort_individual_devices: false` to the card.
+
+- [#368](https://github.com/flixlix/flixlix-cards/pull/368) [`7cc309d`](https://github.com/flixlix/flixlix-cards/commit/7cc309d9d5a8f44c644e0c1160b93c67df588f54) Thanks [@flixlix](https://github.com/flixlix)! - Secondary-info templates for individual devices and the non-fossil node are now unsubscribed when the card is removed, and cards with more than four individual devices show the correct template for each one.
+
 ## 0.3.7
 
 ### Patch Changes
