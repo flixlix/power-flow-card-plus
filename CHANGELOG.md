@@ -1,5 +1,25 @@
 # power-flow-card-plus
 
+## 0.5.0
+
+### Minor Changes
+
+- **New:** New `topology` option. `battery_hub` routes everything through the battery, for power stations where only the battery feeds home (#123); `isolated_battery` drops the battery ↔ grid wire. `standard` stays the default. ([#461](https://github.com/flixlix/flixlix-cards/pull/461))
+
+- **New:** Grid, battery and individual circles can take their own color while nothing flows, with `color.idle` (grid, battery) or `color_idle` (individual). `display_zero_lines.grey_out_circles` greys them out like idle lines instead. Covers #222. ([#472](https://github.com/flixlix/flixlix-cards/pull/472))
+
+- **New:** Individual devices support `secondary_info.sum_total`, like solar. The secondary entity is added to the device's value, flow and `subtract_individual`, while the secondary info shows its own value. Covers the use case of #364. ([#462](https://github.com/flixlix/flixlix-cards/pull/462))
+
+- **New:** Without a grid entity, the card drops the empty grid column and centres solar, battery and home by their visual weight, so battery and solar only setups no longer leave a gap on the left (#142). ([#473](https://github.com/flixlix/flixlix-cards/pull/473))
+
+### Patch Changes
+
+- **Fix:** `display_zero_lines.grey_color` now applies in `custom` mode too, as documented. Before, idle lines in `custom` mode stayed the default grey. ([#472](https://github.com/flixlix/flixlix-cards/pull/472))
+
+- **Fix:** Dots on short lines, like individual devices, no longer crawl next to the main lines: each line's dot time now scales with the square root of its length. Flow rates, including `min_flow_rate`, `max_flow_rate` and a fixed `calculate_flow_rate`, are seconds per 175px of line. ([#467](https://github.com/flixlix/flixlix-cards/pull/467))
+
+- **Performance:** The card file is 2 to 5% smaller. Cards are now built with Vite+ instead of Rollup and Babel; they still run on the same browsers, including Chromecast and older tablets. ([#471](https://github.com/flixlix/flixlix-cards/pull/471))
+
 ## 0.4.1
 
 ### Patch Changes
