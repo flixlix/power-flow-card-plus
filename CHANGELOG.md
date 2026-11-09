@@ -1,5 +1,11 @@
 # power-flow-card-plus
 
+## 0.4.1
+
+### Patch Changes
+
+- **Fix:** Entities are clickable again when the config has no `clickable_entities` line, as before 0.4.0, and now also on Home Flow Card. Only `clickable_entities: false` turns it off. ([#459](https://github.com/flixlix/flixlix-cards/pull/459))
+
 ## 0.4.0
 
 ### Minor Changes

@@ -129,7 +129,7 @@ Else, if you prefer the graphical editor, use the menu to add the resource:
 | min_flow_rate               | `number`  |                   .75                    | Represents how much time it takes for the quickest dot to travel from one end to the other in seconds.                                                                                                                   |
 | max_flow_rate               | `number`  |                    6                     | Represents how much time it takes for the slowest dot to travel from one end to the other in seconds.                                                                                                                    |
 | kilo_threshold              | `number`  |                    0                     | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                                                             |
-| clickable_entities          | `boolean` |                  false                   | If true, clicking on the entity will open the entity's more info dialog.                                                                                                                                                 |
+| clickable_entities          | `boolean` |                   true                   | Clicking a circle opens the entity's more info dialog. Set to `false` to turn it off.                                                                                                                                    |
 | min_expected_power          | `number`  |                   0.01                   | Represents the minimum amount of power (in Watts) expected to flow through the system at a given moment. Only used by the `duration` and `speed` [flow rate models](#flow-formula).                                      |
 | max_expected_power          | `number`  |                   2000                   | Represents the maximum amount of power (in Watts) expected to flow through the system at a given moment. Only used by the `duration` and `speed` [flow rate models](#flow-formula).                                      |
 | display_zero_lines          | `object`  |             `{mode: "show"}`             | Check [Display Zero Lines](#display-zero-lines)                                                                                                                                                                          |
@@ -151,7 +151,7 @@ The card supports Home Assistant action configs on entity circles and other clic
 | hold_action       | `object` | Action triggered on long press.       |
 | double_tap_action | `object` | Action triggered on double tap/click. |
 
-If none of these actions are configured for a clickable entity surface, the card falls back to opening more-info when `clickable_entities: true`.
+If none of these actions are configured for a clickable entity surface, the card falls back to opening more-info unless `clickable_entities: false`.
 
 #### Entities object
 
