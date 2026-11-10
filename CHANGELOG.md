@@ -1,5 +1,19 @@
 # power-flow-card-plus
 
+## 0.6.0
+
+### Minor Changes
+
+- **New:** An `auxiliary` circle under the grid shows a reading outside your home's consumption, like a wind farm share, gas or a virtual battery. `connect_to` draws its line to the grid, the battery or nowhere. Covers #132, #160 and #165. ([#483](https://github.com/flixlix/flixlix-cards/pull/483))
+
+### Patch Changes
+
+- **Fix:** Flow dots keep gliding when an entity updates instead of stepping back in Chrome; a new speed now takes over from where each dot is. ([#482](https://github.com/flixlix/flixlix-cards/pull/482))
+
+- **Fix:** The home circle keeps its ring when the home uses nothing. With a home total of 0 the ring had no segments and disappeared; it is now a full ring in the grid color, as it was before the last release. ([#477](https://github.com/flixlix/flixlix-cards/pull/477))
+
+- **Fix:** With `grey_out_circles`, a circle that went grey while idle takes its colour back when power returns, instead of staying grey until the page reloads. ([#487](https://github.com/flixlix/flixlix-cards/pull/487))
+
 ## 0.5.0
 
 ### Minor Changes

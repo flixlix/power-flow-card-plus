@@ -164,6 +164,7 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | solar                  | `object` | Check [Solar Configuration](#solar-configuration) for more information.          |
 | battery                | `object` | Check [Battery Configuration](#battery-configuration) for more information.      |
 | individual             | `array`  | Check [Individual Devices](#individual-configuration) for more information.      |
+| auxiliary              | `object` | Check [Auxiliary](#auxiliary-configuration) for more information.                |
 | home                   | `object` | Check [Home Configuration](#home-configuration) for more information.            |
 | fossil_fuel_percentage | `object` | Check [Fossil Fuel Percentage](#fossil-fuel-configuration) for more information. |
 
@@ -249,6 +250,29 @@ The Individual fields must be an array of objects. Each object must follow the f
 | display_zero_state     | `boolean`         | `true`                                         | If set to `true`, the state will be shown even if it is `0`. If set to `false`, the state will be hidden if it is `0`.                                                               |
 | color_value            | `boolean`         | `false`                                        | If set to `true`, state text color will match the circle's color. If set to `false`, state text color will be the primary text color.                                                |
 | decimals               | `number`          | `0`                                            | Number of decimals to show in the corresponding state.                                                                                                                               |
+
+#### Auxiliary Configuration
+
+One extra node under the grid and left of the battery, for a reading that is not part of your home's consumption: a share in a wind farm, a virtual battery at your provider, a gas meter or solar panels wired to the battery's DC side. It is display-only: its reading never changes the other flows, the home consumption or the home circle.
+
+It takes every option of an [individual device](#individual-configuration), plus `connect_to`:
+
+| Name       | Type                          | Default | Description                                                                                                                                                                                              |
+| ---------- | ----------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| connect_to | `grid` \| `battery` \| `none` | `grid`  | Where its line runs: up to the grid, across to the battery, or no line at all. The line is drawn only while that node is shown; while it runs up into the grid, the grid's label is hidden to make room. |
+
+A positive reading flows into the auxiliary node. Set `inverted_animation: true` for something that feeds the grid or battery, or `accept_negative: true` when the entity reads negative while feeding.
+
+```yaml
+entities:
+  grid:
+    entity: sensor.grid_power
+  auxiliary:
+    entity: sensor.wind_stake_power
+    name: Wind stake
+    icon: mdi:wind-turbine
+    inverted_animation: true
+```
 
 #### Home Configuration
 
