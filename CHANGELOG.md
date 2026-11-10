@@ -1,5 +1,27 @@
 # power-flow-card-plus
 
+## 0.6.1
+
+### Patch Changes
+
+- **New:** Add more buttons at the bottom of the card with `buttons`, each with its own name, icon and tap, hold or double-tap action, and manage them in the visual editor under Buttons. ([#494](https://github.com/flixlix/flixlix-cards/pull/494))
+
+- **New:** The visual editor no longer shows the dashboard link. Existing `dashboard_link` configs keep working, and the editor offers to convert them into buttons in one click. ([#494](https://github.com/flixlix/flixlix-cards/pull/494))
+
+- **Fix:** `base_decimals`, `kilo_decimals`, `mega_decimals` and a node's `decimals` above 2 show every decimal, e.g. `2.356 kW` with `kilo_decimals: 3`, instead of stopping at two. ([#490](https://github.com/flixlix/flixlix-cards/pull/490))
+
+- **Fix:** The help button in the card editor opens the card's configuration page on cards.flixlix.com instead of an old GitHub README. ([#488](https://github.com/flixlix/flixlix-cards/pull/488))
+
+- **New:** The home's value sits in its own `span.home`, like every other circle's value, so custom CSS can move or recolour it without touching the icon or secondary info. ([#489](https://github.com/flixlix/flixlix-cards/pull/489))
+
+- **New:** An individual device can show only while conditions hold, like the car charger only while the car is plugged in, with `visibility` or under Advanced Options in the editor. Closes #332. ([#495](https://github.com/flixlix/flixlix-cards/pull/495))
+
+- **New:** The low-carbon circle accepts a sensor that reports the green energy percentage: set `invert_state` on `fossil_fuel_percentage` and the card reads it as 100 minus its state. ([#491](https://github.com/flixlix/flixlix-cards/pull/491))
+
+- **New:** `keep_trailing_zeros` always shows the decimals a value is rounded to, so `1.0 kW` stays `1.0 kW` instead of `1 kW`. Also in the editor's advanced options. ([#490](https://github.com/flixlix/flixlix-cards/pull/490))
+
+- **New:** `grid.power_outage.color_alert` colours the outage icon and label, e.g. red, so an outage stands out. Set it in the UI editor next to the outage icon. ([#492](https://github.com/flixlix/flixlix-cards/pull/492))
+
 ## 0.6.0
 
 ### Minor Changes
