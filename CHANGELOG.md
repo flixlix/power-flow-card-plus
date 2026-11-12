@@ -1,5 +1,19 @@
 # power-flow-card-plus
 
+## 0.6.2-beta.0
+
+### Patch Changes
+
+- **Fix:** Icons, values and lines stay in place on the Fire HD 10 (2023) and other ARM Mali GPUs, which drew them shifted or cut off since 0.4.0. Dots there move as before 0.4.0; `dot_animation: gpu` or `classic` picks a method for every device. ([#522](https://github.com/flixlix/flixlix-cards/pull/522))
+
+- **New:** In a sections dashboard, a taller card spreads its rows of circles apart to fill the height, up to the spacing its columns get, then keeps them centred. The lines follow the circles. ([#523](https://github.com/flixlix/flixlix-cards/pull/523))
+
+- **Fix:** The home's secondary info opens its entity on tap when the home has no entity of its own. ([#520](https://github.com/flixlix/flixlix-cards/pull/520))
+
+- **Fix:** Negative values switch to kW, kWh, MW or MWh past the same thresholds as positive ones, so -1200 W shows as -1.2 kW. ([#521](https://github.com/flixlix/flixlix-cards/pull/521))
+
+- **New:** A card added from the card picker starts with the grid, solar, battery and devices from your energy dashboard, and guesses the rest from entity names more carefully than before. ([#524](https://github.com/flixlix/flixlix-cards/pull/524))
+
 ## 0.6.1
 
 ### Patch Changes
