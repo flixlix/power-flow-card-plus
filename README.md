@@ -299,7 +299,7 @@ individual:
         state: "on"
 ```
 
-The conditions use the format of a card's visibility tab; the UI editor edits them under **Advanced Options** of the device with Home Assistant's own conditions editor. Template, sun, zone and device conditions need Home Assistant itself and are ignored.
+The conditions use the format of a card's visibility tab; the UI editor edits them under **Advanced Options** of the device with Home Assistant's own conditions editor. Since Home Assistant 2026.10 its editor writes `state` and `numeric_state` with `entity_id`, as automations do, and offers template, sun, zone and device conditions, which Home Assistant checks for the card. Before 2026.10 those are ignored.
 
 #### Auxiliary Configuration
 
