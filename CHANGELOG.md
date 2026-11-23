@@ -1,5 +1,11 @@
 # power-flow-card-plus
 
+## 0.6.2-beta.3
+
+### Patch Changes
+
+- **Fix:** Flow dots no longer depend on screen measurements, which may be what shifts them off their lines on some devices (#510). `dot_animation: classic` now draws dots inside their line's SVG, like before 0.4.0. ([#548](https://github.com/flixlix/flixlix-cards/pull/548))
+
 ## 0.6.2-beta.2
 
 ### Patch Changes
