@@ -1,5 +1,11 @@
 # power-flow-card-plus
 
+## 0.6.2-beta.4
+
+### Patch Changes
+
+- **Fix:** A dashboard left open for days no longer gets slower and uses ever more memory. Flow dots kept moving unseen after their flow stopped or the card left the page. ([#551](https://github.com/flixlix/flixlix-cards/pull/551))
+
 ## 0.6.2-beta.3
 
 ### Patch Changes
